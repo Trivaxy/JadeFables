@@ -1,7 +1,5 @@
 ﻿//TODO:
 //Fruit thing
-//Recipe
-
 using System;
 using System.Collections.Generic;
 
@@ -36,7 +34,7 @@ namespace JadeFables.Items.Jade.JadeAxe
             Item.useTurn = true;
 
             Item.DamageType = DamageClass.Melee;
-            Item.damage = 11;
+            Item.damage = 8;
             Item.knockBack = 5f;
             Item.crit = 4;
 
@@ -56,6 +54,14 @@ namespace JadeFables.Items.Jade.JadeAxe
 
                 Dust.NewDustPerfect(pos, ModContent.DustType<JadeSparkle>(), Vector2.Zero);
             }
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient<JadeChunk.JadeChunk>(12);
+            recipe.AddTile(TileID.Anvils);
+            recipe.Register();
         }
     }
 }

@@ -2,7 +2,8 @@
 {
     public class JadeLakeBiome : ModBiome
     {
-		public override void SetStaticDefaults()
+        public override ModWaterStyle WaterStyle => ModContent.Find<ModWaterStyle>("JadeFables/JadeLakeWaterStyle"); // Sets a water style for when inside this biome
+        public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Jade Lake");
 		}

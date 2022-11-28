@@ -1,6 +1,7 @@
 ﻿//TODO:
 //Actual sprite
 //Sparkles (maybe)
+//Tooltip (maybe)
 using System;
 using System.Collections.Generic;
 

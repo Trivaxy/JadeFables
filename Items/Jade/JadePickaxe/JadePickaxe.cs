@@ -27,8 +27,8 @@ namespace JadeFables.Items.Jade.JadePickaxe
             Item.height = 32;
 
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 15;
-            Item.useAnimation = 15;
+            Item.useTime = 20;
+            Item.useAnimation = 20;
             Item.autoReuse = true;
             Item.pick = 60;
             Item.useTurn = true;

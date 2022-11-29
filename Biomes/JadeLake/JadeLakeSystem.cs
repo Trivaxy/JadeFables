@@ -13,14 +13,14 @@ namespace JadeFables.Biomes.JadeLake
 
         public override void PostUpdateEverything()
         {
-            if (JadeSandTileCount >= 300)
+            for (int x = 0; x < Main.maxTilesX; x++)
             {
-                for (int x = 0; x < Main.maxTilesX; x++)
-                {
-                    if (new Vector2(x * 16f, Main.LocalPlayer.Center.Y).Distance(Main.LocalPlayer.Center) < Main.screenWidth / 2)
-                        for (int y = 0; y < Main.maxTilesY; y++)
+                if (new Vector2(x * 16f, Main.LocalPlayer.Center.Y).Distance(Main.LocalPlayer.Center) < Main.screenWidth / 2)
+                    for (int y = 0; y < Main.maxTilesY; y++)
+                    {
+                        Tile tile = Main.tile[x, y];
+                        if (JadeSandTileCount >= 300)
                         {
-                            Tile tile = Main.tile[x, y];
                             if (tile.LiquidAmount > 0 && Main.rand.NextBool(30) && Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
                             {
                                 for (int i = 0; i < 2; i++)
@@ -30,10 +30,13 @@ namespace JadeFables.Biomes.JadeLake
                                     Dust.NewDustPerfect(new Vector2(x * 16 + Main.rand.Next(-8, 8), y * 16 + 8), ModContent.DustType<SpringMist>(), velocity, 0, default, Main.rand.NextFloat(0.5f, 1.25f));
                                 }
                             }
+                        }
 
-                            if (tile.LiquidAmount > 0)
+                        if (tile.LiquidAmount > 0)
+                        {
+                            Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.000006f * JadeSandTileCount));
+                            if (JadeSandTileCount >= 300)
                             {
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * 0.002f);
                                 if (Main.rand.NextBool(800))
                                     Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.WhiteSparkle>(), Vector2.Zero, 0, default, 0.5f);
 
@@ -41,7 +44,7 @@ namespace JadeFables.Biomes.JadeLake
                                     Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.JadeBubble>(), -Vector2.UnitY.RotatedByRandom(0.5f), 0, default, Main.rand.NextFloat(0.75f, 1.5f));
                             }
                         }
-                }
+                    }
             }
         }
     }

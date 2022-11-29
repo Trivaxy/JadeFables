@@ -76,7 +76,7 @@ namespace JadeFables.Biomes.JadeLake
                 return;
 
             var effect = Terraria.Graphics.Effects.Filters.Scene["JadeLakeWater"].GetShader().Shader;
-            effect.Parameters["offset"].SetValue((Main.screenPosition - oldScreenPos) * -1);
+            effect.Parameters["offset"].SetValue(Vector2.Zero);
             effect.Parameters["sampleTexture2"].SetValue(JadeLakeMapTarget.jadelakeMapTarget);
             effect.Parameters["sampleTexture3"].SetValue(JadeLakeMapTarget.jadelakeShineTarget);
             effect.Parameters["time"].SetValue(Main.GameUpdateCount / 20f);
@@ -108,22 +108,6 @@ namespace JadeFables.Biomes.JadeLake
             Main.graphics.GraphicsDevice.Clear(Color.Transparent);
 
             Texture2D tex2 = Terraria.ModLoader.ModContent.Request<Texture2D>("JadeFables/Assets/WaterMap", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-
-            /*Vector2 screenSize = Helpers.Helper.ScreenSize;
-            Vector2 textureSize = tex2.Size();
-
-            Vector2 texWrapCount = (screenSize / textureSize).Round().TwoValueMax(Vector2.One);
-
-            Vector2 texScaleDiv = textureSize / screenSize * texWrapCount;
-            Vector2 texOutSize = textureSize / texScaleDiv;
-
-            for (int i = 0; i <= texWrapCount.X; i++)
-                for (int j = 0; j <= texWrapCount.Y; j++)
-                {
-                    Vector2 pos = new Vector2(i, j) * texOutSize;
-                    Vector2 off = new Vector2((Main.screenPosition.X) % texOutSize.X, (Main.screenPosition.Y) % texOutSize.Y);
-                    Main.spriteBatch.Draw(tex2, new Rectangle((int)(pos.X - off.X), (int)(pos.Y - off.Y), (int)texOutSize.X, (int)texOutSize.Y), null, Color.White);
-                }*/
 
             //The seam issue is not in this file, See StarlightRiver.cs and enable the commented out PostDrawInterface hook to view RTs
             for (int i = -tex2.Width; i <= Main.screenWidth + tex2.Width; i += tex2.Width)

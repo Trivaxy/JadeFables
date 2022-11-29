@@ -72,7 +72,7 @@ public sealed class ModifyTreeShakeResultsEdit : RuntimeDetourModSystem
     }
 
     private void AddModifiers() {
-        foreach (int fruit in VanillaFruits) RateModifiers.Add(fruit, MultiplicativeModifier(1.30f));
+        foreach (int fruit in VanillaFruits) RateModifiers.Add(fruit, MultiplicativeModifier(1.3f));
     }
 
     private void RewriteShakeDropRates(ILContext il) {

@@ -48,6 +48,8 @@ public sealed class ModifyTreeShakeResultsEdit : RuntimeDetourModSystem
     public TreeShakeRateModifier MultiplicativeModifier(float multiplier) {
         return (_, c) =>
         {
+            // Objective: multiply rate (already pushed to stack) by given multiplier
+
             c.Emit(OpCodes.Conv_R4); // convert rate to float
             c.Emit(OpCodes.Ldc_R4, multiplier); // push multiplier
             c.Emit(OpCodes.Mul); // multiply
@@ -72,6 +74,14 @@ public sealed class ModifyTreeShakeResultsEdit : RuntimeDetourModSystem
     }
 
     private void RewriteShakeDropRates(ILContext il) {
+        /* Objective: Arbitrarily modify the drop rates of tree shake results.
+         *  All instances of the pattern: ldc.i4(.s) x
+         *  represent a drop rate.        UnifiedRandom::Next(int32)
+         *  After finding the drop rate,
+         *  we can search for item IDs based on Item::NewItem calls (item ID is last value on stack before method invocation).
+         */
+        ILCursor c = new(il);
+
         // TODO: Traverse IL and apply modifiers.
     }
 }

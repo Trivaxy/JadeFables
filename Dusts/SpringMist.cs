@@ -9,7 +9,7 @@ namespace JadeFables.Dusts
     {
         public override Color? GetAlpha(Dust dust, Color lightColor)
         {
-            return lightColor * (0.01f + dust.alpha / 250f) * (float)Math.Sin(dust.fadeIn / 120f * 3.14f);
+            return Color.Lerp(lightColor, Color.White, 0.05f) * (0.00025f + dust.alpha / 500f) * (float)Math.Sin(dust.fadeIn / 120f * 3.14f);
         }
 
         public override void OnSpawn(Dust dust)

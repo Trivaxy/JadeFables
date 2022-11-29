@@ -17,12 +17,6 @@ namespace JadeFables.Dusts
 
         public override bool Update(Dust dust)
         {
-            if (dust.customData is null)
-            {
-                dust.position -= new Vector2(dust.frame.Width / 2, dust.frame.Height / 2) * dust.scale;
-                dust.customData = 1;
-            }
-
             dust.alpha += 5;
 
             if (dust.alpha > 255)

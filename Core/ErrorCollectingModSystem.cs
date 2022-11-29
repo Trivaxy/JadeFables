@@ -50,7 +50,7 @@ internal sealed class ErrorReportingPlayer : ModPlayer
             if (system.LoadErrors.Count == 0) continue;
 
             Main.NewText("");
-            Main.NewText($"{Name} - Errors: {system.LoadErrors.Count}", Colors.RarityRed);
+            Main.NewText($"{system.Name} - Errors: {system.LoadErrors.Count}", Colors.RarityRed);
 
             foreach (var error in system.LoadErrors) Main.NewText('[' + error.Severity + ']' + error.AsReportable(), Colors.RarityRed);
         }

@@ -52,7 +52,7 @@ internal sealed class ErrorReportingPlayer : ModPlayer
             Main.NewText("");
             Main.NewText($"{Name} - Errors: {system.LoadErrors.Count}", Colors.RarityRed);
 
-            foreach (var error in system.LoadErrors) Main.NewText(error.Severity + ": " + error.AsReportable(), Colors.RarityRed);
+            foreach (var error in system.LoadErrors) Main.NewText('[' + error.Severity + ']' + error.AsReportable(), Colors.RarityRed);
         }
     }
 }
@@ -102,4 +102,24 @@ public interface ISystemLoadError
     ///     The string representation of this load error in a format befitting reporting in-game.
     /// </summary>
     string AsReportable();
+}
+
+/// <summary>
+///     Default implementation of <see cref="ISystemLoadError"/>.
+/// </summary>
+public abstract class SystemLoadError : ISystemLoadError
+{
+    public virtual LoadErrorSeverity Severity { get; init; } = LoadErrorSeverity.Error;
+
+    string ISystemLoadError.AsLoggable() {
+        return GetType().Name + ": " + AsLoggableImpl();
+    }
+
+    protected abstract string AsLoggableImpl();
+
+    string ISystemLoadError.AsReportable() {
+        return GetType().Name + ": " + AsReportableImpl();
+    }
+
+    protected abstract string AsReportableImpl();
 }

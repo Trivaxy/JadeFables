@@ -3,6 +3,7 @@
 //Better splash dust
 //Better droplet gore
 //Bubbles
+using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -19,7 +20,7 @@ namespace JadeFables.Biomes.JadeLake
 		}
 
 		public override int GetSplashDust() {
-			return 6;
+			return ModContent.DustType<JadeWaterDust>();
 		}
 
 		public override int GetDropletGore() {

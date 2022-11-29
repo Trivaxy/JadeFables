@@ -8,7 +8,7 @@
             DustType = DustID.Sand;
             HitSound = SoundID.Dig;
             ItemDrop = ItemType<JadeSandItem>();
-            Main.tileMergeDirt[Type] = true;
+            Main.tileMerge[Type][TileID.Stone] = true;
 
             Main.tileSolid[Type] = true;
             Main.tileLighted[Type] = true;

@@ -1,32 +1,31 @@
-﻿using JadeFables.Tiles.JadeSandstone;
+﻿using JadeFables.Tiles.JadeSand;
 
-namespace JadeFables.Tiles.JadeSand
+namespace JadeFables.Tiles.JadeSandstone
 {
-    public class JadeSandTile : ModTile
+    public class JadeSandstoneTile : ModTile
     {
         public override void SetStaticDefaults()
         {
             MinPick = 10;
-            DustType = DustType<Dusts.JadeSandDust>();
+            DustType = DustType<Dusts.JadeSandstoneDust>();
             HitSound = SoundID.Dig;
-            ItemDrop = ItemType<JadeSandItem>();
-            Main.tileMerge[TileID.Stone][Type] = true;
-            Main.tileMerge[TileType<JadeSandstoneTile>()][Type] = true;
+            ItemDrop = ItemType<JadeSandstoneItem>();
+            Main.tileMerge[TileType<JadeSandTile>()][Type] = true;
             Main.tileSolid[Type] = true;
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
 
             ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Spring Sand");
-            AddMapEntry(new Color(207, 160, 118), name);
+            name.SetDefault("Spring Sandstone");
+            AddMapEntry(new Color(92, 62, 32), name);
         }
     }
 
-    public class JadeSandItem : ModItem
+    public class JadeSandstoneItem : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Sand");
+            DisplayName.SetDefault("Spring Sandstone");
         }
 
         public override void SetDefaults()
@@ -40,9 +39,17 @@ namespace JadeFables.Tiles.JadeSand
             Item.useTime = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
-            Item.createTile = TileType<JadeSandTile>();
+            Item.createTile = TileType<JadeSandstoneTile>();
             Item.rare = ItemRarityID.White;
             Item.value = 5;
+        }
+
+        public override void AddRecipes()
+        {
+            CreateRecipe().
+                AddIngredient<JadeSandItem>(2).
+                AddTile(TileID.Furnaces).
+                Register();
         }
     }
 }

@@ -19,8 +19,10 @@ namespace JadeFables
 {
 	public class JadeFables : Mod
 	{
+		public static JadeFables Instance;
 		public override void Load()
 		{
+			Instance = this;
 			Main.QueueMainThreadAction(() =>
 			{
 				LoadDetours();

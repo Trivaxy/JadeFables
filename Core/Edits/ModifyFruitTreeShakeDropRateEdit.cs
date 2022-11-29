@@ -5,7 +5,7 @@ using Terraria.Utilities;
 
 namespace JadeFables.Core.Edits;
 
-public sealed class ModifyTreeShakeResultsEdit : RuntimeDetourModSystem
+public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
 {
     public override void OnModLoad() {
         base.OnModLoad();

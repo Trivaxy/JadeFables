@@ -17,6 +17,7 @@ namespace JadeFables.Biomes.JadeLake
             float progress = MathHelper.Min(JadeSandTileCount, 300) / 300f;
             if (JadeSandTileCount == 0)
                 return;
+
             for (int x = 0; x < Main.maxTilesX; x++)
             {
                 if (new Vector2(x * 16f, Main.LocalPlayer.Center.Y).Distance(Main.LocalPlayer.Center) < Main.screenWidth / 2)

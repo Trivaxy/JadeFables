@@ -148,6 +148,7 @@ namespace JadeFables.Core
 				activeAddon.SpritebatchChange();
 			}
 
+
 			Main.spriteBatch.Draw(Main.waterTarget, Main.sceneWaterPos - Main.screenPosition, Color.White);
 
 			if (activeAddon != null)

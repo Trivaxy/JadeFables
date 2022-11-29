@@ -10,10 +10,10 @@ public abstract class RuntimeDetourModSystem : ErrorCollectingModSystem
         private readonly string TypeName;
         private readonly string MethodName;
         private readonly string OpCode;
-        private readonly string? Value;
+        private readonly object? Value;
         private readonly int? Iteration;
 
-        public OpCodeError(string typeName, string methodName, string opCode, string? value = null, int? iteration = null) {
+        public OpCodeError(string typeName, string methodName, string opCode, object? value = null, int? iteration = null) {
             TypeName = typeName;
             MethodName = methodName;
             OpCode = opCode;
@@ -53,7 +53,32 @@ public abstract class RuntimeDetourModSystem : ErrorCollectingModSystem
         }
     }
 
-    protected void AddOpCodeError(string typeName, string methodName, string opCode, string? value = null, int? iteration = null) {
+    protected class MissingMemberError : SystemLoadError
+    {
+        private readonly string Member;
+
+        public MissingMemberError(string member) {
+            Member = member;
+        }
+
+        protected override string AsLoggableImpl() {
+            return ToString();
+        }
+
+        protected override string AsReportableImpl() {
+            return ToString();
+        }
+
+        public override string ToString() {
+            return "Failed to find missing member: " + Member;
+        }
+    }
+
+    protected void AddOpCodeError(string typeName, string methodName, string opCode, object? value = null, int? iteration = null) {
         AddError(new OpCodeError(typeName, methodName, opCode, value, iteration));
+    }
+    
+    protected void AddMissingMemberError(string member) {
+        AddError(new MissingMemberError(member));
     }
 }

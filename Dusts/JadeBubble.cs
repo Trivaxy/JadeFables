@@ -24,6 +24,8 @@ namespace JadeFables.Dusts
 
             dust.position += dust.velocity;
 
+            dust.velocity *= 0.94f;
+
             Lighting.AddLight(dust.position, new Color(174, 235, 30).ToVector3() * 0.35f);
             return false;
         }

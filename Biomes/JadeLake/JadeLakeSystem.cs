@@ -34,6 +34,9 @@ namespace JadeFables.Biomes.JadeLake
                                     Dust.NewDustPerfect(new Vector2(x * 16 + Main.rand.Next(-8, 8), y * 16 + 8), DustID.Smoke, velocity, 240, default, Main.rand.NextFloat(1f, 2f));
                                     for (int i = 0; i < 3; i++)
                                         Dust.NewDustPerfect(new Vector2(x * 16 + Main.rand.Next(-8, 8), y * 16 + 8), ModContent.DustType<SpringMist>(), velocity, 0, Color.White, Main.rand.NextFloat(0.25f, 1.25f));
+
+                                    if (Main.rand.NextBool((int)(40 / progress)))
+                                        Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.JadeBubble>(), -Vector2.UnitY.RotatedByRandom(1f) * 2, 0, default, Main.rand.NextFloat(0.5f, 1f));
                                 }
                             }
                             else
@@ -41,9 +44,6 @@ namespace JadeFables.Biomes.JadeLake
 
                             if (Main.rand.NextBool((int)(2000 / progress)))
                                 Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.WhiteSparkle>(), Vector2.Zero, 0, default, 0.5f);
-
-                            if (Main.rand.NextBool((int)(8000 / progress)))
-                                Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.JadeBubble>(), -Vector2.UnitY.RotatedByRandom(0.5f), 0, default, Main.rand.NextFloat(0.75f, 1.5f));
                         }
                     }
             }

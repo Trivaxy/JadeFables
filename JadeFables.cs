@@ -9,6 +9,11 @@ global using Terraria.ModLoader;
 global using Terraria.ID;
 global using Microsoft.Xna.Framework;
 global using Microsoft.Xna.Framework.Graphics;
+using Terraria.GameContent;
+using JadeFables.Biomes.JadeLake;
+using Terraria.Graphics.Light;
+using Terraria.Graphics;
+using Terraria.GameContent.Liquid;
 
 namespace JadeFables
 {
@@ -175,9 +180,8 @@ namespace JadeFables
 		    switch (num2)
 		    {
 			case 0:
-			    num2 = Main.waterStyle;
-			    num *= (SubworldSystem.IsActive<CoralReefs>() && global::EEMod.LightingBuffer.Instance.bgAlpha > 0 ? 0.5f : 2f);
-			    num *= (SubworldSystem.IsActive<CoralReefs>() && !(global::EEMod.LightingBuffer.Instance.bgAlpha > 0) ? 0.5f : 1f);
+				num2 = Main.waterStyle;
+				num *= 1f;
 			    break;
 			case 2:
 			    num2 = 11;
@@ -202,7 +206,7 @@ namespace JadeFables
 
 			Main.DrawTileInWater(drawOffset, i, j);
 
-			if (Main.tile[i, j].IsHalfBlock && SubworldSystem.IsActive<CoralReefs>())
+			if (Main.tile[i, j].IsHalfBlock && Main.LocalPlayer.InModBiome<JadeLakeBiome>())
 			    Main.tileBatch.Draw(TextureAssets.Liquid[num2].Value, archivePos + new Vector2(0, 8), liquidSize, vertices, default(Vector2), 1f, SpriteEffects.None);
 			else if(Main.tile[i, j].IsHalfBlock)
 			    Main.tileBatch.Draw(TextureAssets.Liquid[num2].Value, archivePos, liquidSize, vertices, default(Vector2), 1f, SpriteEffects.None);
@@ -225,7 +229,7 @@ namespace JadeFables
 
 		private void WaterAlphaMod(On.Terraria.Main.orig_DrawWater orig, Main self, bool bg, int Style, float Alpha)
 		{
-		    orig(self, bg, Style, Main.LocalPlayer.InModBiome<JadeLake>() ? Alpha / 3.5f : Alpha);
+		    orig(self, bg, Style, Main.LocalPlayer.InModBiome<JadeLakeBiome>() ? Alpha / 2f : Alpha);
 		}
 	}
 }

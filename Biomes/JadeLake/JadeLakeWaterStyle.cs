@@ -1,3 +1,8 @@
+//TODO:
+//Water shader
+//Better splash dust
+//Better droplet gore
+//Bubbles
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;

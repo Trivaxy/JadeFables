@@ -1,4 +1,5 @@
-﻿using JadeFables.Tiles.JadeSand;
+﻿using JadeFables.Dusts;
+using JadeFables.Tiles.JadeSand;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -26,11 +27,15 @@ namespace JadeFables.Biomes.JadeLake
                                 {
                                     Vector2 velocity = Vector2.UnitY.RotatedByRandom(0.1f) * -Main.rand.NextFloat(1f, 1.5f);
                                     Dust.NewDustPerfect(new Vector2(x * 16 + Main.rand.Next(-8, 8), y * 16 + 8), DustID.Smoke, velocity, 220, default, Main.rand.NextFloat(1f, 2f));
+                                    Dust.NewDustPerfect(new Vector2(x * 16 + Main.rand.Next(-8, 8), y * 16 + 8), ModContent.DustType<SpringMist>(), velocity, 0, default, Main.rand.NextFloat(0.5f, 1.25f));
                                 }
                             }
 
-                            if (tile.LiquidAmount > 0 && Main.rand.NextBool(2000))
-                                Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.JadeSparkle>(), Vector2.Zero, 0, default, 1f);
+                            if (tile.LiquidAmount > 0 && Main.rand.NextBool(200))
+                                Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.WhiteSparkle>(), Vector2.Zero, 0, default, 0.5f);
+
+                            if (tile.LiquidAmount > 0 && Main.rand.NextBool(200))
+                                Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.JadeBubble>(), -Vector2.UnitY.RotatedByRandom(0.5f), 0, default, Main.rand.NextFloat(0.75f,1.5f));
                         }
                 }
             }

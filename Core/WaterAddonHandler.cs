@@ -129,6 +129,7 @@ namespace JadeFables.Core
 				activeAddon.SpritebatchChangeBack();
 			}
 
+
 			Main.spriteBatch.Draw(Main.instance.backWaterTarget, Main.sceneBackgroundPos - Main.screenPosition, Color.White);
 
 			if (activeAddon != null)

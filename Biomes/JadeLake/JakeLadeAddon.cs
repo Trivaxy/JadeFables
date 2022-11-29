@@ -137,23 +137,69 @@ namespace JadeFables.Biomes.JadeLake
             Main.graphics.GraphicsDevice.SetRenderTarget(null);
         }
 
+        private bool ShouldDrawGradient(int i, int j)
+        {
+            Tile tile = Main.tile[i, j];
+            if (tile.LiquidAmount == 0)
+                return false;
+
+            Tile tileAbove = Main.tile[i, j - 1];
+            if (tileAbove.LiquidAmount > 0 || (tileAbove.HasTile && Main.tileSolid[tileAbove.TileType]))
+                return false;
+            return true;
+        }
+
         private void DrawGradients()
         {
-            Texture2D tex = ModContent.Request<Texture2D>("JadeFables/Assets/WaterGradient").Value;
+            Texture2D glowTex = ModContent.Request<Texture2D>("JadeFables/Assets/WaterGradient").Value;
 
-            for (int x = 0; x < Main.maxTilesX; x++)
+            for (int i = 0; i < Main.maxTilesX; i++)
             {
-                if (new Vector2(x * 16f, Main.LocalPlayer.Center.Y).Distance(Main.LocalPlayer.Center) < Main.screenWidth / 2)
-                    for (int y = 0; y < Main.maxTilesY; y++)
+                if (new Vector2(i * 16f, Main.LocalPlayer.Center.Y).Distance(Main.LocalPlayer.Center) < Main.screenWidth / 2)
+                    for (int j = 0; j < Main.maxTilesY; j++)
                     {
-                        Tile tile = Main.tile[x, y];
-                        if (tile.LiquidAmount > 0)
+                        Tile tile = Main.tile[i, j];
+                        if (ShouldDrawGradient(i, j))
                         {
-                            if (tile.LiquidAmount > 0 && Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
+                            Main.spriteBatch.Draw(glowTex, (new Vector2(i, j) * 16) - Main.sceneWaterPos, null, Color.White * 0.4f, 0, new Vector2(glowTex.Width / 2, 0), new Vector2(1, 2), SpriteEffects.None, 0f);
+                            /*float heightScale = ((float)Math.Sin(Main.GameUpdateCount * 0.025f) / 8) + 1;
+
+                            Color overlayColor = Color.White;
+                            bool emptyLeft;
+                            bool emptyRight;
+
+                            emptyLeft = !ShouldDrawGradient(i - 1, j);
+                            emptyRight = !ShouldDrawGradient(i + 1, j);
+
+                            Vector2 offset2 = new Vector2(0, -8);
+                            if (emptyLeft)
+                                if (emptyRight) //solo
+                                    Main.spriteBatch.Draw(Request<Texture2D>("JadeFables/Assets/GlowSolo").Value, offset2 + new Vector2(i, j) - Main.sceneWaterPos, null, overlayColor, 0, Vector2.Zero, new Vector2(1, 2), SpriteEffects.FlipVertically, 0f);
+                                else            //left
+                                    Main.spriteBatch.Draw(Request<Texture2D>("JadeFables/Assets/GlowLeft").Value, offset2 + (new Vector2(i, j) * 16) - Main.sceneWaterPos, null, overlayColor, 0, Vector2.Zero, new Vector2(1, 2), SpriteEffects.FlipVertically, 0f);
+                            else if (emptyRight)//right
+                                Main.spriteBatch.Draw(Request<Texture2D>("JadeFables/Assets/GlowRight").Value, offset2 + (new Vector2(i, j) * 16) - Main.sceneWaterPos, null, overlayColor, 0, Vector2.Zero, new Vector2(1, 2), SpriteEffects.FlipVertically, 0f);
+                            else                //both
+                                Main.spriteBatch.Draw(Request<Texture2D>("JadeFables/Assets/GlowMid").Value, offset2 + (new Vector2(i, j) * 16) - Main.sceneWaterPos, null, overlayColor, 0, Vector2.Zero, new Vector2(1,2), SpriteEffects.FlipVertically, 0f);
+
+
+                            Texture2D glowLines = Request<Texture2D>("JadeFables/Assets/GlowLines").Value;
+                            int realX = i * 16;
+                            int realY = j * 16;
+                            int realWidth = glowLines.Width - 1;//1 pixel offset since the texture has a empty row of pixels on the side, this is also accounted for elsewhere below
+                            Color drawColor = overlayColor * 0.35f;
+
+                            realWidth = (int)MathHelper.Max(1, realWidth);
+                            float val = (((Main.GameUpdateCount * 0.3333f) + realY) % realWidth);
+                            int offset = (int)(val + (realX % realWidth) - realWidth);
+
+                            Main.spriteBatch.Draw(glowLines, new Rectangle((int)offset2.X + realX - (int)Main.sceneWaterPos.X, (int)offset2.Y + realY - (int)Main.sceneWaterPos.Y, 16, glowLines.Height * 2), new Rectangle(offset + 1, 0, 16, (int)(glowLines.Height * heightScale)), drawColor, 0, Vector2.Zero, SpriteEffects.FlipVertically, 0f);
+
+                            if (offset < 0)
                             {
-                                Vector2 pos = (new Vector2(x, y) * 16);
-                                Main.spriteBatch.Draw(tex, pos - Main.sceneWaterPos, null, Color.White, 0, Vector2.Zero, new Vector2(1, 0.5f), SpriteEffects.None, 0f);
-                            }
+                                int rectWidth = Math.Min(-offset, 16);
+                                Main.spriteBatch.Draw(glowLines, new Rectangle(realX - (int)Main.sceneWaterPos.X, realY - (int)Main.sceneWaterPos.Y, rectWidth, glowLines.Height * 5), new Rectangle(offset + 1 + realWidth, 0, rectWidth, (int)(glowLines.Height * heightScale)), drawColor, 0, Vector2.Zero, SpriteEffects.FlipVertically, 0f);
+                            }*/
                         }
                     }
             }

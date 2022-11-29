@@ -52,7 +52,7 @@ internal sealed class ErrorReportingPlayer : ModPlayer
             Main.NewText("");
             Main.NewText($"{system.Name} - Errors: {system.LoadErrors.Count}", Colors.RarityRed);
 
-            foreach (var error in system.LoadErrors) Main.NewText('[' + error.Severity + ']' + error.AsReportable(), Colors.RarityRed);
+            foreach (var error in system.LoadErrors) Main.NewText('[' + Enum.GetName(error.Severity) + "] " + error.AsReportable());
         }
     }
 }

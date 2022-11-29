@@ -46,15 +46,17 @@ public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
             int urIterations = 0;
 
             foreach (int fruit in fruits) {
-                urIterations++;
+                c.Index = 0;
 
-                if (!c.TryGotoPrev(x => x.MatchCallvirt(nextInt32))) {
-                    AddOpCodeError("Terraria.WorldGen", "ShakeTree", "callvirt", nextInt32!.DeclaringType + "::" + nextInt32.Name, urIterations);
-                    return;
-                }
+                urIterations++;
 
                 if (!c.TryGotoNext(x => x.MatchLdcI4(fruit))) {
                     AddOpCodeError("Terraria.WorldGen", "ShakeTree", "ldc.i4", fruit);
+                    return;
+                }
+
+                if (!c.TryGotoPrev(x => x.MatchCallvirt(nextInt32))) {
+                    AddOpCodeError("Terraria.WorldGen", "ShakeTree", "callvirt", nextInt32!.DeclaringType + "::" + nextInt32.Name, urIterations);
                     return;
                 }
 

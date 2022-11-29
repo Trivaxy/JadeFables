@@ -41,7 +41,7 @@ namespace JadeFables.Biomes.JadeLake
                                 }
                             }
                             else
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.00001f * MathHelper.Min(JadeSandTileCount, 300)));
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.0000001f * MathHelper.Min(JadeSandTileCount, 300)));
 
                             if (Main.rand.NextBool((int)(2000 / progress)))
                                 Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.WhiteSparkle>(), Vector2.Zero, 0, default, 0.5f);

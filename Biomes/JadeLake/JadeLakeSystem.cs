@@ -31,11 +31,15 @@ namespace JadeFables.Biomes.JadeLake
                                 }
                             }
 
-                            if (tile.LiquidAmount > 0 && Main.rand.NextBool(200))
-                                Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.WhiteSparkle>(), Vector2.Zero, 0, default, 0.5f);
+                            if (tile.LiquidAmount > 0)
+                            {
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * 0.002f);
+                                if (Main.rand.NextBool(500))
+                                    Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.WhiteSparkle>(), Vector2.Zero, 0, default, 0.5f);
 
-                            if (tile.LiquidAmount > 0 && Main.rand.NextBool(200))
-                                Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.JadeBubble>(), -Vector2.UnitY.RotatedByRandom(0.5f), 0, default, Main.rand.NextFloat(0.75f,1.5f));
+                                if (Main.rand.NextBool(500))
+                                    Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.JadeBubble>(), -Vector2.UnitY.RotatedByRandom(0.5f), 0, default, Main.rand.NextFloat(0.75f, 1.5f));
+                            }
                         }
                 }
             }

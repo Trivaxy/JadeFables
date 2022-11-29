@@ -15,7 +15,7 @@
             Main.tileBlockLight[Type] = true;
 
             ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Jade Sand");
+            name.SetDefault("Spring Sand");
             AddMapEntry(new Color(207, 160, 118), name);
         }
     }
@@ -24,7 +24,7 @@
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Sand");
+            DisplayName.SetDefault("Spring Sand");
         }
 
         public override void SetDefaults()

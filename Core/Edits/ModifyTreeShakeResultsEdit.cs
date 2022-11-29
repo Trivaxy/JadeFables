@@ -60,7 +60,7 @@ public sealed class ModifyTreeShakeResultsEdit : RuntimeDetourModSystem
     public override void OnModLoad() {
         base.OnModLoad();
 
-        AddModifiers();
+        foreach (int fruit in VanillaFruits) RateModifiers.Add(fruit, MultiplicativeModifier(1.3f));
 
         IL.Terraria.WorldGen.ShakeTree += RewriteShakeDropRates;
     }
@@ -69,10 +69,6 @@ public sealed class ModifyTreeShakeResultsEdit : RuntimeDetourModSystem
         base.OnModUnload();
 
         RateModifiers.Clear();
-    }
-
-    private void AddModifiers() {
-        foreach (int fruit in VanillaFruits) RateModifiers.Add(fruit, MultiplicativeModifier(1.3f));
     }
 
     private void RewriteShakeDropRates(ILContext il) {

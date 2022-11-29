@@ -61,7 +61,7 @@ public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
                 // Objective: multiply rate (already pushed to stack) by given multiplier
 
                 c.Emit(OpCodes.Conv_R4); // convert rate to float
-                c.Emit(OpCodes.Ldc_R4, 1.3f); // push multiplier
+                c.Emit(OpCodes.Ldc_R4, 0.7f); // push multiplier
                 c.Emit(OpCodes.Mul); // multiply
                 c.Emit(OpCodes.Conv_I4); // convert back to int
             }

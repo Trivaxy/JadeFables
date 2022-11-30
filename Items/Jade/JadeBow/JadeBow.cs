@@ -181,6 +181,8 @@ namespace JadeFables.Items.Jade.JadeBow
             Projectile.hide = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.penetrate = -1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 15;
         }
 
         public override void AI()

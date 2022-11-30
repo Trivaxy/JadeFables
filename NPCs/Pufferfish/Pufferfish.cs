@@ -3,9 +3,9 @@
 //Bestiary
 //Banners
 //Balance
-//Launches out projectiles
 //Gores
 //Spawning
+//dust on collision
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,6 +23,9 @@ using Terraria.Audio;
 using System;
 using System.Linq;
 using static Terraria.ModLoader.ModContent;
+using JadeFables.Core;
+using JadeFables.Helpers;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace JadeFables.NPCs.Pufferfish
 {
@@ -78,6 +81,14 @@ namespace JadeFables.NPCs.Pufferfish
             {
                 frameCounter = 0;
                 yFrame++;
+                if (yFrame == 3 && xFrame == 1)
+                {
+                    float offset = Main.rand.NextFloat(6.28f);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, ((i / 4f) * 6.28f).ToRotationVector2().RotatedBy(offset), ModContent.ProjectileType<PufferfishProj>(), Main.expertMode ? 15 : 30, 4);
+                    }
+                }
                 if (yFrame >= Main.npcFrameCount[NPC.type])
                 {
                     xFrame = 0;
@@ -126,6 +137,74 @@ namespace JadeFables.NPCs.Pufferfish
             Vector2 slopeOffset = new Vector2(0, NPC.gfxOffY);
             Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor, NPC.rotation, origin, NPC.scale, effects, 0f);
             return false;
+        }
+
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
+            return (xFrame == 1);
+        }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            target.AddBuff(BuffID.Poisoned, 200);
+        }
+    }
+
+    internal class PufferfishProj : ModProjectile
+    {
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 8;
+            Projectile.height = 8;
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.penetrate = 1;
+            Projectile.timeLeft = 270;
+            Projectile.tileCollide = true;
+            Projectile.ignoreWater = true;
+        }
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Spike");
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D glowTex = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
+
+            if (Projectile.velocity.Length() > 5)
+                Main.spriteBatch.Draw(glowTex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, tex.Size() / 2, Projectile.scale * ((3 + (float)Math.Sin(Main.timeForVisualEffects * 0.1f)) * 0.5f), SpriteEffects.None, 0f);
+            
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, tex.Size() / 2, Projectile.scale, SpriteEffects.None, 0f);
+
+            if (Projectile.velocity.Length() > 5)
+                Main.spriteBatch.Draw(glowTex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, tex.Size() / 2, Projectile.scale, SpriteEffects.None, 0f);
+            return false;
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            
+        }
+
+        public override bool CanHitPlayer(Player target)
+        {
+            return Projectile.velocity.Length() > 5;
+        }
+
+        public override void AI()
+        {
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            Projectile.velocity *= 1.08f;
+        }
+
+        public override void OnHitPlayer(Player target, int damage, bool crit)
+        {
+            target.AddBuff(BuffID.Poisoned, 200);
         }
     }
 }

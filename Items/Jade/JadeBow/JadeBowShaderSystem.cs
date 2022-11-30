@@ -46,7 +46,7 @@ namespace JadeFables.Items.Jade.JadeBow
                 return;
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             Color color = new Color(27, 198, 116);
             Effect effect = Filters.Scene["JadeOutline"].GetShader().Shader;

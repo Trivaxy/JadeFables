@@ -1,11 +1,8 @@
 ﻿//TODO:
 //Balance
-//Longer immunity to critters
-//New sprite
-//Sparkles
-//Fix with zoom
+//Arrow sparkles
 //Minion cap
-//Make minions jump
+//healing players
 
 using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
@@ -194,6 +191,7 @@ namespace JadeFables.Items.Jade.JadeBow
                 Projectile.active = false;
             Projectile.Center = parent.Center;
         }
+
         public override bool? CanHitNPC(NPC target)
         {
             if (target == parent || target.CountsAsACritter)
@@ -219,6 +217,29 @@ namespace JadeFables.Items.Jade.JadeBow
                 target.GetGlobalNPC<JadeBowGNPC>().timer = 900;
                 damage = 0;
             }
+
+            if (shotFromBow && target.townNPC)
+            {
+                target.immortal = true;
+                target.GetGlobalNPC<JadeBowGNPC>().timer = 3000;
+                damage = 0;
+            }
+        }
+
+        public override bool? CanHitNPC(Projectile projectile, NPC target)
+        {
+            if (!shotFromBow)
+                return base.CanHitNPC(projectile, target);
+
+            return true;
+        }
+
+        public override bool CanHitPlayer(Projectile projectile, Player target)
+        {
+            if (!shotFromBow)
+                return base.CanHitPlayer(projectile, target);
+
+            return false;
         }
     }
 
@@ -227,6 +248,8 @@ namespace JadeFables.Items.Jade.JadeBow
         public override bool InstancePerEntity => true;
 
         public int timer = -1;
+
+        int jumpTimer = 0;
 
         public override bool PreAI(NPC npc)
         {
@@ -237,7 +260,7 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public override void PostAI(NPC npc)
         {
-            if (timer-- > 0)
+            if (timer-- > 0 && npc.CountsAsACritter)
             {
                 NPC target = Main.npc.Where(n => n.active && n.CanBeChasedBy() && n.Distance(npc.Center) < 900).OrderBy(n => n.Distance(npc.Center)).FirstOrDefault();
                 if (target != default)
@@ -248,8 +271,11 @@ namespace JadeFables.Items.Jade.JadeBow
                     else
                     {
                         npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(target.Center.X - npc.Center.X) * 4, 0.1f);
-                        if (npc.collideY && target.Center.Y < npc.Center.Y)
-                            npc.velocity.Y = -6;
+                        if (npc.collideY && target.Center.Y < npc.Center.Y - 60)
+                        {
+                            if (jumpTimer++ % 30 == 0)
+                                npc.velocity.Y = -6;
+                        }
                     }
                 }
 

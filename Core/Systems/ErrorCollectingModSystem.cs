@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace JadeFables.Core;
+namespace JadeFables.Core.Systems;
 
 /// <summary>
 ///     A <see cref="ModSystem"/> which collects and keeps track of errors that occur during loading, with the option to print them upon joining a world.

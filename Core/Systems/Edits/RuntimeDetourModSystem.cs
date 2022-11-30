@@ -1,4 +1,4 @@
-﻿namespace JadeFables.Core.Edits;
+﻿namespace JadeFables.Core.Systems.Edits;
 
 /// <summary>
 ///     Abstraction over <see cref="ErrorCollectingModSystem"/> with utilities for handling runtime detouring (IL edits and detours).

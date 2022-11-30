@@ -1,9 +1,8 @@
-﻿using System.Reflection;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Terraria.Utilities;
 
-namespace JadeFables.Core.Edits;
+namespace JadeFables.Core.Systems.Edits;
 
 public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
 {

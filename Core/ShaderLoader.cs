@@ -1,14 +1,10 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
-using System.Reflection;
-using Terraria;
+﻿using System.Reflection;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
-using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
 using static Terraria.ModLoader.Core.TmodFile;
 
-namespace StarlightRiver.Core.Loaders
+namespace JadeFables.Core
 {
 	class ShaderLoader : ILoadable
     {

@@ -209,7 +209,8 @@ namespace JadeFables.Items.Jade.JadeBow
 
                 for (int i = 0; i < alreadyBuffed.Count(); i++)
                     mult *= 0.9f;
-                target.immortal = true;
+                if (target.type != NPCID.ExplosiveBunny)
+                    target.immortal = true;
                 if (target.GetGlobalNPC<JadeBowGNPC>().timer <= 0)
                     Projectile.NewProjectile(projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeBowHitbox>(), damage, knockback, projectile.owner, target.whoAmI);
 

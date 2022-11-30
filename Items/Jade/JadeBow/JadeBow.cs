@@ -227,10 +227,9 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public override bool? CanHitNPC(Projectile projectile, NPC target)
         {
-            if (!shotFromBow)
-                return base.CanHitNPC(projectile, target);
-
-            return true;
+            if (shotFromBow && target.townNPC)
+                return true;
+            return base.CanHitNPC(projectile, target);
         }
 
         public override bool CanHitPlayer(Projectile projectile, Player target)

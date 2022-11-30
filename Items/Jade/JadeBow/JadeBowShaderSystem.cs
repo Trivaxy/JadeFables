@@ -54,7 +54,7 @@ namespace JadeFables.Items.Jade.JadeBow
             effect.Parameters["alpha"].SetValue(1);
             effect.Parameters["outlineColor"].SetValue(color.ToVector4() * 0.6f);
             effect.Parameters["innerColor"].SetValue(Color.LightGreen.ToVector4());
-            effect.Parameters["innerColorLerp"].SetValue(0.4f);
+            effect.Parameters["innerColorLerp"].SetValue(0.1f);
 
             effect.CurrentTechnique.Passes[0].Apply();
             spriteBatch.Draw(jadeBowRT, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White);

@@ -1,5 +1,6 @@
 ﻿using JadeFables.Dusts;
 using JadeFables.Tiles.JadeSand;
+using JadeFables.Tiles.JadeSandstone;
 using Terraria;
 
 namespace JadeFables.Biomes.JadeLake
@@ -7,15 +8,18 @@ namespace JadeFables.Biomes.JadeLake
     public class JadeLakeSystem : ModSystem
     {
         public int JadeSandTileCount;
+        public int JadeSandstoneTileCount;
+        public int TotalBiomeCount => JadeSandstoneTileCount + JadeSandTileCount;
         public override void TileCountsAvailable(ReadOnlySpan<int> tileCounts)
         {
             JadeSandTileCount = tileCounts[TileType<JadeSandTile>()];
+            JadeSandstoneTileCount = tileCounts[TileType<JadeSandstoneTile>()];
         }
 
         public override void PostUpdateEverything()
         {
-            float progress = MathHelper.Min(JadeSandTileCount, 300) / 300f;
-            if (JadeSandTileCount == 0)
+            float progress = MathHelper.Min(TotalBiomeCount, 300) / 300f;
+            if (TotalBiomeCount == 0)
                 return;
 
             for (int x = 0; x < Main.maxTilesX; x++)
@@ -28,7 +32,7 @@ namespace JadeFables.Biomes.JadeLake
                         {
                             if (tile.LiquidAmount > 0 && Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
                             {
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.00001f * MathHelper.Min(JadeSandTileCount, 300)));
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.00001f * MathHelper.Min(TotalBiomeCount, 300)));
                                 if (Main.rand.NextBool((int)(30 / progress)))
                                 {
                                     Vector2 velocity = Vector2.UnitY.RotatedByRandom(0.1f) * -Main.rand.NextFloat(1f, 1.5f);
@@ -41,7 +45,7 @@ namespace JadeFables.Biomes.JadeLake
                                 }
                             }
                             else
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.0000001f * MathHelper.Min(JadeSandTileCount, 300)));
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.0000001f * MathHelper.Min(TotalBiomeCount, 300)));
 
                             if (Main.rand.NextBool((int)(2000 / progress)))
                                 Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.WhiteSparkle>(), Vector2.Zero, 0, default, 0.5f);

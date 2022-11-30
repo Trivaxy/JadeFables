@@ -11,7 +11,7 @@ namespace JadeFables.Tiles.JadeSand
             HitSound = SoundID.Dig;
             ItemDrop = ItemType<JadeSandItem>();
             Main.tileMerge[TileID.Stone][Type] = true;
-            Main.tileMerge[TileType<JadeSandstoneTile>()][Type] = true;
+            Main.tileBrick[Type] = true;
             Main.tileSolid[Type] = true;
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;

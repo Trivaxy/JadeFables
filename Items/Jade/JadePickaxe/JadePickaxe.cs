@@ -1,8 +1,6 @@
-﻿//TODO:
-//Critter thing
-using System;
+﻿using System;
 using System.Collections.Generic;
-
+using JadeFables.Core.Systems.TileHits;
 using Microsoft.Xna.Framework;
 
 using Terraria;
@@ -62,6 +60,22 @@ namespace JadeFables.Items.Jade.JadePickaxe
             recipe.AddIngredient<JadeChunk.JadeChunk>(12);
             recipe.AddTile(TileID.Anvils);
             recipe.Register();
+        }
+    }
+
+    public class CritterDroprateIncreaseTile : GlobalTile
+    {
+        public override void DropCritterChance(int i, int j, int type, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance) {
+            base.DropCritterChance(i, j, type, ref wormChance, ref grassHopperChance, ref jungleGrubChance);
+
+            if (!ModContent.GetInstance<TileHitInfoSystem>().TryGetHitTileContext(new Point(i, j), out var context)) return;
+
+            // TODO: Use an ID set?
+            if (context.Player.HeldItem.type == ModContent.ItemType<JadePickaxe>()) {
+                wormChance = (int) (wormChance * 1.4);
+                grassHopperChance = (int) (grassHopperChance * 1.4);
+                jungleGrubChance = (int) (jungleGrubChance * 1.4);
+            }
         }
     }
 }

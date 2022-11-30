@@ -11,13 +11,14 @@ namespace JadeFables.Tiles.JadeSandstone
             HitSound = SoundID.Dig;
             ItemDrop = ItemType<JadeSandstoneItem>();
             Main.tileMerge[TileType<JadeSandTile>()][Type] = true;
+            Main.tileBrick[Type] = true;
             Main.tileSolid[Type] = true;
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
 
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Sandstone");
-            AddMapEntry(new Color(92, 62, 32), name);
+            AddMapEntry(new Color(163, 117, 76), name);
         }
     }
 

@@ -2,9 +2,12 @@
 //Balance
 //Longer immunity to critters
 //New sprite
-//Visuals
+//Sparkles
+//Fix with zoom
 //Minion cap
+//Make minions jump
 
+using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -209,9 +212,11 @@ namespace JadeFables.Items.Jade.JadeBow
         {
             if (shotFromBow && target.CountsAsACritter)
             {
-                target.GetGlobalNPC<JadeBowGNPC>().timer = 900;
                 target.immortal = true;
-                Projectile.NewProjectile(projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeBowHitbox>(), damage, knockback, projectile.owner, target.whoAmI);
+                if (target.GetGlobalNPC<JadeBowGNPC>().timer <= 0)
+                    Projectile.NewProjectile(projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeBowHitbox>(), damage, knockback, projectile.owner, target.whoAmI);
+
+                target.GetGlobalNPC<JadeBowGNPC>().timer = 900;
                 damage = 0;
             }
         }
@@ -241,8 +246,15 @@ namespace JadeFables.Items.Jade.JadeBow
                     if (npc.noGravity)
                         npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(target.Center) * 4, 0.1f);
                     else
+                    {
                         npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(target.Center.X - npc.Center.X) * 4, 0.1f);
+                        if (npc.collideY && target.Center.Y < npc.Center.Y)
+                            npc.velocity.Y = -6;
+                    }
                 }
+
+                if (Main.rand.NextBool(70))
+                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(15, 15), ModContent.DustType<JadeSparkle>(), Vector2.Zero);
             }
 
             if (timer == 0)

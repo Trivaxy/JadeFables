@@ -59,7 +59,6 @@ public sealed class TileHitInfoSystem : ErrorCollectingModSystem
 
     private static int HitObjectWithPlayerContext(HitTile hitTile, int x, int y, int hitType, Player player) {
         GetInstance<TileHitInfoSystem>().Contexts[new Point(x, y)] = new HitTileContext(hitTile, x, y, hitType, player);
-        ModContent.GetInstance<JadeFables>().Logger.Debug($"HitTileContext added for {x}, {y}.");
         return hitTile.HitObject(x, y, hitType);
     }
 }

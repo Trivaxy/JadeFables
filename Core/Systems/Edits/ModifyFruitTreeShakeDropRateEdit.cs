@@ -49,17 +49,17 @@ public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
             foreach (int fruit in fruits) {
                 c.Index = 0;
 
-                urIterations++;
-
                 if (!c.TryGotoNext(x => x.MatchLdcI4(fruit))) {
                     AddOpCodeError("Terraria.WorldGen", "ShakeTree", "ldc.i4", fruit);
                     return;
                 }
 
-                if (!c.TryGotoPrev(x => x.MatchCallvirt(nextInt32))) {
-                    AddOpCodeError("Terraria.WorldGen", "ShakeTree", "callvirt", nextInt32!.DeclaringType + "::" + nextInt32.Name, urIterations);
-                    return;
-                }
+                // Twice since fruits always have an extra rand call.
+                for (int i = 0; i < 2; i++)
+                    if (!c.TryGotoPrev(x => x.MatchCallvirt(nextInt32))) {
+                        AddOpCodeError("Terraria.WorldGen", "ShakeTree", "callvirt", nextInt32!.DeclaringType + "::" + nextInt32.Name, ++urIterations);
+                        return;
+                    }
 
                 // Objective: multiply rate (already pushed to stack) by given multiplier
 
@@ -72,8 +72,8 @@ public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
                 c.Emit(OpCodes.Ldarg_1); // int y
                 c.EmitDelegate((int rate, int x, int y) =>
                 {
-                    if (ModContent.GetInstance<TileHitInfoSystem>().TryGetHitTileContext(new Point(x, y), out var hitContext)) return rate;
-                    
+                    if (!ModContent.GetInstance<TileHitInfoSystem>().TryGetHitTileContext(new Point(x, y), out var hitContext)) return rate;
+
                     // TODO: Use an ID set?
                     return hitContext.Player.HeldItem.type == ModContent.ItemType<JadeAxe>() ? (int) (rate * 0.7f) : rate;
                 });

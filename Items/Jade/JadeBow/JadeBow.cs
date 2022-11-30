@@ -19,7 +19,7 @@ namespace JadeFables.Items.Jade.JadeBow
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Jade Bow");
-            Tooltip.SetDefault("Shoot critters to make them fight for you");
+            Tooltip.SetDefault("Shoot critters to make them fight for you\nShoot town NPCs to give them a shield");
         }
 
         public override void SetDefaults()
@@ -270,7 +270,7 @@ namespace JadeFables.Items.Jade.JadeBow
                     else
                     {
                         npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(target.Center.X - npc.Center.X) * 4, 0.1f);
-                        if (npc.collideY && target.Center.Y < npc.Center.Y - 60)
+                        if (npc.collideY && target.Center.Y < npc.Center.Y - 20)
                         {
                             if (jumpTimer++ % 30 == 0)
                                 npc.velocity.Y = -6;

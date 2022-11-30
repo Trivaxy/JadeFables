@@ -1,4 +1,6 @@
-﻿using Mono.Cecil.Cil;
+﻿using JadeFables.Core.Systems.TileHits;
+using JadeFables.Items.Jade.JadeAxe;
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Terraria.Utilities;
 
@@ -61,10 +63,20 @@ public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
 
                 // Objective: multiply rate (already pushed to stack) by given multiplier
 
-                c.Emit(OpCodes.Conv_R4); // convert rate to float
-                c.Emit(OpCodes.Ldc_R4, 0.7f); // push multiplier
-                c.Emit(OpCodes.Mul); // multiply
-                c.Emit(OpCodes.Conv_I4); // convert back to int
+                // c.Emit(OpCodes.Conv_R4); // convert rate to float
+                // c.Emit(OpCodes.Ldc_R4, 0.7f); // push multiplier
+                // c.Emit(OpCodes.Mul); // multiply
+                // c.Emit(OpCodes.Conv_I4); // convert back to int
+
+                c.Emit(OpCodes.Ldarg_0); // int x
+                c.Emit(OpCodes.Ldarg_1); // int y
+                c.EmitDelegate((int rate, int x, int y) =>
+                {
+                    if (ModContent.GetInstance<TileHitInfoSystem>().TryGetHitTileContext(new Point(x, y), out var hitContext)) return rate;
+                    
+                    // TODO: Use an ID set?
+                    return hitContext.Player.HeldItem.type == ModContent.ItemType<JadeAxe>() ? (int) (rate * 0.7f) : rate;
+                });
             }
         };
     }

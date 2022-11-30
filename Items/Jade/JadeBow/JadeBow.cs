@@ -1,10 +1,4 @@
-﻿//TODO:
-//Balance
-//Arrow sparkles
-//Minion cap
-//healing players
-
-using JadeFables.Dusts;
+﻿using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -210,11 +204,16 @@ namespace JadeFables.Items.Jade.JadeBow
         {
             if (shotFromBow && target.CountsAsACritter)
             {
+                float mult = 1;
+                var alreadyBuffed = Main.npc.Where(n => n.active && n.CountsAsACritter && n.GetGlobalNPC<JadeBowGNPC>().timer > 0);
+
+                for (int i = 0; i < alreadyBuffed.Count(); i++)
+                    mult *= 0.9f;
                 target.immortal = true;
                 if (target.GetGlobalNPC<JadeBowGNPC>().timer <= 0)
                     Projectile.NewProjectile(projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeBowHitbox>(), damage, knockback, projectile.owner, target.whoAmI);
 
-                target.GetGlobalNPC<JadeBowGNPC>().timer = 900;
+                target.GetGlobalNPC<JadeBowGNPC>().timer = (int)(900 * mult);
                 damage = 0;
             }
 

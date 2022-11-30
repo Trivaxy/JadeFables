@@ -2,6 +2,8 @@
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeSandstone;
 using Terraria;
+using Terraria.GameContent.Generation;
+using Terraria.WorldBuilding;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -16,8 +18,56 @@ namespace JadeFables.Biomes.JadeLake
             JadeSandstoneTileCount = tileCounts[TileType<JadeSandstoneTile>()];
         }
 
+        public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
+        {
+            int TerrainIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Terrain"));
+
+            tasks.Insert(TerrainIndex + 1, new PassLegacy("Jade Spring", JadeLakeWorldGen.SurfaceItemPass));
+
+            //debug
+            tasks.RemoveAll(x => x.Name != "Jade Spring");
+
+            //do not commit
+            //int ShiniesIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Shinies"));
+            //int SurfaceIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Sunflowers"));
+            //int HellIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Lakes"));
+            //int DesertIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Micro Biomes"));
+            //int TrapsIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Traps"));
+            //int EndIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Tile Cleanup"));
+
+            //if (ShiniesIndex != -1)
+            //{
+            //    tasks.Insert(DesertIndex + 1, new PassLegacy("Starlight River Temples", UndergroundTempleGen));
+            //    tasks.Insert(DesertIndex + 2, new PassLegacy("Starlight River Permafrost", PermafrostGen));
+            //    tasks.Insert(DesertIndex + 4, new PassLegacy("Starlight River Vitric Desert", VitricGen));
+            //    tasks.Insert(DesertIndex + 6, new PassLegacy("Starlight River Codex", BookAltarGen));
+
+            //    tasks.Insert(SurfaceIndex + 1, new PassLegacy("Starlight River Ivy", ForestHerbGen));
+            //    tasks.Insert(SurfaceIndex + 1, new PassLegacy("Starlight River Surface Items", SurfaceItemPass));
+            //    tasks.Insert(SurfaceIndex + 1, new PassLegacy("Starlight River Drop Pods", DropPodGen));
+            //    tasks.Insert(EndIndex + 1, new PassLegacy("Starlight River Big Trees", BigTreeGen));
+            //}
+        }
+        bool pressed = false;
         public override void PostUpdateEverything()
         {
+            if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.NumPad5))
+            {
+                if (!pressed)
+                {
+                    pressed = true;
+
+                    for (int i = 0; i < Main.maxTilesX; i++)
+                        for (int j = 0; j < Main.maxTilesY; j++)
+                            Main.tile[i, j].ClearTile();
+
+                    JadeLakeWorldGen.SurfaceItemPass(new GenerationProgress(), default);
+                    Main.NewText("regened");
+                }
+            }
+            else
+                pressed = false;
+
             float progress = MathHelper.Min(TotalBiomeCount, 300) / 300f;
             if (TotalBiomeCount == 0)
                 return;

@@ -31,5 +31,21 @@ namespace JadeFables.Items.Jade.JadeChunk
             Item.rare = ItemRarityID.Blue;
             Item.maxStack = 999;
         }
+
+        public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
+        {
+            Texture2D tex = Request<Texture2D>(Texture).Value;
+            Texture2D texGlow = Request<Texture2D>(Texture + "_Glow").Value;
+            Main.spriteBatch.Draw(texGlow, Item.Center - Main.screenPosition, null, new Color(105, 208, 86, 0), rotation, texGlow.Size() / 2f, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tex, Item.Center - Main.screenPosition, null, lightColor, rotation, tex.Size() / 2f, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(texGlow, Item.Center - Main.screenPosition, null, (new Color(105, 208, 86, 0) * 0.5f) * (float)Utils.Clamp(Math.Sin(Main.GlobalTimeWrappedHourly), 0, 1), rotation, texGlow.Size() / 2f, scale, SpriteEffects.None, 0f);
+            return false;
+        }
+
+        public override void PostUpdate()
+        {
+            if (Main.rand.NextBool(90))
+                Dust.NewDustPerfect(Item.Center + Main.rand.NextVector2Circular(10, 10), DustType<JadeSparkle>(), Vector2.Zero);
+        }
     }
 }

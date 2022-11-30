@@ -22,8 +22,10 @@ public sealed class TileHitInfoSystem : ErrorCollectingModSystem
     private void RewriteHitObjectInvocations(ILContext il) {
         var c = new ILCursor(il);
 
+        c.Index = c.Instrs.Count - 1;
+
         // Jump to every HitTile::HitObject invocation, push Player instance (`this`, ldarg.0), and call our method instead of HitTile::HitObject (jump to label after).
-        while (c.TryGotoNext(MoveType.After, x => x.MatchCall<HitTile>(nameof(HitTile.HitObject)))) {
+        while (c.TryGotoPrev(MoveType.After, x => x.MatchCallvirt<HitTile>(nameof(HitTile.HitObject)))) {
             // Mark label to jump to later.
             var label = c.MarkLabel();
 
@@ -56,7 +58,8 @@ public sealed class TileHitInfoSystem : ErrorCollectingModSystem
     }
 
     private static int HitObjectWithPlayerContext(HitTile hitTile, int x, int y, int hitType, Player player) {
-        GetInstance<TileHitInfoSystem>().Contexts.Add(new Point(x, y), new HitTileContext(hitTile, x, y, hitType, player));
+        GetInstance<TileHitInfoSystem>().Contexts[new Point(x, y)] = new HitTileContext(hitTile, x, y, hitType, player);
+        ModContent.GetInstance<JadeFables>().Logger.Debug($"HitTileContext added for {x}, {y}.");
         return hitTile.HitObject(x, y, hitType);
     }
 }

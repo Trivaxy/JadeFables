@@ -1,4 +1,5 @@
 ﻿using JadeFables.Dusts;
+using JadeFables.Tiles.HardenedJadeSand;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeSandstone;
 using Terraria;
@@ -11,10 +12,12 @@ namespace JadeFables.Biomes.JadeLake
     {
         public int JadeSandTileCount;
         public int JadeSandstoneTileCount;
-        public int TotalBiomeCount => JadeSandstoneTileCount + JadeSandTileCount;
+        public int HardenedJadeSandTileCount;
+        public int TotalBiomeCount => JadeSandstoneTileCount + JadeSandTileCount + HardenedJadeSandTileCount;
         public override void TileCountsAvailable(ReadOnlySpan<int> tileCounts)
         {
             JadeSandTileCount = tileCounts[TileType<JadeSandTile>()];
+            HardenedJadeSandTileCount = tileCounts[TileType<HardenedJadeSandTile>()];
             JadeSandstoneTileCount = tileCounts[TileType<JadeSandstoneTile>()];
         }
 

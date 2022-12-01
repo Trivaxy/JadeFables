@@ -1,10 +1,4 @@
-﻿//TODO:
-//Balance
-//Longer immunity to critters
-//New sprite
-//Visuals
-//Minion cap
-
+﻿using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -25,7 +19,7 @@ namespace JadeFables.Items.Jade.JadeBow
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Jade Bow");
-            Tooltip.SetDefault("Shoot critters to make them fight for you");
+            Tooltip.SetDefault("Shoot critters to make them fight for you\nShoot town NPCs to give them a shield");
         }
 
         public override void SetDefaults()
@@ -116,7 +110,7 @@ namespace JadeFables.Items.Jade.JadeBow
             if (Projectile.frameCounter % 6 == 5)
             {
                 Projectile.frame++;
-                if (Projectile.frame == 4)
+                if (Projectile.frame == 5)
                     Shoot();
             }
 
@@ -157,7 +151,7 @@ namespace JadeFables.Items.Jade.JadeBow
             }
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, Projectile.Center);
-            Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.rotation.ToRotationVector2() * (speed + 12), type, damage, knockBack, owner.whoAmI);
+            Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + (Projectile.rotation.ToRotationVector2() * 5), Projectile.rotation.ToRotationVector2() * (speed + 12), type, damage, knockBack, owner.whoAmI);
             proj.GetGlobalProjectile<JadeBowGProj>().shotFromBow = true;
         }
     }
@@ -191,6 +185,7 @@ namespace JadeFables.Items.Jade.JadeBow
                 Projectile.active = false;
             Projectile.Center = parent.Center;
         }
+
         public override bool? CanHitNPC(NPC target)
         {
             if (target == parent || target.CountsAsACritter)
@@ -209,11 +204,41 @@ namespace JadeFables.Items.Jade.JadeBow
         {
             if (shotFromBow && target.CountsAsACritter)
             {
-                target.GetGlobalNPC<JadeBowGNPC>().timer = 900;
-                target.immortal = true;
-                Projectile.NewProjectile(projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeBowHitbox>(), damage, knockback, projectile.owner, target.whoAmI);
+                float mult = 1;
+                var alreadyBuffed = Main.npc.Where(n => n.active && n.CountsAsACritter && n.GetGlobalNPC<JadeBowGNPC>().timer > 0);
+
+                for (int i = 0; i < alreadyBuffed.Count(); i++)
+                    mult *= 0.9f;
+                if (target.type != NPCID.ExplosiveBunny)
+                    target.immortal = true;
+                if (target.GetGlobalNPC<JadeBowGNPC>().timer <= 0)
+                    Projectile.NewProjectile(projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeBowHitbox>(), damage, knockback, projectile.owner, target.whoAmI);
+
+                target.GetGlobalNPC<JadeBowGNPC>().timer = (int)(900 * mult);
                 damage = 0;
             }
+
+            if (shotFromBow && target.townNPC)
+            {
+                target.immortal = true;
+                target.GetGlobalNPC<JadeBowGNPC>().timer = 3000;
+                damage = 0;
+            }
+        }
+
+        public override bool? CanHitNPC(Projectile projectile, NPC target)
+        {
+            if (shotFromBow && target.townNPC)
+                return true;
+            return base.CanHitNPC(projectile, target);
+        }
+
+        public override bool CanHitPlayer(Projectile projectile, Player target)
+        {
+            if (!shotFromBow)
+                return base.CanHitPlayer(projectile, target);
+
+            return false;
         }
     }
 
@@ -222,6 +247,8 @@ namespace JadeFables.Items.Jade.JadeBow
         public override bool InstancePerEntity => true;
 
         public int timer = -1;
+
+        int jumpTimer = 0;
 
         public override bool PreAI(NPC npc)
         {
@@ -232,7 +259,7 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public override void PostAI(NPC npc)
         {
-            if (timer-- > 0)
+            if (timer-- > 0 && npc.CountsAsACritter)
             {
                 NPC target = Main.npc.Where(n => n.active && n.CanBeChasedBy() && n.Distance(npc.Center) < 900).OrderBy(n => n.Distance(npc.Center)).FirstOrDefault();
                 if (target != default)
@@ -241,8 +268,18 @@ namespace JadeFables.Items.Jade.JadeBow
                     if (npc.noGravity)
                         npc.velocity = Vector2.Lerp(npc.velocity, npc.DirectionTo(target.Center) * 4, 0.1f);
                     else
+                    {
                         npc.velocity.X = MathHelper.Lerp(npc.velocity.X, Math.Sign(target.Center.X - npc.Center.X) * 4, 0.1f);
+                        if (npc.collideY && target.Center.Y < npc.Center.Y - 20)
+                        {
+                            if (jumpTimer++ % 30 == 0)
+                                npc.velocity.Y = -6;
+                        }
+                    }
                 }
+
+                if (Main.rand.NextBool(70))
+                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(15, 15), ModContent.DustType<JadeSparkle>(), Vector2.Zero);
             }
 
             if (timer == 0)

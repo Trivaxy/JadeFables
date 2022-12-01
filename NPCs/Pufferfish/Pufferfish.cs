@@ -1,5 +1,4 @@
 ﻿//TODO
-//Hit and death sounds
 //Bestiary
 //Banners
 //Balance

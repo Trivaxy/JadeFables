@@ -110,7 +110,7 @@ namespace JadeFables.Items.Jade.JadeBow
             if (Projectile.frameCounter % 6 == 5)
             {
                 Projectile.frame++;
-                if (Projectile.frame == 4)
+                if (Projectile.frame == 5)
                     Shoot();
             }
 
@@ -151,7 +151,7 @@ namespace JadeFables.Items.Jade.JadeBow
             }
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, Projectile.Center);
-            Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center, Projectile.rotation.ToRotationVector2() * (speed + 12), type, damage, knockBack, owner.whoAmI);
+            Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + (Projectile.rotation.ToRotationVector2() * 5), Projectile.rotation.ToRotationVector2() * (speed + 12), type, damage, knockBack, owner.whoAmI);
             proj.GetGlobalProjectile<JadeBowGProj>().shotFromBow = true;
         }
     }

@@ -31,7 +31,7 @@ namespace JadeFables.NPCs.GiantSnail
     internal class GiantSnail : ModNPC
     {
 
-        private readonly int NUMPOINTS = 140;
+        private readonly int NUMPOINTS = 100;
 
         protected Vector2 oldVelocity = Vector2.Zero;
         protected Vector2 moveDirection;
@@ -187,13 +187,14 @@ namespace JadeFables.NPCs.GiantSnail
                 return false;
             Vector2 position = cache[(int)(NUMPOINTS / 1.5f)];
 
+            float rotation = oldRotation.Average();
+
             Texture2D headTex = ModContent.Request<Texture2D>(Texture + "_Head").Value;
             Vector2 headOrigin = headTex.Size() * new Vector2(0f, 0.76f);
-            Main.spriteBatch.Draw(headTex, (NPC.Center - screenPos) - (NPC.rotation.ToRotationVector2() * 4), null, Color.White, NPC.rotation, headOrigin, NPC.scale, SpriteEffects.FlipHorizontally, 0f);
+            Main.spriteBatch.Draw(headTex, (NPC.Center - screenPos) - (NPC.rotation.ToRotationVector2() * 4), null, Color.White, rotation, headOrigin, NPC.scale, SpriteEffects.FlipHorizontally, 0f);
 
 
             
-            float rotation = oldRotation.Average();
             Main.spriteBatch.Draw(tex, (position - screenPos) - ((rotation + 1.57f).ToRotationVector2() * tex.Height * 0.5f), null, Color.White, rotation, tex.Size() * new Vector2(0.5f, 0.5f), NPC.scale, initialDirection != 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
 
             return false;

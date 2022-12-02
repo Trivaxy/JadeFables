@@ -1,5 +1,6 @@
 ﻿matrix transformMatrix;
 
+bool flip;
 texture sampleTexture;
 sampler2D samplerTex = sampler_state { texture = <sampleTexture>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = wrap; AddressV = wrap; };
 
@@ -31,6 +32,8 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     float2 uv = input.TexCoords;
+    if (flip)
+        uv.y = 1 - uv.y;
     float4 color = tex2D(samplerTex, uv);
     return color * input.Color;
 }

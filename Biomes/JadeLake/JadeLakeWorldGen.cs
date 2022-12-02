@@ -26,7 +26,7 @@ namespace JadeFables.Biomes.JadeLake
             Main.worldSurface = Main.spawnTileY;
 
             //very center of biome, used as origin for main arc raycasts
-            Point16 biomeCenter = new Point16(Main.spawnTileX, Main.spawnTileY);
+            Point16 biomeCenter = new Point16(Main.spawnTileX, Main.spawnTileY + 500);
 
             int biomeSize = 111;//vary based on world size and randomness
             float CONST_biomeWidthMult = 1.3f;//the width/height ratio
@@ -116,7 +116,7 @@ namespace JadeFables.Biomes.JadeLake
             float CONST_mainBodyArcFreq = 25;
             float CONST_mainBodyArcAmp = 0.05f;
 
-            //?
+            //Offshoot cups above the main cup, categorized by their corner
             List<Point16> offshoots2 = new List<Point16>();
 
             //generate main hollow area
@@ -127,9 +127,9 @@ namespace JadeFables.Biomes.JadeLake
 
                 offshoots2 = new List<Point16>();
                 //method that gets passed to arc function to be called for every block placed around edge (the actual placing of blocks is disabled)
-                void CalcOffshoots(int i, int j)
+                void CalcOffshoots(int i, int j, float angle)
                 {
-                    if (Main.rand.NextFloat() < ((position == originalPosition) ? 0.02f : 0) && (i < 4f || i > 5.4))
+                    if (Main.rand.NextFloat() < ((position == originalPosition) ? 0.03f : 0) && (angle < 4f || angle > 5.4))
                         offshoots2.Add(new Point16(i, j));
                 }
                 //bottom
@@ -139,12 +139,11 @@ namespace JadeFables.Biomes.JadeLake
                 WavyArc(position, (int)(radius * DEBUG_CONST_upperradiusmult), TileID.AmberGemspark, CONST_mainBodyArcFreq, CONST_mainBodyArcAmp, true, widtMult / DEBUG_CONST_upperwidthmult, 2f, (float)Math.PI, (float)Math.PI * 2, CalcOffshoots);
             }
 
-            //?
-            float height = size * heightMult;
-            //?
+            //Maximum number of offshoot cups allowed to generate.
             int offshootsLeft = triesLeft;
 
             //generates the wavy pattern on the bottom of the island
+            float height = size * heightMult;
             for (int j = 0; j < height; j++)
             {
                 for (int i = -(int)(size * widtMult); i < (size * widtMult); i++)
@@ -194,7 +193,7 @@ namespace JadeFables.Biomes.JadeLake
                     else if (belowHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal)
                         WorldGen.PlaceTile(position.X + i, position.Y + j, ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), true, true);
 
-                    //?
+                    //Store a point to create an offshoot off of the larger cup
                     if (generateNew && triesLeft > 0 && offshootsLeft > 0)
                     {
                         offshootsLeft--;
@@ -204,7 +203,7 @@ namespace JadeFables.Biomes.JadeLake
                 }
             }
 
-            //deletes amber gemsparks?
+            //deletes amber gemsparks
             for (int i = -(int)(size * widtMult); i < (size * widtMult); i++)
             {
                 float height2 = size * heightMult;
@@ -216,7 +215,8 @@ namespace JadeFables.Biomes.JadeLake
                     }
                 }
             }
-
+            
+            //creates cups above the main cup
             foreach (Point16 corner2 in offshoots2)
             {
                 int direction = Math.Sign(originalPosition.X - corner2.X);
@@ -239,6 +239,7 @@ namespace JadeFables.Biomes.JadeLake
                 DEBUG_RANDOM_VALUE_INCREMENT += Main.rand.Next(1000, 10000);//debug
             }
 
+            //Creates offshoot cups
             foreach (Point16 corner in offshoots)
             {
                 int direction = Math.Sign(originalPosition.X - corner.X);
@@ -276,7 +277,7 @@ namespace JadeFables.Biomes.JadeLake
         /// <param name="startRadian">start angle of circle</param>
         /// <param name="endRadian">end angle of circle</param>
         /// <param name="placement">method to be ran once for each angle</param>
-        public static void WavyArc(Point16 centerPoint, int radius, int tileType, float freq, float amp, bool clearInside = true, float widthMult = 1, float increment = 2, float startRadian = 0, float endRadian = (float)Math.PI, Action<int, int>? placement = null)
+        public static void WavyArc(Point16 centerPoint, int radius, int tileType, float freq, float amp, bool clearInside = true, float widthMult = 1, float increment = 2, float startRadian = 0, float endRadian = (float)Math.PI, Action<int, int, float>? placement = null)
         {
             //if there is a passed in method to be run on each step
             bool onplace = placement != null;
@@ -316,7 +317,7 @@ namespace JadeFables.Biomes.JadeLake
 
                 //passed in method
                 if (onplace)
-                    placement((int)(centerPoint.X + (pos.X * widthMult)), (int)(centerPoint.Y + pos.Y));
+                    placement((int)(centerPoint.X + (pos.X * widthMult)), (int)(centerPoint.Y + pos.Y), i);
 
                 //disabled since this isnt needed to place tiles
                 //else

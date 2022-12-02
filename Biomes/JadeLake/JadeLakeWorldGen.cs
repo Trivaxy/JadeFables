@@ -56,10 +56,18 @@ namespace JadeFables.Biomes.JadeLake
 
             Cup(biomePosition, biomeSize, widtMult, fastnoise, mainBodyHeightMult, mainBodyamp, mainBodyfreq, RANDOFFSET, offshootChance, biomePosition, 7);
 
+            /*for (int i = 0; i < 8; i++)
+            {
+                Vector2 offset = new Vector2(0, -biomeSize * Main.rand.NextFloat(0.55f, 1.35f)).RotatedByRandom(1.5f);
+                offset.X *= 0.75f;
+                float newHeightMult = mainBodyHeightMult * Main.rand.NextFloat(0.65f, 1.75f) * 0.5f;
+                Cup(biomePosition + offset.ToPoint16(), (int)(biomeSize * Main.rand.NextFloat(0.15f,0.35f)), widtMult, fastnoise, newHeightMult, mainBodyamp * Main.rand.NextFloat(0.3f,0.6f), mainBodyfreq, RANDOFFSET, 0.0025f, biomePosition, 3);
+            }*/
+
             for (int i = -(int)(biomeSize * widtMult); i < (biomeSize * widtMult); i++)
             {
                 float height = biomeSize * mainBodyHeightMult;
-                for (int j = 0; j < height; j++)
+                for (int j = (int)-height; j < height; j++)
                 {
                     Tile.SmoothSlope(biomePosition.X + i, biomePosition.Y + j);
                 }
@@ -129,8 +137,10 @@ namespace JadeFables.Biomes.JadeLake
 
             float freq2 = 25;// * ((2 + (float)Math.Sin(Main.GameUpdateCount / 50f)) / 5);
             float amp2 = 0.05f;// * ((2 + (float)Math.Sin(Main.GameUpdateCount / 36f)) / 2);
+
+            List<Point16> offshoots2 = new List<Point16>();
             if (position == originalPosition)
-                WavyArc(position, radius, TileID.AmberGemspark, freq2, amp2, true, widtMult, 2f);
+                offshoots2 = WavyArc(position, radius, TileID.AmberGemspark, freq2, amp2, true, widtMult, 2f, offshootChance: (position == originalPosition) ? 0.02f : 0);
 
             int offshootsLeft = triesLeft;
             float height = size * heightMult;
@@ -184,13 +194,34 @@ namespace JadeFables.Biomes.JadeLake
             for (int i = -(int)(size * widtMult); i < (size * widtMult); i++)
             {
                 float height2 = size * heightMult;
-                for (int j = 0; j < height2; j++)
+                for (int j = (int)-height2; j < height2; j++)
                 {
                     if (Main.tile[position.X + i, position.Y + j].HasTile && Main.tile[position.X + i, position.Y + j].TileType == TileID.AmberGemspark)
                     {
                         Main.tile[position.X + i, position.Y + j].Get<TileWallWireStateData>().HasTile = false;
                     }
                 }
+            }
+
+            foreach (Point16 corner2 in offshoots2)
+            {
+                int direction = Math.Sign(originalPosition.X - corner2.X);
+
+                int newRadius = Main.rand.Next((int)(size * 0.4f), size);
+                float newHeightMult = heightMult * Main.rand.NextFloat(0.65f, 1.45f);
+                float newAmp = amp;
+
+                newRadius = (int)(newRadius * 0.35f);
+                newHeightMult *= 0.7f;
+                newAmp *= 0.6f;
+
+                Point16 newPosition = new Point16(corner2.X + (direction * newRadius), corner2.Y);
+
+                if (Main.rand.NextBool())
+                    newPosition = new Point16(newPosition.X - (20 * direction), newPosition.Y);
+                else
+                    newPosition = new Point16(newPosition.X, newPosition.Y - (int)(newRadius * newHeightMult * 0.5f));
+                Cup(newPosition, newRadius, widtMult * Main.rand.NextFloat(0.65f, 1.45f), fastnoise, newHeightMult, newAmp, freq, randoffset, 0.02f, originalPosition, 0);
             }
 
             foreach (Point16 corner in offshoots)
@@ -207,7 +238,7 @@ namespace JadeFables.Biomes.JadeLake
                 {
                     newRadius = (int)(newRadius * 0.35f);
                     newHeightMult *= 0.7f;
-                    newAmp *= 0.4f;
+                    newAmp *= 0.6f;
                 }
 
                 Point16 newPosition = new Point16(corner.X + (direction * newRadius), corner.Y);
@@ -220,21 +251,24 @@ namespace JadeFables.Biomes.JadeLake
             }
         }
 
-        public static void WavyArc(Point16 centerPoint, int radius, int tileType, float freq, float amp, bool clearInside = true, float widthMult = 1, float increment = 2, float startRadian = 0, float endRadian = (float)Math.PI, Action<int, int>? placement = null)
+        public static List<Point16> WavyArc(Point16 centerPoint, int radius, int tileType, float freq, float amp, bool clearInside = true, float widthMult = 1, float increment = 2, float offshootChance = 0, float startRadian = 0, float endRadian = (float)Math.PI, Action<int, int>? placement = null)
         {
             bool onplace = placement != null;
 
+            List<Point16> offshoots = new List<Point16>();
             FastNoise fastnoise = new FastNoise(Main.rand.Next());
             float inc = (float)Math.Tau / (increment * radius * widthMult * (freq / 5f));
-            for (float i = 0; i < (float)Math.PI; i += inc)
+            for (float i = 0; i < (float)Math.PI * 2; i += inc)
             {
                 Vector2 dist = new(radius * (1 + fastnoise.GetCubic(0, i * radius * freq) * amp), 0);
                 Vector2 pos = dist.RotatedBy(i, Vector2.Zero);
 
                 if (clearInside)
                 {
+                    if (pos.Y < 0)
+                        pos.Y *= 2f;
                     float clearLen = ((dist.X * widthMult));
-                    for (int j = 0; j < clearLen; j++)
+                    for (float j = 0; j < clearLen; j+= 0.5f)
                     {
                         float multDist = j / clearLen;
                         int posX = (int)(centerPoint.X + ((pos.X * multDist) * widthMult));
@@ -248,6 +282,13 @@ namespace JadeFables.Biomes.JadeLake
                         }
                         // WorldGen.PlaceTile((int)(biomePosition.X + ((pos.X * multDist) * widtMult)), (int)(Main.spawnTileY + (pos.Y * multDist)), TileID.AmberGemspark, true, true);
                     }
+
+                    if (Main.rand.NextFloat() < offshootChance && pos.Y < 0 && (i < 4f || i > 5.4))
+                    {
+                        int posX = (int)(centerPoint.X + ((pos.X) * widthMult));
+                        int posY = (int)(centerPoint.Y + (pos.Y));
+                        offshoots.Add(new Point16(posX, posY));
+                    }
                 }
 
                 /*if (onplace)
@@ -259,6 +300,17 @@ namespace JadeFables.Biomes.JadeLake
                     //WorldGen.PlaceTile((int)(biomePosition.X + (pos.X * widtMult)), (int)(biomePosition.Y + pos.Y), tileType, true, true);
                 }*/
             }
+
+            return offshoots;
+            /*foreach(Point16 pos in offshoots)
+            {
+                int posX = pos.X;
+                int posY = pos.Y;
+                int direction = Math.Sign(centerPoint.X - posX);
+                int newRadius = (int)(radius * Main.rand.NextFloat(0.35f, 0.55f));
+                float newHeightMult = Main.rand.NextFloat(0.65f, 1.75f) * 0.5f;
+                Cup(new Point16(posX + (int)(direction * newRadius * 0.5f), posY), newRadius, Main.rand.NextFloat(0.85f, 1.35f), fastnoise, newHeightMult, Main.rand.NextFloat(0.15f, 0.3f), 3, 3, 0.025f, centerPoint, 3);
+            }*/
         }
     }
 }

@@ -26,7 +26,7 @@ namespace JadeFables.Biomes.JadeLake
             Main.worldSurface = Main.spawnTileY;
 
             //very center of biome, used as origin for main arc raycasts
-            Point16 biomeCenter = new Point16(Main.spawnTileX, Main.spawnTileY + 500);
+            Point16 biomeCenter = new Point16(Main.spawnTileX, Main.spawnTileY);
 
             int biomeSize = 111;//vary based on world size and randomness
             float CONST_biomeWidthMult = 1.3f;//the width/height ratio
@@ -41,7 +41,11 @@ namespace JadeFables.Biomes.JadeLake
             float offshootChance = 0.0025f;
 
             //used for stuff that needs to iterate over the entire biome
-            Rectangle MainBiomeRect = new Rectangle(biomeCenter.X - (int)(biomeSize * CONST_biomeWidthMult), biomeCenter.Y - biomeSize, (int)(biomeSize * CONST_biomeWidthMult), (int)(biomeSize * CONST_mainBodyLowerHeightMult));
+            Rectangle MainBiomeRect = new Rectangle(
+                biomeCenter.X - (int)(biomeSize * CONST_biomeWidthMult), 
+                biomeCenter.Y - (int)(biomeSize * CONST_mainBodyLowerHeightMult), 
+                (int)(biomeSize * CONST_biomeWidthMult) * 2, 
+                (int)(biomeSize * CONST_mainBodyLowerHeightMult) * 2);
 
             //clears all water in biome area
             ClearWater(MainBiomeRect);
@@ -64,11 +68,14 @@ namespace JadeFables.Biomes.JadeLake
             SlopeTiles(MainBiomeRect);
         }
 
-        public static void SlopeTiles(Rectangle worldArea)
+        public static void SlopeTiles(Rectangle worldArea)//rename to something else since it reframes
         {
             for (int i = worldArea.X; i < worldArea.X + worldArea.Width; i++)
                 for (int j = worldArea.Y; j < worldArea.Y + worldArea.Height; j++)
-                    Tile.SmoothSlope(i, j);
+                {
+                    WorldGen.TileFrame(i, j);
+                    Tile.SmoothSlope(i, j, false);
+                }
         }
 
         /// <summary>
@@ -164,7 +171,7 @@ namespace JadeFables.Biomes.JadeLake
 
                     //checks if below a threshold, creates sloped edges on top of main island
                     float sinh = (float)Math.Sinh(-j + 5.1f) / 5;
-                    bool belowHeight = (i + (int)(size * widtMult) - 5) > sinh && (-i + (int)(size * widtMult) - 5) > sinh;
+                    bool belowSideSlopeHeight = (i + (int)(size * widtMult) - 5) > sinh && (-i + (int)(size * widtMult) - 5) > sinh;
 
                     //? (if this should attempt to generate another island?)
                     bool generateNew = false;
@@ -172,8 +179,8 @@ namespace JadeFables.Biomes.JadeLake
                     //places water if below below a certain threshold. and skips everything below on second iterations (?)
                     if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.25f)
                     {
-                        if (Main.rand.NextBool(3))
-                            Main.tile[position.X + i, position.Y + j].LiquidAmount = 255;
+                        //if (Main.rand.NextBool(3))
+                        //    Main.tile[position.X + i, position.Y + j].LiquidAmount = 255;
                         if (position != originalPosition)
                             continue;
                     }
@@ -185,12 +192,12 @@ namespace JadeFables.Biomes.JadeLake
                     }
 
                     //placement of sand and sandstone if below a certain threshold, continued from water placement
-                    if (belowHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.15f)
+                    if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.15f)
                     {
                         WorldGen.PlaceTile(position.X + i, position.Y + j, ModContent.TileType<Tiles.JadeSand.JadeSandTile>(), true, true);
                         generateNew = Main.rand.NextFloat()/*Debug:make genrand later*/ < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, normalizedY);//???
                     }
-                    else if (belowHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal)
+                    else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal)
                         WorldGen.PlaceTile(position.X + i, position.Y + j, ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), true, true);
 
                     //Store a point to create an offshoot off of the larger cup
@@ -215,7 +222,8 @@ namespace JadeFables.Biomes.JadeLake
                     }
                 }
             }
-            
+
+            return;//debug
             //creates cups above the main cup
             foreach (Point16 corner2 in offshoots2)
             {
@@ -294,6 +302,9 @@ namespace JadeFables.Biomes.JadeLake
                 //rotates distance to get position
                 Vector2 pos = dist.RotatedBy(i, Vector2.Zero);
 
+                //debug
+                List<Point16> placebowl = new List<Point16>();
+
                 //clearing inside
                 if (clearInside)
                 {
@@ -311,13 +322,28 @@ namespace JadeFables.Biomes.JadeLake
                             Main.tile[posX, posY].Get<TileTypeData>().Type = (ushort)tileType;
                             Main.tile[posX, posY].Get<TileWallWireStateData>().HasTile = true;
                         }
+
+                        //debug
+                        {
+                            if (Main.rand.NextBool(100000))
+                                placebowl.Add(new Point16(posX, posY));
+                        }
+
                         // WorldGen.PlaceTile((int)(biomePosition.X + ((pos.X * multDist) * widtMult)), (int)(Main.spawnTileY + (pos.Y * multDist)), TileID.AmberGemspark, true, true);
                     }
                 }
 
+
                 //passed in method
                 if (onplace)
                     placement((int)(centerPoint.X + (pos.X * widthMult)), (int)(centerPoint.Y + pos.Y), i);
+
+                //debug
+                foreach (var a in placebowl)
+                {
+                    Cup(new Point16(a.X, a.Y), 30, 1, fastnoise, 1f, 1f, 3, 0f, new Point16(a.X - 1, a.Y - 1), 0);
+
+                }
 
                 //disabled since this isnt needed to place tiles
                 //else

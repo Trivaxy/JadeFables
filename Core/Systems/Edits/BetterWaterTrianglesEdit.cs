@@ -102,8 +102,6 @@ public sealed class BetterWaterTrianglesEdit : RuntimeDetourModSystem
 
         Main.tileBatch.Begin();
 
-        Main.DrawTileInWater(drawOffset, tileCoords.X, tileCoords.Y);
-
         var tile = Framing.GetTileSafely(tileCoords);
         int liquidStyle = tile.LiquidType;
         float opacity = tile.LiquidType switch
@@ -134,19 +132,18 @@ public sealed class BetterWaterTrianglesEdit : RuntimeDetourModSystem
         vertices.TopLeftColor *= opacity;
         vertices.TopRightColor *= opacity;
 
-        Main.DrawTileInWater(drawOffset, tileCoords.X, tileCoords.Y);
-
+        int ySlice = tile.IsHalfBlock ? 8 : 0;
         int frameYOffset = tile.LiquidAmount == 0 && !tile.HasTile ? 0 : 48;
         var srcRect = new Rectangle(
             16,
             frameYOffset + (int) (animationFrameField!.GetValue(LiquidRenderer.Instance) ?? 0) * 80,
             16,
-            16
+            16 - ySlice
         );
 
         Main.tileBatch.Draw(
             TextureAssets.Liquid[liquidStyle].Value,
-            position + new Vector2(0f, tile.IsHalfBlock ? 8f : 0f),
+            position + new Vector2(0f, ySlice),
             srcRect,
             vertices,
             Vector2.Zero,

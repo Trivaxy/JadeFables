@@ -151,7 +151,10 @@ namespace JadeFables.NPCs.GiantSnail
                 NPC.rotation = NPC.velocity.ToRotation();
                 return;
             }
-            NPC.rotation += Math.Sign(rotDifference) * 0.025f;
+            float increment = Math.Sign(rotDifference) * 0.025f;
+            if (Math.Abs(rotDifference) > 1)
+                increment *= 3;
+            NPC.rotation += increment;
         }
 
         private void ManageCache()

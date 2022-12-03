@@ -20,7 +20,7 @@ namespace JadeFables.Core
 		/// <summary>
 		/// call Main.SpriteBatch.Begin with the parameters you want for the front of water. Primarily used for applying shaders
 		/// </summary>
-		public abstract void SpritebatchChange();
+		public abstract void SpritebatchChange(Matrix transformMation);
 		/// <summary>
 		/// call Main.SpriteBatch.Begin with the parameters you want for the back of water. Primarily used for applying shaders
 		/// </summary>
@@ -123,34 +123,24 @@ namespace JadeFables.Core
 		{
 			var sb = Main.spriteBatch;
 
-			if (activeAddon != null)
-			{
-				sb.End();
-				activeAddon.SpritebatchChangeBack();
-			}
-
-
-			Main.spriteBatch.Draw(Main.instance.backWaterTarget, Main.sceneBackgroundPos - Main.screenPosition, Color.White);
-
-			if (activeAddon != null)
-			{
-				sb.End();
-				sb.Begin(default, default, default, default, default, default, Main.GameViewMatrix.ZoomMatrix);
-			}
+			DoActionWithSpriteBatchChange(() => Main.spriteBatch.Draw(Main.instance.backWaterTarget, Main.sceneBackgroundPos - Main.screenPosition, Color.White), Main.GameViewMatrix.ZoomMatrix);
 		}
 
 		private void NewDraw()
 		{
-            var sb = Main.spriteBatch;
+            DoActionWithSpriteBatchChange(() => Main.spriteBatch.Draw(Main.waterTarget, Main.sceneWaterPos - Main.screenPosition, Color.White), Main.GameViewMatrix.ZoomMatrix);
+		}
+
+		public void DoActionWithSpriteBatchChange(Action action, Matrix transformMatrix) {
+			var sb = Main.spriteBatch;
 
 			if (activeAddon != null)
 			{
 				sb.End();
-				activeAddon.SpritebatchChange();
+				activeAddon.SpritebatchChange(transformMatrix);
 			}
 
-
-			Main.spriteBatch.Draw(Main.waterTarget, Main.sceneWaterPos - Main.screenPosition, Color.White);
+			action?.Invoke();
 
 			if (activeAddon != null)
 			{

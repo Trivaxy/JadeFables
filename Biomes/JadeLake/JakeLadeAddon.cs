@@ -24,7 +24,7 @@ namespace JadeFables.Biomes.JadeLake
 			return normal;
 		}
 
-		public override void SpritebatchChange()
+		public override void SpritebatchChange(Matrix transformMatrix)
 		{
 
 			/*Main.spriteBatch.Begin();
@@ -35,7 +35,7 @@ namespace JadeFables.Biomes.JadeLake
 			//var a = Vector2.Normalize(Helpers.Helper.ScreenSize);
 			//effect.Parameters["offset"].SetValue(Main.screenPosition - HotspringMapTarget.oldScreenPos);
 
-			Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
+			Main.spriteBatch.Begin(default, default, default, default, default, effect, transformMatrix);
 		}
 
 		public override void SpritebatchChangeBack()

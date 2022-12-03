@@ -11,8 +11,9 @@ public sealed class BetterWaterTrianglesEdit : RuntimeDetourModSystem
         base.OnModLoad();
 
         IL.Terraria.Main.DrawBlack += InjectExtraDrawBlockConditions;
-        IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += DrawWouldBePartials;
-        On.Terraria.GameContent.Drawing.TileDrawing.DrawPartialLiquid += SkipPartialLiquidDrawing;
+        //IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += DrawWouldBePartials;
+        //On.Terraria.GameContent.Drawing.TileDrawing.DrawPartialLiquid += SkipPartialLiquidDrawing;
+        On.Terraria.GameContent.Drawing.TileDrawing.DrawPartialLiquid += RenderPartialsWithWaterAddonShader;
     }
 
     private void InjectExtraDrawBlockConditions(ILContext il) {
@@ -73,7 +74,7 @@ public sealed class BetterWaterTrianglesEdit : RuntimeDetourModSystem
                || (Framing.GetTileSafely(x, y).IsHalfBlock && Framing.GetTileSafely(x - 1, y).LiquidAmount > 0 && Lighting.Brightness(x, y) > 0f);
     }
     
-    private void DrawWouldBePartials(ILContext il) {
+    /*private void DrawWouldBePartials(ILContext il) {
         var c = new ILCursor(il);
         
         if (!c.TryGotoNext(MoveType.Before, x => x.MatchCallvirt<TileBatch>("Draw"))) {
@@ -123,7 +124,7 @@ public sealed class BetterWaterTrianglesEdit : RuntimeDetourModSystem
                 case SlopeType.SlopeDownRight:
                 case SlopeType.SlopeUpLeft:
                 case SlopeType.SlopeUpRight:
-                    Main.tileBatch.Draw(texture, position + relativeOffset, sourceRectangle /* TODO */, relativeColors, origin, scale, effects);
+                    Main.tileBatch.Draw(texture, position + relativeOffset, sourceRectangle, relativeColors, origin, scale, effects);
                     break;
                 
                 default:
@@ -139,9 +140,13 @@ public sealed class BetterWaterTrianglesEdit : RuntimeDetourModSystem
 
         // Render original liquid.
         Main.tileBatch.Draw(texture, position, sourceRectangle, colors, origin, scale, effects);
-    }
+    }*/
     
-    private static void SkipPartialLiquidDrawing(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawPartialLiquid orig, Terraria.GameContent.Drawing.TileDrawing self, Tile tileCache, Vector2 position, Rectangle liquidSize, int liquidType, Color aColor) {
+    /*private static void SkipPartialLiquidDrawing(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawPartialLiquid orig, Terraria.GameContent.Drawing.TileDrawing self, Tile tileCache, Vector2 position, Rectangle liquidSize, int liquidType, Color aColor) {
         // orig(self, tileCache, position, liquidSize, liquidType, aColor);
+    }*/
+    
+    private static void RenderPartialsWithWaterAddonShader(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawPartialLiquid orig, Terraria.GameContent.Drawing.TileDrawing self, Tile tileCache, Vector2 position, Rectangle liquidSize, int liquidType, Color aColor) {
+        ModContent.GetInstance<WaterAddonHandler>().DoActionWithSpriteBatchChange(() => orig(self, tileCache, position, liquidSize, liquidType, aColor), Matrix.Identity);
     }
 }

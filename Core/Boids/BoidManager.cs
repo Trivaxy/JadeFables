@@ -52,7 +52,7 @@ namespace JadeFables.Core.Boids
 
 		public void Load(Mod mod)
 		{
-			const int AmbientFishTextureCount = 4;
+			const int AmbientFishTextureCount = 5;
 			Texture2D[] textures = new Texture2D[AmbientFishTextureCount];
 
 			bool[] addedIDs = new bool[AmbientFishTextureCount];

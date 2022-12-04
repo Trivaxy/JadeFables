@@ -140,7 +140,10 @@ namespace JadeFables.Tiles.JadeSand
             if (player.InInteractionRange(x, y) && Main.tile[x, y + 1].HasTile && Main.tile[x, y + 1].TileType == ModContent.TileType<JadeSandTile>())
             {
                 item.tileWand = ModContent.ItemType<JadeSandItem>();
-                item.createTile = ModContent.TileType<JadeSandCastle2>();
+                if (x % 2 == 0)
+                    item.createTile = ModContent.TileType<JadeSandCastle1>();
+                else
+                    item.createTile = ModContent.TileType<JadeSandCastle2>();
             }
             else
             {

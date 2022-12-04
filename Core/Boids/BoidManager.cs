@@ -52,15 +52,14 @@ namespace JadeFables.Core.Boids
 
 		public void Load(Mod mod)
 		{
-			const int AmbientFishTextureCount = 3;
+			const int AmbientFishTextureCount = 4;
 			Texture2D[] textures = new Texture2D[AmbientFishTextureCount];
-
 
 			bool[] addedIDs = new bool[AmbientFishTextureCount];
 
 			for (int j = 0; j < textures.Length; ++j)
 			{
-				int id = Main.rand.Next(AmbientFishTextureCount) + 1;
+				int id = j + 1;
 
 				if (!addedIDs[id - 1]) //So we don't have multiple of the same texture
 				{

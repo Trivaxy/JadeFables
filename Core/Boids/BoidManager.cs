@@ -44,7 +44,7 @@ namespace JadeFables.Core.Boids
 					{
 						Tile tile = Framing.GetTileSafely(tP.X, tP.Y);
 						if (tile.LiquidAmount > 100)
-							Flocks[flock].Populate(position, Main.rand.Next(4, 11), 40f);
+							Flocks[flock].Populate(position, Main.rand.Next(2, 6), 40f);
 					}
 				}
 			}

@@ -51,7 +51,7 @@ namespace JadeFables.Tiles.JadeSand
 
     public class JadeSandCastle2 : JadeSandCastle1 { }
 
-    public class JadeSandCastle3 : JadeSandCastle1
+    public class JadeSandPile1 : JadeSandCastle1
     {
         public override void SetStaticDefaults()
         {
@@ -74,7 +74,7 @@ namespace JadeFables.Tiles.JadeSand
         }
     }
 
-    public class JadeSandCastle4 : JadeSandCastle1
+    public class JadeSandPile2 : JadeSandCastle1
     {
         public override void SetStaticDefaults()
         {
@@ -106,7 +106,7 @@ namespace JadeFables.Tiles.JadeSand
             return true;
         }
     }
-    public class JadeSandCastle5 : JadeSandCastle4
+    public class JadeSandPile3 : JadeSandPile2
     {
         public override void SetStaticDefaults()
         {

@@ -1,3 +1,4 @@
+using JadeFables.NPCs;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -216,6 +217,11 @@ namespace JadeFables.Core.Boids
 			Acceleration += AvoidTiles(100) * 5f;
 			ApplyForces();
 
+			if (Main.rand.NextBool(4000))
+			{
+				Projectile proj = Projectile.NewProjectileDirect(GetSource_Misc("Boidfish"), position, -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(0.75f, 2f), ModContent.ProjectileType<AirBubble>(), 100, 0);
+				proj.scale = Main.rand.NextFloat(0.1f, 0.3f);
+			}
 			Frame++;
 		}
 	}

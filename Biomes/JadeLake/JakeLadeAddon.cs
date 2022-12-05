@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Terraria;
 using Terraria.Graphics.Effects;
 using JadeFables.Core;
+using JadeFables.NPCs;
 using rail;
 using Terraria.GameContent;
 using JadeFables.Dusts;
@@ -54,6 +55,7 @@ namespace JadeFables.Biomes.JadeLake
     {
         public static RenderTarget2D jadelakeMapTarget;
         public static RenderTarget2D jadelakeShineTarget;
+        public static RenderTarget2D jadelakeBubbleTarget;
 
         public static Vector2 oldScreenPos;
 
@@ -82,6 +84,7 @@ namespace JadeFables.Biomes.JadeLake
             var effect = Terraria.Graphics.Effects.Filters.Scene["JadeLakeWater"].GetShader().Shader;
             effect.Parameters["offset"].SetValue(((Main.screenPosition - oldScreenPos) * -1));
             effect.Parameters["sampleTexture2"].SetValue(JadeLakeMapTarget.jadelakeMapTarget);
+            effect.Parameters["bubbleTex"].SetValue(JadeLakeMapTarget.jadelakeBubbleTarget);
             effect.Parameters["sampleTexture3"].SetValue(JadeLakeMapTarget.jadelakeShineTarget);
             effect.Parameters["time"].SetValue(Main.GameUpdateCount / 20f);
 
@@ -94,6 +97,9 @@ namespace JadeFables.Biomes.JadeLake
 
             if (jadelakeShineTarget is null || jadelakeShineTarget.Size() != new Vector2(RTwidth, RTheight))
                 jadelakeShineTarget = new RenderTarget2D(graphics, RTwidth, RTheight, default, default, default, default, RenderTargetUsage.PreserveContents);
+
+            if (jadelakeBubbleTarget is null || jadelakeBubbleTarget.Size() != new Vector2(RTwidth, RTheight))
+                jadelakeBubbleTarget = new RenderTarget2D(graphics, RTwidth, RTheight, default, default, default, default, RenderTargetUsage.PreserveContents);
 
             graphics.SetRenderTarget(jadelakeMapTarget);
 
@@ -133,7 +139,18 @@ namespace JadeFables.Biomes.JadeLake
                 }
 
             Main.spriteBatch.End();
+            Main.spriteBatch.Begin(default, BlendState.AlphaBlend, SamplerState.PointWrap, default, default);
 
+            Main.graphics.GraphicsDevice.SetRenderTarget(jadelakeBubbleTarget);
+            Main.graphics.GraphicsDevice.Clear(Color.Transparent);
+
+            var bubbles = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<AirBubble>());
+            foreach (Projectile proj in bubbles)
+            {
+                (proj.ModProjectile as AirBubble).DrawBubble(Main.sceneWaterPos);
+            }
+
+            Main.spriteBatch.End();
             Main.graphics.GraphicsDevice.SetRenderTarget(null);
         }
 

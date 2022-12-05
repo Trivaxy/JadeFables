@@ -7,7 +7,7 @@ using JadeFables.Biomes.JadeLake;
 
 namespace JadeFables.Core.Boids
 {
-	public class BoidHost : ILoadable
+	public class BoidHost : ModSystem
 	{
 		internal List<Flock> Flocks = new List<Flock>();
 		private const int SPAWNRATE = 40;
@@ -20,7 +20,7 @@ namespace JadeFables.Core.Boids
 			}
 		}
 
-		public void Update()
+		public override void PostUpdateEverything()
 		{
 			foreach (Flock fishflock in Flocks)
 				fishflock.Update();
@@ -50,7 +50,7 @@ namespace JadeFables.Core.Boids
 			}
 		}
 
-		public void Load(Mod mod)
+		public override void Load()
 		{
 			const int AmbientFishTextureCount = 5;
 			Texture2D[] textures = new Texture2D[AmbientFishTextureCount];
@@ -75,18 +75,16 @@ namespace JadeFables.Core.Boids
 			On.Terraria.Main.DrawWoF += Main_DrawWoF;
 		}
 
-		//TODO: Move to update hook soon
 		private void Main_DrawWoF(On.Terraria.Main.orig_DrawWoF orig, Main self)
 		{
 			if (Flocks != null)
 			{
-				Update();
 				Draw(Main.spriteBatch);
 			}
 			orig(self);
 		}
 
-		public void Unload()
+		public override void Unload()
 		{
 			if (Flocks != null)
 				Flocks.Clear();

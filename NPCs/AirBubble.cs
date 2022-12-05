@@ -43,7 +43,7 @@ namespace JadeFables.NPCs
 
             if (collidingPlayers != default)
             {
-                collidingPlayers.breath += (int)(300 * Projectile.scale);
+                collidingPlayers.breath += (int)(200 * Projectile.scale);
                 collidingPlayers.breath = (int)MathHelper.Min(collidingPlayers.breath, collidingPlayers.breathMax);
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item54, Projectile.Center);
                 Projectile.active = false;

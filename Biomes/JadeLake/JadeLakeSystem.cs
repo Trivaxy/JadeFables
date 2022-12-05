@@ -5,6 +5,7 @@ using JadeFables.Tiles.JadeSandstone;
 using Terraria;
 using Terraria.GameContent.Generation;
 using Terraria.WorldBuilding;
+using Microsoft.Xna.Framework;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -31,6 +32,35 @@ namespace JadeFables.Biomes.JadeLake
             tasks.RemoveAll(x => x.Name != "Jade Spring");
         }
         bool pressed = false;
+        public override void Load()
+        {
+            On.Terraria.Main.DoDraw += AddLighting;
+        }
+
+        private void AddLighting(On.Terraria.Main.orig_DoDraw orig, Main self, GameTime gameTime)
+        {
+            orig(self, gameTime);
+
+            float progress = MathHelper.Min(TotalBiomeCount, 300) / 300f;
+            if (TotalBiomeCount == 0)
+                return;
+
+            for (int x = 0; x < Main.maxTilesX; x++)
+            {
+                if (new Vector2(x * 16f, Main.LocalPlayer.Center.Y).Distance(Main.LocalPlayer.Center) < Main.screenWidth / 2)
+                    for (int y = 0; y < Main.maxTilesY; y++)
+                    {
+                        Tile tile = Main.tile[x, y];
+                        if (tile.LiquidAmount > 0)
+                        {
+                            if (Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.00001f * MathHelper.Min(TotalBiomeCount, 300)));
+                            else
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.0000001f * MathHelper.Min(TotalBiomeCount, 300)));
+                        }
+                    }
+            }
+        }
         public override void PostUpdateEverything()
         {
             if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.NumPad5))
@@ -66,9 +96,8 @@ namespace JadeFables.Biomes.JadeLake
                         Tile tile = Main.tile[x, y];
                         if (tile.LiquidAmount > 0)
                         {
-                            if (tile.LiquidAmount > 0 && Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
+                            if (Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
                             {
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.00001f * MathHelper.Min(TotalBiomeCount, 300)));
                                 if (Main.rand.NextBool((int)(30 / progress)))
                                 {
                                     Vector2 velocity = Vector2.UnitY.RotatedByRandom(0.1f) * -Main.rand.NextFloat(1f, 1.5f);
@@ -80,10 +109,13 @@ namespace JadeFables.Biomes.JadeLake
                                         Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.JadeBubble>(), -Vector2.UnitY.RotatedByRandom(1f) * 2, 0, default, Main.rand.NextFloat(0.5f, 1f));
                                 }
                             }
-                            else
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.0000001f * MathHelper.Min(TotalBiomeCount, 300)));
 
-                            if (Main.rand.NextBool((int)(2000 / progress)))
+                            Color color = Lighting.GetColor(new Point(x, y));
+
+                            float avg = color.R + color.G + color.B;
+                            avg /= 255;
+                            avg /= 3;
+                            if (Main.rand.NextBool((int)(2000 / progress)) && avg > 0.3f)
                                 Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.WhiteSparkle>(), Vector2.Zero, 0, default, 0.5f);
                         }
                     }

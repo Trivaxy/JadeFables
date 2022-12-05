@@ -8,6 +8,9 @@ sampler2D samplerTex = sampler_state { texture = <sampleTexture>; magfilter = LI
 texture sampleTexture2;
 sampler2D samplerTex2 = sampler_state { texture = <sampleTexture2>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = wrap; AddressV = wrap; };
 
+texture bubbleTex;
+sampler2D samplerBubble = sampler_state { texture = <bubbleTex>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = wrap; AddressV = wrap; };
+
 texture sampleTexture3;
 sampler2D samplerTex3 = sampler_state { texture = <sampleTexture3>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = wrap; AddressV = wrap; };
 
@@ -16,7 +19,10 @@ float4 PixelShaderFunction(float4 screenSpace : TEXCOORD0) : COLOR0
     float2 st = screenSpace.xy;
 
     float4 color = tex2D(samplerTex, (st + offset));
-    float power = tex2D(samplerTex2, (st)).r;
+    float power = tex2D(samplerTex2, (st + offset)).r;
+
+    if (tex2D(samplerBubble, st + offset).r > 0)
+        return float4(0,0,0,0);
 
     float factor = (0.4 + sin(power * 30.0 + time) * 0.6) * power;
     float bright = ((color.r + color.b + color.g) / 2.0);

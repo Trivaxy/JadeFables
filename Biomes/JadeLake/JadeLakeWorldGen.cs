@@ -59,20 +59,30 @@ namespace JadeFables.Biomes.JadeLake
 
             //clears all water in biome area
             ClearWater(WholeBiomeRect);
-            //FillArea(WholeBiomeRect, TileID.EmeraldGemspark, 0);
-            //FillArea(LowerIslandRect, TileID.RubyGemspark, 1);
+            FillArea(WholeBiomeRect, TileID.EmeraldGemspark, 0);
+            FillArea(LowerIslandRect, TileID.RubyGemspark, 1);
 
 
-            float offshootChance = 0.0025f;
+            //float offshootChance = 0.0025f;
 
             //Offshoot cups above the main cup, categorized by their corner
-            List<(Rectangle rect, float amp, int triesLeft)> upperOffshoots = new ();
-            List<(Rectangle rect, float amp, int triesLeft)> lowerOffshoots = new ();
+            //List<(Rectangle rect, float amp, int triesLeft)> upperOffshoots = new ();
+            //List<(Rectangle rect, float amp, int triesLeft)> lowerOffshoots = new ();
 
 
-            Cup(LowerIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, offshootChance, LowerIslandRect.Center().ToPoint16(), 7);
+            Cup(LowerIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 7);
 
 
+            float CONST_Start_SecondSizeMult = 0.4f;
+            float CONST_SecondSizeMult = 0.75f;
+
+            (List<Rectangle> list, int xSize, int ySize) SecondPoolsCurrent = 
+                new(new List<Rectangle>(), (int)(LowerIslandRect.Width * CONST_Start_SecondSizeMult), (int)(LowerIslandRect.Height * CONST_Start_SecondSizeMult));
+
+            (List<Rectangle> list, int xSize, int ySize) SecondPoolsPrevious;// = new(new List<Rectangle>() { LowerIslandRect }, (int)(LowerIslandRect.Width), (int)(LowerIslandRect.Height));
+
+
+            //each stage check all prev rectangles and move current ones away from center
 
             //generate main hollow area
             {
@@ -87,7 +97,7 @@ namespace JadeFables.Biomes.JadeLake
                 {
                     if (Main.rand.NextFloat() < (0.03f) && (angle < 4f || angle > 5.4))
                     {
-                        upperOffshoots.Add((new Rectangle(i, j, LowerIslandRect.Width, LowerIslandRect.Height), CONST_mainIslandBottomAmp, 0));
+                        //upperOffshoots.Add((new Rectangle(i, j, LowerIslandRect.Width, LowerIslandRect.Height), CONST_mainIslandBottomAmp, 0));
                     }
                 }
 
@@ -104,6 +114,62 @@ namespace JadeFables.Biomes.JadeLake
                 WavyArc(new Point16(LowerIslandRect.Center.X, LowerIslandRect.Top), radius - sideBeachSize, CONST_mainBodyArcFreq, CONST_mainBodyArcAmp, true, ratio, 2f);
             }
 
+            float CONST_chance = 0.0003f;
+            float CONST_loopbackCount = 7;
+            //add secondary pools
+            {
+                for (int h = 0; h < CONST_loopbackCount; h++)
+                {
+                    //iterate over biome
+                    for (int i = LowerIslandRect.X; i < LowerIslandRect.X + LowerIslandRect.Width; i++)
+                        for (int j = LowerIslandRect.Y; j < LowerIslandRect.Y + LowerIslandRect.Height; j++)
+                        {
+                            //if chance
+                            if (Main.rand.NextFloat() < CONST_chance)
+                            {
+                                //if(Main.tile[i, j].HasTile && AnyEmptyTileSurround(i, j))
+                                {
+                                    //create rectangle centered on point
+                                    Rectangle size = new Rectangle(i, j, 0, 0);
+                                    size.Inflate(SecondPoolsCurrent.xSize / 2, SecondPoolsCurrent.ySize / 2);//size.Inflade adds the value to both sides of the center
+
+                                    //int corner = 0;
+                                    //if (Main.tile[size.X, size.Y].HasTile)
+                                    //    corner++;
+                                    //if (Main.tile[size.X, size.Y + size.Height].HasTile)
+                                    //    corner++;
+                                    //if (Main.tile[size.X + size.Width, size.Y].HasTile)
+                                    //    corner++;
+                                    //if (Main.tile[size.X + size.Width, size.Y + size.Height].HasTile)
+                                    //    corner++;
+                                    //if (Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile)
+                                    //    corner += 2;
+
+                                    if ((Main.tile[size.X, size.Y].HasTile || Main.tile[size.X + size.Width, size.Y].HasTile) && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile)
+                                    {
+                                        //adds pool to the list
+                                        SecondPoolsCurrent.list.Add(size);
+                                        Cup(size, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 0);
+                                        FillArea(size, TileID.TopazGemsparkOff + h, h);
+                                    }
+                                }
+                            }
+                        }
+
+                    //foreach(Rectangle poolRect in SecondPoolsCurrent.list)
+                    //{
+                    //    Cup(poolRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 0);
+                    //    FillArea(poolRect, TileID.TopazGemsparkOff + h, h);
+                    //}
+
+
+                    SecondPoolsPrevious = SecondPoolsCurrent;
+                    SecondPoolsCurrent = 
+                        new(new List<Rectangle>(), (int)(SecondPoolsPrevious.xSize * CONST_SecondSizeMult), (int)(SecondPoolsPrevious.ySize * CONST_SecondSizeMult));
+                }
+            }
+
+            /*
             CreateOffshoots(LowerIslandRect, CONST_mainIslandBottomAmp, 4, offshootChance, true, lowerOffshoots);
 
             //creates cups above the main cup
@@ -162,6 +228,7 @@ namespace JadeFables.Biomes.JadeLake
                     CreateOffshoots(cupArea, corner.amp, corner.triesLeft - 1, 0.04f, false, lowerOffshoots);
                 }
             }
+            */
 
             /*for (int i = 0; i < 8; i++)
             {
@@ -187,6 +254,17 @@ namespace JadeFables.Biomes.JadeLake
                     WorldGen.TileFrame(i, j);
                     Tile.SmoothSlope(i, j, false);
                 }
+        }
+
+        public static bool AnyEmptyTileSurround(int i, int j)
+        {
+            for (int x = -1; x < 2; x++)
+                for (int y = -1; y < 2; y++)
+                {
+                    if (!Main.tile[i + x, j + y].HasTile)
+                        return true;
+                }
+            return false;
         }
 
         /// <summary>

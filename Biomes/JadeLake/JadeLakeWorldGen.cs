@@ -79,7 +79,7 @@ namespace JadeFables.Biomes.JadeLake
             (List<Rectangle> list, int xSize, int ySize) SecondPoolsCurrent = 
                 new(new List<Rectangle>(), (int)(LowerIslandRect.Width * CONST_Start_SecondSizeMult), (int)(LowerIslandRect.Height * CONST_Start_SecondSizeMult));
 
-            (List<Rectangle> list, int xSize, int ySize) SecondPoolsPrevious;// = new(new List<Rectangle>() { LowerIslandRect }, (int)(LowerIslandRect.Width), (int)(LowerIslandRect.Height));
+            (List<Rectangle> list, int xSize, int ySize) SecondPoolsPrevious = new(new List<Rectangle>() { WholeBiomeRect }, 5, 5);
 
 
             //each stage check all prev rectangles and move current ones away from center
@@ -114,53 +114,57 @@ namespace JadeFables.Biomes.JadeLake
                 WavyArc(new Point16(LowerIslandRect.Center.X, LowerIslandRect.Top), radius - sideBeachSize, CONST_mainBodyArcFreq, CONST_mainBodyArcAmp, true, ratio, 2f);
             }
 
-            float CONST_chance = 0.0003f;
-            float CONST_loopbackCount = 7;
+            float CONST_chance = 0.00015f;
+            float CONST_loopbackCount = 3;
+            int CONST_MinAdd = 1;
             //add secondary pools
             {
                 for (int h = 0; h < CONST_loopbackCount; h++)
                 {
-                    //iterate over biome
-                    for (int i = LowerIslandRect.X; i < LowerIslandRect.X + LowerIslandRect.Width; i++)
-                        for (int j = LowerIslandRect.Y; j < LowerIslandRect.Y + LowerIslandRect.Height; j++)
+                        while (SecondPoolsCurrent.list.Count < CONST_MinAdd * (h + 1))
                         {
-                            //if chance
-                            if (Main.rand.NextFloat() < CONST_chance)
-                            {
-                                //if(Main.tile[i, j].HasTile && AnyEmptyTileSurround(i, j))
+                            //iterate over biome
+                            for (int i = LowerIslandRect.X; i < LowerIslandRect.X + LowerIslandRect.Width; i++)
+                                for (int j = LowerIslandRect.Y; j < LowerIslandRect.Y + LowerIslandRect.Height; j++)
                                 {
-                                    //create rectangle centered on point
-                                    Rectangle size = new Rectangle(i, j, 0, 0);
-                                    size.Inflate(SecondPoolsCurrent.xSize / 2, SecondPoolsCurrent.ySize / 2);//size.Inflade adds the value to both sides of the center
-
-                                    //int corner = 0;
-                                    //if (Main.tile[size.X, size.Y].HasTile)
-                                    //    corner++;
-                                    //if (Main.tile[size.X, size.Y + size.Height].HasTile)
-                                    //    corner++;
-                                    //if (Main.tile[size.X + size.Width, size.Y].HasTile)
-                                    //    corner++;
-                                    //if (Main.tile[size.X + size.Width, size.Y + size.Height].HasTile)
-                                    //    corner++;
-                                    //if (Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile)
-                                    //    corner += 2;
-
-                                    if ((Main.tile[size.X, size.Y].HasTile || Main.tile[size.X + size.Width, size.Y].HasTile) && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile)
+                                    //if chance
+                                    if (Main.rand.NextFloat() < CONST_chance)
                                     {
-                                        //adds pool to the list
-                                        SecondPoolsCurrent.list.Add(size);
-                                        Cup(size, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 0);
-                                        FillArea(size, TileID.TopazGemsparkOff + h, h);
+                                        //if(Main.tile[i, j].HasTile && AnyEmptyTileSurround(i, j))
+                                        {
+                                            //create rectangle centered on point
+                                            Rectangle size = new Rectangle(i, j, 0, 0);
+                                            size.Inflate(SecondPoolsCurrent.xSize / 2, SecondPoolsCurrent.ySize / 2);//size.Inflade adds the value to both sides of the center
+
+                                            //int corner = 0;
+                                            //if (Main.tile[size.X, size.Y].HasTile)
+                                            //    corner++;
+                                            //if (Main.tile[size.X, size.Y + size.Height].HasTile)
+                                            //    corner++;
+                                            //if (Main.tile[size.X + size.Width, size.Y].HasTile)
+                                            //    corner++;
+                                            //if (Main.tile[size.X + size.Width, size.Y + size.Height].HasTile)
+                                            //    corner++;
+                                            //if (Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile)
+                                            //    corner += 2;
+
+                                            if ((Main.tile[size.X, size.Y].HasTile || Main.tile[size.X + size.Width, size.Y].HasTile) && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile)
+                                            {
+                                                //adds pool to the list
+                                                SecondPoolsCurrent.list.Add(size);
+                                                //Cup(size, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 0);
+                                                //FillArea(size, TileID.TopazGemsparkOff + h, h);
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                        }
+                    }
 
-                    //foreach(Rectangle poolRect in SecondPoolsCurrent.list)
-                    //{
-                    //    Cup(poolRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 0);
-                    //    FillArea(poolRect, TileID.TopazGemsparkOff + h, h);
-                    //}
+                    foreach (Rectangle poolRect in SecondPoolsCurrent.list)
+                    {
+                        Cup(poolRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 0);
+                        FillArea(poolRect, TileID.TopazGemsparkOff + h, h);
+                    }
 
 
                     SecondPoolsPrevious = SecondPoolsCurrent;
@@ -393,7 +397,11 @@ namespace JadeFables.Biomes.JadeLake
                     if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.15f)
                     {
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSand.JadeSandTile>(), true, true);
-                        generateNew = Main.rand.NextFloat()/*Debug:make genrand later*/ < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, normalizedY);//???
+                    }
+                    else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.15f)
+                    {
+                        WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), true, true);
+                        //generateNew = Main.rand.NextFloat()/*Debug:make genrand later*/ < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, normalizedY);//???
                     }
                     else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal)
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), true, true);

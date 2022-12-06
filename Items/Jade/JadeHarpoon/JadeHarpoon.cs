@@ -103,13 +103,16 @@ namespace JadeFables.Items.Jade.JadeHarpoon
         {
             if (swinging)
             {
-                if (progress < 10)
-                    progress++;
+                Projectile.rotation += 0.3f * owner.direction;
 
-                Vector2 posToBe = owner.Center;
-                Projectile.Center = Vector2.Lerp(startPos, posToBe, progress / 10f);
+                owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 0.78f);
+                Projectile.velocity = Vector2.Zero;
+                Vector2 posToBe = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - 0.78f);
+                    Projectile.Center = posToBe;
+
                 Projectile.timeLeft = 2;
-                owner.GetModPlayer<JadeHarpoonPlayer>().flipping = true;
+                if (!owner.GetModPlayer<JadeHarpoonPlayer>().flipping)
+                    Projectile.active = false;
                 return;
             }
             owner.itemAnimation = owner.itemTime = 2;
@@ -132,11 +135,13 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                     playerSpeed += 0.15f;
                     playerSpeed *= 1.15f;
                 }
-                if (!owner.channel && Main.mouseLeft && owner.Distance(Projectile.Center) < 40)
+                if (!owner.channel && Main.mouseLeft && owner.Distance(Projectile.Center) < 70)
                 {
                     startPos = Projectile.Center;
                     owner.velocity = owner.DirectionFrom(Projectile.Center) * 16;
                     swinging = true;
+                    Projectile.rotation = 0;
+                    owner.GetModPlayer<JadeHarpoonPlayer>().flipping = true;
                 }
                 return;
             }
@@ -153,6 +158,16 @@ namespace JadeFables.Items.Jade.JadeHarpoon
            {
                 Projectile.velocity *= 0.92f;
            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Vector2 origin = new Vector2(0, tex.Height);
+            if (!swinging)
+                origin = new Vector2(tex.Width / 2, tex.Height / 2);
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            return false;
         }
 
         public override bool? CanHitNPC(NPC target)
@@ -182,5 +197,33 @@ namespace JadeFables.Items.Jade.JadeHarpoon
     public class JadeHarpoonPlayer : ModPlayer
     {
         public bool flipping;
+        public Vector2 jumpVelocity = Vector2.Zero;
+
+        public float storedBodyRotation = 0f;
+        public override void PreUpdate()
+        {
+            if (flipping)
+                Player.maxFallSpeed = 2000f;
+
+        }
+
+        public override void PostUpdate()
+        {
+            if (flipping)
+            {
+                storedBodyRotation += 0.3f * Player.direction;
+                Player.fullRotation = storedBodyRotation;
+                Player.fullRotationOrigin = Player.Size / 2;
+            }
+            if (Player.velocity.Y == 0)
+            {
+                storedBodyRotation = 0;
+                Player.fullRotation = 0;
+                flipping = false;
+            }
+            else
+                jumpVelocity = Player.velocity;
+        }
+
     }
 }

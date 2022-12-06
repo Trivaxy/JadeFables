@@ -59,5 +59,18 @@ namespace JadeFables.Core.Boids
                 }
             }
         }
+
+        public void TryCatchFish(Rectangle hitbox, out List<Fish> caughtFish)
+        {
+            caughtFish = new List<Fish>();
+            foreach (Fish fish in Objects.ToArray())
+            {
+                if (hitbox.Contains((int)fish.position.X, (int)fish.position.Y))
+                {
+                    Objects.Remove(fish);
+                    caughtFish.Add(fish);
+                }
+            }
+        }
     }
 }

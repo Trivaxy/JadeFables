@@ -195,7 +195,8 @@ namespace JadeFables.NPCs.Pufferfish
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.velocity *= 1.08f;
+            if (Projectile.velocity.Length() < 8)
+                Projectile.velocity *= 1.08f;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

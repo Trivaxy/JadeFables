@@ -1,4 +1,12 @@
-﻿using JadeFables.Dusts;
+﻿//TODO on jade harpoon:
+//Balance
+//Sellprice
+//Rarity
+//Description
+//Damage on flip
+//Chain drawing
+
+using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

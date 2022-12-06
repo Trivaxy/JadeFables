@@ -85,6 +85,8 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         private Vector2 initialDirection = Vector2.Zero;
 
+        NPC lastHit;
+
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Firework");
@@ -148,8 +150,17 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
                 Dust dust = Dust.NewDustPerfect(Projectile.Center + new Vector2(9, 9), ModContent.DustType<FireworkPackDust1>(), Main.rand.NextVector2Circular(16, 16), 0, AdjacentColor(), Main.rand.NextFloat(1f, 1.5f));
                 dust.alpha = Main.rand.Next(150);
             }
-            Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireworkPackExplosion>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            Projectile proj;
+            if (lastHit == null)
+                proj = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireworkPackExplosion>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+            else
+                proj = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireworkPackExplosion>(), Projectile.damage, Projectile.knockBack, Projectile.owner, lastHit.whoAmI);
             (proj.ModProjectile as FireworkPackExplosion).color = color;
+        }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            lastHit = target;
         }
 
         private void CreateDust()
@@ -215,7 +226,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Orbital Strike");
+            DisplayName.SetDefault("Fireworks");
         }
 
         public override void AI()

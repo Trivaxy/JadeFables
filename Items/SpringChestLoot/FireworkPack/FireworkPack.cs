@@ -163,6 +163,13 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
             lastHit = target;
         }
 
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (Projectile.velocity.Length() < 3.5f)
+                return false;
+            return base.CanHitNPC(target);
+        }
+
         private void CreateDust()
         {
             Lighting.AddLight(Projectile.Center, color.ToVector3());

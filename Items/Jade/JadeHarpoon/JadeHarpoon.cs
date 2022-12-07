@@ -3,9 +3,6 @@
 //Sellprice
 //Rarity
 //Description
-//Make the player's hand point towards the harpoon
-//Move the origin up while spiking in
-//Implement more safeguards
 //Visuals
 //Sound effects
 
@@ -146,6 +143,8 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                 }
                 return;
             }
+
+            owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, owner.DirectionTo(Projectile.Center).ToRotation() - 1.57f);
             owner.itemAnimation = owner.itemTime = 2;
             owner.direction = Math.Sign(owner.DirectionTo(Main.MouseWorld).X);
             Projectile.rotation = Projectile.DirectionFrom(owner.Center).ToRotation() + 0.78f;
@@ -189,12 +188,13 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
                 Vector2 pointToDrawFrom = Projectile.Center + new Vector2(-tex.Width, tex.Height).RotatedBy(Projectile.rotation);
 
-                float length = MathHelper.Max((pointToDrawFrom - owner.Center).Length(), 10000);
+                Vector2 pointToDrawTo = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, owner.DirectionTo(Projectile.Center).ToRotation() - 1.57f);
+                float length = MathHelper.Max((pointToDrawFrom - pointToDrawTo).Length(), 10000);
                 if (length > chaintex.Height * 3)
                 {
                     for (float i = 0; i < length; i += chaintex.Height)
                     {
-                        Vector2 pointToDraw = Vector2.Lerp(pointToDrawFrom, owner.Center, i / length);
+                        Vector2 pointToDraw = Vector2.Lerp(pointToDrawFrom, pointToDrawTo, i / length);
                         Color chainColor = Lighting.GetColor((int)(pointToDraw.X / 16), (int)(pointToDraw.Y / 16));
                         Main.spriteBatch.Draw(chaintex, pointToDraw - Main.screenPosition, null, chainColor, pointToDrawFrom.DirectionFrom(owner.Center).ToRotation() + 1.57f, chaintex.Size() / 2, Projectile.scale, SpriteEffects.None, 0f);
                     }

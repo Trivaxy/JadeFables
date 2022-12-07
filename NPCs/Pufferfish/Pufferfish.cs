@@ -3,7 +3,6 @@
 //Banners
 //Balance
 //Gores
-//Spawning
 //dust on collision
 
 using Microsoft.Xna.Framework;
@@ -25,6 +24,7 @@ using static Terraria.ModLoader.ModContent;
 using JadeFables.Core;
 using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
+using JadeFables.Biomes.JadeLake;
 
 namespace JadeFables.NPCs.Pufferfish
 {
@@ -144,6 +144,8 @@ namespace JadeFables.NPCs.Pufferfish
         {
             target.AddBuff(BuffID.Poisoned, 200);
         }
+
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 150f : 0f;
     }
 
     internal class PufferfishProj : ModProjectile

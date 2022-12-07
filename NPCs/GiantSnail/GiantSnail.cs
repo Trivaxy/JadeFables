@@ -3,7 +3,6 @@
 //Banners
 //Balance
 //Gores
-//Spawning
 //Better hitbox
 //Make it not geek out while turning at some angles
 //Make it not turn upside down
@@ -31,6 +30,7 @@ using static Terraria.ModLoader.ModContent;
 using JadeFables.Core;
 using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
+using JadeFables.Biomes.JadeLake;
 
 namespace JadeFables.NPCs.GiantSnail
 {
@@ -222,6 +222,8 @@ namespace JadeFables.NPCs.GiantSnail
             Main.spriteBatch.Draw(tex, shellPos - screenPos, null, Lighting.GetColor((int)(shellPos.X / 16), (int)(shellPos.Y / 16)), rotation + (initialDirection == -1 ? 3.14f : 0), tex.Size() * new Vector2(0.5f, 0.5f), NPC.scale, initialDirection != 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
             return false;
         }
+
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 25f : 0f;
 
         private void DrawBody()
         {

@@ -70,7 +70,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 			for (int i = 0; i < amt; i++)
 			{
 				Projectile proj = Projectile.NewProjectileDirect(target.GetSource_Death(), target.Center, Main.rand.NextVector2CircularEdge(2, 2), ModContent.ProjectileType<FireworkPackProj>(), 15, 3, owner.whoAmI);
-                proj.timeLeft = Main.rand.Next(50, 80);
+                proj.timeLeft = Main.rand.Next(100, 120);
             }
 		}
 	}
@@ -108,6 +108,18 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
             if (color == Color.White)
                 color = Main.hslToRgb(Main.rand.NextFloat(), Main.rand.NextFloat(0.65f, 1f), Main.rand.NextFloat(0.5f,0.8f));
 
+
+            if (Projectile.timeLeft < 80)
+            {
+                var nearestNPC = Main.npc.Where(n => n.active && n.CanBeChasedBy() && n.Distance(Projectile.Center) < 500).OrderBy(n => n.Distance(Projectile.Center)).FirstOrDefault();
+                if (nearestNPC != default)
+                {
+                    Vector2 direction = Projectile.DirectionTo(nearestNPC.Center);
+                    float rotDifference = ((((direction.ToRotation() - Projectile.velocity.ToRotation()) % 6.28f) + 9.42f) % 6.28f) - 3.14f;
+
+                    Projectile.velocity = Projectile.velocity.RotatedBy(rotDifference * 0.2f);
+                }
+            }
             Projectile.velocity *= 1.01f;
 
 
@@ -167,7 +179,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         public override bool? CanHitNPC(NPC target)
         {
-            if (Projectile.velocity.Length() < 2.5f)
+            if (Projectile.velocity.Length() < 4f)
                 return false;
             return base.CanHitNPC(target);
         }

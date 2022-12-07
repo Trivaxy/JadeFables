@@ -83,9 +83,9 @@ namespace JadeFables.Items.Jade.JadeHarpoon
         private bool retracting => Projectile.timeLeft < 40;
 
         private bool hooked = false;
-        private bool launching = false;
+        public bool launching = false;
 
-        private bool spinning = false;
+        public bool spinning = false;
 
         private NPC hookTarget;
         private Vector2 hookOffset;
@@ -93,6 +93,22 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
         private int progress;
         private float playerRotation = 0;
+
+        public float noiseRotation;
+
+        public float noiseRotation2;
+
+        private float storedBodyRotation = 0f;
+
+        public override void Load()
+        {
+            On.Terraria.Main.DrawDust += DrawCone;
+        }
+
+        public override void Unload()
+        {
+            On.Terraria.Main.DrawDust -= DrawCone;
+        }
 
         public override void SetStaticDefaults()
         {
@@ -111,10 +127,19 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
         public override void AI()
         {
+            if (noiseRotation < 0.02f)
+                noiseRotation = Main.rand.NextFloat(6.28f);
+            noiseRotation += 0.12f;
+
+            if (noiseRotation2 < 0.02f)
+                noiseRotation2 = Main.rand.NextFloat(6.28f);
+            noiseRotation2 -= 0.12f;
+
             if (hooked && !spinning)
             {
                 if (!hookTarget.active)
                 {
+                    owner.fullRotation = 0;
                     Projectile.active = false;
                     return;
                 }
@@ -144,6 +169,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                 return;
             }
 
+            owner.heldProj = Projectile.whoAmI;
             owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, owner.DirectionTo(Projectile.Center).ToRotation() - 1.57f);
             owner.itemAnimation = owner.itemTime = 2;
             owner.direction = Math.Sign(owner.DirectionTo(Main.MouseWorld).X);
@@ -153,6 +179,11 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             {
                 owner.velocity = owner.DirectionTo(Projectile.Center) * playerSpeed;
 
+                float rotDifference = (((((owner.DirectionTo(Projectile.Center).ToRotation() + 1.57f) - storedBodyRotation) % 6.28f) + 9.42f) % 6.28f) - 3.14f;
+
+                storedBodyRotation += rotDifference * 0.2f;
+                owner.fullRotation = storedBodyRotation;
+                owner.fullRotationOrigin = owner.Size / 2;
                 if (playerSpeed < 20)
                 {
                     playerSpeed += 0.15f;
@@ -202,6 +233,58 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             }
             Main.spriteBatch.Draw(spinning ? spinTex : tex, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
+        }
+
+        private void DrawCone(On.Terraria.Main.orig_DrawDust orig, Main self) //putting this here so I dont have to load another detour to get it to load in front of the fist
+        {
+            orig(self);
+
+            //putting this here so I dont have to load another detour to get it to load in front of the fist
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+            Main.spriteBatch.End();
+
+            Color color = Color.LightGreen;
+            color.A = 0;
+
+            foreach (Projectile Projectile in Main.projectile)
+            {
+                Player player = Main.player[Projectile.owner];
+
+                float rot = player.DirectionTo(Projectile.Center).ToRotation();
+                if (Projectile.type == ModContent.ProjectileType<JadeHarpoonHook>() && Projectile.active)
+                {
+                    var mp = Projectile.ModProjectile as JadeHarpoonHook;
+                    if (mp.spinning || !mp.launching)
+                        continue;
+                    Texture2D tex = ModContent.Request<Texture2D>(Texture + "_Launch").Value;
+                    Effect effect = Filters.Scene["ConicalNoise"].GetShader().Shader;
+                    Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+                    effect.Parameters["vnoise"].SetValue(ModContent.Request<Texture2D>(Texture + "_Noise").Value);
+                    effect.Parameters["rotation"].SetValue(mp.noiseRotation);
+                    effect.Parameters["transparency"].SetValue(1f);
+                    effect.Parameters["pallette"].SetValue(ModContent.Request<Texture2D>(Texture + "_Pallette").Value);
+                    effect.Parameters["color"].SetValue(Color.White.ToVector4());
+                    effect.CurrentTechnique.Passes[0].Apply();
+
+                    Main.spriteBatch.Draw(tex, player.Center + (rot.ToRotationVector2() * 30) - Main.screenPosition, null, color, rot, new Vector2(250, 64), new Vector2(0.6f, 0.6f), SpriteEffects.None, 0f);
+
+                    Main.spriteBatch.End();
+                    Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+                    effect.Parameters["vnoise"].SetValue(ModContent.Request<Texture2D>(Texture + "_Noise").Value);
+                    effect.Parameters["rotation"].SetValue(mp.noiseRotation2);
+                    effect.Parameters["transparency"].SetValue(1f);
+                    effect.Parameters["pallette"].SetValue(ModContent.Request<Texture2D>(Texture + "_Pallette").Value);
+                    effect.Parameters["color"].SetValue(Color.White.ToVector4());
+                    effect.CurrentTechnique.Passes[0].Apply();
+
+                    Main.spriteBatch.Draw(tex, player.Center + (rot.ToRotationVector2() * 30) - Main.screenPosition, null, color, rot, new Vector2(250, 64), new Vector2(0.6f, 0.6f), SpriteEffects.None, 0f);
+
+                    Main.spriteBatch.End();
+                }
+            }
         }
 
         public override bool? CanHitNPC(NPC target)

@@ -3,8 +3,6 @@
 //Rarity
 //Balance
 //Sprites
-//Unfuck drawing
-//Sound effects
 
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -15,6 +13,9 @@ using JadeFables.Core;
 using ReLogic.Content;
 using JadeFables.Helpers;
 using Terraria.Graphics.Effects;
+using SteelSeries.GameSense;
+using IL.Terraria.Audio;
+using Terraria.Audio;
 
 namespace JadeFables.Items.SpringChestLoot.FireworkPack
 {
@@ -105,7 +106,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
         public override void AI()
         {
             if (color == Color.White)
-                color = new Color(Main.rand.Next(100, 255), Main.rand.Next(100, 255), Main.rand.Next(100, 255));
+                color = Main.hslToRgb(Main.rand.NextFloat(), Main.rand.NextFloat(0.65f, 1f), Main.rand.NextFloat(0.3f,0.8f));
 
             Projectile.velocity *= 1.01f;
 
@@ -140,16 +141,17 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         public override void Kill(int timeLeft)
         {
-            for (int i = 0; i < 16; i++)
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+            for (int i = 0; i < 32; i++)
             {
                 Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<FireworkPackGlowDust>(), Main.rand.NextVector2Circular(12, 12), 0, AdjacentColor(), Main.rand.NextFloat(1.5f, 3f));
             }
 
-            for (int j = 0; j < 15; j++)
+            /*for (int j = 0; j < 15; j++)
             {
                 Dust dust = Dust.NewDustPerfect(Projectile.Center + new Vector2(9, 9), ModContent.DustType<FireworkPackDust1>(), Main.rand.NextVector2Circular(16, 16), 0, AdjacentColor(), Main.rand.NextFloat(1f, 1.5f));
                 dust.alpha = Main.rand.Next(150);
-            }
+            }*/
             Projectile proj;
             if (lastHit == null)
                 proj = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireworkPackExplosion>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
@@ -165,7 +167,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         public override bool? CanHitNPC(NPC target)
         {
-            if (Projectile.velocity.Length() < 3.5f)
+            if (Projectile.velocity.Length() < 2.5f)
                 return false;
             return base.CanHitNPC(target);
         }
@@ -341,12 +343,13 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         public override Color? GetAlpha(Dust dust, Color lightColor)
         {
-            Color gray = new Color(25, 25, 25);
             Color ret;
-            if (dust.alpha < 240)
-                ret = Color.Lerp(dust.color, gray, EaseFunction.EaseCircularIn.Ease(dust.alpha / 240f));
-            else
-                ret = gray;
+
+            Vector3 HSL = Main.rgbToHsl(dust.color);
+            HSL.X += 0.5f;
+            Color newColor = Main.hslToRgb(HSL);
+
+            ret = Color.Lerp(dust.color, newColor, dust.alpha / 255f);
 
             return ret * ((255 - dust.alpha) / 255f);
         }
@@ -415,12 +418,13 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         public override Color? GetAlpha(Dust dust, Color lightColor)
         {
-            Color gray = new Color(25, 25, 25);
             Color ret;
-            if (dust.alpha < 240)
-                ret = Color.Lerp(dust.color, gray, EaseFunction.EaseCircularIn.Ease(dust.alpha / 240f));
-            else
-                ret = gray;
+
+            Vector3 HSL = Main.rgbToHsl(dust.color);
+            HSL.X += 0.5f;
+            Color newColor = Main.hslToRgb(HSL);
+
+            ret = Color.Lerp(dust.color, newColor, dust.alpha / 255f);
 
             return ret * ((255 - dust.alpha) / 255f);
         }

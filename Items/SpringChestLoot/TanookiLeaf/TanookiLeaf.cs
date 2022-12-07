@@ -33,7 +33,7 @@ namespace JadeFables.Items.SpringChestLoot.TanookiLeaf
 		public override void UpdateAccessory(Player player, bool hideVisual)
 		{
             player.GetModPlayer<TanookiLeafPlayer>().equipped = true;
-            player.jumpSpeedBoost += Math.Min(Math.Abs(player.velocity.X), 6);
+            player.jumpSpeedBoost += Math.Min(Math.Abs(player.velocity.X) * 0.7f, 5);
             player.GetModPlayer<TanookiLeafPlayer>().frameCounter--;
             if (cooldown-- < 0 && player.controlJump && player.velocity.Y > 0 && !pressedJump)
 			{

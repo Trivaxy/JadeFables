@@ -279,7 +279,6 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.extraUpdates = 5;
             Projectile.penetrate = -1;
-            Projectile.hide = true;
         }
 
         public override void AI()

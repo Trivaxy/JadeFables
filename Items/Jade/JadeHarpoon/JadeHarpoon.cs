@@ -229,8 +229,6 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (target.life <= 0)
-                return;
             if (launching && !spinning)
             {
                 CameraSystem.Shake += 7;
@@ -241,6 +239,9 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                 owner.GetModPlayer<JadeHarpoonPlayer>().flipping = true;
                 return;
             }
+
+            if (target.life <= 0)
+                return;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 1000;
             hooked = true;
@@ -347,6 +348,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
     public class JadeHarpoonPlayer : ModPlayer
     {
+        public int iframes = 0;
         public bool flipping;
         public Vector2 jumpVelocity = Vector2.Zero;
 
@@ -360,6 +362,8 @@ namespace JadeFables.Items.Jade.JadeHarpoon
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
         {
             if (flipping)
+                return false;
+            if (iframes-- > 0)
                 return false;
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource, ref cooldownCounter);
         }
@@ -376,8 +380,12 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             if (Player.velocity.Y == 0)
             {
                 storedBodyRotation = 0;
-                Player.fullRotation = 0;
-                flipping = false;
+                if (flipping)
+                {
+                    Player.fullRotation = 0;
+                    flipping = false;
+                    iframes = 30;
+                }
             }
             else
                 jumpVelocity = Player.velocity;

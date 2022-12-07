@@ -69,7 +69,9 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 			int amt = Main.rand.Next(1, 4);
 			for (int i = 0; i < amt; i++)
 			{
-				Projectile proj = Projectile.NewProjectileDirect(target.GetSource_Death(), target.Center, Main.rand.NextVector2CircularEdge(2, 2), ModContent.ProjectileType<FireworkPackProj>(), 15, 3, owner.whoAmI);
+                Vector2 vel = Main.rand.NextVector2CircularEdge(2, 2);
+                vel.Y *= -Math.Sign(vel.Y);
+                Projectile proj = Projectile.NewProjectileDirect(target.GetSource_Death(), target.Center, vel, ModContent.ProjectileType<FireworkPackProj>(), 15, 3, owner.whoAmI);
                 proj.timeLeft = Main.rand.Next(100, 120);
             }
 		}

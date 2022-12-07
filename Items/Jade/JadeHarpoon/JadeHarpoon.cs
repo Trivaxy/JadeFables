@@ -3,7 +3,6 @@
 //Sellprice
 //Rarity
 //Description
-//Visuals
 //Sound effects
 
 using JadeFables.Dusts;
@@ -137,7 +136,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
             if (hooked && !spinning)
             {
-                if (!hookTarget.active)
+                if (!hookTarget.active || Main.mouseRight)
                 {
                     owner.fullRotation = 0;
                     Projectile.active = false;
@@ -152,6 +151,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             }
             if (spinning)
             {
+                owner.itemAnimation = owner.itemTime = 2;
                 Projectile.rotation += 0.3f * owner.direction;
 
                 owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 0.78f);
@@ -439,13 +439,14 @@ namespace JadeFables.Items.Jade.JadeHarpoon
         {
             if (flipping)
                 Player.maxFallSpeed = 2000f;
+            iframes--;
 
         }
         public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
         {
             if (flipping)
                 return false;
-            if (iframes-- > 0)
+            if (iframes > 0)
                 return false;
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource, ref cooldownCounter);
         }

@@ -72,7 +72,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
                 Vector2 vel = Main.rand.NextVector2CircularEdge(2, 2);
                 vel.Y *= -Math.Sign(vel.Y);
                 Projectile proj = Projectile.NewProjectileDirect(target.GetSource_Death(), target.Center, vel, ModContent.ProjectileType<FireworkPackProj>(), 15, 3, owner.whoAmI);
-                proj.timeLeft = Main.rand.Next(100, 120);
+                proj.timeLeft = Main.rand.Next(60, 80);
             }
 		}
 	}
@@ -111,9 +111,9 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
                 color = Main.hslToRgb(Main.rand.NextFloat(), Main.rand.NextFloat(0.65f, 1f), Main.rand.NextFloat(0.5f,0.8f));
 
 
-            if (Projectile.timeLeft < 80)
+            if (Projectile.timeLeft < 40)
             {
-                var nearestNPC = Main.npc.Where(n => n.active && n.CanBeChasedBy() && n.Distance(Projectile.Center) < 500).OrderBy(n => n.Distance(Projectile.Center)).FirstOrDefault();
+                var nearestNPC = Main.npc.Where(n => n.active && n.CanBeChasedBy() && n.Distance(Projectile.Center) < 700).OrderBy(n => n.Distance(Projectile.Center)).FirstOrDefault();
                 if (nearestNPC != default)
                 {
                     Vector2 direction = Projectile.DirectionTo(nearestNPC.Center);

@@ -106,7 +106,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
         public override void AI()
         {
             if (color == Color.White)
-                color = Main.hslToRgb(Main.rand.NextFloat(), Main.rand.NextFloat(0.65f, 1f), Main.rand.NextFloat(0.3f,0.8f));
+                color = Main.hslToRgb(Main.rand.NextFloat(), Main.rand.NextFloat(0.65f, 1f), Main.rand.NextFloat(0.5f,0.8f));
 
             Projectile.velocity *= 1.01f;
 

@@ -3,12 +3,11 @@
 //Sellprice
 //Rarity
 //Description
-//Chain drawing
-//Disable mount while flipping
 //Make the player's hand point towards the harpoon
 //Move the origin up while spiking in
 //Implement more safeguards
 //Visuals
+//Sound effects
 
 using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
@@ -372,6 +371,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                 storedBodyRotation += 0.3f * Player.direction;
                 Player.fullRotation = storedBodyRotation;
                 Player.fullRotationOrigin = Player.Size / 2;
+                Player.mount?.Dismount(Player);
             }
             if (Player.velocity.Y == 0)
             {

@@ -27,9 +27,9 @@ namespace JadeFables.Items.Jade.JadeChunk
             Item.width = 24;
             Item.height = 24;
 
-            Item.value = Item.sellPrice(silver: 2);
-            Item.rare = ItemRarityID.Blue;
             Item.maxStack = 999;
+            Item.value = Item.sellPrice(silver: 35);
+            Item.rare = ItemRarityID.Blue;
         }
 
         public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)

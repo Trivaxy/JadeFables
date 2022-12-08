@@ -23,8 +23,8 @@ namespace JadeFables.Items.Potions
             Item.useTime = 17;
             Item.useTurn = true;
 
-            Item.rare = ItemRarityID.Blue;
             Item.value = Item.sellPrice(silver: 2);
+            Item.rare = ItemRarityID.Blue;
 
             Item.consumable = true;
             Item.buffType = (ModContent.BuffType<Buffs.HeartbeatBuff>());

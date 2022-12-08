@@ -16,7 +16,7 @@ namespace JadeFables.Items.Critters
             Item.height = 24;
 
             Item.maxStack = 999; //change after labor of love
-            Item.value = Item.sellPrice(silver: 5);
+            Item.value = Item.sellPrice(silver: 3);
             Item.rare = ItemRarityID.Blue;
         }
     }

@@ -32,9 +32,12 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 			Item.width = 24;
 			Item.height = 28;
 			Item.accessory = true;
-		}
 
-		public override void UpdateAccessory(Player player, bool hideVisual)
+            Item.value = Item.sellPrice(gold: 1);
+            Item.rare = ItemRarityID.Blue;
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
 		{
 			player.GetModPlayer<FireworkPackPlayer>().equipped = true;
 		}

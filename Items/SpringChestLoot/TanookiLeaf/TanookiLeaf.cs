@@ -28,9 +28,12 @@ namespace JadeFables.Items.SpringChestLoot.TanookiLeaf
 			Item.height = 28;
 			Item.accessory = true;
             Item.canBePlacedInVanityRegardlessOfConditions = true;
-		}
 
-		public override void UpdateAccessory(Player player, bool hideVisual)
+            Item.value = Item.sellPrice(gold: 1);
+            Item.rare = ItemRarityID.Blue;
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
 		{
             player.GetModPlayer<TanookiLeafPlayer>().equipped = true;
             player.jumpSpeedBoost += Math.Min(Math.Abs(player.velocity.X) * 0.7f, 5);

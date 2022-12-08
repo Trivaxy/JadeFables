@@ -44,14 +44,15 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.knockBack = 1;
-            Item.rare = ItemRarityID.Blue;
-            Item.value = Item.sellPrice(0, 0, 40, 0);
             Item.channel = true;
             Item.shoot = ProjectileType<JadeHarpoonHook>();
             Item.shootSpeed = 30f;
             Item.autoReuse = false;
             Item.useTurn = true;
             Item.channel = true;
+
+            Item.value = Item.sellPrice(silver: 45);
+            Item.rare = ItemRarityID.Blue;
         }
 
         public override bool CanUseItem(Player player)

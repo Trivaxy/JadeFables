@@ -72,7 +72,9 @@ namespace JadeFables.Tiles.JadeFountain
             Item.createTile = ModContent.TileType<JadeFountain>();
             Item.width = 10;
             Item.height = 24;
-            Item.value = 500;
+
+            Item.value = Item.sellPrice(silver: 80);
+            Item.rare = ItemRarityID.Blue;
         }
     }
 }

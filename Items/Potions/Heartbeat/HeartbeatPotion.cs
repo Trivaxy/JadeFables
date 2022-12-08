@@ -1,6 +1,6 @@
 ﻿using Terraria.ID;
 
-namespace JadeFables.Items.Potions
+namespace JadeFables.Items.Potions.Heartbeat
 {
     public class HeartbeatPotion : ModItem
     {
@@ -8,7 +8,7 @@ namespace JadeFables.Items.Potions
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Heartbeat Potion");
-            Tooltip.SetDefault("Increases life restored by heart pickups");
+            Tooltip.SetDefault("Heart pickups turn into larger hearts, which heal more");
             ItemID.Sets.DrinkParticleColors[Item.type] = new Color[3] { new Color(150, 0, 0), new Color(100, 0, 0), new Color(50, 0, 0) }; //change the color when the item sprite is done
         }
 
@@ -27,7 +27,7 @@ namespace JadeFables.Items.Potions
             Item.rare = ItemRarityID.Blue;
 
             Item.consumable = true;
-            Item.buffType = (ModContent.BuffType<Buffs.HeartbeatBuff>());
+            Item.buffType = (ModContent.BuffType<HeartbeatBuff>());
             Item.buffTime = 21600;
 
             Item.UseSound = SoundID.Item3;

@@ -11,7 +11,7 @@ namespace JadeFables.Items.Potions.Heartbeat
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Heartbeat");
-            Description.SetDefault("Increases life restored by heart pickups");
+            Description.SetDefault("Heart pickups are replaced by big hearts");
             Main.buffNoSave[Type] = true;
         }
     }

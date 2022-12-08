@@ -23,10 +23,13 @@ namespace JadeFables.NPCs
         {
             if (spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>())) 
             {
-                pool[NPCID.GreenDragonfly] = 35f;
-                pool[NPCID.RedDragonfly] = 35f;
-                pool[NPCID.BlueDragonfly] = 35f;
-                pool[NPCID.YellowDragonfly] = 35f;
+                if (!spawnInfo.Water)
+                {
+                    pool[NPCID.GreenDragonfly] = 35f;
+                    pool[NPCID.RedDragonfly] = 35f;
+                    pool[NPCID.BlueDragonfly] = 35f;
+                    pool[NPCID.YellowDragonfly] = 35f;
+                }
             }
         }
     }

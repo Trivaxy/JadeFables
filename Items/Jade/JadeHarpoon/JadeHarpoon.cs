@@ -29,7 +29,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Jade Harpoon");
-            Tooltip.SetDefault("update later");
+            Tooltip.SetDefault("Hook yourself onto enemies and bounce off of them");
         }
 
         public override void SetDefaults()

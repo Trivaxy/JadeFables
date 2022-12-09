@@ -79,7 +79,13 @@ namespace JadeFables.Tiles.JadeGrass
 
             public string texturePath;
 
+            public float swaySpeed = 0.01f;
+
+            public float sway;
+
             public int height;
+
+            public float springiness = 0.02f;
 
             public Vector2 scale = Vector2.One;
 
@@ -93,6 +99,7 @@ namespace JadeFables.Tiles.JadeGrass
 
             public void Update(Vector2 startPoint)
             {
+                sway += swaySpeed;
                 startPoint += offset;
                 Vector2 endPoint = startPoint + (rotation.ToRotationVector2() * height * scale.Y);
                 var collider = Main.player.Where(n => n.active && !n.dead && Collision.CheckAABBvLineCollision(n.position, n.Hitbox.Size(), startPoint, endPoint)).FirstOrDefault();
@@ -103,7 +110,7 @@ namespace JadeFables.Tiles.JadeGrass
                     rotation = MathHelper.Clamp(rotation, -3.14f, 0f);
                 }
 
-                rotation = MathHelper.Lerp(rotation, originalRotation, 0.02f);
+                rotation = MathHelper.Lerp(rotation, originalRotation + (0.15f * (float)Math.Sin(sway)), springiness);
             }
 
             public JadeGrassBlade() { }
@@ -161,8 +168,10 @@ namespace JadeFables.Tiles.JadeGrass
                         blade.height = 14;
                         break;
                 }
+                blade.springiness = Main.rand.NextFloat(0.01f, 0.03f);
                 blade.offset = Main.rand.NextVector2Circular(16, 4) + new Vector2(8, 20);
                 blade.scale = Vector2.One;
+                blade.swaySpeed = Main.rand.NextFloat(0.01f, 0.03f);
                 blades.Add(blade);
             }
         }

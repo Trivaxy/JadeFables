@@ -130,12 +130,39 @@ namespace JadeFables.Tiles.JadeGrass
         {
             for (int i = 0; i < 3; i++)
             {
+                int texNum = Main.rand.Next(1, 9);
                 JadeGrassBlade blade = new JadeGrassBlade();
                 blade.originalRotation = Main.rand.NextFloat(-0.2f, 0.2f) - 1.57f;
-                blade.texturePath = Texture;
-                blade.height = 32;
+                blade.texturePath = Texture + texNum.ToString();
+                switch (texNum)
+                {
+                    case 1:
+                        blade.height = 40;
+                        break;
+                    case 2:
+                        blade.height = 26;
+                        break;
+                    case 3:
+                        blade.height = 14;
+                        break;
+                    case 4:
+                        blade.height = 44;
+                        break;
+                    case 5:
+                        blade.height = 32;
+                        break;
+                    case 6:
+                        blade.height = 38;
+                        break;
+                    case 7:
+                        blade.height = 18;
+                        break;
+                    case 8:
+                        blade.height = 14;
+                        break;
+                }
                 blade.offset = Main.rand.NextVector2Circular(16, 4) + new Vector2(8, 20);
-                blade.scale = new Vector2(Main.rand.NextFloat(0.85f, 1.15f), Main.rand.NextFloat(0.3f, 1.6f));
+                blade.scale = Vector2.One;
                 blades.Add(blade);
             }
         }

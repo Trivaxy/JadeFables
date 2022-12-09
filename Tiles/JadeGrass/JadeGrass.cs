@@ -99,7 +99,7 @@ namespace JadeFables.Tiles.JadeGrass
 
                 if (collider != default)
                 {
-                    rotation += collider.velocity.X * 0.019f * Main.rand.NextFloat(0.75f, 1.25f);
+                    rotation += collider.velocity.X * (collider.wet ? 0.5f : 1) * 0.019f * (1.57f - Math.Abs(originalRotation - rotation));
                     rotation = MathHelper.Clamp(rotation, -3.14f, 0f);
                 }
 

@@ -52,7 +52,7 @@ namespace JadeFables.NPCs.Pufferfish
             NPC.lifeMax = 100;
             NPC.value = 10f;
             NPC.knockBackResist = 2.6f;
-            NPC.HitSound = SoundID.NPCHit23;
+            NPC.HitSound = SoundID.Item111 with { PitchVariance = 0.2f, Pitch = 0.4f};
             NPC.DeathSound = SoundID.NPCDeath26;
             NPC.noGravity = true;
             NPC.aiStyle = 16;

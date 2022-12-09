@@ -62,6 +62,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item156, player.Center);
             Projectile.NewProjectile(source, position, velocity, ProjectileType<JadeHarpoonHook>(), damage, knockback, player.whoAmI);
             return false;
         }

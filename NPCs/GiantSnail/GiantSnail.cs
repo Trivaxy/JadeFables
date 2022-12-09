@@ -18,11 +18,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Graphics.Effects;
 using System.Collections.Generic;
+using static Terraria.Utils;
 
 using Terraria.DataStructures;
 using Terraria.GameContent;
 
 using Terraria.Audio;
+using Terraria.Utilities;
 
 using System;
 using System.Linq;
@@ -38,6 +40,8 @@ namespace JadeFables.NPCs.GiantSnail
     {
 
         private readonly int NUMPOINTS = 100;
+
+        private readonly float SPEED = 1;
 
         protected Vector2 oldVelocity = Vector2.Zero;
         protected Vector2 moveDirection;
@@ -137,8 +141,9 @@ namespace JadeFables.NPCs.GiantSnail
                     NPC.ai[1] = 0f;
                 }
             }
-            NPC.velocity = 1 * moveDirection;
+            NPC.velocity = SPEED * moveDirection;
             NPC.velocity = Collide();
+            //NPC.velocity = Vector2.Normalize(NPC.velocity) * SPEED;
         }
 
         protected Vector2 Collide() => Collision.noSlopeCollision(NPC.position, NPC.velocity, 32, 32, true, true);
@@ -182,13 +187,25 @@ namespace JadeFables.NPCs.GiantSnail
 
         private void ManageTrail()
         {
-            trail = trail ?? new Trail(Main.instance.GraphicsDevice, NUMPOINTS, new TriangularTip(40), factor => 21, factor =>
+            trail = trail ?? new Trail(Main.instance.GraphicsDevice, NUMPOINTS * 2, new TriangularTip(40), factor => 31, factor =>
             {
                 return Lighting.GetColor((int)(NPC.Center.X / 16), (int)(NPC.Center.Y / 16));
             });
 
-            trail.Positions = cache.ToArray();
-            trail.NextPosition = NPC.Center + (segmentRotation.ToRotationVector2() * 40);
+            List<Vector2> newCache = new List<Vector2>();
+            cache.ForEach(n => newCache.Add(n));
+
+            Vector2 point = cache.Last();
+            Vector2 vel = segmentRotation.ToRotationVector2() * SPEED;
+            for (int i = 0; i < NUMPOINTS; i++)
+            {
+                float v = vel.ToRotation().AngleLerp(segmentRotation - (1.57f * initialDirection), 0.04f);
+                vel = v.ToRotationVector2() * SPEED;
+                point += vel;
+                newCache.Add(point);
+            }
+            trail.Positions = newCache.ToArray();
+            trail.NextPosition = newCache.Last() + ((segmentRotation - (1.57f * initialDirection)).ToRotationVector2() * 40);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -216,7 +233,7 @@ namespace JadeFables.NPCs.GiantSnail
             if (initialDirection == -1)
                 headOrigin.X = headTex.Width - headOrigin.X;
             Vector2 headPos = (NPC.Center) - ((NPC.rotation).ToRotationVector2() * 8);
-            Main.spriteBatch.Draw(headTex, headPos - screenPos, null, Lighting.GetColor((int)(headPos.X / 16), (int)(headPos.Y / 16)), rotation + (initialDirection == -1 ? 3.14f : 0), headOrigin, NPC.scale, initialDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
+            //Main.spriteBatch.Draw(headTex, headPos - screenPos, null, Lighting.GetColor((int)(headPos.X / 16), (int)(headPos.Y / 16)), rotation + (initialDirection == -1 ? 3.14f : 0), headOrigin, NPC.scale, initialDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
 
             Vector2 shellPos = (pos) - ((rotation + 1.57f + directionRotationOffset).ToRotationVector2() * tex.Height * 0.5f);
             Main.spriteBatch.Draw(tex, shellPos - screenPos, null, Lighting.GetColor((int)(shellPos.X / 16), (int)(shellPos.Y / 16)), rotation + (initialDirection == -1 ? 3.14f : 0), tex.Size() * new Vector2(0.5f, 0.5f), NPC.scale, initialDirection != 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);

@@ -4,8 +4,6 @@
 //Balance
 //Gores
 //Make it COWER
-//Make it not turn upside down
-//Make them not occaisionally fly off into space
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -53,6 +51,8 @@ namespace JadeFables.NPCs.GiantSnail
 
         private Vector2 climbCenter = Vector2.Zero;
 
+        private int climbHalfSize = 4;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Giant Snail");
@@ -78,7 +78,7 @@ namespace JadeFables.NPCs.GiantSnail
         {
             initialDirection = (Main.rand.Next(2) * 2) - 1;
             moveDirection = new Vector2(initialDirection, 0);
-            climbCenter = NPC.Center + new Vector2(0, (size / 2) - 16);
+            climbCenter = NPC.Center + new Vector2(0, (size / 2) - climbHalfSize).RotatedBy(initialDirection == -1 ? 3.14f : 0);
         }
 
         public override void AI()
@@ -88,11 +88,11 @@ namespace JadeFables.NPCs.GiantSnail
             ManageTrail();
             segmentRotation = ExperimentalAverage(oldRotation);
             climbCenter += NPC.velocity;
-            NPC.Center = climbCenter - new Vector2(0, (size / 2) - 16).RotatedBy(segmentRotation);
+            NPC.Center = climbCenter - new Vector2(0, (size / 2) - climbHalfSize).RotatedBy(segmentRotation + (initialDirection == -1 ? 3.14f : 0));
         }
         protected void Crawl()
         {
-            newVelocity = Collide();
+            newVelocity = Collide(2);
 
             if (Math.Abs(newVelocity.X) < 0.5f)
                 NPC.collideX = true;
@@ -147,11 +147,11 @@ namespace JadeFables.NPCs.GiantSnail
                 }
             }
             NPC.velocity = SPEED * moveDirection;
-            NPC.velocity = Collide();
+            NPC.velocity = Collide(1);
             //NPC.velocity = Vector2.Normalize(NPC.velocity) * SPEED;
         }
 
-        protected Vector2 Collide() => Collision.noSlopeCollision(climbCenter - new Vector2(16,16), NPC.velocity, 32, 32, true, true);
+        protected Vector2 Collide(float speedMult) => Collision.noSlopeCollision(climbCenter - new Vector2(climbHalfSize, climbHalfSize), NPC.velocity * speedMult, climbHalfSize * 2, climbHalfSize * 2, true, true);
 
         protected void RotateCrawl()
         {
@@ -181,7 +181,7 @@ namespace JadeFables.NPCs.GiantSnail
                     oldRotation.Add(0);
             }
             float directionRotationOffset = (initialDirection == -1 ? 3.14f : 0);
-            cache.Add(climbCenter + ((NPC.rotation + 1.57f + directionRotationOffset).ToRotationVector2() * 16));
+            cache.Add(climbCenter + ((NPC.rotation + 1.57f + directionRotationOffset).ToRotationVector2() * climbHalfSize));
             oldRotation.Add(NPC.rotation);
             while (cache.Count > NUMPOINTS)
             {

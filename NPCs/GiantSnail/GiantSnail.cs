@@ -249,6 +249,12 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 25f : 0f;
 
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            position = climbCenter + new Vector2(0, 16).RotatedBy(segmentRotation);
+            return true;
+        }
+
         private void DrawBody()
         {
             if (trail == null || trail == default)

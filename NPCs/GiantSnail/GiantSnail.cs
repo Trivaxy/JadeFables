@@ -5,9 +5,7 @@
 //Gores
 //Better hitbox
 //Make it not turn upside down
-//Reduce jank in general
 //Animations
-//Smoother collection of points
 //Make them not occaisionally fly off into space
 
 using Microsoft.Xna.Framework;
@@ -203,8 +201,10 @@ namespace JadeFables.NPCs.GiantSnail
                 point += vel;
                 newCache.Add(point);
             }
-            trail.Positions = newCache.ToArray();
-            trail.NextPosition = newCache.Last() + ((segmentRotation - (1.57f * initialDirection)).ToRotationVector2() * 40);
+
+            List<Vector2> newerCache = SmoothBezierPointRetreivalFunction(newCache, NUMPOINTS * 2, 5);
+            trail.Positions = newerCache.ToArray();
+            trail.NextPosition = newerCache.Last() + ((segmentRotation - (1.57f * initialDirection)).ToRotationVector2() * 40);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -271,6 +271,25 @@ namespace JadeFables.NPCs.GiantSnail
                 retVec += newVec;
             }
             return retVec.ToRotation();
+        }
+
+        public static List<Vector2> SmoothBezierPointRetreivalFunction(IEnumerable<Vector2> originalPositions, int totalTrailPoints, int divider)
+        {
+            List<Vector2> controlPoints = new List<Vector2>();
+            for (int i = 0; i < originalPositions.Count(); i++)
+            {
+                // Don't incorporate points that are zeroed out.
+                // They are almost certainly a result of incomplete oldPos arrays.
+                if (originalPositions.ElementAt(i) == Vector2.Zero)
+                    continue;
+
+                if (i % divider != 0)
+                    continue;
+                controlPoints.Add(originalPositions.ElementAt(i));
+            }
+
+            BezierCurve bezierCurve = new BezierCurve(controlPoints.ToArray());
+            return controlPoints.Count <= 1 ? controlPoints : bezierCurve.GetEvenlySpacedPoints(totalTrailPoints);
         }
     }
 }

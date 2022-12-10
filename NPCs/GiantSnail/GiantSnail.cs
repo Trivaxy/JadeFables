@@ -4,7 +4,6 @@
 //Balance
 //Gores
 //Better hitbox
-//Make it not geek out while turning at some angles
 //Make it not turn upside down
 //Reduce jank in general
 //Animations
@@ -83,7 +82,7 @@ namespace JadeFables.NPCs.GiantSnail
             Crawl();
             ManageCache();
             ManageTrail();
-            segmentRotation = oldRotation.Average();
+            segmentRotation = ExperimentalAverage(oldRotation);
         }
         protected void Crawl()
         {
@@ -261,6 +260,17 @@ namespace JadeFables.NPCs.GiantSnail
             trail.Render(effect);
 
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+        }
+
+        private float ExperimentalAverage(List<float> rots)
+        {
+            Vector2 retVec = Vector2.Zero;
+            foreach (float rot in rots)
+            {
+                Vector2 newVec = rot.ToRotationVector2();
+                retVec += newVec;
+            }
+            return retVec.ToRotation();
         }
     }
 }

@@ -73,8 +73,8 @@ namespace JadeFables.Biomes.JadeLake
             Cup(LowerIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 7);
 
 
-            float CONST_Start_SecondSizeMult = 0.4f;
-            float CONST_SecondSizeMult = 0.75f;
+            float CONST_Start_SecondSizeMult = 0.3f;
+            float CONST_SecondSizeMult = 0.8f;
 
             (List<Rectangle> list, int xSize, int ySize) SecondPoolsCurrent = 
                 new(new List<Rectangle>(), (int)(LowerIslandRect.Width * CONST_Start_SecondSizeMult), (int)(LowerIslandRect.Height * CONST_Start_SecondSizeMult));
@@ -115,13 +115,16 @@ namespace JadeFables.Biomes.JadeLake
             }
 
             float CONST_chance = 0.00015f;
-            float CONST_loopbackCount = 3;
-            int CONST_MinAdd = 1;
+
+            float CONST_loopbackCount = 4;
+            int CONST_MinAdd = 2;
+            int CONST_MultPerLoop = 2;
+
             //add secondary pools
             {
                 for (int h = 0; h < CONST_loopbackCount; h++)
                 {
-                        while (SecondPoolsCurrent.list.Count < CONST_MinAdd * (h + 1))
+                        while (SecondPoolsCurrent.list.Count < CONST_MinAdd + (h * CONST_MultPerLoop))
                         {
                             //iterate over biome
                             for (int i = LowerIslandRect.X; i < LowerIslandRect.X + LowerIslandRect.Width; i++)
@@ -136,18 +139,6 @@ namespace JadeFables.Biomes.JadeLake
                                             Rectangle size = new Rectangle(i, j, 0, 0);
                                             size.Inflate(SecondPoolsCurrent.xSize / 2, SecondPoolsCurrent.ySize / 2);//size.Inflade adds the value to both sides of the center
 
-                                            //int corner = 0;
-                                            //if (Main.tile[size.X, size.Y].HasTile)
-                                            //    corner++;
-                                            //if (Main.tile[size.X, size.Y + size.Height].HasTile)
-                                            //    corner++;
-                                            //if (Main.tile[size.X + size.Width, size.Y].HasTile)
-                                            //    corner++;
-                                            //if (Main.tile[size.X + size.Width, size.Y + size.Height].HasTile)
-                                            //    corner++;
-                                            //if (Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile)
-                                            //    corner += 2;
-
                                             if ((Main.tile[size.X, size.Y].HasTile || Main.tile[size.X + size.Width, size.Y].HasTile) && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile)
                                             {
                                                 //adds pool to the list
@@ -158,18 +149,90 @@ namespace JadeFables.Biomes.JadeLake
                                         }
                                     }
                                 }
+                        }
+                    int DEBUG_CONST_X_OFFSET = 250;
+
+                    //move colliding ones away from eachother
+                    for (int y = 0; y < SecondPoolsCurrent.list.Count; y++)
+                    {
+                        for (int u = 0; u < SecondPoolsPrevious.list.Count; u++)
+                        {
+                            var poolRect = SecondPoolsCurrent.list[y];
+                            var poolRect2 = SecondPoolsPrevious.list[u];
+
+                            if (y != u)
+                            {
+                                if (poolRect.Intersects(poolRect2))
+                                {
+                                    Vector2 dir = Vector2.Normalize(poolRect.Center.ToVector2() - poolRect2.Center.ToVector2()) * (new Vector2(SecondPoolsCurrent.xSize, SecondPoolsCurrent.ySize) / 4);
+                                    Point newPos1 = (poolRect.TopLeft() + dir).ToPoint();
+                                    Point newPos2 = (poolRect2.TopLeft() - dir).ToPoint();
+                                    var len = dir.Length() * 2;
+                                    for (float l = 0; l < len; l += 0.3f)
+                                    {
+                                        var pos = Vector2.Lerp(newPos1.ToVector2(), newPos2.ToVector2(), l / len);
+                                        WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y, TileID.ArgonMoss, true, true);
+                                        WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y-1, TileID.ArgonMoss, true, true);
+                                        WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y + 1, TileID.ArgonMoss, true, true);
+                                    }
+                                    WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y, TileID.XenonMoss, true, true);
+                                    WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y - 1, TileID.ArgonMoss, true, true);
+                                    WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y, TileID.XenonMoss, true, true);
+                                    WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y - 1, TileID.ArgonMoss, true, true);
+                                    SecondPoolsCurrent.list[y] = new Rectangle(newPos1.X, newPos1.Y, poolRect.Width, poolRect.Height);
+                                    SecondPoolsPrevious.list[u] = new Rectangle(newPos2.X, newPos2.Y, poolRect2.Width, poolRect2.Height);
+                                }
+                            }
+                        }
+                    }
+
+                    for (int y = 0; y < SecondPoolsCurrent.list.Count; y++)
+                    {
+                        for (int u = 0; u < SecondPoolsCurrent.list.Count; u++)
+                        {
+                            var poolRect = SecondPoolsCurrent.list[y];
+                            var poolRect2 = SecondPoolsCurrent.list[u];
+
+                            if (y != u)
+                            {
+                                if (poolRect.Intersects(poolRect2))
+                                {
+                                    Vector2 dir = Vector2.Normalize(poolRect.Center.ToVector2() - poolRect2.Center.ToVector2()) * (new Vector2(SecondPoolsCurrent.xSize, SecondPoolsCurrent.ySize) / 6);
+                                    Point newPos1 = (poolRect.TopLeft() + dir).ToPoint();
+                                    Point newPos2 = (poolRect2.TopLeft() - dir).ToPoint();
+                                    var len = dir.Length() * 2;
+                                    for (float l = 0; l < len; l += 0.3f)
+                                    {
+                                        var pos = Vector2.Lerp(newPos1.ToVector2(), newPos2.ToVector2(), l / len);
+                                        WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y, TileID.ArgonMoss, true, true);
+                                        WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y - 1, TileID.ArgonMoss, true, true);
+                                        WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y + 1, TileID.ArgonMoss, true, true);
+                                    }
+                                    WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y, TileID.XenonMoss, true, true);
+                                    WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y - 1, TileID.ArgonMoss, true, true);
+                                    WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y, TileID.XenonMoss, true, true);
+                                    WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y - 1, TileID.ArgonMoss, true, true);
+                                    SecondPoolsCurrent.list[y] = new Rectangle(newPos1.X, newPos1.Y, poolRect.Width, poolRect.Height);
+                                    SecondPoolsCurrent.list[u] = new Rectangle(newPos2.X, newPos2.Y, poolRect2.Width, poolRect2.Height);
+                                }
+                            }
+                        }
                     }
 
                     foreach (Rectangle poolRect in SecondPoolsCurrent.list)
                     {
-                        Cup(poolRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 0);
-                        FillArea(poolRect, TileID.TopazGemsparkOff + h, h);
+                        if (WholeBiomeRect.Contains(poolRect) && !poolRect.Contains(WholeBiomeRect.Center))
+                        {
+                            Cup(poolRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 0);
+                            FillArea(new Rectangle(poolRect.X - (DEBUG_CONST_X_OFFSET - 0), poolRect.Y, poolRect.Width, poolRect.Height), TileID.TopazGemsparkOff + h, h);
+                        }
                     }
 
 
                     SecondPoolsPrevious = SecondPoolsCurrent;
+                    float randomSizeMult = Main.rand.NextFloat(0.96f, 1.03f);
                     SecondPoolsCurrent = 
-                        new(new List<Rectangle>(), (int)(SecondPoolsPrevious.xSize * CONST_SecondSizeMult), (int)(SecondPoolsPrevious.ySize * CONST_SecondSizeMult));
+                        new(new List<Rectangle>(), (int)(SecondPoolsPrevious.xSize * CONST_SecondSizeMult * randomSizeMult), (int)(SecondPoolsPrevious.ySize * CONST_SecondSizeMult * randomSizeMult));
                 }
             }
 

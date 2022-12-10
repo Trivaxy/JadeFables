@@ -173,7 +173,7 @@ namespace JadeFables.NPCs.GiantSnail
                     oldRotation.Add(0);
             }
             float directionRotationOffset = (initialDirection == -1 ? 3.14f : 0);
-            cache.Add(NPC.Center + ((NPC.rotation + 1.57f + directionRotationOffset).ToRotationVector2() * 10));
+            cache.Add(NPC.Center + ((NPC.rotation + 1.57f + directionRotationOffset).ToRotationVector2() * 16));
             oldRotation.Add(NPC.rotation);
             while (cache.Count > NUMPOINTS)
             {

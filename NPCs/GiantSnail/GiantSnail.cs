@@ -98,7 +98,8 @@ namespace JadeFables.NPCs.GiantSnail
                 }
                 SPEED *= 0.92f;
             }
-            else
+
+            if (!fullyScared)
                 Crawl();
             ManageCache();
             ManageTrail();
@@ -242,7 +243,7 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (SPEED > 0.05f)
+            if (!fullyScared)
             DrawBody();
 
             float directionRotationOffset = (initialDirection == -1 ? 3.14f : 0);

@@ -35,7 +35,7 @@ namespace JadeFables.NPCs.GiantSnail
 {
     internal class GiantSnail : ModNPC
     {
-
+        private readonly int size = 100;
         private readonly int NUMPOINTS = 100;
 
         private readonly float SPEED = 1;
@@ -52,6 +52,8 @@ namespace JadeFables.NPCs.GiantSnail
         private Trail trail;
         private Player target => Main.player[NPC.target];
 
+        private Vector2 climbCenter = Vector2.Zero;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Giant Snail");
@@ -59,8 +61,8 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override void SetDefaults()
         {
-            NPC.width = 32;
-            NPC.height = 32;
+            NPC.width = size;
+            NPC.height = size;
             NPC.damage = 30;
             NPC.defense = 5;
             NPC.lifeMax = 1000;
@@ -71,8 +73,13 @@ namespace JadeFables.NPCs.GiantSnail
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
             initialDirection = (Main.rand.Next(2) * 2) - 1;
             moveDirection = new Vector2(initialDirection, 0);
+            climbCenter = NPC.Center + new Vector2(0, (size / 2) - 16);
         }
 
         public override void AI()
@@ -81,6 +88,8 @@ namespace JadeFables.NPCs.GiantSnail
             ManageCache();
             ManageTrail();
             segmentRotation = ExperimentalAverage(oldRotation);
+            climbCenter += NPC.velocity;
+            NPC.Center = climbCenter - new Vector2(0, (size / 2) - 16).RotatedBy(segmentRotation);
         }
         protected void Crawl()
         {
@@ -143,7 +152,7 @@ namespace JadeFables.NPCs.GiantSnail
             //NPC.velocity = Vector2.Normalize(NPC.velocity) * SPEED;
         }
 
-        protected Vector2 Collide() => Collision.noSlopeCollision(NPC.position, NPC.velocity, 32, 32, true, true);
+        protected Vector2 Collide() => Collision.noSlopeCollision(climbCenter - new Vector2(16,16), NPC.velocity, 32, 32, true, true);
 
         protected void RotateCrawl()
         {
@@ -167,13 +176,13 @@ namespace JadeFables.NPCs.GiantSnail
                 oldRotation = new List<float>();
                 for (int i = 0; i < NUMPOINTS; i++)
                 {
-                    cache.Add(NPC.Center);
+                    cache.Add(climbCenter);
                 }
                 for (int i = 0; i < NUMPOINTS / 2; i++)
                     oldRotation.Add(0);
             }
             float directionRotationOffset = (initialDirection == -1 ? 3.14f : 0);
-            cache.Add(NPC.Center + ((NPC.rotation + 1.57f + directionRotationOffset).ToRotationVector2() * 16));
+            cache.Add(climbCenter + ((NPC.rotation + 1.57f + directionRotationOffset).ToRotationVector2() * 16));
             oldRotation.Add(NPC.rotation);
             while (cache.Count > NUMPOINTS)
             {
@@ -186,7 +195,7 @@ namespace JadeFables.NPCs.GiantSnail
         {
             trail = trail ?? new Trail(Main.instance.GraphicsDevice, NUMPOINTS * 2, new TriangularTip(40), factor => 31, factor =>
             {
-                return Lighting.GetColor((int)(NPC.Center.X / 16), (int)(NPC.Center.Y / 16));
+                return Lighting.GetColor((int)(climbCenter.X / 16), (int)(climbCenter.Y / 16));
             });
 
             List<Vector2> newCache = new List<Vector2>();
@@ -226,12 +235,12 @@ namespace JadeFables.NPCs.GiantSnail
 
             float rotation = segmentRotation;
 
-            Texture2D headTex = ModContent.Request<Texture2D>(Texture + "_Head").Value;
-            Vector2 headOrigin = headTex.Size() * new Vector2(0f, 0.71f);
+            //Texture2D headTex = ModContent.Request<Texture2D>(Texture + "_Head").Value;
+            //Vector2 headOrigin = headTex.Size() * new Vector2(0f, 0.71f);
 
-            if (initialDirection == -1)
-                headOrigin.X = headTex.Width - headOrigin.X;
-            Vector2 headPos = (NPC.Center) - ((NPC.rotation).ToRotationVector2() * 8);
+            //if (initialDirection == -1)
+            //    headOrigin.X = headTex.Width - headOrigin.X;
+           // Vector2 headPos = (NPC.Center) - ((NPC.rotation).ToRotationVector2() * 8);
             //Main.spriteBatch.Draw(headTex, headPos - screenPos, null, Lighting.GetColor((int)(headPos.X / 16), (int)(headPos.Y / 16)), rotation + (initialDirection == -1 ? 3.14f : 0), headOrigin, NPC.scale, initialDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
 
             Vector2 shellPos = (pos) - ((rotation + 1.57f + directionRotationOffset).ToRotationVector2() * tex.Height * 0.5f);

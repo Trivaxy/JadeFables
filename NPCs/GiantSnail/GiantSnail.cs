@@ -3,9 +3,8 @@
 //Banners
 //Balance
 //Gores
-//Better hitbox
+//Make it COWER
 //Make it not turn upside down
-//Animations
 //Make them not occaisionally fly off into space
 
 using Microsoft.Xna.Framework;

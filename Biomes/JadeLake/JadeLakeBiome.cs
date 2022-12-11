@@ -6,6 +6,8 @@
 
         public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/JadeBiomeMusic");
 
+        public override string MapBackground => "JadeFables/Biomes/JadeLake/JadeBG";
+
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Jade Lake");

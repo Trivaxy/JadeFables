@@ -27,6 +27,7 @@ using JadeFables.Core;
 using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
 using JadeFables.Biomes.JadeLake;
+using Terraria.GameContent.Bestiary;
 
 namespace JadeFables.NPCs.GiantSnail
 {
@@ -76,6 +77,15 @@ namespace JadeFables.NPCs.GiantSnail
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.behindTiles = true;
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                JadeSpawnConditions.JadeSprings,
+                new FlavorTextBestiaryInfoElement("[PH] Snale")
+            });
         }
 
         public override void OnSpawn(IEntitySource source)
@@ -243,8 +253,15 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (NPC.IsABestiaryIconDummy)
+            {
+                Texture2D previewTex = ModContent.Request<Texture2D>(Texture + "_Preview").Value;
+                Main.spriteBatch.Draw(previewTex, NPC.Center - screenPos, null, Color.White, 0, previewTex.Size() / 2, NPC.scale, SpriteEffects.None, 0f);
+                return false;
+            }
+
             if (!fullyScared)
-            DrawBody();
+                DrawBody();
 
             float directionRotationOffset = (initialDirection == -1 ? 3.14f : 0);
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;

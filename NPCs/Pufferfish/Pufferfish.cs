@@ -26,6 +26,7 @@ using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
 using JadeFables.Biomes.JadeLake;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.GameContent.Bestiary;
 
 namespace JadeFables.NPCs.Pufferfish
 {
@@ -58,6 +59,15 @@ namespace JadeFables.NPCs.Pufferfish
             NPC.noGravity = true;
             NPC.aiStyle = 16;
             AIType = NPCID.Goldfish;
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                JadeSpawnConditions.JadeSprings,
+                new FlavorTextBestiaryInfoElement("[PH] Pufferfish")
+            });
         }
 
         public override void AI()

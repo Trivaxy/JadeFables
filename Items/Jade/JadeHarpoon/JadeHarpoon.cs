@@ -298,6 +298,12 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             return base.CanHitNPC(target);
         }
 
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (launching && !spinning)
+                damage = (int)MathHelper.Lerp(damage, damage * 2, owner.velocity.Length() / 20f);
+        }
+
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float point = 0;

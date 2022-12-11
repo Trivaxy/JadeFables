@@ -27,6 +27,8 @@ using static System.Formats.Asn1.AsnWriter;
 using JadeFables.Biomes.JadeLake;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Bestiary;
+using Humanizer;
+using System.Reflection;
 
 namespace JadeFables.NPCs.Pufferfish
 {
@@ -66,15 +68,13 @@ namespace JadeFables.NPCs.Pufferfish
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 JadeSpawnConditions.JadeSprings,
-                new FlavorTextBestiaryInfoElement("[PH] Pufferfish")
+                new FlavorTextBestiaryInfoElement("Despite being a popular meal in some places, messing with this timid vertebrate is not the wisest decision, as it will bloat up in an attempt to inject you with its dangerous venom. Otherwise, they’re quite friendly!")
             });
         }
-
         public override void AI()
         {
             NPC.spriteDirection = Math.Sign(-NPC.velocity.X);
             frameCounter++;
-
             int threshhold = 4;
 
             if (xFrame == 1)

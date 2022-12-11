@@ -63,7 +63,7 @@ namespace JadeFables.NPCs.Koi
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 JadeSpawnConditions.JadeSprings,
-                new FlavorTextBestiaryInfoElement("[PH] Koi")
+                new FlavorTextBestiaryInfoElement("Larger than most of its kind, but still quite peaceful! Let's just hope it doesn't get hungry while you're around...")
             });
         }
 

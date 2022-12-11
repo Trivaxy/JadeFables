@@ -25,6 +25,7 @@ using JadeFables.Core;
 using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
 using JadeFables.Biomes.JadeLake;
+using Terraria.GameContent.ItemDropRules;
 
 namespace JadeFables.NPCs.Pufferfish
 {
@@ -146,6 +147,11 @@ namespace JadeFables.NPCs.Pufferfish
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 150f : 0f;
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Spine.SpineItem>(), 2));
+        }
     }
 
     internal class PufferfishProj : ModProjectile

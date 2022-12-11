@@ -37,7 +37,7 @@ namespace JadeFables.Core
 
 		public void Unload()
 		{
-			WaterAddonHandler.addons.Remove(this);
+			
 		}
 	}
 
@@ -60,6 +60,7 @@ namespace JadeFables.Core
 
 		public override void Unload()
 		{
+			addons.Clear();
 			addons = null;
 			activeAddon = null;
 		}

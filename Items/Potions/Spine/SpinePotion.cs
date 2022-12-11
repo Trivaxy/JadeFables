@@ -51,6 +51,7 @@ namespace JadeFables.Items.Potions.Spine
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spine");
+            
         }
 
         public override void SetDefaults()
@@ -61,6 +62,21 @@ namespace JadeFables.Items.Potions.Spine
             Item.maxStack = 999; //change after labor of love
             Item.value = Item.sellPrice(silver: 2);
             Item.rare = ItemRarityID.Blue;
+        }
+    }
+
+    public class SpineItemRecipes : GlobalItem
+    {
+        public override void AddRecipes()
+        {
+            Recipe.Create(ItemID.PoisonDart, 100)
+                .AddIngredient(ItemType<SpineItem>())
+                .Register();
+
+            Recipe.Create(ItemID.PoisonedKnife, 50)
+                .AddIngredient(ItemID.ThrowingKnife, 50)
+                .AddIngredient(ItemType<SpineItem>())
+                .Register();
         }
     }
 

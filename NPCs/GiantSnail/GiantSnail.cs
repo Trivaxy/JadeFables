@@ -3,10 +3,7 @@
 //Banners
 //Balance
 //Gores
-//Better hitbox
-//Make it not turn upside down
-//Animations
-//Make them not occaisionally fly off into space
+//Clean up scared transition
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -35,10 +32,10 @@ namespace JadeFables.NPCs.GiantSnail
 {
     internal class GiantSnail : ModNPC
     {
-
+        private readonly int size = 75;
         private readonly int NUMPOINTS = 100;
 
-        private readonly float SPEED = 1;
+        private float SPEED = 1;
 
         protected Vector2 oldVelocity = Vector2.Zero;
         protected Vector2 moveDirection;
@@ -52,6 +49,14 @@ namespace JadeFables.NPCs.GiantSnail
         private Trail trail;
         private Player target => Main.player[NPC.target];
 
+        private Vector2 climbCenter = Vector2.Zero;
+
+        private int climbHalfSize = 4;
+
+        private bool scared => NPC.life < NPC.lifeMax / 4;
+
+        private bool fullyScared = false;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Giant Snail");
@@ -59,8 +64,8 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override void SetDefaults()
         {
-            NPC.width = 32;
-            NPC.height = 32;
+            NPC.width = size;
+            NPC.height = size;
             NPC.damage = 30;
             NPC.defense = 5;
             NPC.lifeMax = 1000;
@@ -68,23 +73,52 @@ namespace JadeFables.NPCs.GiantSnail
             NPC.knockBackResist = 2.6f;
             NPC.HitSound = SoundID.NPCHit23;
             NPC.DeathSound = SoundID.NPCDeath26;
-            NPC.noGravity = true;
-            NPC.noTileCollide = true;
+            NPC.noGravity = false;
+            NPC.noTileCollide = false;
             NPC.behindTiles = true;
+        }
+
+        public override void OnSpawn(IEntitySource source)
+        {
             initialDirection = (Main.rand.Next(2) * 2) - 1;
             moveDirection = new Vector2(initialDirection, 0);
+            climbCenter = NPC.Center + new Vector2(0, (size / 2) - climbHalfSize).RotatedBy(initialDirection == -1 ? 3.14f : 0);
         }
 
         public override void AI()
         {
-            Crawl();
+            if (scared)
+            {
+                if (SPEED < 0.05f && !fullyScared)
+                {
+                    fullyScared = true;
+                    Projectile proj = Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<GiantSnailDamager>(), 55, 3, NPC.target);
+                    (proj.ModProjectile as GiantSnailDamager).parent = NPC;
+                    NPC.velocity = Vector2.Zero;
+                }
+                SPEED *= 0.92f;
+            }
+
+            if (!fullyScared)
+                Crawl();
             ManageCache();
             ManageTrail();
-            segmentRotation = ExperimentalAverage(oldRotation);
+
+            if (!fullyScared)
+            {
+                segmentRotation = ExperimentalAverage(oldRotation);
+                climbCenter += NPC.velocity;
+                NPC.Center = climbCenter - new Vector2(0, (size / 2) - climbHalfSize).RotatedBy(segmentRotation + (initialDirection == -1 ? 3.14f : 0));
+            }
+            else
+            {
+                segmentRotation += NPC.velocity.Length() * 0.005f * Math.Sign(NPC.velocity.X);
+                climbCenter = NPC.Center + new Vector2(0, (size / 2) - climbHalfSize).RotatedBy(segmentRotation + (initialDirection == -1 ? 3.14f : 0));
+            }
         }
         protected void Crawl()
         {
-            newVelocity = Collide();
+            newVelocity = Collide(2);
 
             if (Math.Abs(newVelocity.X) < 0.5f)
                 NPC.collideX = true;
@@ -139,11 +173,11 @@ namespace JadeFables.NPCs.GiantSnail
                 }
             }
             NPC.velocity = SPEED * moveDirection;
-            NPC.velocity = Collide();
+            NPC.velocity = Collide(1);
             //NPC.velocity = Vector2.Normalize(NPC.velocity) * SPEED;
         }
 
-        protected Vector2 Collide() => Collision.noSlopeCollision(NPC.position, NPC.velocity, 32, 32, true, true);
+        protected Vector2 Collide(float speedMult) => Collision.noSlopeCollision(climbCenter - new Vector2(climbHalfSize, climbHalfSize), NPC.velocity * speedMult, climbHalfSize * 2, climbHalfSize * 2, true, true);
 
         protected void RotateCrawl()
         {
@@ -167,13 +201,13 @@ namespace JadeFables.NPCs.GiantSnail
                 oldRotation = new List<float>();
                 for (int i = 0; i < NUMPOINTS; i++)
                 {
-                    cache.Add(NPC.Center);
+                    cache.Add(climbCenter);
                 }
                 for (int i = 0; i < NUMPOINTS / 2; i++)
                     oldRotation.Add(0);
             }
             float directionRotationOffset = (initialDirection == -1 ? 3.14f : 0);
-            cache.Add(NPC.Center + ((NPC.rotation + 1.57f + directionRotationOffset).ToRotationVector2() * 10));
+            cache.Add(climbCenter + ((NPC.rotation + 1.57f + directionRotationOffset).ToRotationVector2() * climbHalfSize * SPEED));
             oldRotation.Add(NPC.rotation);
             while (cache.Count > NUMPOINTS)
             {
@@ -186,7 +220,7 @@ namespace JadeFables.NPCs.GiantSnail
         {
             trail = trail ?? new Trail(Main.instance.GraphicsDevice, NUMPOINTS * 2, new TriangularTip(40), factor => 31, factor =>
             {
-                return Lighting.GetColor((int)(NPC.Center.X / 16), (int)(NPC.Center.Y / 16));
+                return Lighting.GetColor((int)(climbCenter.X / 16), (int)(climbCenter.Y / 16));
             });
 
             List<Vector2> newCache = new List<Vector2>();
@@ -209,6 +243,7 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (!fullyScared)
             DrawBody();
 
             float directionRotationOffset = (initialDirection == -1 ? 3.14f : 0);
@@ -226,20 +261,30 @@ namespace JadeFables.NPCs.GiantSnail
 
             float rotation = segmentRotation;
 
-            Texture2D headTex = ModContent.Request<Texture2D>(Texture + "_Head").Value;
-            Vector2 headOrigin = headTex.Size() * new Vector2(0f, 0.71f);
+            //Texture2D headTex = ModContent.Request<Texture2D>(Texture + "_Head").Value;
+            //Vector2 headOrigin = headTex.Size() * new Vector2(0f, 0.71f);
 
-            if (initialDirection == -1)
-                headOrigin.X = headTex.Width - headOrigin.X;
-            Vector2 headPos = (NPC.Center) - ((NPC.rotation).ToRotationVector2() * 8);
+            //if (initialDirection == -1)
+            //    headOrigin.X = headTex.Width - headOrigin.X;
+            // Vector2 headPos = (NPC.Center) - ((NPC.rotation).ToRotationVector2() * 8);
             //Main.spriteBatch.Draw(headTex, headPos - screenPos, null, Lighting.GetColor((int)(headPos.X / 16), (int)(headPos.Y / 16)), rotation + (initialDirection == -1 ? 3.14f : 0), headOrigin, NPC.scale, initialDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
 
-            Vector2 shellPos = (pos) - ((rotation + 1.57f + directionRotationOffset).ToRotationVector2() * tex.Height * 0.5f);
+            float offsetLength = tex.Height * MathHelper.Lerp(0.35f, 0.5f, SPEED);
+            Vector2 shellPos = (pos) - ((rotation + 1.57f + directionRotationOffset).ToRotationVector2() * offsetLength);
+
+            if (scared)
+                shellPos = Vector2.Lerp(shellPos, NPC.Center, 1 - SPEED) + Main.rand.NextVector2Circular(2 - SPEED, 2 - SPEED);
             Main.spriteBatch.Draw(tex, shellPos - screenPos, null, Lighting.GetColor((int)(shellPos.X / 16), (int)(shellPos.Y / 16)), rotation + (initialDirection == -1 ? 3.14f : 0), tex.Size() * new Vector2(0.5f, 0.5f), NPC.scale, initialDirection != 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0);
             return false;
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 25f : 0f;
+
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            position = climbCenter + new Vector2(0, 16).RotatedBy(segmentRotation);
+            return true;
+        }
 
         private void DrawBody()
         {
@@ -290,6 +335,43 @@ namespace JadeFables.NPCs.GiantSnail
 
             BezierCurve bezierCurve = new BezierCurve(controlPoints.ToArray());
             return controlPoints.Count <= 1 ? controlPoints : bezierCurve.GetEvenlySpacedPoints(totalTrailPoints);
+        }
+    }
+
+    internal class GiantSnailDamager : ModProjectile
+    {
+        public NPC parent;
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Giant Snail");
+        }
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 75;
+            Projectile.height = 75;
+            Projectile.tileCollide = false;
+            Projectile.friendly = true;
+            Projectile.penetrate = -1;
+            Projectile.hide = true;
+        }
+
+        public override void AI()
+        {
+            if (parent.active)
+            {
+                Projectile.timeLeft = 2;
+                Projectile.Center = parent.Center;
+            }
+            else
+                Projectile.active = false;
+        }
+
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (parent.velocity.Length() < 4 || target == parent)
+                return false;
+            return base.CanHitNPC(target);
         }
     }
 }

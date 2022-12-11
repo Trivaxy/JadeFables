@@ -25,6 +25,7 @@ using JadeFables.Core;
 using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
 using JadeFables.Biomes.JadeLake;
+using Terraria.GameContent.Bestiary;
 
 namespace JadeFables.NPCs.Koi
 {
@@ -55,6 +56,15 @@ namespace JadeFables.NPCs.Koi
             NPC.noGravity = true;
             NPC.aiStyle = 16;
             AIType = NPCID.Goldfish;
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                JadeSpawnConditions.JadeSprings,
+                new FlavorTextBestiaryInfoElement("Larger than most of its kind, but still quite peaceful! Let's just hope it doesn't get hungry while you're around...")
+            });
         }
 
         public override void AI()

@@ -84,7 +84,7 @@ namespace JadeFables.NPCs.GiantSnail
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 JadeSpawnConditions.JadeSprings,
-                new FlavorTextBestiaryInfoElement("[PH] Snale")
+                new FlavorTextBestiaryInfoElement("This mythical bottom feeder scoops up its prey using its wide, gaping jaws, retreating to the safety of its shell when provoked. best to avoid getting too close, or it might be the last thing you do…")
             });
         }
 

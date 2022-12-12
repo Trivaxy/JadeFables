@@ -174,7 +174,7 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
         public override bool PreAI(Projectile projectile)
         {
             inRadius = false;
-            if (projectile.friendly || projectile.type == ModContent.ProjectileType<HourglassProj>())
+            if (projectile.friendly || projectile.type == ModContent.ProjectileType<HourglassProj>() || !projectile.hostile)
                 return true;
 
             var hourglass = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<HourglassProj>() && (n.ModProjectile as HourglassProj).activated && n.Distance(projectile.Center) < 200).OrderBy(n => n.Distance(projectile.Center)).FirstOrDefault();

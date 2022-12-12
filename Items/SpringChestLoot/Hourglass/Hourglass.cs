@@ -171,7 +171,7 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
             if (hourglass != default)
             {
                 inRadius = true;
-                aiTicker = MathHelper.Lerp(0.25f, 1f, hourglass.Distance(projectile.Center) / 200f);
+                aiTicker = MathHelper.Lerp(0.125f, 1f, hourglass.Distance(projectile.Center) / 200f);
             }
             else
                 return true;

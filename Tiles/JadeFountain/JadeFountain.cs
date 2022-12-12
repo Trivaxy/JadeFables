@@ -1,3 +1,6 @@
+using System.Reflection;
+using JadeFables.Biomes.JadeLake;
+using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
@@ -9,10 +12,13 @@ using Terraria.ObjectData;
 
 namespace JadeFables.Tiles.JadeFountain
 {
-    public class JadeFountain : ModTile
-    {
-        public override void SetStaticDefaults()
-        {
+    public class JadeFountain : ModTile {
+        public static Delegate SetActiveFountain;
+
+        public override void SetStaticDefaults() {
+            //Mostly everything in SceneMetrics is public, EXCEPT the one thing I need to use :(
+            SetActiveFountain = typeof(SceneMetrics).GetProperty(nameof(SceneMetrics.ActiveFountainColor), BindingFlags.Instance | BindingFlags.Public)!.GetSetMethod(true)!.CreateDelegate<Action<int>>(Main.SceneMetrics);
+
             Main.tileFrameImportant[Type] = true;
             Main.tileSolid[Type] = false;
             TileObjectData.newTile.Height = 4;
@@ -63,6 +69,11 @@ namespace JadeFables.Tiles.JadeFountain
         public override void AnimateIndividualTile(int type, int i, int j, ref int frameXOffset, ref int frameYOffset) {
             Tile tile = Main.tile[i, j];
 
+            //Sparkle every now and then
+            if (tile.TileFrameX % 3 * 18 == 0 && tile.TileFrameY % 4 * 18 == 0 && (Lighting.NotRetro ? Main.rand.NextBool(200) : Main.rand.NextBool(200 * 4))) {
+                Dust.NewDust(new Vector2(i * 16, (j + 1) * 16), 3, 3, DustID.TreasureSparkle, Main.rand.NextFloat(-0.1f, 0.1f), Main.rand.NextFloat(-0.1f, 0.1f));
+            }
+
             //Only animate when activated
             if (tile.TileFrameX == 3 * 18 && tile.TileFrameY % 4 * 18 == 0) {
                 ref int frame = ref Main.tileFrame[type];
@@ -77,6 +88,15 @@ namespace JadeFables.Tiles.JadeFountain
                 }
 
             }
+        }
+
+        public override void NearbyEffects(int i, int j, bool closer) {
+            if (!closer || Main.tile[i, j].TileFrameX < 18 * 3) {
+                return;
+            }
+
+            GetInstance<JadeLakeSystem>().forceLakeAesthetic = true;
+            SetActiveFountain.DynamicInvoke(GetInstance<JadeLakeWaterStyle>().Slot);
         }
     }
     internal class JadeFountainItem : ModItem

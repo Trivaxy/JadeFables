@@ -492,12 +492,13 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
     public class JadeHarpoonGlow : ModDust
     {
+        static Terraria.Graphics.Shaders.ArmorShaderData? glowDustShader;
         public override void OnSpawn(Dust dust)
         {
             dust.noGravity = true;
             dust.frame = new Rectangle(0, 0, 64, 64);
 
-            dust.shader = new Terraria.Graphics.Shaders.ArmorShaderData(new Ref<Effect>(JadeFables.Instance.Assets.Request<Effect>("Effects/GlowingDust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "GlowingDustPass");
+            dust.shader = glowDustShader ??= new Terraria.Graphics.Shaders.ArmorShaderData(new Ref<Effect>(JadeFables.Instance.Assets.Request<Effect>("Effects/GlowingDust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "GlowingDustPass");
             int a = 1;
         }
 

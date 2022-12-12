@@ -30,8 +30,8 @@ namespace JadeFables.Items.Jade.JadeKunai
             Item.autoReuse = true;
 
             Item.DamageType = DamageClass.Throwing;
-            Item.damage = 8;
-            Item.knockBack = 5f;
+            Item.damage = 19;
+            Item.knockBack = 3f;
             Item.crit = 4;
 
             Item.shoot = ProjectileType<JadeKunaiProjectile>();
@@ -73,10 +73,10 @@ namespace JadeFables.Items.Jade.JadeKunai
             {
                 directionToMouse = shoulderPos.DirectionTo(Main.MouseWorld);
             }
-
+            float arc = MathHelper.TwoPi * 0.66f;
             float mouseRot = directionToMouse.ToRotation();
             float rotFunc = MathF.Sin(MathF.Pow((float)player.itemAnimation / player.itemAnimationMax, 5) * 1.095f);
-            float armRotation = mouseRot + swingDirection * (MathHelper.Pi * rotFunc - MathHelper.PiOver2);
+            float armRotation = mouseRot + swingDirection * (arc * rotFunc - arc * 0.5f);
 
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armRotation - MathHelper.PiOver2);
 
@@ -87,6 +87,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 if (rotFunc < 0.45f)
                 {
                     lastShotKunai.velocity = directionToMouse * lastShotKunai.velocity.Length();
+                    lastShotKunai.Center = shoulderPos + directionToMouse * armLen;
                     lastShotKunai.tileCollide = true;
                     lastShotKunai = null;
                 }
@@ -120,7 +121,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             Projectile.hostile = false;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 600;
+            Projectile.timeLeft = 3000;
             Projectile.extraUpdates = 2;
 
             Projectile.ignoreWater = true;
@@ -189,7 +190,14 @@ namespace JadeFables.Items.Jade.JadeKunai
         NPC? stabbedTarget;
         Vector2 sTOffset;
         float stabImpactTimer;
-        public override bool? CanHitNPC(NPC target) => !StabActive;
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (StabActive)
+            {
+                return false;
+            }
+            return null;
+        }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             stabImpactTimer = 1;
@@ -218,20 +226,13 @@ namespace JadeFables.Items.Jade.JadeKunai
                     trailCache[i] = Projectile.Center;
                 }
             }
-            else if (stabbedTarget is null)
+            else
             {
                 for (int i = 1; i < trailCache.Length; i++)
                 {
-                    trailCache[i - 1] = trailCache[i];
+                    trailCache[i - 1] = trailCache[i] + MathF.Sin(Main.GameUpdateCount * 0.2f + ((float)i / trailCache.Length) * 16f) * Vector2.UnitY * 6;
                 }
                 trailCache[^1] = Projectile.Center;
-            }
-            else
-            {
-                for (int i = 0; i < trailCache.Length; i++)
-                {
-                    trailCache[i] = trailCache[i];
-                }
             }
         }
         private float trailFadeIn = 0;

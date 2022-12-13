@@ -106,7 +106,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                 int frameHeight = (tex.Height / yFrames) / tileHeight;
                 Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * (((i / tileHeight) + frame) % yFrames)) + (frameHeight * (i % tileHeight)), tex.Width, frameHeight);
                 Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16));
-                Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             }
             return false;
         }

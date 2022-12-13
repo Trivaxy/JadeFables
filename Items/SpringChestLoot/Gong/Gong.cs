@@ -1,3 +1,13 @@
+//TODO on gong:
+//Sound effects
+//Balance
+//Sellprice
+//Rarity
+//Sprites
+//Make the gong go through tiles on it's way back
+//Visuals
+//Make it so you can only throw out one gong at once
+//Screenshake
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -14,6 +24,7 @@ using Terraria.GameContent;
 using Terraria.DataStructures;
 using CsvHelper.TypeConversion;
 using JadeFables.Core;
+using System.Reflection.Metadata;
 
 namespace JadeFables.Items.SpringChestLoot.Gong
 {
@@ -73,6 +84,13 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         readonly int MAXHITS = 3;
         int timesHit = 0;
 
+        private bool onLastHit => timesHit >= MAXHITS;
+
+        private bool embedded = false;
+        private NPC embedTarget = default;
+        private Vector2 embedOffset = Vector2.Zero;
+        private float opacity = 1;
+
         private Player owner => Main.player[Projectile.owner];
         public override void SetStaticDefaults()
         {
@@ -91,8 +109,26 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         public override void AI()
         {
-            if (timesHit > MAXHITS)
+            if (onLastHit)
+            {
+                if (embedded)
+                {
+                    Projectile.velocity = Vector2.Zero;
+                    if (embedTarget != default)
+                    {
+                        if (!embedTarget.active)
+                        {
+                            Projectile.active = false;
+                            return;
+                        }
+                        Projectile.Center = embedTarget.Center + embedOffset;
+                    }
+                    opacity -= 0.025f;
+                    if (opacity <= 0)
+                        Projectile.active = false;
+                }
                 return;
+            }
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(owner.Center + new Vector2(1,1)) * 15, 0.06f);
 
             if (Projectile.timeLeft < 460 && Projectile.Distance(owner.Center) < 20)
@@ -103,16 +139,23 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Projectile ringer = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<RingerProj>() && n.Hitbox.Intersects(Projectile.Hitbox)).FirstOrDefault();
             if (ringer != default)
             {
+                Projectile.damage = (int)(Projectile.damage * 1.4f);
                 Projectile.friendly = true;
                 Projectile.timeLeft = 500;
                 Projectile.velocity = Projectile.DirectionTo(Main.MouseWorld) * MathHelper.Lerp(45.5f, 60f, timesHit++ / (float)MAXHITS);
+                if (onLastHit)
+                    Projectile.velocity *= 0.7f;
             }
         }
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            if (timesHit > MAXHITS)
-                return;
+            if (onLastHit)
+            {
+                embedded = true;
+                embedTarget = target;
+                embedOffset = Projectile.Center - target.Center;
+            }
             Projectile.friendly = false;
             Projectile.penetrate++;
             Projectile.velocity *= -0.5f;
@@ -121,7 +164,21 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
+            if (onLastHit)
+            {
+                embedded = true;
+                return false;
+            }
             Projectile.timeLeft = 450;
+            return false;
+        }
+
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Vector2 origin = new Vector2(tex.Width, tex.Height) / 2;
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

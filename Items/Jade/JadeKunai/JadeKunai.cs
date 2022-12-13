@@ -15,8 +15,6 @@ namespace JadeFables.Items.Jade.JadeKunai
 {
     public class JadeKunai : ModItem
     {
-        public override string Texture => "Terraria/Images/Item_" + ItemID.ThrowingKnife;
-
         public override void SetDefaults()
         {
             Item.width = 32;
@@ -43,10 +41,14 @@ namespace JadeFables.Items.Jade.JadeKunai
             Item.UseSound = SoundID.Item1;
         }
 
-        public Projectile? lastShotKunai;
+        const int KunaiCount = 3;
+        public Projectile[]? lastShotKunai;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            lastShotKunai = Projectile.NewProjectileDirect(
+            lastShotKunai = new Projectile[KunaiCount];
+            for (int i = 0; i < KunaiCount; i++)
+            {
+                Projectile kunai = Projectile.NewProjectileDirect(
                 source,
                 position,
                 velocity,
@@ -56,7 +58,12 @@ namespace JadeFables.Items.Jade.JadeKunai
                 player.whoAmI
                 );
 
-            lastShotKunai.tileCollide = false;
+                kunai.tileCollide = false;
+
+                lastShotKunai[i] = kunai;
+            }
+
+            
 
             swingDirection = -swingDirection;
 
@@ -83,18 +90,28 @@ namespace JadeFables.Items.Jade.JadeKunai
             if (lastShotKunai is not null)
             {
                 float armLen = 30;
-                player.heldProj = lastShotKunai.whoAmI;
+                player.heldProj = lastShotKunai[0].whoAmI;
                 if (rotFunc < 0.45f)
                 {
-                    lastShotKunai.velocity = directionToMouse * lastShotKunai.velocity.Length();
-                    lastShotKunai.Center = shoulderPos + directionToMouse * armLen;
-                    lastShotKunai.tileCollide = true;
+                    float maxRot = MathHelper.PiOver4 * 0.25f;
+                    float currRot = 0;
+                    foreach (Projectile kunai in lastShotKunai)
+                    {
+                        kunai.velocity = directionToMouse.RotatedBy(currRot - maxRot * 0.5f) * kunai.velocity.Length();
+                        kunai.Center = shoulderPos + directionToMouse * armLen;
+                        kunai.tileCollide = true;
+                        currRot += maxRot / (KunaiCount - 1);
+                    }
+                    
                     lastShotKunai = null;
                 }
                 else
                 {
-                    lastShotKunai.Center = shoulderPos + armRotation.ToRotationVector2() * armLen;
-                    lastShotKunai.rotation = shoulderPos.DirectionTo(lastShotKunai.Center).ToRotation();
+                    foreach (Projectile kunai in lastShotKunai)
+                    {
+                        kunai.Center = shoulderPos + armRotation.ToRotationVector2() * armLen;
+                        kunai.rotation = shoulderPos.DirectionTo(kunai.Center).ToRotation();
+                    }
                 }
             }
         }
@@ -126,6 +143,9 @@ namespace JadeFables.Items.Jade.JadeKunai
 
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
+
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 30;
         }
 
         int stabTimer;
@@ -183,7 +203,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             }
         }
 
-        public override bool PreAI() => !(Main.player[Projectile.owner]?.HeldItem?.ModItem is JadeKunai kunaiItem && kunaiItem.lastShotKunai?.whoAmI == Projectile.whoAmI);
+        public override bool PreAI() => !(Main.player[Projectile.owner]?.HeldItem?.ModItem is JadeKunai kunaiItem && kunaiItem.lastShotKunai?.FirstOrDefault(p => p.whoAmI == Projectile.whoAmI) is not null);
         public override bool ShouldUpdatePosition() => PreAI() && !StabActive;
 
         bool StabActive => stabbedTarget is not null && stabbedTarget.life > 0 && stabbedTarget.active;
@@ -200,22 +220,32 @@ namespace JadeFables.Items.Jade.JadeKunai
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
+            target.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack++;
+
+            Dust.NewDustPerfect(
+                Projectile.Center, 
+                DustType<JadeKunaiDust>(), 
+                Vector2.Zero, 
+                125,
+                Color.Green,
+                Main.rand.NextFloat(0.75f, 1.25f)
+                );
+
             stabImpactTimer = 1;
-            stabbedTarget = target;
             sTOffset = Projectile.Center - target.Center;
+            stabbedTarget = target;
         }
 
-        public override bool OnTileCollide(Vector2 oldVelocity) 
+        public override void Kill(int timeLeft)
         {
-            if (Main.rand.NextBool(3))
+            if (stabbedTarget is not null)
             {
-                Item.NewItem(Projectile.GetSource_Death(), Projectile.Hitbox, ItemType<JadeKunai>());
+                stabbedTarget.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack--;
             }
-            return true;
         }
 
         private Vector2[]? trailCache;
-        private const int TrailCacheLenght = 7;
+        private const int TrailCacheLenght = 9;
         private void ManageTrailCache()
         {
             if (trailCache is null)
@@ -230,7 +260,8 @@ namespace JadeFables.Items.Jade.JadeKunai
             {
                 for (int i = 1; i < trailCache.Length; i++)
                 {
-                    trailCache[i - 1] = trailCache[i] + MathF.Sin(Main.GameUpdateCount * 0.2f + ((float)i / trailCache.Length) * 16f) * Vector2.UnitY * 6;
+                    float prog = (float)i / trailCache.Length;
+                    trailCache[i - 1] = trailCache[i] + MathF.Sin(Main.GameUpdateCount * 0.6f + prog * 16f) * Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2) * MathF.Pow(prog * 2, 2);
                 }
                 trailCache[^1] = Projectile.Center;
             }
@@ -239,7 +270,7 @@ namespace JadeFables.Items.Jade.JadeKunai
         private Trail? trail;
         private void ManageTrail()
         {
-            trail ??= new Trail(Main.instance.GraphicsDevice, trailCache.Length, new TriangularTip(3), factor => MathF.Sin(factor * factor * 1.7f) * 16 * (MathF.Sin(Main.GameUpdateCount * 0.35f + factor * 16f) + 1) / 2, 
+            trail ??= new Trail(Main.instance.GraphicsDevice, TrailCacheLenght, new TriangularTip(3), factor => (-MathF.Pow(factor * 2 - 1 , 2) + 1) * MathF.Sin(MathF.Pow(factor, 4) * MathHelper.Lerp(1.674f, 1.821f, 0.5f * (MathF.Sin(Main.GameUpdateCount * 0.2f) + 1))) * 12,// * (MathF.Sin(Main.GameUpdateCount * 0.1f + factor * 16f) + 1) / 2, 
                 factor => 
                 {
                     Color colorMain = Color.Lerp(Color.Orange, Color.YellowGreen, Main.GameUpdateCount * 0.3f);
@@ -247,6 +278,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 }
                 );
             trail.Positions = trailCache;
+            trail.NextPosition = Projectile.Center;
         }
         public override bool PreDraw(ref Color lightColor)
         {
@@ -282,7 +314,8 @@ namespace JadeFables.Items.Jade.JadeKunai
                 lightColor,
                 Projectile.rotation,
                 KunaiOrigin(kunaiTexture),
-                new Vector2(Projectile.scale + 0.33f * Projectile.velocity.LengthSquared() / 100, Projectile.scale + MathF.Pow(stabImpactTimer, 4) * 0.75f),
+                new Vector2(Projectile.scale + 0.33f * Projectile.velocity.LengthSquared() / 100, 
+                Projectile.scale + MathF.Pow(stabImpactTimer, 4) * 0.75f),
                 SpriteEffects.None,
                 0
                 );
@@ -295,7 +328,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 glowTex,
                 Projectile.Center - Main.screenPosition,
                 null,
-                Color.Lerp(Color.MistyRose, Color.White, (MathF.Sin(Main.GameUpdateCount * 0.05f) + 1) / 2) * (0.45f + stabImpactTimer * 0.7f),
+                Color.Lerp(Color.MistyRose, Color.White, (MathF.Sin(Main.GameUpdateCount * 0.05f) + 1) / 2) * (0.4f + stabImpactTimer * 0.7f),
                 Projectile.rotation,
                 KunaiOrigin(glowTex),
                 Projectile.scale / 5f,
@@ -308,5 +341,49 @@ namespace JadeFables.Items.Jade.JadeKunai
 
             return false;
         }
+    }
+
+    public class JadeKunaiDust : ModDust
+    {
+        static Terraria.Graphics.Shaders.ArmorShaderData? glowDustShader;
+        public override void OnSpawn(Dust dust)
+        {
+            dust.frame = new Rectangle(0, 0, 1, 64);
+            dust.shader = glowDustShader ??= new Terraria.Graphics.Shaders.ArmorShaderData(new Ref<Effect>(JadeFables.Instance.Assets.Request<Effect>("Effects/GlowingDust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "GlowingDustPass");
+        }
+
+        public override Color? GetAlpha(Dust dust, Color lightColor)
+        {
+            return dust.color;
+        }
+
+        public override bool Update(Dust dust)
+        {
+            dust.rotation = dust.velocity.ToRotation();
+            dust.position += dust.velocity;
+
+            dust.frame.Width = (int)MathHelper.Lerp(1, 64, dust.velocity.LengthSquared() * 0.05f);
+            dust.frame.X = 64 - dust.frame.Width;
+
+            dust.velocity *= 0.98f;
+
+            dust.color *= 0.9f;
+            dust.scale *= 0.9f;
+            if (dust.scale < 0.03f)
+            {
+                dust.active = false;
+            }
+
+            dust.shader.UseColor(dust.color);
+
+            return false;
+        }
+    }
+
+    public class JadeKunaiStackNPC : GlobalNPC
+    {
+        public override bool InstancePerEntity => true;
+
+        public int KunaiStack { get; set; }
     }
 }

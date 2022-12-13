@@ -77,7 +77,7 @@ namespace JadeFables.Tiles.JadeWaterfall
         int length = 0;
 
         int frame = 0;
-        int yFrames = 3;
+        int yFrames = 6;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Jade Waterfall");
@@ -100,10 +100,11 @@ namespace JadeFables.Tiles.JadeWaterfall
 
             for (int i = 0; i < length; i++)
             {
+                int tileHeight = 4;
                 Vector2 pos = Projectile.Center + (Vector2.UnitY * 16 * i);
-                int frameHeight = tex.Height / yFrames;
-                Rectangle frameBox = new Rectangle(0, frameHeight * ((i + frame) % yFrames), tex.Width, frameHeight);
-                Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16)) * 0.75f;
+                int frameHeight = (tex.Height / yFrames) / tileHeight;
+                Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * (((i / tileHeight) + frame) % yFrames)) + (frameHeight * (i % tileHeight)), tex.Width, frameHeight);
+                Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16));
                 Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             }
             return false;
@@ -120,7 +121,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                 for (int j = 0; j < 2; j++)
                 {
                     Tile tile = Main.tile[(int)(Projectile.Center.X / 16) + j, (int)(Projectile.Center.Y / 16) + i];
-                    if (tile.LiquidAmount > 0 && !tile.HasTile)
+                    if (tile.LiquidAmount == 255 && !tile.HasTile)
                         foundWater = true;
                 }
                 if (foundWater)

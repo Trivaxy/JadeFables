@@ -10,6 +10,7 @@ using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using JadeFables.Dusts;
 
 namespace JadeFables.Tiles.JadeWaterfall
 {
@@ -122,7 +123,12 @@ namespace JadeFables.Tiles.JadeWaterfall
                 {
                     Tile tile = Main.tile[(int)(Projectile.Center.X / 16) + j, (int)(Projectile.Center.Y / 16) + i];
                     if (tile.LiquidAmount == 255 && !tile.HasTile)
+                    {
+                        Vector2 velocity = Vector2.UnitY.RotatedByRandom(0.1f) * -Main.rand.NextFloat(1f, 1.5f);
+                        Vector2 pos = new Vector2(Projectile.Center.X + (j * 16), Projectile.Center.Y + (i * 16)) + new Vector2(8,8) + Main.rand.NextVector2Circular(4, 12);
+                        Dust.NewDustPerfect(pos, ModContent.DustType<WaterfallMist>(), velocity, 0, Color.White, Main.rand.NextFloat(0.025f, 0.225f));
                         foundWater = true;
+                    }
                 }
                 if (foundWater)
                     break;

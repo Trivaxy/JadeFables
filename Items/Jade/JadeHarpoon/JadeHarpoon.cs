@@ -162,6 +162,19 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                     Projectile.Center = posToBe;
 
                 Projectile.timeLeft = 2;
+
+                if (owner.controlJump)
+                {
+                    owner.GetModPlayer<JadeHarpoonPlayer>().flipping = false;
+                    Projectile.active = false;
+                    owner.velocity.Y = -8;
+                    if (owner.controlLeft)
+                        owner.velocity.X = -8;
+                    if (owner.controlRight)
+                        owner.velocity.X = 8;
+                    owner.fullRotation = 0;
+                    return;
+                }
                 if (!owner.GetModPlayer<JadeHarpoonPlayer>().flipping)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.UnitX, ModContent.ProjectileType<JadeHarpoonShockwave>(), (int)(Projectile.damage * 2f), 0, owner.whoAmI, 0, 10);

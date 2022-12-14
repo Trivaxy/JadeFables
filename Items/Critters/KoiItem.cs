@@ -2,7 +2,7 @@
 
 namespace JadeFables.Items.Critters
 {
-    public class Koi : ModItem
+    public class KoiItem : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -19,7 +19,15 @@ namespace JadeFables.Items.Critters
             Item.value = Item.sellPrice(silver: 3);
             Item.rare = ItemRarityID.Blue;
         }
+        public override void AddRecipes()
+        {
+            Recipe recipe = Recipe.Create(ItemID.CookedFish);
+            recipe.AddIngredient<Critters.KoiItem>(2);
+            recipe.AddTile(TileID.CookingPots);
+            recipe.Register();
+        }
     }
+
     public class NetGItem : GlobalItem
     {
         public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
@@ -37,7 +45,7 @@ namespace JadeFables.Items.Critters
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                int itemWhoAmI = Item.NewItem(NPC.GetSource_NaturalSpawn(), (int)player.Center.X, (int)player.Center.Y, 0, 0, ItemType<Koi>(), caughtFish.Count, noBroadcast: true, 0, noGrabDelay: true);
+                int itemWhoAmI = Item.NewItem(NPC.GetSource_NaturalSpawn(), (int)player.Center.X, (int)player.Center.Y, 0, 0, ItemType<KoiItem>(), caughtFish.Count, noBroadcast: true, 0, noGrabDelay: true);
                 NetMessage.SendData(MessageID.SyncItem, -1, -1, null, itemWhoAmI, 1f);
             }
         }

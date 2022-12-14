@@ -10,7 +10,7 @@ namespace JadeFables.Core.Boids
 	public class BoidHost : ModSystem
 	{
 		internal List<Flock> Flocks = new List<Flock>();
-		private const int SPAWNRATE = 40;
+		private const int SPAWNRATE = 10;
 
 		public void Draw(SpriteBatch spriteBatch)
 		{
@@ -26,25 +26,35 @@ namespace JadeFables.Core.Boids
 				fishflock.Update();
 
 			Player player = Main.LocalPlayer;
-			//Test
-			if (Main.GameUpdateCount % SPAWNRATE == 39 && Main.LocalPlayer.InModBiome<JadeLakeBiome>())
-			{
-				int flock = Main.rand.Next(0, Flocks.Count);
+			
+			//Attempt to populate random flock every SPAWNRATE ticks
+			if (Main.GameUpdateCount % SPAWNRATE == (SPAWNRATE - 1) && player.InModBiome<JadeLakeBiome>()) {
+				int randomFlock = Main.rand.Next(0, Flocks.Count());
 				int fluff = 1000;
 
-				var rand = new Vector2(
+				int fishCount = Flocks[randomFlock].FishCount;
+				int maxFishCount = Flocks[randomFlock].MaxFish;
+				float spawnChance = (float) (maxFishCount - fishCount) / maxFishCount;
+				
+				//Attempt to populate flock
+				if (Main.rand.NextFloat(0, 1) >= spawnChance) return;
+				
+				var randOffset = new Vector2(
 					Main.rand.Next(-Main.screenWidth / 2 - fluff, Main.screenWidth / 2 + fluff),
 					Main.rand.Next(-Main.screenHeight / 2 - fluff, Main.screenHeight / 2 + fluff));
 
-				if (!new Rectangle(0, 0, Main.screenWidth, Main.screenHeight).Contains(rand.ToPoint()))
-				{
-					Vector2 position = Main.LocalPlayer.Center + rand;
-					Point tP = position.ToTileCoordinates();
-					if (WorldGen.InWorld(tP.X, tP.Y, 10))
-					{
-						Tile tile = Framing.GetTileSafely(tP.X, tP.Y);
-						if (tile.LiquidAmount > 100)
-							Flocks[flock].Populate(position, Main.rand.Next(2, 6), 40f);
+				//If new random offset is currently not on screen
+				if (!new Rectangle(0, 0, Main.screenWidth, Main.screenHeight).Contains(randOffset.ToPoint())) {
+					Vector2 position = player.Center + randOffset;
+					Point tilePosition = position.ToTileCoordinates();
+			
+					if (WorldGen.InWorld(tilePosition.X, tilePosition.Y, 10)) {
+						Tile tile = Framing.GetTileSafely(tilePosition.X, tilePosition.Y);
+						
+						//Check if it is a full tile of water
+						if (tile.LiquidAmount > 100 && tile.LiquidType == LiquidID.Water) {
+							Flocks[randomFlock].Populate(position, Main.rand.Next(2, 6), 40f);
+						}
 					}
 				}
 			}

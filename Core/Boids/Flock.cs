@@ -8,13 +8,14 @@ namespace JadeFables.Core.Boids
     internal class Flock : ComponentManager<Fish>
     {
         public Texture2D[] FlockTextures { get; set; }
+        public int FishCount => Objects.Count;
 
         public float FlockScale;
-		public float MaxFish;
+		public int MaxFish;
 
 		private const int SimulationDistance = 2500;
 
-        public Flock(Texture2D[] texs, float Scale = 1, float MaxFlockSize = 60)
+        public Flock(Texture2D[] texs, float Scale = 1, int MaxFlockSize = 60)
         {
 			if (texs != null) FlockTextures = texs;
 			else FlockTextures = new Texture2D[] { TextureAssets.MagicPixel.Value };
@@ -54,7 +55,7 @@ namespace JadeFables.Core.Boids
                             fish.AdjFish.Add(adjfish);
                     }
 
-                    if (Vector2.DistanceSquared(fish.position, Main.LocalPlayer.Center) > SimulationDistance * SimulationDistance)
+                    if (fish.CanDespawn || Vector2.DistanceSquared(fish.position, Main.LocalPlayer.Center) > SimulationDistance * SimulationDistance)
                         Objects.Remove(fish);
                 }
             }

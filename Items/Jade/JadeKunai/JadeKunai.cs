@@ -80,7 +80,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             {
                 directionToMouse = shoulderPos.DirectionTo(Main.MouseWorld);
             }
-            float arc = MathHelper.TwoPi * Main.rand.NextFloat(0.35f, 0.55f);
+            float arc = MathHelper.TwoPi * 0.66f;
             float mouseRot = directionToMouse.ToRotation();
             float rotFunc = MathF.Sin(MathF.Pow((float)player.itemAnimation / player.itemAnimationMax, 5) * 1.095f);
             float armRotation = mouseRot + swingDirection * (arc * rotFunc - arc * 0.5f);
@@ -93,7 +93,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 player.heldProj = lastShotKunai[0].whoAmI;
                 if (rotFunc < 0.45f)
                 {
-                    float maxRot = MathHelper.PiOver4 * 0.25f;
+                    float maxRot = MathHelper.PiOver4 * Main.rand.NextFloat(0.1f, 0.225f);
                     float currRot = 0;
                     foreach (Projectile kunai in lastShotKunai)
                     {
@@ -138,7 +138,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             Projectile.hostile = false;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 3000;
+            Projectile.timeLeft = 2000;
             Projectile.extraUpdates = 2;
 
             Projectile.ignoreWater = true;
@@ -322,7 +322,7 @@ namespace JadeFables.Items.Jade.JadeKunai
 
             Texture2D glowTex = Request<Texture2D>(Texture + "_WeirdGlow", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
 
-            Color color = Color.Lerp(Color.Green, Color.White, stabImpactTimer) * ((0.4f + stabImpactTimer * 0.7f) + (MathF.Sin(Main.GameUpdateCount * 0.05f) / 4));
+            Color color = Color.Lerp(Color.Green, Color.White, stabImpactTimer) * ((0.4f + stabImpactTimer * 0.7f) + (MathF.Sin(Main.GameUpdateCount * 0.05f) / 8));
             color.A = 0;
             Main.EntitySpriteDraw(
                 glowTex,

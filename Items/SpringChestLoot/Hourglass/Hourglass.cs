@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using static Terraria.ModLoader.ModContent;
 using System.IO;
+using System.Reflection;
 using Terraria.GameContent;
 using Terraria.DataStructures;
 using CsvHelper.TypeConversion;
@@ -100,6 +101,7 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
     {
         public override bool InstancePerEntity => true;
 
+        public float waterMovementSpeedPublic = 0;
 
         public bool inRadius = false;
 
@@ -107,13 +109,21 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
 
         public float aiTicker = 0;
 
+        public Vector2 oldPos = Vector2.Zero;
+
         public override void ResetEffects(NPC npc)
         {
             inRadius = false;
         }
 
+        public override void OnSpawn(NPC npc, IEntitySource source)
+        {
+            waterMovementSpeedPublic = (float)typeof(NPC).GetField("waterMovementSpeed", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(npc);
+        }
+
         public override bool PreAI(NPC npc)
         {
+            oldPos = npc.position;
             if (npc.boss)
                 return true;
             var hourglass = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<HourglassProj>() && (n.ModProjectile as HourglassProj).activated && n.Distance(npc.Center) < 200).OrderBy(n => n.Distance(npc.Center)).FirstOrDefault();
@@ -138,13 +148,14 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
 
         public override void PostAI(NPC npc)
         {
+            float waterMult = npc.wet ? waterMovementSpeedPublic : 1;
             if (inRadius)
             {
                 if (!npc.collideX)
-                    npc.position.X -= npc.velocity.X * (1 - aiTicker);
+                    npc.position.X -= npc.velocity.X * (1 - aiTicker) * waterMult;
 
                 if (!npc.collideY)
-                    npc.position.Y -= npc.velocity.Y * (1 - aiTicker);
+                    npc.position.Y -= npc.velocity.Y * (1 - aiTicker) * waterMult;
             }
         }
     }
@@ -163,7 +174,7 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
         public override bool PreAI(Projectile projectile)
         {
             inRadius = false;
-            if (projectile.friendly || projectile.type == ModContent.ProjectileType<HourglassProj>())
+            if (projectile.friendly || projectile.type == ModContent.ProjectileType<HourglassProj>() || !projectile.hostile)
                 return true;
 
             var hourglass = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<HourglassProj>() && (n.ModProjectile as HourglassProj).activated && n.Distance(projectile.Center) < 200).OrderBy(n => n.Distance(projectile.Center)).FirstOrDefault();
@@ -171,7 +182,7 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
             if (hourglass != default)
             {
                 inRadius = true;
-                aiTicker = MathHelper.Lerp(0.125f, 1f, hourglass.Distance(projectile.Center) / 200f);
+                aiTicker = MathHelper.Lerp(0.0f, 0.75f, hourglass.Distance(projectile.Center) / 200f);
             }
             else
                 return true;
@@ -183,14 +194,16 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
                 aiCounter -= 1;
                 return true;
             }
+            projectile.timeLeft++;
             return false;
         }
 
         public override void PostAI(Projectile projectile)
         {
+            float waterFactor = (projectile.wet && !projectile.ignoreWater) ? 0.5f : 1;
             if (inRadius)
             {
-                projectile.position -= projectile.velocity * (1 - aiTicker);
+                projectile.position -= projectile.velocity * (1 - aiTicker) * waterFactor;
             }
         }
     }

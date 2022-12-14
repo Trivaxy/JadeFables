@@ -38,7 +38,7 @@ namespace JadeFables.Items.Potions.Heartbeat
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.RegenerationPotion);
             recipe.AddIngredient(ItemID.Fireblossom);
-            recipe.AddIngredient<Critters.Koi>(1);
+            recipe.AddIngredient<Critters.KoiItem>(10);
             recipe.AddTile(TileID.Bottles);
             recipe.Register();
         }

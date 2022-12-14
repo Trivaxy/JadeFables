@@ -80,7 +80,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             {
                 directionToMouse = shoulderPos.DirectionTo(Main.MouseWorld);
             }
-            float arc = MathHelper.TwoPi * 0.66f;
+            float arc = MathHelper.TwoPi * Main.rand.NextFloat(0.35f, 0.55f);
             float mouseRot = directionToMouse.ToRotation();
             float rotFunc = MathF.Sin(MathF.Pow((float)player.itemAnimation / player.itemAnimationMax, 5) * 1.095f);
             float armRotation = mouseRot + swingDirection * (arc * rotFunc - arc * 0.5f);
@@ -97,7 +97,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                     float currRot = 0;
                     foreach (Projectile kunai in lastShotKunai)
                     {
-                        kunai.velocity = directionToMouse.RotatedBy(currRot - maxRot * 0.5f) * kunai.velocity.Length();
+                        kunai.velocity = directionToMouse.RotatedBy(currRot - maxRot * 0.5f) * kunai.velocity.Length() * Main.rand.NextFloat(0.85f,1.2f);
                         kunai.Center = shoulderPos + directionToMouse * armLen;
                         kunai.tileCollide = true;
                         currRot += maxRot / (KunaiCount - 1);
@@ -261,7 +261,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 for (int i = 1; i < trailCache.Length; i++)
                 {
                     float prog = (float)i / trailCache.Length;
-                    trailCache[i - 1] = trailCache[i] + MathF.Sin(Main.GameUpdateCount * 0.6f + prog * 16f) * Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2) * MathF.Pow(prog * 2, 2);
+                    trailCache[i - 1] = trailCache[i] + MathF.Sin(Main.GameUpdateCount * 0.6f + prog * 16f) * Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2) * MathF.Pow(prog * 2, 2) * 0.6f;
                 }
                 trailCache[^1] = Projectile.Center;
             }
@@ -320,24 +320,22 @@ namespace JadeFables.Items.Jade.JadeKunai
                 0
                 );
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(default, BlendState.Additive, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
-
             Texture2D glowTex = Request<Texture2D>(Texture + "_WeirdGlow", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+            Color color = Color.Lerp(Color.Green, Color.White, stabImpactTimer) * ((0.4f + stabImpactTimer * 0.7f) + (MathF.Sin(Main.GameUpdateCount * 0.05f) / 4));
+            color.A = 0;
             Main.EntitySpriteDraw(
                 glowTex,
                 Projectile.Center - Main.screenPosition,
                 null,
-                Color.Lerp(Color.MistyRose, Color.White, (MathF.Sin(Main.GameUpdateCount * 0.05f) + 1) / 2) * (0.4f + stabImpactTimer * 0.7f),
+                color,
                 Projectile.rotation,
                 KunaiOrigin(glowTex),
-                Projectile.scale / 5f,
+                Projectile.scale,
                 SpriteEffects.None,
                 0
                 );
 
-            Main.spriteBatch.End();
-            BeginDefault();
 
             return false;
         }

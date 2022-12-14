@@ -98,13 +98,16 @@ namespace JadeFables.Tiles.JadeWaterfall
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
-
-            for (int i = 0; i < length; i++)
+            Texture2D topTex = ModContent.Request<Texture2D>(Texture + "_Top").Value;
+            int topFrameHeight = topTex.Height / yFrames;
+            Rectangle topFrameBox = new Rectangle(0, (frame % yFrames) * topFrameHeight, topTex.Width, topFrameHeight);
+            Main.spriteBatch.Draw(topTex, Projectile.Center - Main.screenPosition, topFrameBox, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+            for (int i = 1; i < length; i++)
             {
                 int tileHeight = 4;
                 Vector2 pos = Projectile.Center + (Vector2.UnitY * 16 * i);
                 int frameHeight = (tex.Height / yFrames) / tileHeight;
-                Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * (((i / tileHeight) + frame) % yFrames)) + (frameHeight * (i % tileHeight)), tex.Width, frameHeight);
+                Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * ((((i - 1) / tileHeight) + frame) % yFrames)) + (frameHeight * ((i - 1) % tileHeight)), tex.Width, frameHeight);
                 Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16));
                 Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             }

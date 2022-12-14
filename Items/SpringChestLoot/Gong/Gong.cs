@@ -4,9 +4,7 @@
 //Sellprice
 //Rarity
 //Sprites
-//Make the gong go through tiles on it's way back
 //Visuals
-//Make it so you can only throw out one gong at once
 //Screenshake
 using System;
 using System.Linq;
@@ -30,6 +28,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 {
     public class GongItem : ModItem
     {
+        public int gongCooldown = 0;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Gong and Ringer");
@@ -55,6 +54,11 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Item.autoReuse = true;
         }
 
+        public override void HoldItem(Player player)
+        {
+            gongCooldown--;
+        }
+
         public override bool AltFunctionUse(Player player)
         {
             return true;
@@ -70,9 +74,14 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             }
             else
             {
+                Item.useAnimation = 6;
+                Item.useTime = 6;
                 Item.useStyle = ItemUseStyleID.Swing;
                 Item.shoot = ModContent.ProjectileType<GongProj>();
                 Item.shootSpeed = 45.5f;
+                if (Main.projectile.Any(n => n.active && n.owner == player.whoAmI && n.type == Item.shoot) || gongCooldown > 0)
+                    return false;
+                gongCooldown = 20;
             }
             return base.CanUseItem(player);
         }
@@ -130,21 +139,27 @@ namespace JadeFables.Items.SpringChestLoot.Gong
                 return;
             }
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(owner.Center + new Vector2(1,1)) * 15, 0.06f);
-
-            if (Projectile.timeLeft < 460 && Projectile.Distance(owner.Center) < 20)
+            if (Projectile.timeLeft < 430)
+            {
+                Projectile.tileCollide = false;
+            }
+            if (Projectile.Distance(owner.Center) < 20 && Projectile.timeLeft < 460)
             {
                 Projectile.active = false;
             }
 
             Projectile ringer = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<RingerProj>() && n.Hitbox.Intersects(Projectile.Hitbox)).FirstOrDefault();
-            if (ringer != default)
+            if (ringer != default && Projectile.timeLeft < 480)
             {
+                Core.Systems.CameraSystem.Shake += 5;
+                Helpers.Helper.PlayPitched("GongRing", 1, Main.rand.NextFloat(-0.1f, 0.1f), Projectile.Center);
+                Projectile.tileCollide = true;
                 Projectile.damage = (int)(Projectile.damage * 1.4f);
                 Projectile.friendly = true;
                 Projectile.timeLeft = 500;
                 Projectile.velocity = Projectile.DirectionTo(Main.MouseWorld) * MathHelper.Lerp(45.5f, 60f, timesHit++ / (float)MAXHITS);
                 if (onLastHit)
-                    Projectile.velocity *= 0.7f;
+                    Projectile.velocity *= 0.4f;
             }
         }
 
@@ -159,7 +174,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Projectile.friendly = false;
             Projectile.penetrate++;
             Projectile.velocity *= -0.5f;
-            Projectile.timeLeft = 450;
+            Projectile.timeLeft = 390;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -169,7 +184,8 @@ namespace JadeFables.Items.SpringChestLoot.Gong
                 embedded = true;
                 return false;
             }
-            Projectile.timeLeft = 450;
+            Projectile.timeLeft = 390;
+            Projectile.velocity *= -0.5f;
             return false;
         }
 

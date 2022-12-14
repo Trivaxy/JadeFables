@@ -79,6 +79,8 @@ namespace JadeFables.Tiles.JadeWaterfall
 
         int frame = 0;
         int yFrames = 6;
+
+        public bool foundWater = false;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Jade Waterfall");
@@ -99,10 +101,12 @@ namespace JadeFables.Tiles.JadeWaterfall
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
             Texture2D topTex = ModContent.Request<Texture2D>(Texture + "_Top").Value;
+            Texture2D bottomTex = ModContent.Request<Texture2D>(Texture + "_Bottom").Value;
             int topFrameHeight = topTex.Height / yFrames;
             Rectangle topFrameBox = new Rectangle(0, (frame % yFrames) * topFrameHeight, topTex.Width, topFrameHeight);
             Main.spriteBatch.Draw(topTex, Projectile.Center - Main.screenPosition, topFrameBox, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
-            for (int i = 1; i < length; i++)
+            int i;
+            for (i = 1; i < length; i++)
             {
                 int tileHeight = 4;
                 Vector2 pos = Projectile.Center + (Vector2.UnitY * 16 * i);
@@ -111,6 +115,13 @@ namespace JadeFables.Tiles.JadeWaterfall
                 Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16));
                 Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             }
+
+            if (!foundWater)
+                return false;
+            int bottomFrameHeight = bottomTex.Height / yFrames;
+            Rectangle bottomFrameBox = new Rectangle(0, ((i + frame) % yFrames) * bottomFrameHeight, bottomTex.Width, bottomFrameHeight);
+            Vector2 bottomPos = Projectile.Center + (Vector2.UnitY * 16 * i) - new Vector2(16, 16);
+            Main.spriteBatch.Draw(bottomTex, bottomPos - Main.screenPosition, bottomFrameBox, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -121,7 +132,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             int i = 0;
             for (i = 0; i < 60; i++)
             {
-                bool foundWater = false;
+                foundWater = false;
                 for (int j = 0; j < 2; j++)
                 {
                     Tile tile = Main.tile[(int)(Projectile.Center.X / 16) + j, (int)(Projectile.Center.Y / 16) + i];

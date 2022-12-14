@@ -146,13 +146,14 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             if (Projectile.Distance(owner.Center) < 20 && Projectile.timeLeft < 460)
             {
                 Projectile.active = false;
+                return;
             }
 
             Projectile ringer = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<RingerProj>() && n.Hitbox.Intersects(Projectile.Hitbox)).FirstOrDefault();
             if (ringer != default && Projectile.timeLeft < 480)
             {
                 Core.Systems.CameraSystem.Shake += 5;
-                Helpers.Helper.PlayPitched("GongRing", 1, Main.rand.NextFloat(-0.1f, 0.1f), Projectile.Center);
+                Helpers.Helper.PlayPitched("GongRing", 0.6f, Main.rand.NextFloat(-0.1f, 0.1f), Projectile.Center);
                 Projectile.tileCollide = true;
                 Projectile.damage = (int)(Projectile.damage * 1.4f);
                 Projectile.friendly = true;

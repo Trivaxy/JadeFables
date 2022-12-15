@@ -122,6 +122,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             {
                 if (embedded)
                 {
+                    Projectile.timeLeft = 2;
                     Projectile.velocity = Vector2.Zero;
                     if (embedTarget != default)
                     {
@@ -139,6 +140,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
                 return;
             }
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(owner.Center + new Vector2(1,1)) * 15, 0.06f);
+            Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.timeLeft < 430)
             {
                 Projectile.tileCollide = false;
@@ -160,7 +162,10 @@ namespace JadeFables.Items.SpringChestLoot.Gong
                 Projectile.timeLeft = 500;
                 Projectile.velocity = Projectile.DirectionTo(Main.MouseWorld) * MathHelper.Lerp(45.5f, 60f, timesHit++ / (float)MAXHITS);
                 if (onLastHit)
+                {
+                    Projectile.timeLeft = 150;
                     Projectile.velocity *= 0.4f;
+                }
             }
         }
 
@@ -193,9 +198,22 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         public override bool PreDraw(ref Color lightColor)
         {
+            Effect effect = Filters.Scene["ManualRotation"].GetShader().Shader;
+            float rotation = (float)Main.timeForVisualEffects * 0.1f;
+            rotation += Projectile.rotation;
+            effect.Parameters["uTime"].SetValue(rotation);
+            effect.Parameters["cosine"].SetValue(MathF.Cos(rotation));
+            effect.Parameters["uColor"].SetValue(lightColor.ToVector3());
+            effect.Parameters["uOpacity"].SetValue(opacity);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.TransformationMatrix);
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 origin = new Vector2(tex.Width, tex.Height) / 2;
-            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin, new Vector2(1 + (Projectile.velocity.Length() / 17f), 1), SpriteEffects.None, 0f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
     }

@@ -262,7 +262,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 origin = new Vector2(0, tex.Height);
-            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor, angle, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor, angle + 0.78f, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

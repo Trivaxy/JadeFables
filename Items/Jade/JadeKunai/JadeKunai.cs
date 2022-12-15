@@ -174,8 +174,11 @@ namespace JadeFables.Items.Jade.JadeKunai
                     stabTimer--;
                 }
 
-                Projectile.velocity.Y += 0.005f;
-                Projectile.rotation = Projectile.velocity.ToRotation();
+                if (CollideProg == 1f)
+                {
+                    Projectile.velocity.Y += 0.005f;
+                    Projectile.rotation = Projectile.velocity.ToRotation();
+                }
             }
 
             if (Projectile.timeLeft % 3 == 0)
@@ -212,7 +215,7 @@ namespace JadeFables.Items.Jade.JadeKunai
         float stabImpactTimer;
         public override bool? CanHitNPC(NPC target)
         {
-            if (StabActive)
+            if (StabActive || Projectile.timeLeft < TimeLeftOnCollide)
             {
                 return false;
             }
@@ -234,6 +237,22 @@ namespace JadeFables.Items.Jade.JadeKunai
             stabImpactTimer = 1;
             sTOffset = Projectile.Center - target.Center;
             stabbedTarget = target;
+        }
+
+        const int TimeLeftOnCollide = 40;
+        float CollideProg => Math.Clamp((float)Projectile.timeLeft / TimeLeftOnCollide, 0f, 1f);
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Projectile.timeLeft > TimeLeftOnCollide)
+            {
+                Projectile.timeLeft = TimeLeftOnCollide;
+                Projectile.velocity = oldVelocity * 0.001f;
+            }
+            else
+            {
+                Projectile.velocity = oldVelocity;
+            }
+            return false;
         }
 
         public override void Kill(int timeLeft)
@@ -261,7 +280,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 for (int i = 1; i < trailCache.Length; i++)
                 {
                     float prog = (float)i / trailCache.Length;
-                    trailCache[i - 1] = trailCache[i] + MathF.Sin(Main.GameUpdateCount * 0.6f + prog * 16f) * Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2) * MathF.Pow(prog * 2, 2) * 0.6f;
+                    trailCache[i - 1] = trailCache[i]; //+ MathF.Sin(MathHelper.PiOver2 + Main.GameUpdateCount * MathHelper.Pi + i * MathHelper.PiOver2) * Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2) * MathF.Pow(prog * 2, 2) * 1f;
                 }
                 trailCache[^1] = Projectile.Center;
             }
@@ -270,11 +289,11 @@ namespace JadeFables.Items.Jade.JadeKunai
         private Trail? trail;
         private void ManageTrail()
         {
-            trail ??= new Trail(Main.instance.GraphicsDevice, TrailCacheLenght, new TriangularTip(3), factor => (-MathF.Pow(factor * 2 - 1 , 2) + 1) * MathF.Sin(MathF.Pow(factor, 4) * MathHelper.Lerp(1.674f, 1.821f, 0.5f * (MathF.Sin(Main.GameUpdateCount * 0.2f) + 1))) * 12,// * (MathF.Sin(Main.GameUpdateCount * 0.1f + factor * 16f) + 1) / 2, 
+            trail ??= new Trail(Main.instance.GraphicsDevice, TrailCacheLenght, new TriangularTip(3), factor => (-MathF.Pow(factor * 2 - 1 , 2) + 1) * MathF.Sin(MathF.Pow(factor, 4) * MathHelper.Lerp(1.674f, 1.821f, 0.5f * (MathF.Sin(Main.GameUpdateCount * 0.5f) + 1))) * 12,// * (MathF.Sin(Main.GameUpdateCount * 0.1f + factor * 16f) + 1) / 2, 
                 factor => 
                 {
                     Color colorMain = Color.Lerp(Color.Orange, Color.YellowGreen, Main.GameUpdateCount * 0.3f);
-                    return Color.Lerp(Color.HotPink * 0.35f, colorMain, factor.X) * 0.75f * ((100 - stabTimer) / 100f) * trailFadeIn;
+                    return Color.Lerp(Color.HotPink * 0.35f, colorMain, factor.X) * 0.75f * ((100 - stabTimer) / 100f) * trailFadeIn * CollideProg;
                 }
                 );
             trail.Positions = trailCache;
@@ -304,14 +323,14 @@ namespace JadeFables.Items.Jade.JadeKunai
                 BeginDefault();
             }
 
-            Vector2 KunaiOrigin(Texture2D tex) => new Vector2(tex.Width * 0.66f, tex.Height * 0.5f);
+            Vector2 KunaiOrigin(Texture2D tex) => new Vector2(tex.Width * 0.5f, tex.Height * 0.5f);
 
             Texture2D kunaiTexture = TextureAssets.Projectile[Type].Value;
             Main.EntitySpriteDraw(
                 kunaiTexture,
                 Projectile.Center - Main.screenPosition,
                 null,
-                lightColor,
+                lightColor * CollideProg,
                 Projectile.rotation,
                 KunaiOrigin(kunaiTexture),
                 new Vector2(Projectile.scale + 0.33f * Projectile.velocity.LengthSquared() / 100, 
@@ -328,7 +347,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 glowTex,
                 Projectile.Center - Main.screenPosition,
                 null,
-                color,
+                color * CollideProg,
                 Projectile.rotation,
                 KunaiOrigin(glowTex),
                 Projectile.scale,

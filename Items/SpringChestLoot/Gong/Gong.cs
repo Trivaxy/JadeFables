@@ -4,8 +4,8 @@
 //Sellprice
 //Rarity
 //Sprites
-//Visuals
-//Screenshake
+//Shockwave Visuals
+//AOE
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -125,7 +125,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         public override void AI()
         {
             behindScale += 0.05f;
-            elasticity *= 0.96f;
+            elasticity *= 0.93f;
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (onLastHit)
             {
@@ -146,6 +146,8 @@ namespace JadeFables.Items.SpringChestLoot.Gong
                     if (opacity <= 0)
                         Projectile.active = false;
                 }
+                else
+                    rot++;
                 return;
             }
 

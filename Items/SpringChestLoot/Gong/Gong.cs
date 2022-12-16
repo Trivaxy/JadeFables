@@ -1,11 +1,6 @@
 //TODO on gong:
-//Sound effects
-//Balance
 //Sellprice
 //Rarity
-//Sprites
-//Shockwave Visuals
-//AOE
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -47,10 +42,10 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Item.useAnimation = 10;
             Item.useTime = 10;
             Item.shootSpeed = 45.5f;
-            Item.damage = 15;
+            Item.damage = 10;
             Item.knockBack = 1.5f;
-            Item.value = Item.sellPrice(0, 0, 1, 0);
             Item.crit = 8;
+            Item.value = Item.sellPrice(gold: 1);
             Item.rare = ItemRarityID.Blue;
             Item.autoReuse = true;
         }
@@ -119,13 +114,14 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Projectile.tileCollide = true;
             Projectile.friendly = true;
             Projectile.timeLeft = 500;
+            Projectile.DamageType = DamageClass.Melee;
             Projectile.penetrate = 1;
         }
 
         public override void AI()
         {
             behindScale += 0.05f;
-            elasticity *= 0.93f;
+            elasticity *= 0.85f;
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (onLastHit)
             {
@@ -167,6 +163,12 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Projectile ringer = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<RingerProj>() && n.Hitbox.Intersects(Projectile.Hitbox)).FirstOrDefault();
             if (ringer != default && Projectile.timeLeft < 480)
             {
+
+                for (int i = 0; i < 13; i++)
+                {
+                    Vector2 dustDir = Projectile.DirectionTo(owner.Center).RotatedByRandom(0.7f) * Main.rand.NextFloat(0.8f, 1.2f);
+                    Dust.NewDustPerfect(Projectile.Center + (dustDir * 25) + Main.rand.NextVector2Circular(16,16), ModContent.DustType<Dusts.GlowLineFast>(), dustDir *8, 0, Color.Gold, 0.5f);
+                }
                 behindScale = 1;
                 elasticity = 1;
                 Core.Systems.CameraSystem.Shake += 5;
@@ -196,6 +198,11 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Projectile.penetrate++;
             Projectile.velocity *= -0.5f;
             Projectile.timeLeft = 390;
+        }
+
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

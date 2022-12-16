@@ -23,6 +23,7 @@ using Terraria.DataStructures;
 using CsvHelper.TypeConversion;
 using JadeFables.Core;
 using System.Reflection.Metadata;
+using Steamworks;
 
 namespace JadeFables.Items.SpringChestLoot.Gong
 {
@@ -100,6 +101,11 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         private Vector2 embedOffset = Vector2.Zero;
         private float opacity = 1;
 
+        private float elasticity = 1;
+
+        private float behindScale = 2.5f;
+
+        private float rot = 0;
         private Player owner => Main.player[Projectile.owner];
         public override void SetStaticDefaults()
         {
@@ -108,8 +114,8 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         public override void SetDefaults()
         {
-            Projectile.width = 16;
-            Projectile.height = 16;
+            Projectile.width = 32;
+            Projectile.height = 32;
             Projectile.tileCollide = true;
             Projectile.friendly = true;
             Projectile.timeLeft = 500;
@@ -118,6 +124,8 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         public override void AI()
         {
+            behindScale += 0.05f;
+            elasticity *= 0.96f;
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (onLastHit)
             {
@@ -140,6 +148,8 @@ namespace JadeFables.Items.SpringChestLoot.Gong
                 }
                 return;
             }
+
+            rot++;
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(owner.Center + new Vector2(1,1)) * 15, 0.06f);
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.timeLeft < 430)
@@ -155,6 +165,8 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Projectile ringer = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<RingerProj>() && n.Hitbox.Intersects(Projectile.Hitbox)).FirstOrDefault();
             if (ringer != default && Projectile.timeLeft < 480)
             {
+                behindScale = 1;
+                elasticity = 1;
                 Core.Systems.CameraSystem.Shake += 5;
                 Helpers.Helper.PlayPitched("GongRing", 0.6f, Main.rand.NextFloat(-0.1f, 0.1f), Projectile.Center);
                 Projectile.tileCollide = true;
@@ -199,19 +211,29 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         public override bool PreDraw(ref Color lightColor)
         {
+            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Vector2 origin = new Vector2(tex.Width, tex.Height) / 2;
             Effect effect = Filters.Scene["ManualRotation"].GetShader().Shader;
-            float rotation = (float)Main.timeForVisualEffects * 0.1f;
+            float rotation = rot * 0.1f;
             rotation += Projectile.rotation;
             effect.Parameters["uTime"].SetValue(rotation);
             effect.Parameters["cosine"].SetValue(MathF.Cos(rotation));
             effect.Parameters["uColor"].SetValue(lightColor.ToVector3());
-            effect.Parameters["uOpacity"].SetValue(opacity);
+            effect.Parameters["uOpacity"].SetValue(opacity * MathHelper.Max((2.5f - behindScale) / 2.5f, 0));
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.TransformationMatrix);
-            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
-            Vector2 origin = new Vector2(tex.Width, tex.Height) / 2;
-            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin, new Vector2(1 + (Projectile.velocity.Length() / 30f), MathHelper.Max(1 - (Projectile.velocity.Length() / 80f), 0.25f)), SpriteEffects.None, 0f);
+
+            float squash = MathHelper.Max(1 - (Projectile.velocity.Length() / 80f), 0.25f);
+            float stretch = 1 + Projectile.velocity.Length() / 30f;
+
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin, Vector2.Lerp(Vector2.One, new Vector2(stretch, squash), elasticity) * behindScale, SpriteEffects.None, 0f);
+
+            Main.spriteBatch.End();
+            effect.Parameters["uOpacity"].SetValue(opacity);
+            Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.TransformationMatrix);
+
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin, Vector2.Lerp(Vector2.One, new Vector2(stretch, squash), elasticity), SpriteEffects.None, 0f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);

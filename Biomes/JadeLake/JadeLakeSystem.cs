@@ -3,6 +3,8 @@ using JadeFables.Tiles.HardenedJadeSand;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeSandstone;
 using Terraria;
+using Terraria.GameContent.Generation;
+using Terraria.WorldBuilding;
 using Microsoft.Xna.Framework;
 
 namespace JadeFables.Biomes.JadeLake
@@ -27,6 +29,16 @@ namespace JadeFables.Biomes.JadeLake
             JadeSandstoneTileCount = tileCounts[TileType<JadeSandstoneTile>()];
         }
 
+        public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
+        {
+            int TerrainIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Terrain"));
+
+            tasks.Insert(TerrainIndex + 1, new PassLegacy("Jade Spring", JadeLakeWorldGen.SurfaceItemPass));
+
+            //debug
+            tasks.RemoveAll(x => x.Name != "Jade Spring");
+        }
+        bool pressed = false;
         public override void Load()
         {
             On.Terraria.Main.DoDraw += AddLighting;
@@ -67,6 +79,27 @@ namespace JadeFables.Biomes.JadeLake
 
         public override void PostUpdateEverything()
         {
+            if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.NumPad5))
+            {
+                if (!pressed)
+                {
+                    pressed = true;
+
+                    for (int i = 400; i < Main.maxTilesX - 400; i++)
+                        for (int j = 100; j < Main.maxTilesY - 400; j++)
+                        {
+                            //Main.tile[i, j].ClearTile();
+                            Main.tile[i, j].Get<TileTypeData>().Type = TileID.Stone;
+                            Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
+                        }
+
+                    JadeLakeWorldGen.SurfaceItemPass(new GenerationProgress(), default);
+                    Main.NewText("regened");
+                }
+            }
+            else
+                pressed = false;
+
             float progress = MathHelper.Min(TotalBiomeCount, 300) / 300f;
             if (TotalBiomeCount == 0 && !forceLakeAesthetic)
                 return;

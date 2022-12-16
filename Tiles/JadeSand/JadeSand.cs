@@ -20,7 +20,7 @@ namespace JadeFables.Tiles.JadeSand
             TileID.Sets.TouchDamageSands[Type] = 15;
             TileID.Sets.Conversion.Sand[Type] = true;
             TileID.Sets.ForAdvancedCollision.ForSandshark[Type] = true;
-            TileID.Sets.Falling[Type] = true;
+            //TileID.Sets.Falling[Type] = true;
 
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Sand");
@@ -29,6 +29,9 @@ namespace JadeFables.Tiles.JadeSand
 
         public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
         {
+
+            return true;
+
             if (WorldGen.noTileActions)
                 return true;
 

@@ -118,6 +118,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         public override void AI()
         {
+            Projectile.rotation = Projectile.velocity.ToRotation();
             if (onLastHit)
             {
                 if (embedded)
@@ -210,7 +211,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.TransformationMatrix);
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
             Vector2 origin = new Vector2(tex.Width, tex.Height) / 2;
-            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin, new Vector2(1 + (Projectile.velocity.Length() / 17f), 1), SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin, new Vector2(1 + (Projectile.velocity.Length() / 30f), MathHelper.Max(1 - (Projectile.velocity.Length() / 80f), 0.25f)), SpriteEffects.None, 0f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);

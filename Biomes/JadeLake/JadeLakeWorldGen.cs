@@ -29,7 +29,7 @@ namespace JadeFables.Biomes.JadeLake
             Point16 biomeCenter = new Point16(Main.spawnTileX, Main.spawnTileY);
 
             //these 2 control the main size and shape of the biome
-            int biomeSize = 220;//vary based on world size and randomness
+            int biomeSize = 180;//vary based on world size and randomness
             float biomeWidthMult = 1.2f;//the width/height ratio
             int sideBeachSize = 12;
 
@@ -58,10 +58,10 @@ namespace JadeFables.Biomes.JadeLake
 
             //for the upper islands
             Rectangle UpperIslandRect = new Rectangle(
-                biomeCenter.X - (int)((biomeSize / 2.2f) * biomeWidthMult),
-                biomeCenter.Y - (int)((biomeSize / 1.4f) * CONST_mainIslandBodyHeightMult),
-                (int)((biomeSize / 2.2f) * biomeWidthMult) * 2,
-                (int)((biomeSize / 2f) * CONST_mainIslandBodyHeightMult));
+                biomeCenter.X - (int)((biomeSize / 1.7f) * biomeWidthMult),
+                biomeCenter.Y - (int)((biomeSize / 1.7f) * CONST_mainIslandBodyHeightMult),
+                (int)((biomeSize / 1.7f) * biomeWidthMult) * 2,
+                (int)((biomeSize / 1.9f) * CONST_mainIslandBodyHeightMult));
 
 
 
@@ -79,9 +79,7 @@ namespace JadeFables.Biomes.JadeLake
             //List<(Rectangle rect, float amp, int triesLeft)> upperOffshoots = new ();
             //List<(Rectangle rect, float amp, int triesLeft)> lowerOffshoots = new ();
 
-
-            Cup(LowerIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, LowerIslandRect.Center().ToPoint16(), 7);
-
+            Cup(LowerIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0.35f, false);
 
             //each stage check all prev rectangles and move current ones away from center
 
@@ -115,80 +113,24 @@ namespace JadeFables.Biomes.JadeLake
                 WavyArc(new Point16(LowerIslandRect.Center.X, LowerIslandRect.Top), radius - sideBeachSize, CONST_mainBodyArcFreq, CONST_mainBodyArcAmp, true, ratio, 2f);
             }
 
-            AddPools(LowerIslandRect, WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, false);
-            AddPools(UpperIslandRect, WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, true);
-
-            //add secondary pools
+            AddPools(LowerIslandRect, (int)(LowerIslandRect.Width * 0.3f), (int)(LowerIslandRect.Height * 0.2f), WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, false);
+            AddPools(UpperIslandRect, (int)(LowerIslandRect.Width * 0.38f), (int)(LowerIslandRect.Height * 0.22f), WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, true);
 
 
-            /*
-            CreateOffshoots(LowerIslandRect, CONST_mainIslandBottomAmp, 4, offshootChance, true, lowerOffshoots);
+            Rectangle PlatformArea = LowerIslandRect;
+            PlatformArea.Inflate(-(int)(LowerIslandRect.Width * 0.24f), -(int)(LowerIslandRect.Height * 0.27f));
+            PlatformArea.Y -= (int)(LowerIslandRect.Height * 0.66f);
 
-            //creates cups above the main cup
-            foreach (var corner in upperOffshoots)
-            {
-                //continue;
-                int direction = Math.Sign(LowerIslandRect.Center().X - corner.rect.X);//orig center - pos
+            FillArea(PlatformArea, TileID.SapphireGemspark, 0);
 
-                int newWidth = Main.rand.Next((int)(corner.rect.Width * 0.4f), corner.rect.Width);//old width
-                newWidth = (int)(newWidth * 0.35f);
-                newWidth = (int)(newWidth * Main.rand.NextFloat(0.65f, 1.45f));
+            Rectangle smallerPlat = LowerIslandRect;
+            smallerPlat.Inflate(-(int)(LowerIslandRect.Width * 0.35f), -(int)(LowerIslandRect.Height * 0.35f));
+            smallerPlat.Y -= (int)(LowerIslandRect.Height * 0.35f);
 
-                int newHeight = (int)(corner.rect.Height * 0.5f);//old height
-                newHeight = (int)(newHeight * 0.7f);
-                newHeight = (int)(newHeight * Main.rand.NextFloat(0.65f, 1.45f));
 
-                float newAmp = corner.amp;
-                newAmp *= 0.6f;
+            //Platform(smallerPlat, fastnoise, CONST_mainIslandBottomAmp * 2, CONST_mainBodyLowerFreq * 2, 0f, LowerIslandRect.Center().ToPoint16(), 7);
 
-                Point16 newPosition = new Point16(corner.rect.X + (direction * newWidth), corner.rect.Y);
 
-                if (Main.rand.NextBool())
-                    newPosition = new Point16(newPosition.X - (20 * direction), newPosition.Y);
-                else
-                    newPosition = new Point16(newPosition.X, newPosition.Y - newHeight);
-                var cupArea = new Rectangle(newPosition.X, newPosition.Y, newWidth, newHeight);
-                Cup(cupArea, fastnoise, newAmp, CONST_mainBodyLowerFreq, 0.02f, LowerIslandRect.Center().ToPoint16(), 0);
-                FillArea(cupArea, TileID.AmethystGemspark, 0);
-            }
-
-            //Creates offshoot cups
-            while (lowerOffshoots.Count > 0)
-            {
-                var corner = lowerOffshoots.First();
-                lowerOffshoots.Remove(corner);
-                {
-                    int direction = Math.Sign(LowerIslandRect.Center().X - corner.rect.X);
-                    if (!Main.tile[corner.rect.X, corner.rect.Y].HasTile)
-                        continue;
-
-                    int newWidth = Main.rand.Next((int)(corner.rect.Width * 0.4f), corner.rect.Width);
-                    newWidth = (int)(newWidth * Main.rand.NextFloat(0.65f, 1.45f));
-
-                    int newHeight = (int)(corner.rect.Height * 0.5f);
-                    newHeight = (int)(newHeight * Main.rand.NextFloat(0.65f, 1.45f));
-
-                    Point16 newPosition = new Point16(corner.rect.X + (direction * newWidth), corner.rect.Y);
-
-                    if (Main.rand.NextBool())
-                        newPosition = new Point16(newPosition.X + (20 * direction), newPosition.Y);
-                    else
-                        newPosition = new Point16(newPosition.X, newPosition.Y - newHeight);
-                    var cupArea = new Rectangle(newPosition.X, newPosition.Y, newWidth, newHeight);
-                    FillArea(cupArea, TileID.SapphireGemspark, 0);
-                    Cup(cupArea, fastnoise, corner.amp, CONST_mainBodyLowerFreq, 0.04f, LowerIslandRect.Center().ToPoint16(), corner.triesLeft - 1);
-                    CreateOffshoots(cupArea, corner.amp, corner.triesLeft - 1, 0.04f, false, lowerOffshoots);
-                }
-            }
-            */
-
-            /*for (int i = 0; i < 8; i++)
-            {
-                Vector2 offset = new Vector2(0, -biomeSize * Main.rand.NextFloat(0.55f, 1.35f)).RotatedByRandom(1.5f);
-                offset.X *= 0.75f;
-                float newHeightMult = mainBodyHeightMult * Main.rand.NextFloat(0.65f, 1.75f) * 0.5f;
-                Cup(biomePosition + offset.ToPoint16(), (int)(biomeSize * Main.rand.NextFloat(0.15f,0.35f)), widtMult, fastnoise, newHeightMult, mainBodyamp * Main.rand.NextFloat(0.3f,0.6f), mainBodyfreq, RANDOFFSET, 0.0025f, biomePosition, 3);
-            }*/
 
             //places sandstone under floating sand
             SupportSand(WholeBiomeRect);
@@ -199,27 +141,28 @@ namespace JadeFables.Biomes.JadeLake
         }
 
         //could return a list or do stuff here
-        public static void AddPools(Rectangle target, Rectangle mainMax, FastNoise noise, float CONST_mainIslandBottomAmp, float CONST_mainBodyLowerFreq, bool upper)
+        public static void AddPools(Rectangle target, int startSizeX, int startSizeY, Rectangle mainMax, FastNoise noise, float CONST_mainIslandBottomAmp, float CONST_mainBodyLowerFreq, bool upper)
         {
-            float CONST_chance = 0.00015f;
+            float CONST_chance =  upper ? 0.00065f : 0.00015f;
 
-            float CONST_loopbackCount = 4;
-            int CONST_MinAdd = 2;
+            float loopbackCount = upper ? 1 : 3;//make into parameter
+            int MinAdd = upper ? 5 : 1;
             int CONST_MultPerLoop = 2;
 
-            float CONST_Start_SecondSizeMult = 0.3f;
-            float CONST_SecondSizeMult = 0.8f;
+            float CONST_RepeatSizeMult = 0.82f;
+
+            float CONST_sizeVariation = 0.15f;
 
             (List<Rectangle> list, int xSize, int ySize) SecondPoolsCurrent =
-                new(new List<Rectangle>(), (int)(target.Width * CONST_Start_SecondSizeMult), (int)(target.Height * CONST_Start_SecondSizeMult));
+                new(new List<Rectangle>(), (int)(startSizeX), (int)(startSizeY));
 
-            (List<Rectangle> list, int xSize, int ySize) SecondPoolsPrevious = new(new List<Rectangle>() { mainMax }, 5, 5);
+            (List<Rectangle> list, int xSize, int ySize) SecondPoolsPrevious = new(new List<Rectangle>(), 5, 5);
 
 
 
-            for (int h = 0; h < CONST_loopbackCount; h++)
+            for (int h = 0; h < loopbackCount; h++)
             {
-                while (SecondPoolsCurrent.list.Count < CONST_MinAdd + (h * CONST_MultPerLoop))
+                while (SecondPoolsCurrent.list.Count < MinAdd + (h * CONST_MultPerLoop))
                 {
                     //iterate over biome
                     for (int i = target.X; i < target.X + target.Width; i++)
@@ -232,9 +175,23 @@ namespace JadeFables.Biomes.JadeLake
                                 {
                                     //create rectangle centered on point
                                     Rectangle size = new Rectangle(i, j, 0, 0);
-                                    size.Inflate(SecondPoolsCurrent.xSize / 2, SecondPoolsCurrent.ySize / 2);//size.Inflade adds the value to both sides of the center
+                                    float mult = 1 + Main.rand.NextFloat(-CONST_sizeVariation, CONST_sizeVariation);
+                                    size.Inflate((int)((SecondPoolsCurrent.xSize / 2) * mult), (int)((SecondPoolsCurrent.ySize / 2) * mult));//size.Inflade adds the value to both sides of the center
 
-                                    if ((Main.tile[size.X, size.Y + (upper ? size.Height : 0)].HasTile || Main.tile[size.X + size.Width, size.Y + (upper ? size.Height : 0)].HasTile) && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile)
+                                    bool validSpace;
+                                    if (upper)
+                                    {
+                                        validSpace = ((Main.tile[size.X, size.Y].HasTile && Main.tile[size.X, size.Y + size.Height].HasTile) ||
+                                            (Main.tile[size.X + size.Width, size.Y].HasTile && Main.tile[size.X + size.Width, size.Y + size.Height].HasTile))
+                                            && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile;
+                                    }
+                                    else
+                                    {
+                                        validSpace = (Main.tile[size.X, size.Y].HasTile || Main.tile[size.X + size.Width, size.Y].HasTile) 
+                                            && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile;
+                                    }
+
+                                    if (validSpace)
                                     {
                                         //adds pool to the list
                                         SecondPoolsCurrent.list.Add(size);
@@ -247,87 +204,161 @@ namespace JadeFables.Biomes.JadeLake
                 }
                 int DEBUG_CONST_X_OFFSET = 250;
 
-                //move colliding ones away from eachother
-                for (int y = 0; y < SecondPoolsCurrent.list.Count; y++)
+                //make them avoid eachother
+                if (!upper)
                 {
-                    for (int u = 0; u < SecondPoolsPrevious.list.Count; u++)
+                    //move colliding ones away from eachother (old list and new list)
+                    for (int y = 0; y < SecondPoolsCurrent.list.Count; y++)
                     {
-                        var poolRect = SecondPoolsCurrent.list[y];
-                        var poolRect2 = SecondPoolsPrevious.list[u];
-
-                        if (y != u)
+                        for (int u = 0; u < SecondPoolsPrevious.list.Count; u++)
                         {
-                            if (poolRect.Intersects(poolRect2))
+                            var poolRect = SecondPoolsCurrent.list[y];
+                            var poolRect2 = SecondPoolsPrevious.list[u];
+
+                            if (y != u)
                             {
-                                Vector2 dir = Vector2.Normalize(poolRect.Center.ToVector2() - poolRect2.Center.ToVector2()) * (new Vector2(SecondPoolsCurrent.xSize, SecondPoolsCurrent.ySize) / 4);
-                                Point newPos1 = (poolRect.TopLeft() + dir).ToPoint();
-                                Point newPos2 = (poolRect2.TopLeft() - dir).ToPoint();
-                                //var len = dir.Length() * 2;
-                                //for (float l = 0; l < len; l += 0.3f)
-                                //{
-                                //    var pos = Vector2.Lerp(newPos1.ToVector2(), newPos2.ToVector2(), l / len);
-                                //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y, TileID.ArgonMoss, true, true);
-                                //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y-1, TileID.ArgonMoss, true, true);
-                                //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y + 1, TileID.ArgonMoss, true, true);
-                                //}
-                                //WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y, TileID.XenonMoss, true, true);
-                                //WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y - 1, TileID.ArgonMoss, true, true);
-                                //WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y, TileID.XenonMoss, true, true);
-                                //WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y - 1, TileID.ArgonMoss, true, true);
-                                SecondPoolsCurrent.list[y] = new Rectangle(newPos1.X, newPos1.Y, poolRect.Width, poolRect.Height);
-                                SecondPoolsPrevious.list[u] = new Rectangle(newPos2.X, newPos2.Y, poolRect2.Width, poolRect2.Height);
+                                if (poolRect.Intersects(poolRect2))
+                                {
+                                    Vector2 dir = Vector2.Normalize(poolRect.Center.ToVector2() - poolRect2.Center.ToVector2()) * (new Vector2(SecondPoolsCurrent.xSize, SecondPoolsCurrent.ySize) / 4);
+                                    Point newPos1 = (poolRect.TopLeft() + dir).ToPoint();
+                                    Point newPos2 = (poolRect2.TopLeft() - dir).ToPoint();
+                                    //var len = dir.Length() * 2;
+                                    //for (float l = 0; l < len; l += 0.3f)
+                                    //{
+                                    //    var pos = Vector2.Lerp(newPos1.ToVector2(), newPos2.ToVector2(), l / len);
+                                    //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y, TileID.ArgonMoss, true, true);
+                                    //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y-1, TileID.ArgonMoss, true, true);
+                                    //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y + 1, TileID.ArgonMoss, true, true);
+                                    //}
+                                    //WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y, TileID.XenonMoss, true, true);
+                                    //WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y - 1, TileID.ArgonMoss, true, true);
+                                    //WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y, TileID.XenonMoss, true, true);
+                                    //WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y - 1, TileID.ArgonMoss, true, true);
+                                    SecondPoolsCurrent.list[y] = new Rectangle(newPos1.X, newPos1.Y, poolRect.Width, poolRect.Height);
+                                    SecondPoolsPrevious.list[u] = new Rectangle(newPos2.X, newPos2.Y, poolRect2.Width, poolRect2.Height);
+                                }
+                            }
+                        }
+                    }
+
+                    //move colliding ones away from eachother (new list only)
+                    for (int y = 0; y < SecondPoolsCurrent.list.Count; y++)
+                    {
+                        for (int u = 0; u < SecondPoolsCurrent.list.Count; u++)
+                        {
+                            var poolRect = SecondPoolsCurrent.list[y];
+                            var poolRect2 = SecondPoolsCurrent.list[u];
+
+                            if (y != u)
+                            {
+                                if (poolRect.Intersects(poolRect2))
+                                {
+                                    Vector2 dir = Vector2.Normalize(poolRect.Center.ToVector2() - poolRect2.Center.ToVector2()) * (new Vector2(SecondPoolsCurrent.xSize, SecondPoolsCurrent.ySize) / 6);
+                                    Point newPos1 = (poolRect.TopLeft() + dir).ToPoint();
+                                    Point newPos2 = (poolRect2.TopLeft() - dir).ToPoint();
+                                    //var len = dir.Length() * 2;
+                                    //for (float l = 0; l < len; l += 0.3f)
+                                    //{
+                                    //    var pos = Vector2.Lerp(newPos1.ToVector2(), newPos2.ToVector2(), l / len);
+                                    //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y, TileID.ArgonMoss, true, true);
+                                    //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y - 1, TileID.ArgonMoss, true, true);
+                                    //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y + 1, TileID.ArgonMoss, true, true);
+                                    //}
+                                    //WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y, TileID.XenonMoss, true, true);
+                                    //WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y - 1, TileID.ArgonMoss, true, true);
+                                    //WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y, TileID.XenonMoss, true, true);
+                                    //WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y - 1, TileID.ArgonMoss, true, true);
+                                    SecondPoolsCurrent.list[y] = new Rectangle(newPos1.X, newPos1.Y, poolRect.Width, poolRect.Height);
+                                    SecondPoolsCurrent.list[u] = new Rectangle(newPos2.X, newPos2.Y, poolRect2.Width, poolRect2.Height);
+                                }
                             }
                         }
                     }
                 }
-
-                for (int y = 0; y < SecondPoolsCurrent.list.Count; y++)
+                //delete overlapping
+                else
                 {
-                    for (int u = 0; u < SecondPoolsCurrent.list.Count; u++)
                     {
-                        var poolRect = SecondPoolsCurrent.list[y];
-                        var poolRect2 = SecondPoolsCurrent.list[u];
-
-                        if (y != u)
+                        int y = 0;
+                        while (y < SecondPoolsCurrent.list.Count)
                         {
-                            if (poolRect.Intersects(poolRect2))
+                            bool inc = true;
+                            for (int u = 0; u < SecondPoolsPrevious.list.Count; u++)
                             {
-                                Vector2 dir = Vector2.Normalize(poolRect.Center.ToVector2() - poolRect2.Center.ToVector2()) * (new Vector2(SecondPoolsCurrent.xSize, SecondPoolsCurrent.ySize) / 6);
-                                Point newPos1 = (poolRect.TopLeft() + dir).ToPoint();
-                                Point newPos2 = (poolRect2.TopLeft() - dir).ToPoint();
-                                //var len = dir.Length() * 2;
-                                //for (float l = 0; l < len; l += 0.3f)
-                                //{
-                                //    var pos = Vector2.Lerp(newPos1.ToVector2(), newPos2.ToVector2(), l / len);
-                                //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y, TileID.ArgonMoss, true, true);
-                                //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y - 1, TileID.ArgonMoss, true, true);
-                                //    WorldGen.PlaceTile((int)pos.X - DEBUG_CONST_X_OFFSET, (int)pos.Y + 1, TileID.ArgonMoss, true, true);
-                                //}
-                                //WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y, TileID.XenonMoss, true, true);
-                                //WorldGen.PlaceTile((int)newPos1.X - DEBUG_CONST_X_OFFSET, (int)newPos1.Y - 1, TileID.ArgonMoss, true, true);
-                                //WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y, TileID.XenonMoss, true, true);
-                                //WorldGen.PlaceTile((int)newPos2.X - DEBUG_CONST_X_OFFSET, (int)newPos2.Y - 1, TileID.ArgonMoss, true, true);
-                                SecondPoolsCurrent.list[y] = new Rectangle(newPos1.X, newPos1.Y, poolRect.Width, poolRect.Height);
-                                SecondPoolsCurrent.list[u] = new Rectangle(newPos2.X, newPos2.Y, poolRect2.Width, poolRect2.Height);
+                                var poolRectCur = SecondPoolsCurrent.list[y];
+                                var poolRectPrev = SecondPoolsPrevious.list[u];
+
+                                if (y != u)
+                                {
+                                    if (poolRectPrev.Contains(poolRectCur.Center))
+                                    {
+                                        //FillArea(new Rectangle(poolRectCur.X, poolRectCur.Y, poolRectCur.Width, poolRectCur.Height), TileID.TopazGemspark + h + 1, h);
+                                        SecondPoolsCurrent.list.Remove(poolRectCur);
+                                        inc = false;
+                                        break;
+                                    }
+                                }
                             }
+
+                            if (inc)
+                                y++;
+                            else
+                                y = 0;
+                        }
+                    }
+
+                    {
+                        int y = 0;
+                        while (y < SecondPoolsCurrent.list.Count)
+                        {
+                            bool inc = true;
+                            for (int u = 0; u < SecondPoolsCurrent.list.Count; u++)
+                            {
+                                var poolRect = SecondPoolsCurrent.list[y];
+                                var poolRect2 = SecondPoolsCurrent.list[u];
+
+                                if (y != u)
+                                {
+                                    if (poolRect.Contains(poolRect2.Center))
+                                    {
+                                        //FillArea(new Rectangle(poolRect.X, poolRect.Y, poolRect.Width, poolRect.Height), TileID.TopazGemsparkOff + h, h);
+                                        SecondPoolsCurrent.list.Remove(poolRect);
+                                        inc = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (inc)
+                                y++;
+                            else if (y > 0)
+                                y--;
                         }
                     }
                 }
 
+                int skipped = 0;
                 foreach (Rectangle poolRect in SecondPoolsCurrent.list)
                 {
-                    if (mainMax.Contains(poolRect) && !poolRect.Contains(mainMax.Center))
+                    if (mainMax.Contains(poolRect.Center) && !poolRect.Contains(mainMax.Center))
                     {
-                        Cup(poolRect, noise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0f, target.Center().ToPoint16(), 0);
+                        Rectangle rect = poolRect;
+                        if (upper && (SecondPoolsCurrent.list.Count - skipped) < MinAdd)
+                        {
+                            float mul = (MinAdd - (SecondPoolsCurrent.list.Count - skipped));
+                            rect.Inflate((int)(rect.Width * (0.025f * mul)), (int)(rect.Height * (0.05f * mul)));
+                        }
+                        Cup(rect, noise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, upper ? 0.55f : 0.35f, true);
                         //FillArea(new Rectangle(poolRect.X - (DEBUG_CONST_X_OFFSET - 0), poolRect.Y, poolRect.Width, poolRect.Height), TileID.TopazGemsparkOff + h, h);
                     }
+                    else
+                        skipped++;
                 }
 
 
                 SecondPoolsPrevious = SecondPoolsCurrent;
                 float randomSizeMult = Main.rand.NextFloat(0.96f, 1.03f);
                 SecondPoolsCurrent =
-                    new(new List<Rectangle>(), (int)(SecondPoolsPrevious.xSize * CONST_SecondSizeMult * randomSizeMult), (int)(SecondPoolsPrevious.ySize * CONST_SecondSizeMult * randomSizeMult));
+                    new(new List<Rectangle>(), (int)(SecondPoolsPrevious.xSize * CONST_RepeatSizeMult * randomSizeMult), (int)(SecondPoolsPrevious.ySize * CONST_RepeatSizeMult * randomSizeMult));
             }
         }
 
@@ -420,17 +451,14 @@ namespace JadeFables.Biomes.JadeLake
                 }
         }
 
-        public static void Cup(Rectangle rect, FastNoise fastnoise, float amp, float freq, float chanceToOffshoot, Point16 originalPosition, int triesLeft)
+        public static void Cup(Rectangle rect, FastNoise fastnoise, float amp, float freq, float depthScale = 0.25f, bool clearTop = false)
         {
             fastnoise = new FastNoise(WorldGen.genRand.Next());
 
             int DEBUG_RANDOM_VALUE_INCREMENT = 0;
 
-            bool newPos = !(originalPosition == rect.Center().ToPoint16());
-
-
             //Maximum number of offshoot cups allowed to generate.
-            int offshootsLeft = triesLeft;
+            //int offshootsLeft = triesLeft;
 
             //generates the wavy pattern on the bottom of the island
             float height = rect.Height;
@@ -460,11 +488,11 @@ namespace JadeFables.Biomes.JadeLake
                     //bool generateNew = false;
 
                     //places water if below below a certain threshold. and skips everything below on second iterations (?)
-                    if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.25f)
+                    if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - depthScale)
                     {
                         //if (Main.rand.NextBool(3))
                         //    Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 255;
-                        if (newPos)
+                        if (clearTop)
                             continue;
                     }
 
@@ -475,11 +503,11 @@ namespace JadeFables.Biomes.JadeLake
                     }
 
                     //placement of sand and sandstone if below a certain threshold, continued from water placement
-                    if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.14f)
+                    if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - (depthScale / 2))
                     {
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSand.JadeSandTile>(), true, true);
                     }
-                    else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.07f)
+                    else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - (depthScale / 4))
                     {
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), true, true);
                         //generateNew = Main.rand.NextFloat()/*Debug:make genrand later*/ < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, normalizedY);//???
@@ -527,6 +555,55 @@ namespace JadeFables.Biomes.JadeLake
             //    for (int j = 0; j < a - CONST_maxTotalLowerOffshoots; j++)
             //        lowerOffshoots.RemoveAt(Main.rand.Next(lowerOffshoots.Count));
             //}
+        }
+
+        public static void Platform(Rectangle rect, FastNoise fastnoise, float amp, float freq, float chanceToOffshoot, Point16 originalPosition, int triesLeft)
+        {
+            fastnoise = new FastNoise(WorldGen.genRand.Next());
+
+            //generates the wavy pattern on the bottom of the island
+            for (int j = 0; j < rect.Height; j++)
+            {
+                for (int i = 0; i < (rect.Width); i++)
+                {
+                    //x in the 0 - 1 range
+                    float normalizedX = ((float)i / (float)(rect.Width / 2)) - 1;
+                    //y in the 0 - 1 range
+                    float normalizedY = ((float)j / rect.Height);
+
+                    //creates the creates a semi-circle like shape to be multiplied with the noise in order to make sure there is falloff towards the edges
+                    float sineCap =
+                        (float)Math.Sin(Math.Sin(Math.Sin(Math.Sin(Math.Sin(
+                        ((normalizedX / 2f) + 0.5f) * (float)Math.PI)
+                        )))) * 1.5f;
+
+                    //gets the random value (uses debug value right now to make sure the seed is somewhat random between generations)
+                    float noiseVal = fastnoise.GetCubicFractal(i * freq, (j * 1.4f)) * amp;
+
+                    //checks if below a threshold, creates sloped edges on top of main island
+                    float sinh = (float)Math.Sinh(-j + 5.1f) / 5;
+                    bool belowSideSlopeHeight = (i - 3) > sinh && (-i + (int)(rect.Width) - 5) > sinh;
+
+                    //places water if below below a certain threshold. and skips everything below on second iterations (?)
+                    if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.25f)
+                    {
+                        //if (Main.rand.NextBool(3))
+                        //    Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 255;
+                    }
+
+                    //skip placing sand or sandstone if this is...?
+                    if (Main.tile[rect.X + i, rect.Y + j].HasTile && (Main.tile[rect.X + i, rect.Y + j].TileType == ModContent.TileType<JadeSandTile>()))
+                        continue;
+
+                    //placement of sand and sandstone if below a certain threshold, continued from water placement
+                    if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.14f)
+                        WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSand.JadeSandTile>(), true, true);
+                    else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.07f)
+                        WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), true, true);
+                    else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal)
+                        WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), true, true);
+                }
+            }
         }
 
         /// <param name="tileType">unused</param>

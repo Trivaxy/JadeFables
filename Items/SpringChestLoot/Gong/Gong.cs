@@ -109,8 +109,8 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         public override void SetDefaults()
         {
-            Projectile.width = 32;
-            Projectile.height = 32;
+            Projectile.width = 24;
+            Projectile.height = 24;
             Projectile.tileCollide = true;
             Projectile.friendly = true;
             Projectile.timeLeft = 500;
@@ -181,7 +181,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
                 if (onLastHit)
                 {
                     Projectile.timeLeft = 150;
-                    Projectile.velocity *= 0.4f;
+                    Projectile.velocity *= 0.7f;
                 }
             }
         }
@@ -209,6 +209,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         {
             if (onLastHit)
             {
+                //Projectile.position += Projectile.oldVelocity;
                 embedded = true;
                 return false;
             }

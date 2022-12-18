@@ -112,24 +112,29 @@ namespace JadeFables.Biomes.JadeLake
                 //bottom
                 WavyArc(new Point16(LowerIslandRect.Center.X, LowerIslandRect.Top), radius - sideBeachSize, CONST_mainBodyArcFreq, CONST_mainBodyArcAmp, true, ratio, 2f);
             }
+            //float CONST_chance =  upper ? 0.00065f : 0.00015f;
 
-            AddPools(LowerIslandRect, (int)(LowerIslandRect.Width * 0.3f), (int)(LowerIslandRect.Height * 0.2f), WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, false);
-            AddPools(UpperIslandRect, (int)(LowerIslandRect.Width * 0.38f), (int)(LowerIslandRect.Height * 0.22f), WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, true);
+            //float loopbackCount = upper ? 1 : 2;//make into parameter
+            //int MinAdd = upper ? 5 : 3;
 
+            AddPools(LowerIslandRect, (int)(LowerIslandRect.Width * 0.33f), (int)(LowerIslandRect.Height * 0.21f), WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq * 1.3f, loopbackCount: 2, MinAdd: 3, chance: 0.00015f, 2, CONST_sizeVariation: 0.225f, 1.1f, avoidCollide: true, deleteCollide: true);
+
+            AddPools(UpperIslandRect, (int)(LowerIslandRect.Width * 0.38f), (int)(LowerIslandRect.Height * 0.22f), UpperIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq * 1.3f, loopbackCount: 1, MinAdd: 5, chance: 0.00065f, 1, CONST_sizeVariation: 0.225f, 0.15f, avoidCollide: false, deleteCollide: true);
+           
 
             Rectangle PlatformArea = LowerIslandRect;
-            PlatformArea.Inflate(-(int)(LowerIslandRect.Width * 0.24f), -(int)(LowerIslandRect.Height * 0.27f));
-            PlatformArea.Y -= (int)(LowerIslandRect.Height * 0.66f);
+            PlatformArea.Inflate(-(int)(LowerIslandRect.Width * 0.32f), -(int)(LowerIslandRect.Height * 0.24f));
+            PlatformArea.Y -= (int)(LowerIslandRect.Height * 0.60f);
 
-            FillArea(PlatformArea, TileID.SapphireGemspark, 0);
 
             Rectangle smallerPlat = LowerIslandRect;
-            smallerPlat.Inflate(-(int)(LowerIslandRect.Width * 0.35f), -(int)(LowerIslandRect.Height * 0.35f));
-            smallerPlat.Y -= (int)(LowerIslandRect.Height * 0.35f);
+            smallerPlat.Inflate(-(int)(LowerIslandRect.Width * 0.38f), -(int)(LowerIslandRect.Height * 0.38f));
+            //smallerPlat.Y -= (int)(LowerIslandRect.Height * 0.35f);
 
-
+            AddPools(PlatformArea, smallerPlat.Width, smallerPlat.Height, PlatformArea, fastnoise, CONST_mainIslandBottomAmp * 1.6f, CONST_mainBodyLowerFreq * 2f, loopbackCount: 1, MinAdd: 5, chance: 0.0045f, 0, CONST_sizeVariation: 0.05f, 0.20f, avoidCollide: false, deleteCollide: true, true);
             //Platform(smallerPlat, fastnoise, CONST_mainIslandBottomAmp * 2, CONST_mainBodyLowerFreq * 2, 0f, LowerIslandRect.Center().ToPoint16(), 7);
 
+            //FillArea(PlatformArea, TileID.SapphireGemspark, 0);
 
 
             //places sandstone under floating sand
@@ -141,17 +146,15 @@ namespace JadeFables.Biomes.JadeLake
         }
 
         //could return a list or do stuff here
-        public static void AddPools(Rectangle target, int startSizeX, int startSizeY, Rectangle mainMax, FastNoise noise, float CONST_mainIslandBottomAmp, float CONST_mainBodyLowerFreq, bool upper)
+        public static void AddPools(Rectangle target, int startSizeX, int startSizeY, Rectangle mainMax, FastNoise noise, float CONST_mainIslandBottomAmp, float CONST_mainBodyLowerFreq, int loopbackCount, int MinAdd, float chance, int collsionType, float CONST_sizeVariation = 0.225f, float waterChance = 0.25f, bool avoidCollide = false, bool deleteCollide = true, bool platform = false)
         {
-            float CONST_chance =  upper ? 0.00065f : 0.00015f;
+            //float CONST_chance =  upper ? 0.00065f : 0.00015f;
 
-            float loopbackCount = upper ? 1 : 3;//make into parameter
-            int MinAdd = upper ? 5 : 1;
-            int CONST_MultPerLoop = 2;
+            //float loopbackCount = upper ? 1 : 2;//make into parameter
+            //int MinAdd = upper ? 5 : 3;
+            int CONST_MultPerLoop = 1;
 
             float CONST_RepeatSizeMult = 0.82f;
-
-            float CONST_sizeVariation = 0.15f;
 
             (List<Rectangle> list, int xSize, int ySize) SecondPoolsCurrent =
                 new(new List<Rectangle>(), (int)(startSizeX), (int)(startSizeY));
@@ -159,17 +162,18 @@ namespace JadeFables.Biomes.JadeLake
             (List<Rectangle> list, int xSize, int ySize) SecondPoolsPrevious = new(new List<Rectangle>(), 5, 5);
 
 
-
+            int escape = 0;
             for (int h = 0; h < loopbackCount; h++)
             {
-                while (SecondPoolsCurrent.list.Count < MinAdd + (h * CONST_MultPerLoop))
+                while (SecondPoolsCurrent.list.Count < MinAdd + (h * CONST_MultPerLoop) && escape < 300)
                 {
+                    escape++;
                     //iterate over biome
                     for (int i = target.X; i < target.X + target.Width; i++)
                         for (int j = target.Y; j < target.Y + target.Height; j++)
                         {
                             //if chance
-                            if (Main.rand.NextFloat() < CONST_chance)
+                            if (Main.rand.NextFloat() < chance)
                             {
                                 //if(Main.tile[i, j].HasTile && AnyEmptyTileSurround(i, j))
                                 {
@@ -178,17 +182,26 @@ namespace JadeFables.Biomes.JadeLake
                                     float mult = 1 + Main.rand.NextFloat(-CONST_sizeVariation, CONST_sizeVariation);
                                     size.Inflate((int)((SecondPoolsCurrent.xSize / 2) * mult), (int)((SecondPoolsCurrent.ySize / 2) * mult));//size.Inflade adds the value to both sides of the center
 
-                                    bool validSpace;
-                                    if (upper)
+                                    bool validSpace = false;
+                                    if (collsionType == 1)
                                     {
                                         validSpace = ((Main.tile[size.X, size.Y].HasTile && Main.tile[size.X, size.Y + size.Height].HasTile) ||
                                             (Main.tile[size.X + size.Width, size.Y].HasTile && Main.tile[size.X + size.Width, size.Y + size.Height].HasTile))
                                             && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile;
                                     }
-                                    else
+                                    else if (collsionType == 2)
                                     {
                                         validSpace = (Main.tile[size.X, size.Y].HasTile || Main.tile[size.X + size.Width, size.Y].HasTile) 
                                             && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile;
+                                    }
+                                    else if (collsionType == 0)
+                                    {
+                                        validSpace = ((
+                                            !Main.tile[size.X, size.Y].HasTile && 
+                                            !Main.tile[size.X, size.Y + size.Height].HasTile && 
+                                            !Main.tile[size.X + size.Width, size.Y].HasTile && 
+                                            !Main.tile[size.X + size.Width, size.Y + size.Height].HasTile))
+                                           && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile;
                                     }
 
                                     if (validSpace)
@@ -205,7 +218,7 @@ namespace JadeFables.Biomes.JadeLake
                 int DEBUG_CONST_X_OFFSET = 250;
 
                 //make them avoid eachother
-                if (!upper)
+                if (avoidCollide)
                 {
                     //move colliding ones away from eachother (old list and new list)
                     for (int y = 0; y < SecondPoolsCurrent.list.Count; y++)
@@ -276,7 +289,7 @@ namespace JadeFables.Biomes.JadeLake
                     }
                 }
                 //delete overlapping
-                else
+                if(deleteCollide)
                 {
                     {
                         int y = 0;
@@ -342,12 +355,18 @@ namespace JadeFables.Biomes.JadeLake
                     if (mainMax.Contains(poolRect.Center) && !poolRect.Contains(mainMax.Center))
                     {
                         Rectangle rect = poolRect;
-                        if (upper && (SecondPoolsCurrent.list.Count - skipped) < MinAdd)
+
+                        //makes size larger if some got deleted, only for upper
+                        if (collsionType == 1 && (SecondPoolsCurrent.list.Count - skipped) < MinAdd)
                         {
                             float mul = (MinAdd - (SecondPoolsCurrent.list.Count - skipped));
                             rect.Inflate((int)(rect.Width * (0.025f * mul)), (int)(rect.Height * (0.05f * mul)));
                         }
-                        Cup(rect, noise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, upper ? 0.55f : 0.35f, true);
+                        bool water = Main.rand.NextFloat() < waterChance;
+                        if (platform)
+                            Platform(rect, noise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq);
+                        else
+                            Cup(rect, noise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, water ? 0.35f : 0.55f, true, water);
                         //FillArea(new Rectangle(poolRect.X - (DEBUG_CONST_X_OFFSET - 0), poolRect.Y, poolRect.Width, poolRect.Height), TileID.TopazGemsparkOff + h, h);
                     }
                     else
@@ -451,7 +470,7 @@ namespace JadeFables.Biomes.JadeLake
                 }
         }
 
-        public static void Cup(Rectangle rect, FastNoise fastnoise, float amp, float freq, float depthScale = 0.25f, bool clearTop = false)
+        public static void Cup(Rectangle rect, FastNoise fastnoise, float amp, float freq, float depthScale = 0.25f, bool clearTop = false, bool water = false)
         {
             fastnoise = new FastNoise(WorldGen.genRand.Next());
 
@@ -490,8 +509,8 @@ namespace JadeFables.Biomes.JadeLake
                     //places water if below below a certain threshold. and skips everything below on second iterations (?)
                     if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - depthScale)
                     {
-                        //if (Main.rand.NextBool(3))
-                        //    Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 255;
+                        if (water)//Main.rand.NextBool(3))
+                            Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 255;
                         if (clearTop)
                             continue;
                     }
@@ -557,7 +576,7 @@ namespace JadeFables.Biomes.JadeLake
             //}
         }
 
-        public static void Platform(Rectangle rect, FastNoise fastnoise, float amp, float freq, float chanceToOffshoot, Point16 originalPosition, int triesLeft)
+        public static void Platform(Rectangle rect, FastNoise fastnoise, float amp, float freq)
         {
             fastnoise = new FastNoise(WorldGen.genRand.Next());
 

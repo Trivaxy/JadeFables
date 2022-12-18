@@ -1,4 +1,5 @@
 using JadeFables.Items.Potions.Heartbeat;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using rail;
@@ -9,8 +10,11 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.Recipe;
+using JadeFables.Biomes.JadeLake;
+using Terraria.Localization;
 
-namespace JadeFables.Items.SpringChestLoot.SpringWater
+namespace JadeFables.Items.Potions.SpringWater
 {
 	public class SpringWater : ModItem
 	{
@@ -52,7 +56,16 @@ namespace JadeFables.Items.SpringChestLoot.SpringWater
 			player.AddBuff(ModContent.BuffType<SpringWaterBuff>(), 600);
 			return true;
 		}
-	}
+
+        public override void AddRecipes()
+        {
+            Condition nearJadeWater = new Condition(NetworkText.FromKey("RecipeConditions.NearWater"), n => Main.LocalPlayer.adjWater && Main.LocalPlayer.InModBiome<JadeLakeBiome>());
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.Bottle);
+            recipe.AddCondition(nearJadeWater);
+            recipe.Register();
+        }
+    }
 
     public class SpringWaterBuff : ModBuff
     {

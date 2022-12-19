@@ -110,7 +110,7 @@ namespace JadeFables.Items.Potions.Spine
 
                 if (npc.CanBeChasedBy() && Vector2.DistanceSquared(Player.Center, npc.Center) < rangePixels * rangePixels)
                 {
-                    int p = Projectile.NewProjectile(Player.GetSource_Buff(Player.FindBuffIndex(BuffType<SpineBuff>())), Player.Center, Vector2.Normalize(npc.Center - Player.Center) * vel, ProjectileType<SpineProj>(), (int)(damageTaken * damageMult), 2f, Main.myPlayer, 0, 0); //damage scales with damage taken. could scale based on player damage stats?
+                    int p = Projectile.NewProjectile(Player.GetSource_Buff(Player.FindBuffIndex(BuffType<SpineBuff>())), Player.Center, Utils.SafeNormalize(npc.Center - Player.Center, Vector2.UnitY) * vel, ProjectileType<SpineProj>(), (int)(damageTaken * damageMult) + 1, 2f, Main.myPlayer, 0, 0); //damage scales with damage taken. could scale based on player damage stats?
                     (Main.projectile[p].ModProjectile as SpineProj).npcToTarget = npc;
                     targets++;
                     if (targets == maxTargets) break;
@@ -132,6 +132,17 @@ namespace JadeFables.Items.Potions.Spine
             Projectile.hostile = false;
             Projectile.DamageType = DamageClass.Default;
             Projectile.aiStyle = 1;
+        }
+
+        float initialVel = 0f;
+        public override void AI() 
+        {
+            if (initialVel == 0) initialVel = Projectile.velocity.Length();
+
+            if (npcToTarget == null || !npcToTarget.CanBeChasedBy()) return;
+
+            Vector2 npcVector = Utils.SafeNormalize(npcToTarget.Center - Projectile.Center, Vector2.UnitY);
+            Projectile.velocity = (initialVel * npcVector);
         }
         public NPC? npcToTarget = null;
         public override bool? CanHitNPC(NPC target)

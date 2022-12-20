@@ -15,6 +15,13 @@ namespace JadeFables.Biomes.JadeLake
         public int JadeSandstoneTileCount;
         public int HardenedJadeSandTileCount;
         public int TotalBiomeCount => JadeSandstoneTileCount + JadeSandTileCount + HardenedJadeSandTileCount;
+
+        /// <summary>
+        /// Whether or not the visual effects applied to water in the Jade Biome will be active, regardless
+        /// of if the player is currently in the Jade Biome or not.
+        /// </summary>
+        public bool forceLakeAesthetic;
+
         public override void TileCountsAvailable(ReadOnlySpan<int> tileCounts)
         {
             JadeSandTileCount = tileCounts[TileType<JadeSandTile>()];
@@ -37,13 +44,15 @@ namespace JadeFables.Biomes.JadeLake
             On.Terraria.Main.DoDraw += AddLighting;
         }
 
-        private void AddLighting(On.Terraria.Main.orig_DoDraw orig, Main self, GameTime gameTime)
-        {
+        private void AddLighting(On.Terraria.Main.orig_DoDraw orig, Main self, GameTime gameTime) {
             orig(self, gameTime);
 
             float progress = MathHelper.Min(TotalBiomeCount, 300) / 300f;
-            if (TotalBiomeCount == 0)
+
+            if (TotalBiomeCount == 0 && !forceLakeAesthetic)
                 return;
+
+            progress = forceLakeAesthetic ? 1f : progress;
 
             for (int x = 0; x < Main.maxTilesX; x++)
             {
@@ -51,16 +60,23 @@ namespace JadeFables.Biomes.JadeLake
                     for (int y = 0; y < Main.maxTilesY; y++)
                     {
                         Tile tile = Main.tile[x, y];
-                        if (tile.LiquidAmount > 0)
-                        {
+                        if (tile.LiquidAmount > 0) {
+                            float modifiedProgress = MathHelper.Min(TotalBiomeCount, 300);
+                            modifiedProgress = forceLakeAesthetic ? 300f : modifiedProgress;
+
                             if (Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.00001f * MathHelper.Min(TotalBiomeCount, 300)));
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.00001f * modifiedProgress));
                             else
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.0000001f * MathHelper.Min(TotalBiomeCount, 300)));
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.0000001f * modifiedProgress));
                         }
                     }
             }
         }
+
+        public override void ResetNearbyTileEffects() {
+            forceLakeAesthetic = false;
+        }
+
         public override void PostUpdateEverything()
         {
             if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.NumPad5))
@@ -85,8 +101,10 @@ namespace JadeFables.Biomes.JadeLake
                 pressed = false;
 
             float progress = MathHelper.Min(TotalBiomeCount, 300) / 300f;
-            if (TotalBiomeCount == 0)
+            if (TotalBiomeCount == 0 && !forceLakeAesthetic)
                 return;
+
+            progress = forceLakeAesthetic ? 1f : progress;
 
             for (int x = 0; x < Main.maxTilesX; x++)
             {

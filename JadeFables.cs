@@ -23,7 +23,10 @@ namespace JadeFables
 			{
 				LoadDetours();
 			});
-		}
+
+            if (Main.netMode != NetmodeID.Server)
+                EquipLoader.AddEquipTexture(Instance, "JadeFables/Items/Jade/JadeArmor/JadeRobe_Legs", EquipType.Legs, null, "JadeRobe_Legs");
+        }
 
 		public override void Unload()
 		{

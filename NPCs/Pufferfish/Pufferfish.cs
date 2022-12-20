@@ -1,9 +1,7 @@
 ﻿//TODO
 //Bestiary
-//Banners
 //Balance
 //Gores
-//Spawning
 //dust on collision
 
 using Microsoft.Xna.Framework;
@@ -25,6 +23,12 @@ using static Terraria.ModLoader.ModContent;
 using JadeFables.Core;
 using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
+using JadeFables.Biomes.JadeLake;
+using Terraria.GameContent.ItemDropRules;
+using Terraria.GameContent.Bestiary;
+using Humanizer;
+using System.Reflection;
+using JadeFables.Tiles.Banners;
 
 namespace JadeFables.NPCs.Pufferfish
 {
@@ -37,6 +41,18 @@ namespace JadeFables.NPCs.Pufferfish
         private int xFrame = 0;
         private int yFrame = 0;
         private int frameCounter = 0;
+
+        public override bool IsLoadingEnabled(Mod mod) {
+            //Since this NPC is just about to be loaded and assigned its type, the current count BEFORE the load will be its type, which is why we can do this
+            int npcType = NPCLoader.NPCCount;
+           
+            DefaultNPCBanner.AddBannerAndItemForNPC(mod, npcType, "Pufferfish", out int bannerType);
+            Banner = npcType;
+            BannerItem = bannerType;
+
+            return true;
+        }
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Pufferfish");
@@ -52,18 +68,25 @@ namespace JadeFables.NPCs.Pufferfish
             NPC.lifeMax = 100;
             NPC.value = 10f;
             NPC.knockBackResist = 2.6f;
-            NPC.HitSound = SoundID.NPCHit23;
+            NPC.HitSound = SoundID.Item111 with { PitchVariance = 0.2f, Pitch = 0.4f};
             NPC.DeathSound = SoundID.NPCDeath26;
             NPC.noGravity = true;
             NPC.aiStyle = 16;
             AIType = NPCID.Goldfish;
         }
 
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                JadeSpawnConditions.JadeSprings,
+                new FlavorTextBestiaryInfoElement("Despite being a popular meal in some places, messing with this timid vertebrate is not the wisest decision, as it will bloat up in an attempt to inject you with its dangerous venom. Otherwise, they’re quite friendly!")
+            });
+        }
         public override void AI()
         {
             NPC.spriteDirection = Math.Sign(-NPC.velocity.X);
             frameCounter++;
-
             int threshhold = 4;
 
             if (xFrame == 1)
@@ -144,6 +167,13 @@ namespace JadeFables.NPCs.Pufferfish
         {
             target.AddBuff(BuffID.Poisoned, 200);
         }
+
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 150f : 0f;
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Spine.SpineItem>(), 2));
+        }
     }
 
     internal class PufferfishProj : ModProjectile
@@ -195,7 +225,8 @@ namespace JadeFables.NPCs.Pufferfish
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation();
-            Projectile.velocity *= 1.08f;
+            if (Projectile.velocity.Length() < 8)
+                Projectile.velocity *= 1.08f;
         }
 
         public override void OnHitPlayer(Player target, int damage, bool crit)

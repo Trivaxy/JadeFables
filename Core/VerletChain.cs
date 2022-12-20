@@ -10,20 +10,33 @@ namespace JadeFables.Core
 {
 	public class VerletChainSystem : ILoadable
 	{
-        public static RenderTarget2D target = Main.dedServ ? null : new RenderTarget2D(Main.instance.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+        public static RenderTarget2D target;
         public static List<VerletChain> toDraw = new List<VerletChain>();
 
         public float Priority => 1;
 
 		public void Load(Mod mod)
 		{
+            if (!Main.dedServ)
+            {
+                Main.QueueMainThreadAction(() =>
+                {
+                    target = new RenderTarget2D(Main.instance.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                });
+            }
 		}
 
 		public void Unload()
 		{
-            target = null;
-            toDraw = null;
-		}
+            Main.QueueMainThreadAction(() =>
+            {
+                target?.Dispose();
+                target = null;
+
+                toDraw.Clear();
+                toDraw = null;
+            });
+        }
 	}
 
 	public class VerletChain 

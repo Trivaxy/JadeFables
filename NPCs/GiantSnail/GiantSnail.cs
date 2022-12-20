@@ -128,13 +128,13 @@ namespace JadeFables.NPCs.GiantSnail
         }
         protected void Crawl()
         {
-            newVelocity = Collide(2);
+            newVelocity = Collide(1);
 
-            if (Math.Abs(newVelocity.X) < 0.5f)
+            if (Math.Abs(newVelocity.X) < 0.125f)
                 NPC.collideX = true;
             else
                 NPC.collideX = false;
-            if (Math.Abs(newVelocity.Y) < 0.5f)
+            if (Math.Abs(newVelocity.Y) < 0.125f)
                 NPC.collideY = true;
             else
                 NPC.collideY = false;

@@ -36,7 +36,7 @@ namespace JadeFables.Items.Jade.JadePickaxe
             Item.knockBack = 5f;
             Item.crit = 4;
 
-            Item.value = Item.sellPrice(silver: 20);
+            Item.value = Item.sellPrice(silver: 40);
             Item.rare = ItemRarityID.Blue;
 
             Item.UseSound = SoundID.Item1;

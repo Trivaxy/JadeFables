@@ -198,7 +198,10 @@ namespace JadeFables.Tiles.SpringChest
             Item.createTile = ModContent.TileType<SpringChest>();
             Item.width = 10;
             Item.height = 24;
-            Item.value = 500;
-        }
-    }
+
+
+			Item.value = Item.sellPrice(silver: 10);
+			Item.rare = ItemRarityID.White;
+		}
+	}
 }

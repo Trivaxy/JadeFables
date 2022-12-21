@@ -10,14 +10,18 @@ namespace JadeFables.Core.Boids
 	internal class Fish : Entity, IComponent
 	{
 		public Vector2 Acceleration { get; set; }
+		public bool CanDespawn => Lifespan < 0 && SpawnTimer > SpawnTimerTicks;
 
 		public const float Vision = 100;
 		private const float MaxForce = 0.02f;
 		private const float MaxVelocity = 2f;
+		private const int SpawnTimerTicks = 100;
+		private const int LifespanTicks = 2000;
 
 		private int Frame = 0;
 		private int TextureID = 0;
 		private int SpawnTimer = 0;
+		private int Lifespan = 0;
 
 		private Flock parent;
 
@@ -26,10 +30,11 @@ namespace JadeFables.Core.Boids
 		public Fish(Flock flock, int texID = -1)
 		{
 			parent = flock;
-
 			Frame = Main.rand.Next(9);
 			TextureID = texID == -1 ? Main.rand.Next(flock.FlockTextures.Length) : 1;
-			SpawnTimer = 100;
+			
+			SpawnTimer = SpawnTimerTicks; // > 0 appearing CD, < 0 disappearing CD
+			Lifespan = LifespanTicks;
 		}
 
 		Vector2 Limit(Vector2 vec, float val)
@@ -189,7 +194,10 @@ namespace JadeFables.Core.Boids
 			const int TOTALFRAMES = 9;
 			Point point = position.ToTileCoordinates();
 			Color lightColour = Lighting.GetColor(point.X, point.Y);
-			float alpha = MathHelper.Clamp(1 - (SpawnTimer-- / 100f), 0f, 1f);
+			
+			//Reuse alpha transition for (de)spawning
+			_ = Lifespan > 0 ? SpawnTimer-- : SpawnTimer++;
+			float alpha = MathHelper.Clamp(1 - (SpawnTimer / (float) SpawnTimerTicks), 0f, 1f);
 			Texture2D texture = parent.FlockTextures[TextureID];
 
 			Rectangle source = new Rectangle(0, (texture.Height / TOTALFRAMES) * ((Frame / 4) % TOTALFRAMES), texture.Width, texture.Height / TOTALFRAMES);
@@ -209,6 +217,11 @@ namespace JadeFables.Core.Boids
 
 		public void Update()
 		{
+			//If fish ded, reset SpawnTimer to fade away into oblivion
+			if (Lifespan == 0) {
+				SpawnTimer = 0;
+			}
+
 			//arbitrarily weight
 			Acceleration += Seperation(25) * 1.5f;
 			Acceleration += Allignment(50) * 1f;
@@ -223,6 +236,9 @@ namespace JadeFables.Core.Boids
 				proj.scale = Main.rand.NextFloat(0.1f, 0.3f);
 			}
 			Frame++;
+			
+			//Should lifespan only be decremented after (de)spawning transition?
+			Lifespan--;
 		}
 	}
 }

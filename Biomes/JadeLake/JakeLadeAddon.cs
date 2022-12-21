@@ -18,7 +18,7 @@ namespace JadeFables.Biomes.JadeLake
 {
 	class JadeLakeAddon : WaterAddon
 	{
-		public override bool Visible => Main.LocalPlayer.InModBiome<JadeLakeBiome>();
+		public override bool Visible => Main.LocalPlayer.InModBiome<JadeLakeBiome>() || GetInstance<JadeLakeSystem>().forceLakeAesthetic;
 
 		public override Texture2D BlockTexture(Texture2D normal, int x, int y)
 		{
@@ -76,7 +76,7 @@ namespace JadeFables.Biomes.JadeLake
         {
             orig();
 
-            if (Main.gameMenu || !Main.LocalPlayer.InModBiome<JadeLakeBiome>())
+            if (Main.gameMenu || !GetInstance<JadeLakeAddon>().Visible)
                 return;
 
 

@@ -1,0 +1,11 @@
+﻿Mods.JadeFables: {
+
+	ItemName: {
+		PufferfishBannerItem: "Pufferfish Banner"
+	}
+
+	ItemTooltip: {
+		PufferfishBannerItem: "{$CommonItemTooltip.BannerBonus}Pufferfish"
+	}
+
+}

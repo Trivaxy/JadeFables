@@ -34,8 +34,6 @@ namespace JadeFables.Items.Jade.JadeBow
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.knockBack = 1;
-            Item.rare = ItemRarityID.Blue;
-            Item.value = Item.sellPrice(0, 0, 40, 0);
             Item.channel = true;
             Item.shoot = ProjectileType<JadeBowProj>();
             Item.shootSpeed = 0f;
@@ -43,6 +41,9 @@ namespace JadeFables.Items.Jade.JadeBow
             Item.useAmmo = AmmoID.Arrow;
             Item.useTurn = true;
             Item.channel = true;
+
+            Item.value = Item.sellPrice(silver: 45);
+            Item.rare = ItemRarityID.Blue;
         }
 
         public override bool CanConsumeAmmo(Item ammo, Player player)

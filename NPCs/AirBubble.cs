@@ -1,5 +1,6 @@
 ﻿using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
+using static Terraria.ModLoader.PlayerDrawLayer;
 
 namespace JadeFables.NPCs
 {
@@ -23,12 +25,12 @@ namespace JadeFables.NPCs
 
         public override void SetDefaults()
         {
-            Projectile.width = 32;
-            Projectile.height = 32;
+            Projectile.width = 16;
+            Projectile.height = 16;
             Projectile.tileCollide = true;
             Projectile.friendly = false;
             Projectile.hide = true;
-            Projectile.timeLeft = 200;
+            Projectile.timeLeft = 500;
         }
 
         public override void AI()
@@ -36,6 +38,16 @@ namespace JadeFables.NPCs
             Point tilePos = new Point((int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16));
             if (Framing.GetTileSafely(tilePos).LiquidAmount == 0)
                 Projectile.active = false;
+
+            var collidingPlayers = Main.player.Where(n => n.active && !n.dead && n.breath < n.breathMax && n.Hitbox.Intersects(Projectile.Hitbox)).FirstOrDefault();
+
+            if (collidingPlayers != default)
+            {
+                collidingPlayers.breath += (int)(200 * Projectile.scale);
+                collidingPlayers.breath = (int)MathHelper.Min(collidingPlayers.breath, collidingPlayers.breathMax);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item54, Projectile.Center);
+                Projectile.active = false;
+            }
         }
 
         public void DrawBubble(Vector2 screenPos)

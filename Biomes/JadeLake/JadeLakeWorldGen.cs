@@ -40,7 +40,6 @@ namespace JadeFables.Biomes.JadeLake
 
             FastNoise fastnoise = new FastNoise(Main.rand.Next());
 
-
             //used for stuff that needs to iterate over the entire biome
             Rectangle WholeBiomeRect = new Rectangle(
                 biomeCenter.X - (int)((biomeSize / 2) * biomeWidthMult),
@@ -73,15 +72,7 @@ namespace JadeFables.Biomes.JadeLake
             FillArea(LowerIslandRect, TileID.RubyGemspark, 1);
             FillArea(UpperIslandRect, TileID.EmeraldGemspark, 0);
 
-            //float offshootChance = 0.0025f;
-
-            //Offshoot cups above the main cup, categorized by their corner
-            //List<(Rectangle rect, float amp, int triesLeft)> upperOffshoots = new ();
-            //List<(Rectangle rect, float amp, int triesLeft)> lowerOffshoots = new ();
-
             Cup(LowerIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0.35f, false);
-
-            //each stage check all prev rectangles and move current ones away from center
 
             //generate main hollow area
             {
@@ -113,21 +104,46 @@ namespace JadeFables.Biomes.JadeLake
                 WavyArc(new Point16(LowerIslandRect.Center.X, LowerIslandRect.Top), radius - sideBeachSize, CONST_mainBodyArcFreq, CONST_mainBodyArcAmp, true, ratio, 2f);
             }
 
-            AddPools(LowerIslandRect, (int)(LowerIslandRect.Width * 0.33f), (int)(LowerIslandRect.Height * 0.21f), WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq * 1.3f, loopbackCount: 2, MinAdd: 3, chance: 0.00015f, 2, CONST_sizeVariation: 0.225f, 1.1f, avoidCollide: true, deleteCollide: true);
+
+            AddPools(LowerIslandRect , (int)(LowerIslandRect.Width * 0.33f), (int)(LowerIslandRect.Height * 0.21f), WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq * 1.3f, loopbackCount: 2, MinAdd: 3, chance: 0.00015f, 2, CONST_sizeVariation: 0.225f, 1.1f, avoidCollide: true, deleteCollide: true);
 
             AddPools(UpperIslandRect, (int)(LowerIslandRect.Width * 0.38f), (int)(LowerIslandRect.Height * 0.22f), UpperIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq * 1.3f, loopbackCount: 1, MinAdd: 5, chance: 0.00065f, 1, CONST_sizeVariation: 0.225f, 0.15f, avoidCollide: false, deleteCollide: true);
-           
+
+
+            //side caves
+            float size = biomeSize / 24;
+            int len = biomeSize / 12;
+
+            GenerateCave(LowerIslandRect.X + (int)size, (LowerIslandRect.Y - (int)size) + 2,
+                size, (float)Math.PI / 2, len, 2f, 20f, fastnoise);
+            GenerateCave(LowerIslandRect.X + LowerIslandRect.Width - (int)size, (LowerIslandRect.Y - (int)size) + 2,
+                size, -(float)Math.PI / 2, len, 4f, 20f, fastnoise);
+
+
+            float size2 = biomeSize / 18;
+            int len2 = biomeSize / 8;
+
+            GenerateCave(
+                LowerIslandRect.X + (int)size2 * 7, 
+                (UpperIslandRect.Y - (int)size2 * 2) + 2,
+                size2, (float)Math.PI / 2, len2, 1.2f, 20f, fastnoise);
+            GenerateCave(
+                LowerIslandRect.X + LowerIslandRect.Width - (int)size2 * 7, 
+                (UpperIslandRect.Y - (int)size2 * 2) + 2,
+                size2, -(float)Math.PI / 2, len2, 1.2f, 20f, fastnoise);
+
+
+
 
             Rectangle PlatformArea = LowerIslandRect;
             PlatformArea.Inflate(-(int)(LowerIslandRect.Width * 0.32f), -(int)(LowerIslandRect.Height * 0.24f));
             PlatformArea.Y -= (int)(LowerIslandRect.Height * 0.60f);
 
-
             Rectangle smallerPlat = LowerIslandRect;
-            smallerPlat.Inflate(-(int)(LowerIslandRect.Width * 0.38f), -(int)(LowerIslandRect.Height * 0.38f));
+            smallerPlat.Inflate(-(int)(LowerIslandRect.Width * 0.39f), -(int)(LowerIslandRect.Height * 0.39f));
             //smallerPlat.Y -= (int)(LowerIslandRect.Height * 0.35f);
 
-            AddPools(PlatformArea, smallerPlat.Width, smallerPlat.Height, PlatformArea, fastnoise, CONST_mainIslandBottomAmp * 1.6f, CONST_mainBodyLowerFreq * 2f, loopbackCount: 1, MinAdd: 5, chance: 0.0045f, 0, CONST_sizeVariation: 0.05f, 0.20f, avoidCollide: false, deleteCollide: true, true);
+            AddPools(PlatformArea, smallerPlat.Width, smallerPlat.Height, PlatformArea, fastnoise, CONST_mainIslandBottomAmp * 1.6f, CONST_mainBodyLowerFreq * 2f, loopbackCount: 1, MinAdd: 5, chance: 0.0025f, 0, CONST_sizeVariation: 0.05f, 0.20f, avoidCollide: false, deleteCollide: true, true);
             //Platform(smallerPlat, fastnoise, CONST_mainIslandBottomAmp * 2, CONST_mainBodyLowerFreq * 2, 0f, LowerIslandRect.Center().ToPoint16(), 7);
 
             //FillArea(PlatformArea, TileID.SapphireGemspark, 0);
@@ -139,6 +155,46 @@ namespace JadeFables.Biomes.JadeLake
             //slopes all tiles in biome
             //likely only needed for debug generation since vanilla has this pass
             SlopeTiles(WholeBiomeRect);
+        }
+
+
+        public static void GenerateCave(int posX, int posY, float size, float direction, int steps, float amp, float freq, FastNoise fastnoise, bool leaveSand = true)
+        {
+            int lastPosX = posX;
+            int lastPosY = posY;
+            Action<int, int> func = leaveSand ? 
+                (int i, int j) => { 
+                    if(
+                        Main.tile[i, j].TileType != ModContent.TileType<Tiles.JadeSand.JadeSandTile>() &&
+                        Main.tile[i, j].TileType != ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>()/* &&
+                        Main.tile[i, j].TileType != ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>()*/)
+                            WorldGen.KillTile(i, j, false, false, true); } : 
+                (int i, int j) => { WorldGen.KillTile(i, j, false, false, true); };
+
+            for (int h = 0; h < steps; h++)
+            {
+                float scale = size * (-((float)h / steps) + 1);                
+                CircleGen(lastPosX, lastPosY, scale, func);
+
+                float mul = fastnoise.GetCubicFractal(h * freq, 0) * amp;
+                Vector2 dir = Vector2.UnitY.RotatedBy(direction + mul) * scale;
+                lastPosX += (int)dir.X;
+                lastPosY += (int)dir.Y;
+            }
+        }
+
+        public static void CircleGen(int posX, int posY, float size, Action<int, int> iterateMethod)
+        {
+            for (int i = -(int)size; i < (int)size; i++)
+            {
+                for (int j = -(int)size; j < (int)size; j++)
+                {
+                    if (Vector2.Distance(new Vector2(i, j), Vector2.Zero) < size && WorldGen.InWorld(posX + i, posY + j))
+                    {
+                        iterateMethod(posX + i, posY + j);
+                    }
+                }
+            }
         }
 
         //could return a list or do stuff here
@@ -492,9 +548,6 @@ namespace JadeFables.Biomes.JadeLake
                     //checks if below a threshold, creates sloped edges on top of main island
                     float sinh = (float)Math.Sinh(-j + 5.1f) / 5;
                     bool belowSideSlopeHeight = (i - 3) > sinh && (-i + (int)(rect.Width) - 5) > sinh;
-
-                    //? (if this should attempt to generate another island?)
-                    //bool generateNew = false;
 
                     //places water if below below a certain threshold. and skips everything below on second iterations (?)
                     if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - depthScale)

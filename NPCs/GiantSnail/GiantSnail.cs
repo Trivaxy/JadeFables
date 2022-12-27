@@ -28,6 +28,7 @@ using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
 using JadeFables.Biomes.JadeLake;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 
 namespace JadeFables.NPCs.GiantSnail
 {
@@ -249,6 +250,11 @@ namespace JadeFables.NPCs.GiantSnail
             List<Vector2> newerCache = SmoothBezierPointRetreivalFunction(newCache, NUMPOINTS * 2, 5);
             trail.Positions = newerCache.ToArray();
             trail.NextPosition = newerCache.Last() + ((segmentRotation - (1.57f * initialDirection)).ToRotationVector2() * 40);
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

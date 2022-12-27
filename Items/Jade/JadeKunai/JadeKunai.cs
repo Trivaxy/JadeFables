@@ -224,6 +224,8 @@ namespace JadeFables.Items.Jade.JadeKunai
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             target.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack++;
+            if (target.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack == 10)
+                target.GetGlobalNPC<JadeKunaiStackNPC>().flashOpacity = 1;
 
             Dust.NewDustPerfect(
                 Projectile.Center, 
@@ -401,6 +403,14 @@ namespace JadeFables.Items.Jade.JadeKunai
     {
         public override bool InstancePerEntity => true;
 
+
+        public float flashOpacity = 0f;
+
         public int KunaiStack { get; set; }
+
+        public override void ResetEffects(NPC npc)
+        {
+            flashOpacity -= 0.03f;
+        }
     }
 }

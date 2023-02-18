@@ -1,10 +1,8 @@
 //TODO:
 //Plant
-//Sellprice
-//Rarity
 //Sound effects
-//Lighting
 //Buff sprite
+//On fire debuff
 
 using JadeFables.Items.Potions.Heartbeat;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -45,7 +43,7 @@ namespace JadeFables.Items.Potions.JasmineTea
             Item.useTime = 17;
             Item.useTurn = true;
 
-            Item.value = Item.sellPrice(silver: 2);
+            Item.value = Item.sellPrice(silver: 10);
             Item.rare = ItemRarityID.Blue;
 
             Item.consumable = true;
@@ -117,6 +115,7 @@ namespace JadeFables.Items.Potions.JasmineTea
         public override void OnSpawn(IEntitySource source)
         {
             Projectile.scale = Main.rand.NextFloat(0.1f, 0.5f);
+            Projectile.rotation = Main.rand.NextFloat(6.28f);
         }
 
         public override void AI()
@@ -124,6 +123,8 @@ namespace JadeFables.Items.Potions.JasmineTea
             Projectile.velocity *= 0.95f;
 
             Projectile.scale += 0.01f;
+
+            Lighting.AddLight(Projectile.Center, color.ToVector3() * 0.6f);
 
             if (Projectile.timeLeft > 30)
             {

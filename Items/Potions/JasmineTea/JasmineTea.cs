@@ -1,9 +1,3 @@
-//TODO:
-//Plant
-//Sound effects
-//Buff sprite
-//On fire debuff
-
 using JadeFables.Items.Potions.Heartbeat;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
@@ -21,6 +15,7 @@ using JadeFables.Biomes.JadeLake;
 using Terraria.Localization;
 using Terraria.DataStructures;
 using Terraria.Audio;
+using JadeFables.Items.Jade.JadeChunk;
 
 namespace JadeFables.Items.Potions.JasmineTea
 {
@@ -72,6 +67,15 @@ namespace JadeFables.Items.Potions.JasmineTea
 
                 player.AddBuff(ModContent.BuffType<JasmineTeaBuff>(), 300);
             }
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.BottledWater, 1);
+            recipe.AddIngredient<Tiles.JasmineFlower.JasmineFlower>(1);
+            recipe.AddTile(622);
+            recipe.Register();
         }
     }
 
@@ -174,6 +178,11 @@ namespace JadeFables.Items.Potions.JasmineTea
         public override bool PreDraw(ref Color lightColor)
         {
             return false;
+        }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.AddBuff(BuffID.OnFire, 180);
         }
     }
 }

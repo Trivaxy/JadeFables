@@ -20,6 +20,7 @@ using static Terraria.Recipe;
 using JadeFables.Biomes.JadeLake;
 using Terraria.Localization;
 using Terraria.DataStructures;
+using Terraria.Audio;
 
 namespace JadeFables.Items.Potions.JasmineTea
 {
@@ -47,14 +48,30 @@ namespace JadeFables.Items.Potions.JasmineTea
             Item.rare = ItemRarityID.Blue;
 
             Item.consumable = true;
-
-            Item.UseSound = SoundID.Item3;
         }
 
         public override bool? UseItem(Player player)
         {
-            player.AddBuff(ModContent.BuffType<JasmineTeaBuff>(), 300);
+            //player.AddBuff(ModContent.BuffType<JasmineTeaBuff>(), 300);
             return true;
+        }
+
+        //Would be better to use a custom useStyle I think but this works 
+        //This is so there is a delay for the player getting the buff 
+        public override void HoldItem(Player player)
+        {
+            if (player.itemTime == 2)
+            {
+                SoundStyle stylea = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_flame_breath") with { Volume = 0.6f, Pitch = 0.64f };
+                SoundEngine.PlaySound(stylea, player.Center);
+
+                SoundStyle styleb = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_2") with { Volume = 0.6f, Pitch = 0.42f };
+                SoundEngine.PlaySound(styleb, player.Center);
+
+                SoundEngine.PlaySound(SoundID.Item3, player.Center);
+
+                player.AddBuff(ModContent.BuffType<JasmineTeaBuff>(), 300);
+            }
         }
     }
 
@@ -67,10 +84,20 @@ namespace JadeFables.Items.Potions.JasmineTea
             Main.buffNoSave[Type] = true;
         }
 
+        private int timer = 0;
         public override void Update(Player player, ref int buffIndex)
         {
+            
+            if (timer % 8 == 0)
+            {
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.5f, MaxInstances = -1, Volume = 0.2f };
+                SoundEngine.PlaySound(style, player.Center);
+            }
+
             for (int i = 0; i < 2; i++)
                 Projectile.NewProjectileDirect(player.GetSource_Buff(buffIndex), player.Center + new Vector2(player.direction * 4, -7), new Vector2(player.direction, 0).RotatedByRandom(0.3f) * Main.rand.NextFloat(3, 8), ModContent.ProjectileType<JasmineTeaFire>(), 20, 0, player.whoAmI);
+
+            timer++;
         }
     }
     internal class JasmineTeaFire : ModProjectile

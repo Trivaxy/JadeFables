@@ -104,7 +104,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             Texture2D bottomTex = ModContent.Request<Texture2D>(Texture + "_Bottom").Value;
             int topFrameHeight = topTex.Height / yFrames;
             Rectangle topFrameBox = new Rectangle(0, (frame % yFrames) * topFrameHeight, topTex.Width, topFrameHeight);
-            Main.spriteBatch.Draw(topTex, Projectile.Center - Main.screenPosition, topFrameBox, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(topTex, Projectile.Center - Main.screenPosition, topFrameBox, lightColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             int i;
             for (i = 1; i < length; i++)
             {
@@ -113,7 +113,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                 int frameHeight = (tex.Height / yFrames) / tileHeight;
                 Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * ((((i - 1) / tileHeight) + frame) % yFrames)) + (frameHeight * ((i - 1) % tileHeight)), tex.Width, frameHeight);
                 Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16));
-                Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             }
 
             if (!foundWater)
@@ -121,7 +121,8 @@ namespace JadeFables.Tiles.JadeWaterfall
             int bottomFrameHeight = bottomTex.Height / yFrames;
             Rectangle bottomFrameBox = new Rectangle(0, ((i + frame) % yFrames) * bottomFrameHeight, bottomTex.Width, bottomFrameHeight);
             Vector2 bottomPos = Projectile.Center + (Vector2.UnitY * 16 * i) - new Vector2(16, 16);
-            Main.spriteBatch.Draw(bottomTex, bottomPos - Main.screenPosition, bottomFrameBox, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+            Color bottomColor = Lighting.GetColor((int)(bottomPos.X / 16), (int)(bottomPos.Y / 16));
+            Main.spriteBatch.Draw(bottomTex, bottomPos - Main.screenPosition, bottomFrameBox, bottomColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -135,7 +136,10 @@ namespace JadeFables.Tiles.JadeWaterfall
                 foundWater = false;
                 for (int j = 0; j < 2; j++)
                 {
-                    Tile tile = Main.tile[(int)(Projectile.Center.X / 16) + j, (int)(Projectile.Center.Y / 16) + i];
+                    int x = (int)(Projectile.Center.X / 16) + j;
+                    int y = (int)(Projectile.Center.Y / 16) + i;
+                    Tile tile = Main.tile[x, y];
+                    Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * 0.0025f);
                     if (tile.LiquidAmount == 255 && !tile.HasTile)
                     {
                         Vector2 velocity = Vector2.UnitY.RotatedByRandom(0.1f) * -Main.rand.NextFloat(1f, 1.5f);

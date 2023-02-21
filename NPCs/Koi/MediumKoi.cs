@@ -26,6 +26,7 @@ using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
 using JadeFables.Biomes.JadeLake;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 
 namespace JadeFables.NPCs.Koi
 {
@@ -108,6 +109,11 @@ namespace JadeFables.NPCs.Koi
             Vector2 slopeOffset = new Vector2(0, NPC.gfxOffY);
             Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor, NPC.rotation, origin, NPC.scale, effects, 0f);
             return false;
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 50f : 0f;

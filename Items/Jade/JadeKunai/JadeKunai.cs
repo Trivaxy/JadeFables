@@ -161,8 +161,19 @@ namespace JadeFables.Items.Jade.JadeKunai
                 {
                     stabTimer = 100;
                 }
-                
-                Projectile.Center = stabbedTarget.Center + sTOffset;
+
+                if (stabbedTarget.active)
+                {
+                    Projectile.Center = stabbedTarget.Center + sTOffset;
+                    if (stabbedTarget.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack == 0)
+                    {
+                        stabbedTarget = null;
+                        Projectile.velocity = Vector2.Normalize(sTOffset) * 6;
+                        Projectile.friendly = false;
+                        Projectile.timeLeft = 2000;
+                        Projectile.tileCollide = true;
+                    }
+                }
 
                 Projectile.velocity *= 0.75f;
                 Projectile.Center += Projectile.velocity;
@@ -224,6 +235,8 @@ namespace JadeFables.Items.Jade.JadeKunai
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             target.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack++;
+            if (target.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack == 10)
+                target.GetGlobalNPC<JadeKunaiStackNPC>().flashOpacity = 1;
 
             Dust.NewDustPerfect(
                 Projectile.Center, 
@@ -237,12 +250,15 @@ namespace JadeFables.Items.Jade.JadeKunai
             stabImpactTimer = 1;
             sTOffset = Projectile.Center - target.Center;
             stabbedTarget = target;
+            Projectile.tileCollide = false;
         }
 
         const int TimeLeftOnCollide = 40;
         float CollideProg => Math.Clamp((float)Projectile.timeLeft / TimeLeftOnCollide, 0f, 1f);
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
+            if (StabActive)
+                return false;
             if (Projectile.timeLeft > TimeLeftOnCollide)
             {
                 Projectile.timeLeft = TimeLeftOnCollide;
@@ -401,6 +417,26 @@ namespace JadeFables.Items.Jade.JadeKunai
     {
         public override bool InstancePerEntity => true;
 
+
+        public float flashOpacity = 0f;
+
         public int KunaiStack { get; set; }
+
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (projectile.type == ModContent.ProjectileType<JadeKunaiProjectile>())
+                return;
+
+            if (KunaiStack > 10)
+            {
+                crit = true;
+                KunaiStack = 0;
+            }
+        }
+
+        public override void ResetEffects(NPC npc)
+        {
+            flashOpacity -= 0.03f;
+        }
     }
 }

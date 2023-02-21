@@ -50,7 +50,7 @@ namespace JadeFables.Tiles.JadeTorch
 			// Create a white (1.0, 1.0, 1.0) light at the torch's approximate position, when the item is held.
 			Vector2 position = player.RotatedRelativePoint(new Vector2(player.itemLocation.X + 12f * player.direction + player.velocity.X, player.itemLocation.Y - 14f + player.velocity.Y), true);
 
-			Lighting.AddLight(position, 0f, 1f, 0.4f);
+			Lighting.AddLight(position, 0f, 1f, 0.7f);
 		}
 
 		public override void PostUpdate() {
@@ -155,8 +155,8 @@ namespace JadeFables.Tiles.JadeTorch
             {
                 // Make it emit the following light.
                 r = 0f;
-                g = 0.9f;
-                b = 0.29f;
+                g = 1f;
+                b = 0.7f;
             }
         }
 

@@ -92,7 +92,7 @@ namespace JadeFables.Biomes.JadeLake
                                     x = i + (MathF.Cos(rad) * h);
                                     y =j + (MathF.Sin(rad) * h);
                                     Tile wallTile = Framing.GetTileSafely((int)x,(int)y);
-                                    if (!wallTile.HasTile)
+                                    if (!wallTile.HasTile && wallTile.WallType == 0)
                                         wallTile.WallType = (ushort)ModContent.WallType<BlossomWall>();
                                 }
                             }

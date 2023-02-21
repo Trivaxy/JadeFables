@@ -32,8 +32,10 @@ namespace JadeFables.Biomes.JadeLake
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
         {
             int TerrainIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Terrain"));
+            int EndIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Tile Cleanup"));
 
             tasks.Insert(TerrainIndex + 1, new PassLegacy("Jade Spring", JadeLakeWorldGen.SurfaceItemPass));
+            tasks.Insert(EndIndex + 1, new PassLegacy("Jade Spring 2", JadeLakeWorldGen.PolishPass));
 
             //debug
             tasks.RemoveAll(x => x.Name != "Jade Spring");
@@ -94,6 +96,7 @@ namespace JadeFables.Biomes.JadeLake
                         }
 
                     JadeLakeWorldGen.SurfaceItemPass(new GenerationProgress(), default);
+                    JadeLakeWorldGen.PolishPass(new GenerationProgress(), default);
                     Main.NewText("regened");
                 }
             }

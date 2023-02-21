@@ -15,7 +15,7 @@ namespace JadeFables.Tiles.BlossomWall
 			WallID.Sets.Conversion.Grass[Type] = true;
 			DustType = DustID.Grass;
 			HitSound = SoundID.Grass;
-			AddMapEntry(new Color(50, 140, 90));
+			AddMapEntry(Color.HotPink);
 		}
 
 		public override void PostDraw(int i, int j, SpriteBatch spriteBatch)

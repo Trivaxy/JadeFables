@@ -32,7 +32,7 @@ namespace JadeFables.Biomes.JadeLake
             PlaceJadeChests(worldRect, 40);
 
             //Places blossom walls
-            BlossomWallPopulation(worldRect, 0.03f, 5f, 3, 5, 7, 10f);
+            BlossomWallPopulation(worldRect, 0.03f, 5f, 3, 3, 5, 10f);
 
             //Places jade grass
             JadeGrassPopulation(worldRect, 0.1f, 5f);

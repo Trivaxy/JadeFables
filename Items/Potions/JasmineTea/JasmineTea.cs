@@ -45,17 +45,15 @@ namespace JadeFables.Items.Potions.JasmineTea
             Item.consumable = true;
         }
 
+        //Yes we need this for UseStyle() to run
         public override bool? UseItem(Player player)
         {
-            //player.AddBuff(ModContent.BuffType<JasmineTeaBuff>(), 300);
             return true;
         }
 
-        //Would be better to use a custom useStyle I think but this works 
-        //This is so there is a delay for the player getting the buff 
-        public override void HoldItem(Player player)
+        public override void UseStyle(Player player, Rectangle heldItemFrame)
         {
-            if (player.itemTime == 2)
+            if (player.itemTime == 2) //We want there to be a delay for the buff and sfx
             {
                 SoundStyle stylea = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_flame_breath") with { Volume = 0.6f, Pitch = 0.64f };
                 SoundEngine.PlaySound(stylea, player.Center);
@@ -74,7 +72,7 @@ namespace JadeFables.Items.Potions.JasmineTea
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.BottledWater, 1);
             recipe.AddIngredient<Tiles.JasmineFlower.JasmineFlower>(1);
-            recipe.AddTile(622);
+            recipe.AddTile(TileID.TeaKettle);
             recipe.Register();
         }
     }

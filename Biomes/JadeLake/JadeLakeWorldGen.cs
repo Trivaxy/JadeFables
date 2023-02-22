@@ -187,6 +187,7 @@ namespace JadeFables.Biomes.JadeLake
                 int scanStartOffset = -10000;
                 int scanEndOffset = 0;
 
+                //finds start of pillar
                 bool hasSkippedStartingEmptySpace = !Main.tile[center.X, center.Y].HasTile;
                 for (int g = -5; g < 20; g++)//moves start point down to bottom of island
                 {
@@ -204,19 +205,67 @@ namespace JadeFables.Biomes.JadeLake
 
                 if (scanStartOffset == -10000)//if there was no valid tile found to move it up to do no generate pillar
                     continue;
-
+                bool foundEnd = false;
+                //finds end of pillar
                 for (int j = scanStartOffset; j < maxPillarDistance; j++)
                 {
                     if (Main.tile[center.X, center.Y + j].HasTile)
                     {
-                        scanEndOffset = j; 
+                        scanEndOffset = j;//goes slightly past end
+                        foundEnd = true;
                         break;
                     }
-                    WorldGen.PlaceTile(center.X, center.Y + j, TileID.LunarOre, true, true);
                 }
-                //todo end the pillar scan if not found, (or reduce width to zero over time?)
+
+                if (foundEnd)
+                {
+                    const int MaxPillarWidth = 5;
+
+                    Point leftSide = Point.Zero;
+                    Point rightSide = Point.Zero;
+
+                    //finds edges/width
+                    for (int j = 0; j < MaxPillarWidth; j++)
+                    {
+                        
+                    }
+
+                    //debug
+                    for (int j = scanStartOffset; j < scanEndOffset; j++)
+                    {
+                        WorldGen.PlaceTile(center.X, center.Y + j, TileID.LunarOre, true, true);
+                    }
+                }
                 //actually generate it
             }
+        }
+
+        public static bool FindGroundTile(int i, int j, int limit, out int offset)
+        {
+            for (int g = limit; g > -limit; g--)
+            {
+                if (Main.tile[i, j + g].HasTile && !Main.tile[i, (j + g) - 1].HasTile)
+                {
+                    offset = g;
+                    return true;
+                }
+            }
+            offset = 0;
+            return false;
+        }
+
+        public static bool FindCeilingTile(int i, int j, int limit, out int offset)
+        {
+            for (int g = -limit; g < limit; g++)
+            {
+                if (Main.tile[i, j + g].HasTile && !Main.tile[i, (j + g) + 1].HasTile)
+                {
+                    offset = g;
+                    return true;
+                }
+            }
+            offset = 0;
+            return false;
         }
 
 

@@ -44,6 +44,8 @@ namespace JadeFables.NPCs.GiantSnail
         protected Vector2 newVelocity = Vector2.Zero;
         protected int initialDirection = 0;
 
+        protected Vector2 uncollidedVel = Vector2.Zero;
+
         private float segmentRotation = 0;
 
         private List<Vector2> cache;
@@ -58,6 +60,12 @@ namespace JadeFables.NPCs.GiantSnail
         private bool scared => NPC.life < NPC.lifeMax / 4;
 
         private bool fullyScared = false;
+
+        private bool lastChangedY = false;
+
+        private bool flippedOnce = false;
+
+        private int flipCountdown = 0;
 
         public override void SetStaticDefaults()
         {
@@ -98,6 +106,8 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override void AI()
         {
+            if (flipCountdown-- == 1)
+                initialDirection *= -1;
             if (scared)
             {
                 if (SPEED < 0.05f && !fullyScared)
@@ -129,13 +139,13 @@ namespace JadeFables.NPCs.GiantSnail
         }
         protected void Crawl()
         {
-            newVelocity = Collide(1);
+            newVelocity = Collide(1, uncollidedVel, 2f);
 
-            if (Math.Abs(newVelocity.X) < 0.125f)
+            if (newVelocity.X != uncollidedVel.X)
                 NPC.collideX = true;
             else
                 NPC.collideX = false;
-            if (Math.Abs(newVelocity.Y) < 0.125f)
+            if (newVelocity.Y != uncollidedVel.Y)
                 NPC.collideY = true;
             else
                 NPC.collideY = false;
@@ -156,12 +166,14 @@ namespace JadeFables.NPCs.GiantSnail
 
                 if (!NPC.collideY && NPC.ai[0] == 2f)
                 {
+                    lastChangedY = false;
                     moveDirection.X = -moveDirection.X;
                     NPC.ai[1] = 1f;
                     NPC.ai[0] = 1f;
                 }
                 if (NPC.collideX)
                 {
+                    lastChangedY = true;
                     moveDirection.Y = -moveDirection.Y;
                     NPC.ai[1] = 1f;
                 }
@@ -173,22 +185,43 @@ namespace JadeFables.NPCs.GiantSnail
 
                 if (!NPC.collideX && NPC.ai[0] == 2f)
                 {
+                    lastChangedY = true;
                     moveDirection.Y = -moveDirection.Y;
                     NPC.ai[1] = 0f;
                     NPC.ai[0] = 1f;
                 }
                 if (NPC.collideY)
                 {
+                    lastChangedY = false;
                     moveDirection.X = -moveDirection.X;
                     NPC.ai[1] = 0f;
                 }
             }
+
+            if (!NPC.collideX && !NPC.collideY)
+            {
+                if (lastChangedY)
+                {
+                    moveDirection.Y *= -1;
+                }
+                else
+                {
+                    if (flipCountdown > 1)
+                    {
+                        flipCountdown = 0;
+                    }
+                    else
+                        flipCountdown = 5;
+                    moveDirection.X *= -1;
+                }
+            }
             NPC.velocity = SPEED * moveDirection;
-            NPC.velocity = Collide(1);
+            uncollidedVel = NPC.velocity;
+            NPC.velocity = Collide(1, NPC.velocity, 2);
             //NPC.velocity = Vector2.Normalize(NPC.velocity) * SPEED;
         }
 
-        protected Vector2 Collide(float speedMult) => Collision.noSlopeCollision(climbCenter - new Vector2(climbHalfSize, climbHalfSize), NPC.velocity * speedMult, climbHalfSize * 2, climbHalfSize * 2, true, true);
+        protected Vector2 Collide(float speedMult, Vector2 vel, float hitboxMult) => Collision.noSlopeCollision(climbCenter - (new Vector2(climbHalfSize, climbHalfSize) * hitboxMult), vel * speedMult, (int)(climbHalfSize * 2 * hitboxMult), (int)(climbHalfSize * 2 * hitboxMult), true, true);
 
         protected void RotateCrawl()
         {

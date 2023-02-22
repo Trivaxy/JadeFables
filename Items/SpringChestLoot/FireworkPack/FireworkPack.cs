@@ -100,8 +100,8 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
 		public override void SetDefaults()
 		{
-			Projectile.width = 12;
-			Projectile.height = 12;
+			Projectile.width = 18;
+			Projectile.height = 18;
 			Projectile.tileCollide = true;
 			Projectile.friendly = true;
 			Projectile.timeLeft = 60;

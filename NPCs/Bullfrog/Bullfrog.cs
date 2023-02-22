@@ -36,7 +36,7 @@ namespace JadeFables.NPCs.Bullfrog
 {
     internal class Bullfrog : ModNPC
     {
-        public static Vector2 tongueOffset = new Vector2(10, 10);
+        public static Vector2 tongueOffset = new Vector2(26, 12);
         private Entity target;
 
         private int XFRAMES = 3;
@@ -243,6 +243,15 @@ namespace JadeFables.NPCs.Bullfrog
                     dragonfly.StrikeNPC(Main.rand.Next(500, 1000), 0, 0, true);
                 }
             }
+
+            if (!parent.active)
+            {
+                Projectile.active = false;
+                if (dragonfly != default)
+                {
+                    dragonfly.immortal = false;
+                }
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -253,7 +262,7 @@ namespace JadeFables.NPCs.Bullfrog
 
             float length = (mouthPos - Projectile.Center).Length();
 
-            Vector2 origin = new Vector2(0, middleTex.Height / 2);
+            Vector2 origin = new Vector2(6, middleTex.Height / 2);
 
             float rot = (mouthPos - Projectile.Center).ToRotation() + 3.14f;
             Main.spriteBatch.Draw(startTex, mouthPos - Main.screenPosition, null, Lighting.GetColor((int)(mouthPos.X / 16), (int)(mouthPos.Y / 16)), rot, origin, Projectile.scale, SpriteEffects.None, 0f);

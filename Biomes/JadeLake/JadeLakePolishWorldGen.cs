@@ -2,6 +2,7 @@
 using JadeFables.Helpers.FastNoise;
 using JadeFables.Tiles.BlossomWall;
 using JadeFables.Tiles.JadeGrass;
+using JadeFables.Tiles.JadeOre;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeWaterfall;
 using JadeFables.Tiles.SpringChest;
@@ -25,8 +26,8 @@ namespace JadeFables.Biomes.JadeLake
         {
             progress.Message = "Polishing jade biome";
 
-            
-            Rectangle worldRect = new Rectangle(0,0,Main.maxTilesX, Main.maxTilesY);
+
+            Rectangle worldRect = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
 
             //Places spring chests
             PlaceJadeChests(worldRect, 40);
@@ -39,6 +40,9 @@ namespace JadeFables.Biomes.JadeLake
 
             //Places sand piles
             PlaceJadeSandPiles(worldRect, 5);
+
+            //Places jade ore
+            PlaceJadeOre(worldRect, 0.5f, 0.25f, 15f);
         }
 
         public static void JadeGrassPopulation(Rectangle rect, float threshhold, float noiseFreq)
@@ -132,6 +136,41 @@ namespace JadeFables.Biomes.JadeLake
                     if (tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
                     {
                         WorldGen.PlaceObject(i, j, piles[WorldGen.genRand.Next(piles.Length)]);
+                    }
+                }
+            }
+        }
+
+        public static void PlaceJadeOre(Rectangle rect, float threshhold, float exposedThreshhold, float noiseFreq)
+        {
+            FastNoise fastnoise = new FastNoise(WorldGen.genRand.Next(0, 10000));
+            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            {
+                for (int j = rect.Top; j < rect.Top + rect.Height; j++)
+                {
+                    Tile mainTile = Framing.GetTileSafely(i, j);
+                    if (mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>())
+                    {
+                        bool exposed = false;
+                        for (int x = i - 3; x < i + 3; x++)
+                        {
+                            for (int y = j - 3; y < j + 3; y++)
+                            {
+                                Tile airTile = Framing.GetTileSafely(x, y);
+                                if (!airTile.HasTile)
+                                {
+                                    exposed = true;
+                                    break;
+                                }
+                            }
+                            if (exposed)
+                                break;
+                        }
+                        float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
+                        if (noiseVal > (exposed ? exposedThreshhold : threshhold))
+                        {
+                            mainTile.TileType = (ushort)ModContent.TileType<JadeOre>();
+                        }
                     }
                 }
             }

@@ -5,6 +5,7 @@ using JadeFables.Tiles.JadeGrass;
 using JadeFables.Tiles.JadeOre;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeWaterfall;
+using JadeFables.Tiles.JasmineFlower;
 using JadeFables.Tiles.SpringChest;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,9 @@ namespace JadeFables.Biomes.JadeLake
 
             //Places jade ore
             PlaceJadeOre(worldRect, 0.5f, 0.25f, 15f);
+
+            //Places jasmine flowers
+            PlaceJasmineFlowers(worldRect, 10);
         }
 
         public static void JadeGrassPopulation(Rectangle rect, float threshhold, float noiseFreq)
@@ -118,6 +122,23 @@ namespace JadeFables.Biomes.JadeLake
                     if (tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
                     {
                         WorldGen.PlaceChest(i, j, (ushort)ModContent.TileType<SpringChest>());
+                    }
+                }
+            }
+        }
+
+        public static void PlaceJasmineFlowers(Rectangle rect, int chance)
+        {
+            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            {
+                for (int j = rect.Top; j < rect.Top + rect.Height - 1; j++)
+                {
+                    Tile tileBelow = Framing.GetTileSafely(i, j + 1);
+                    Tile mainTile = Framing.GetTileSafely(i, j);
+
+                    if (!mainTile.HasTile && tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
+                    {
+                        WorldGen.PlaceTile(i, j, ModContent.TileType<JasmineFlowerTile>());
                     }
                 }
             }

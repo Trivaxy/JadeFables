@@ -81,7 +81,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public override void PostUpdateEverything()
         {
-            if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.NumPad5))
+            if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.OemCloseBrackets))
             {
                 if (!pressed)
                 {

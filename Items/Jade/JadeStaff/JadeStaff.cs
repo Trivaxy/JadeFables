@@ -99,7 +99,7 @@ namespace JadeFables.Items.Jade.JadeStaff
                 }
                 if (dragon != null && dragon.active)
                 {
-                    dragon.timeLeft = 60;
+                    dragon.timeLeft = 120;
                     dragon.Center = owner.Center + rotation.ToRotationVector2() * 80;
                 }
                 if (soundTimer++ % 30 == 0)
@@ -166,8 +166,8 @@ namespace JadeFables.Items.Jade.JadeStaff
 
         public override void SetDefaults()
         {
-            Projectile.width = 16;
-            Projectile.height = 16;
+            Projectile.width = 32;
+            Projectile.height = 32;
             Projectile.tileCollide = false;
             Projectile.friendly = true;
             Projectile.penetrate = -1;

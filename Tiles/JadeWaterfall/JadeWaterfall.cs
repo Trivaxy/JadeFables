@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
@@ -81,6 +82,23 @@ namespace JadeFables.Tiles.JadeWaterfall
         int yFrames = 6;
 
         public bool foundWater = false;
+
+        public override void Load()
+        {
+            On.Terraria.Main.DrawPlayers_AfterProjectiles += Main_DrawPlayers_AfterProjectiles;
+        }
+
+        private void Main_DrawPlayers_AfterProjectiles(On.Terraria.Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
+        {
+            orig(self);
+            {
+                Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+                var toDraw = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<JadeWaterfallProj>()).ToList();
+                toDraw.ForEach(n => (n.ModProjectile as JadeWaterfallProj).Draw());
+                Main.spriteBatch.End();
+            }
+        }
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Jade Waterfall");
@@ -95,17 +113,19 @@ namespace JadeFables.Tiles.JadeWaterfall
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.timeLeft = 10;
+            Projectile.hide = true;
         }
 
 
-        public override bool PreDraw(ref Color lightColor)
+        public void Draw()
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
             Texture2D topTex = ModContent.Request<Texture2D>(Texture + "_Top").Value;
             Texture2D bottomTex = ModContent.Request<Texture2D>(Texture + "_Bottom").Value;
             int topFrameHeight = topTex.Height / yFrames;
             Rectangle topFrameBox = new Rectangle(0, (frame % yFrames) * topFrameHeight, topTex.Width, topFrameHeight);
-            Main.spriteBatch.Draw(topTex, Projectile.Center - Main.screenPosition, topFrameBox, lightColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+            Color topColor = Lighting.GetColor((int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16));
+            Main.spriteBatch.Draw(topTex, Projectile.Center - Main.screenPosition, topFrameBox, topColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             int i;
             for (i = 1; i < length; i++)
             {
@@ -118,13 +138,13 @@ namespace JadeFables.Tiles.JadeWaterfall
             }
 
             if (!foundWater)
-                return false;
+                return;
             int bottomFrameHeight = bottomTex.Height / yFrames;
             Rectangle bottomFrameBox = new Rectangle(0, ((i + frame) % yFrames) * bottomFrameHeight, bottomTex.Width, bottomFrameHeight);
             Vector2 bottomPos = Projectile.Center + (Vector2.UnitY * 16 * i) - new Vector2(16, 16);
             Color bottomColor = Lighting.GetColor((int)(bottomPos.X / 16), (int)(bottomPos.Y / 16));
             Main.spriteBatch.Draw(bottomTex, bottomPos - Main.screenPosition, bottomFrameBox, bottomColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
-            return false;
+            return;
         }
 
         public override void AI()
@@ -132,7 +152,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             if (Projectile.frameCounter++ % 4 == 0)
                 frame++;
             int i = 0;
-            for (i = 0; i < 60; i++)
+            for (i = 0; i < 120; i++)
             {
                 foundWater = false;
                 for (int j = 0; j < 2; j++)

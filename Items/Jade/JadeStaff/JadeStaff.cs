@@ -1,4 +1,9 @@
-﻿using JadeFables.Core;
+﻿//TODO:
+//Description
+//Balance
+//Some sort of chargeup mechanic
+//Visuals
+using JadeFables.Core;
 using JadeFables.Dusts;
 using JadeFables.Helpers;
 using Microsoft.Xna.Framework;
@@ -101,6 +106,7 @@ namespace JadeFables.Items.Jade.JadeStaff
                 {
                     dragon.timeLeft = 120;
                     dragon.Center = owner.Center + rotation.ToRotationVector2() * 80;
+                    (dragon.ModProjectile as JadeStaffDragon).flip = owner.direction == -1;
                 }
                 if (soundTimer++ % 30 == 0)
                 {
@@ -124,7 +130,10 @@ namespace JadeFables.Items.Jade.JadeStaff
                 {
                     thrownDragon = true;
                     if (dragon != null)
+                    {
+                        (dragon.ModProjectile as JadeStaffDragon).Launch();
                         dragon.velocity = dragon.DirectionTo(Main.MouseWorld) * 13;
+                    }
                 }
             }
                 Projectile.timeLeft = 2;
@@ -158,6 +167,10 @@ namespace JadeFables.Items.Jade.JadeStaff
         private List<Vector2> cache;
         private Trail trail;
         private Player owner => Main.player[Projectile.owner];
+
+        private bool launched = false;
+
+        public bool flip;
 
         public override void SetStaticDefaults()
         {
@@ -194,10 +207,13 @@ namespace JadeFables.Items.Jade.JadeStaff
                 cache = new List<Vector2>();
                 for (int i = 0; i < NUMPOINTS; i++) 
                 {
-                    cache.Add(Projectile.Center);
+                    cache.Add(Projectile.Center - owner.Center);
                 }
             }
-            cache.Add(Projectile.Center);
+            if (launched)
+                cache.Add(Projectile.Center);
+            else
+                cache.Add(Projectile.Center - owner.Center);
 
             while (cache.Count > NUMPOINTS)
             {
@@ -205,6 +221,16 @@ namespace JadeFables.Items.Jade.JadeStaff
             }
         }
 
+        public void Launch()
+        {
+            launched = true;
+            List<Vector2> newCache = new List<Vector2>();
+            foreach (Vector2 point in cache)
+            {
+                newCache.Add(point + owner.Center);
+            }
+            cache = newCache;
+        }
         private void ManageTrail()
         {
             trail = trail ?? new Trail(Main.instance.GraphicsDevice, NUMPOINTS, new TriangularTip(2), factor => 23, factor =>
@@ -212,7 +238,17 @@ namespace JadeFables.Items.Jade.JadeStaff
                 return Lighting.GetColor((int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16));
             });
 
-            trail.Positions = cache.ToArray();
+            if (!launched)
+            {
+                List<Vector2> newCache = new List<Vector2>();
+                foreach (Vector2 point in cache)
+                {
+                    newCache.Add(point + owner.Center);
+                }
+                trail.Positions = newCache.ToArray();
+            }
+            else
+                trail.Positions = cache.ToArray();
             trail.NextPosition = Projectile.Center;
         }
 
@@ -230,7 +266,7 @@ namespace JadeFables.Items.Jade.JadeStaff
 
             effect.Parameters["transformMatrix"].SetValue(world * view * projection);
             effect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>(Texture).Value);
-            effect.Parameters["flip"].SetValue(owner.direction == -1);
+            effect.Parameters["flip"].SetValue(flip);
 
             trail.Render(effect);
 

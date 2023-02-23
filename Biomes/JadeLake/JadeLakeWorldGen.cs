@@ -181,9 +181,9 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void GenerateWallPillars(List<(Rectangle pos, bool water)> islandList, int maxPillarDistance)
         {
-            foreach(var island in islandList)
+            foreach(var (pos, water) in islandList)
             {
-                Point center = island.pos.Center;
+                Point center = pos.Center;
                 int scanStartOffset = -10000;
                 int scanEndOffset = 0;
 
@@ -220,23 +220,47 @@ namespace JadeFables.Biomes.JadeLake
                 if (foundEnd)
                 {
                     const int MaxPillarWidth = 5;
+                    int pillarBottomHeight = center.Y + scanEndOffset;
+                    int pillarTopHeight = center.Y + scanStartOffset;
 
-                    Point leftSide = Point.Zero;
-                    Point rightSide = Point.Zero;
+                    Point leftBottomSide = new Point(center.X, pillarBottomHeight);
+                    Point rightBottomSide = new Point(center.X, pillarBottomHeight);
+                    //righttopside
+                    //lefttopside
 
                     //finds edges/width
-                    for (int j = 0; j < MaxPillarWidth; j++)
                     {
-                        
+                        //right side
+                        for (int h = 0; h < MaxPillarWidth; h++)
+                        {
+                            if (FindGroundTile(center.X + h, pillarBottomHeight, MaxPillarWidth + 1, out int offset1))
+                            {
+                                rightBottomSide = new Point(center.X + h, pillarBottomHeight + offset1);
+                            }
+                            else
+                                break;
+                        }
+
+                        //left side
+                        for (int h = 0; h < MaxPillarWidth; h++)
+                        {
+                            if (FindGroundTile(center.X - h, pillarBottomHeight, MaxPillarWidth + 1, out int offset2))
+                            {
+                                leftBottomSide = new Point(center.X - h, pillarBottomHeight + offset2);
+                            }
+                            else
+                                break;//if no valid tile is found it stops searching, so the last valid tile (or starting one) is used
+                        }
                     }
 
                     //debug
-                    for (int j = scanStartOffset; j < scanEndOffset; j++)
-                    {
-                        WorldGen.PlaceTile(center.X, center.Y + j, TileID.LunarOre, true, true);
-                    }
+                    //for (int j = scanStartOffset; j < scanEndOffset; j++)
+                    //{
+                    //    WorldGen.PlaceTile(center.X, center.Y + j, TileID.LunarOre, true, true);
+                    //}
+
+                    //actually generate it
                 }
-                //actually generate it
             }
         }
 

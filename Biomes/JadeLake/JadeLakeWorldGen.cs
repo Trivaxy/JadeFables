@@ -179,6 +179,29 @@ namespace JadeFables.Biomes.JadeLake
             PlaceForegroundWaterfalls(UpperIslandRect, 700);
         }
 
+        public class Area
+        {
+            Point leftTop; 
+            Point rightTop;
+            Point leftBottom; 
+            Point rightBottom;
+
+            public Area() 
+            {
+                leftTop = new();
+                rightTop = new();
+                leftBottom = new();
+                rightBottom= new();
+            }
+            public Area(Point leftTop, Point rightTop, Point leftBottom, Point rightBottom) 
+            {
+                this.leftTop = leftTop;
+                this.rightTop = rightTop;
+                this.leftBottom = leftBottom;
+                this.rightBottom = rightBottom;
+            }
+        }
+
         public static void GenerateWallPillars(List<(Rectangle pos, bool water)> islandList, int maxPillarDistance)
         {
             foreach(var (pos, water) in islandList)
@@ -223,33 +246,56 @@ namespace JadeFables.Biomes.JadeLake
                     int pillarBottomHeight = center.Y + scanEndOffset;
                     int pillarTopHeight = center.Y + scanStartOffset;
 
-                    Point leftBottomSide = new Point(center.X, pillarBottomHeight);
-                    Point rightBottomSide = new Point(center.X, pillarBottomHeight);
-                    //righttopside
-                    //lefttopside
+                    Area PillarArea = new(
+                        leftTop: new Point(center.X, pillarTopHeight),
+                        rightTop: new Point(center.X, pillarTopHeight),
+                        leftBottom: new Point(center.X, pillarBottomHeight),
+                        rightBottom: new Point(center.X, pillarBottomHeight));
 
                     //finds edges/width
                     {
-                        //right side
+                        //bottom left side
+                        for (int h = 0; h < MaxPillarWidth; h++)
+                        {
+                            if (FindGroundTile(center.X - h, pillarBottomHeight, MaxPillarWidth + 1, out int offset2))
+                            {
+                                PillarArea.leftBottom = new Point(center.X - h, pillarBottomHeight + offset2);
+                            }
+                            else
+                                break;//if no valid tile is found it stops searching, so the last valid tile (or starting one) is used
+                        }
+
+                        //bottom right side
                         for (int h = 0; h < MaxPillarWidth; h++)
                         {
                             if (FindGroundTile(center.X + h, pillarBottomHeight, MaxPillarWidth + 1, out int offset1))
                             {
-                                rightBottomSide = new Point(center.X + h, pillarBottomHeight + offset1);
+                                PillarArea.rightBottom = new Point(center.X + h, pillarBottomHeight + offset1);
                             }
                             else
                                 break;
                         }
 
-                        //left side
+                        //top left side
                         for (int h = 0; h < MaxPillarWidth; h++)
                         {
-                            if (FindGroundTile(center.X - h, pillarBottomHeight, MaxPillarWidth + 1, out int offset2))
+                            if (FindGroundTile(center.X - h, pillarTopHeight, MaxPillarWidth + 1, out int offset2))
                             {
-                                leftBottomSide = new Point(center.X - h, pillarBottomHeight + offset2);
+                                PillarArea.leftTop = new Point(center.X - h, pillarBottomHeight + offset2);
                             }
                             else
                                 break;//if no valid tile is found it stops searching, so the last valid tile (or starting one) is used
+                        }
+
+                        //top right side
+                        for (int h = 0; h < MaxPillarWidth; h++)
+                        {
+                            if (FindCeilingTile(center.X + h, pillarTopHeight, MaxPillarWidth + 1, out int offset1))
+                            {
+                                PillarArea.rightTop = new Point(center.X + h, pillarBottomHeight + offset1);
+                            }
+                            else
+                                break;
                         }
                     }
 
@@ -262,6 +308,11 @@ namespace JadeFables.Biomes.JadeLake
                     //actually generate it
                 }
             }
+        }
+        public static bool PillarFunction(int i, int j, Area area)
+        {
+
+            return false;
         }
 
         public static bool FindGroundTile(int i, int j, int limit, out int offset)

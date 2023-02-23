@@ -26,7 +26,7 @@ namespace JadeFables.Tiles.BlossomWall
 			if (i > Main.screenPosition.X / 16 && i < Main.screenPosition.X / 16 + Main.screenWidth / 16 && j > Main.screenPosition.Y / 16 && j < Main.screenPosition.Y / 16 + Main.screenHeight / 16)
 			{
 				Texture2D tex = Request<Texture2D>("JadeFables/Tiles/BlossomWall/BlossomWallFlow").Value;
-				var rand = new Random(i * j % 192372);
+				var rand = new Random(i + (j * 100000));
 
 				float offset = i * j % 6.28f + (float)rand.NextDouble() / 8f;
 				float sin = (float)Math.Sin(Main.GameUpdateCount / 45f + offset);

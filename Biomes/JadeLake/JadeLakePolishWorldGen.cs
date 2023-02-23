@@ -34,7 +34,7 @@ namespace JadeFables.Biomes.JadeLake
             PlaceJadeChests(worldRect, 40);
 
             //Places blossom walls
-            BlossomWallPopulation(worldRect, 0.03f, 5f, 3, 3, 5, 10f);
+            BlossomWallPopulation(worldRect, 0.03f, 5f, 3, 5, 10, 10f, 3);
 
             //Places jade grass
             JadeGrassPopulation(worldRect, 0.1f, 5f);
@@ -75,7 +75,7 @@ namespace JadeFables.Biomes.JadeLake
             }
         }
 
-        public static void BlossomWallPopulation(Rectangle rect, float threshhold, float noiseFreq, int chance, int heightMin, int heightMax, float noiseFreqCircle)
+        public static void BlossomWallPopulation(Rectangle rect, float threshhold, float noiseFreq, int chance, int heightMin, int heightMax, float noiseFreqCircle, float xShrink)
         {
             FastNoise fastnoise = new FastNoise(WorldGen.genRand.Next(0, 10000));
             for (int i = rect.Left; i < rect.Left + rect.Width; i++)
@@ -97,7 +97,7 @@ namespace JadeFables.Biomes.JadeLake
                                 int height = (int)MathHelper.Lerp(heightMin, heightMax, fastnoise.GetPerlin(x * noiseFreqCircle, y * noiseFreqCircle));
                                 for (int h = 0; h < height; h++)
                                 {
-                                    x = i + (MathF.Cos(rad) * h);
+                                    x = i + ((MathF.Cos(rad) * h) / xShrink);
                                     y =j + (MathF.Sin(rad) * h);
                                     Tile wallTile = Framing.GetTileSafely((int)x,(int)y);
                                     if (!wallTile.HasTile && wallTile.WallType == 0)

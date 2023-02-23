@@ -3,7 +3,6 @@
 //Balance
 //Gores
 //Banner
-//Sound effects
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -78,13 +77,19 @@ namespace JadeFables.NPCs.Bullfrog
             NPC.lifeMax = 300;
             NPC.value = 10f;
             NPC.knockBackResist = 0.4f;
-            NPC.HitSound = SoundID.Item111 with { PitchVariance = 0.2f, Pitch = 0.4f};
-            NPC.DeathSound = SoundID.NPCDeath26;
+            NPC.HitSound = SoundID.NPCHit21 with { Pitch = -0.45f };
+            NPC.DeathSound = SoundID.NPCDeath53 with { Pitch = -0.6f};
             NPC.noGravity = false;
         }
 
         public override void AI()
         {
+            if (Main.rand.NextBool(900))
+                SoundEngine.PlaySound(SoundID.Zombie26 with { Pitch = -0.45f });
+            if (Main.rand.NextBool(900))
+                SoundEngine.PlaySound(SoundID.Zombie29 with { Pitch = -0.45f });
+            if (Main.rand.NextBool(900))
+                SoundEngine.PlaySound(SoundID.Zombie13 with { Pitch = -0.8f});
             NPC.TargetClosest(true);
             int[] dragonflies = new int[] { NPCID.BlackDragonfly, NPCID.BlueDragonfly, NPCID.GoldDragonfly, NPCID.GreenDragonfly, NPCID.OrangeDragonfly, NPCID.RedDragonfly, NPCID.YellowDragonfly };
             var nearbyDragonfly = Main.npc.Where(n => n.active && dragonflies.Contains(n.type) && n.Distance(NPC.Center) < 300 && MathF.Abs(MathF.Sin((n.Center - NPC.Center).ToRotation())) < 0.35f).OrderBy(n => n.Distance(NPC.Center)).FirstOrDefault();
@@ -131,11 +136,13 @@ namespace JadeFables.NPCs.Bullfrog
                     {
                         if (tongue == null)
                         {
+                            SoundEngine.PlaySound(SoundID.Item95, NPC.Center);
                             tongue = Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), NPC.Center + tongueOffset * new Vector2(NPC.spriteDirection, 1), (NPC.Center + tongueOffset * new Vector2(NPC.spriteDirection, 1)).DirectionTo(target.Center) * 15, ModContent.ProjectileType<Bullfrog_Tongue>(), 30, 0, NPC.target);
                             (tongue.ModProjectile as Bullfrog_Tongue).parent = NPC;
                         }
                         else if (!tongue.active)
                         {
+                            SoundEngine.PlaySound(SoundID.Item111, NPC.Center);
                             tongue = null;
                             yFrame++;
                         }

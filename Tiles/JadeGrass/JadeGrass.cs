@@ -10,6 +10,7 @@ using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using JadeFables.Tiles.JadeSand;
 
 namespace JadeFables.Tiles.JadeGrass
 {
@@ -187,8 +188,9 @@ namespace JadeFables.Tiles.JadeGrass
         {
             blades.ForEach(n => n.Update(Projectile.Center));
             Projectile.velocity = Vector2.Zero;
-            
-            if (Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)].HasTile)
+
+            Tile tile = Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)];
+            if (tile.HasTile && tile.TileType == ModContent.TileType<JadeGrassTile>())
                 Projectile.timeLeft = 2;
         }
     }

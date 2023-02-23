@@ -94,6 +94,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             Projectile.penetrate = -1;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
+            Projectile.timeLeft = 10;
         }
 
 
@@ -152,7 +153,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                     break;
             }
             length = i;
-            if (originLeft.HasTile)
+            if (originLeft.HasTile && originLeft.TileType == ModContent.TileType<JadeWaterfallTile>())
                 Projectile.timeLeft = 2;
         }
     }

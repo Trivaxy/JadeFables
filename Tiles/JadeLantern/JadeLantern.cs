@@ -306,7 +306,7 @@ namespace JadeFables.Tiles.JadeLantern
             else
                 burning = true;
 
-            SoundEngine.PlaySound(SoundID.Shatter, seg.posNow);
+            Helpers.Helper.PlayPitched("LanternBreak", 0.6f, Main.rand.NextFloat(-0.1f, 0.1f), seg.posNow);
 
             for (int i = 1; i <= 4; i++)
             {

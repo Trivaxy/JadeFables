@@ -239,7 +239,7 @@ namespace JadeFables.Tiles.JadeLantern
         public override void AI()
         {
             Tile tile = Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)];
-            if (tile.HasTile && tile.TileType == ModContent.TileType<JadeLantern>())
+            if (tile.HasTile && (tile.TileType == ModContent.TileType<JadeLantern>() || tile.TileType == ModContent.TileType<JadeLanternFurniture>()))
                 Projectile.timeLeft = 2;
 
             chain.UpdateChain();

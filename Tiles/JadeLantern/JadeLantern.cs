@@ -81,6 +81,8 @@ namespace JadeFables.Tiles.JadeLantern
 
         private Rectangle lanternFrame;
 
+        private Rectangle pivotFrame;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Jade Lantern");
@@ -98,10 +100,13 @@ namespace JadeFables.Tiles.JadeLantern
 
         public override void OnSpawn(IEntitySource source)
         {
-            chain = new VerletChain(Main.rand.Next(10, 15), true, Projectile.Center, 16, true);
+            chain = new VerletChain(Main.rand.Next(10, 15), true, Projectile.Center, 14, true);
             chain.Start();
             chain.forceGravity = new Vector2(0, 0.4f);
-            chainFrame = new Rectangle(0, 16 * Main.rand.Next(4), 12, 16);
+
+            int chainMat = Main.rand.Next(3);
+            chainFrame = new Rectangle(0, 22 * chainMat, 12, 22);
+            pivotFrame = new Rectangle(0, 10 * chainMat, 14, 10);
             lanternFrame = new Rectangle(0, 32 * Main.rand.Next(4), 32, 32);
         }
 
@@ -110,13 +115,16 @@ namespace JadeFables.Tiles.JadeLantern
             if (chain == null)
                 return false;
             Texture2D chainTex = ModContent.Request<Texture2D>(Texture + "_Chain").Value;
+            Texture2D pivotTex = ModContent.Request<Texture2D>(Texture + "_Pivot").Value;
             Texture2D lanternTex = ModContent.Request<Texture2D>(Texture).Value;
-            for (int i = 0; i < chain.segmentCount - 1; i++)
+            for (int i = chain.segmentCount - 2; i >= 0; i--)
             {
                 RopeSegment segInner = chain.ropeSegments[i];
                 RopeSegment nextSegInner = chain.ropeSegments[i + 1];
                 Main.spriteBatch.Draw(chainTex, segInner.posNow - Main.screenPosition, chainFrame, Lighting.GetColor((int)(segInner.posNow.X / 16), (int)(segInner.posNow.Y / 16)), segInner.posNow.DirectionTo(nextSegInner.posNow).ToRotation() + 1.57f, chainFrame.Size() / 2, 1, SpriteEffects.None, 0f);
             }
+
+            Main.spriteBatch.Draw(pivotTex, (Projectile.Center - new Vector2(0, 6)) - Main.screenPosition, pivotFrame, lightColor, 0, pivotFrame.Size() / 2, 1, SpriteEffects.None, 0f);
 
             RopeSegment seg = chain.ropeSegments[chain.segmentCount - 2];
             RopeSegment nextSeg = chain.ropeSegments[chain.segmentCount - 1];

@@ -2,8 +2,10 @@
 using JadeFables.Helpers.FastNoise;
 using JadeFables.Tiles.BlossomWall;
 using JadeFables.Tiles.JadeGrass;
+using JadeFables.Tiles.JadeLantern;
 using JadeFables.Tiles.JadeOre;
 using JadeFables.Tiles.JadeSand;
+using JadeFables.Tiles.JadeSandstone;
 using JadeFables.Tiles.JadeWaterfall;
 using JadeFables.Tiles.JasmineFlower;
 using JadeFables.Tiles.SpringChest;
@@ -47,6 +49,9 @@ namespace JadeFables.Biomes.JadeLake
 
             //Places jasmine flowers
             PlaceJasmineFlowers(worldRect, 10);
+
+            //Places hanging lanterns
+            PlaceJadeLanterns(worldRect, 15, 20);
         }
 
         public static void JadeGrassPopulation(Rectangle rect, float threshhold, float noiseFreq)
@@ -191,6 +196,37 @@ namespace JadeFables.Biomes.JadeLake
                         if (noiseVal > (exposed ? exposedThreshhold : threshhold))
                         {
                             mainTile.TileType = (ushort)ModContent.TileType<JadeOre>();
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void PlaceJadeLanterns(Rectangle rect, int chance, int spaceBelow)
+        {
+            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            {
+                for (int j = rect.Top; j < rect.Top + rect.Height - spaceBelow; j++)
+                {
+                    Tile mainTile = Framing.GetTileSafely(i, j);
+                    if (mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandstoneTile>())
+                    {
+                        bool safe = true;
+                        for (int y = 1; y < spaceBelow; y++)
+                        {
+                            Tile tileBelow = Framing.GetTileSafely(i, j + y);
+                            if (tileBelow.HasTile)
+                            {
+                                safe = false;
+                                break;
+                            }
+                        }
+
+                        if (safe && WorldGen.genRand.NextBool(chance))
+                        {
+                            Tile toPlace = Framing.GetTileSafely(i, j + 1);
+                            toPlace.HasTile = true;
+                            toPlace.TileType = (ushort)ModContent.TileType<JadeLantern>();
                         }
                     }
                 }

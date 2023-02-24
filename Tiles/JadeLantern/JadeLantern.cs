@@ -29,7 +29,7 @@ namespace JadeFables.Tiles.JadeLantern
             TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
             TileObjectData.newTile.UsesCustomCanPlace = true;
             TileObjectData.newTile.LavaDeath = false;
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16};
+            TileObjectData.newTile.CoordinateHeights = new int[] { 16 };
             TileObjectData.newTile.CoordinateWidth = 16;
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
@@ -46,6 +46,63 @@ namespace JadeFables.Tiles.JadeLantern
             {
                 Projectile.NewProjectile(new EntitySource_Misc("Jade Lantern"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeLanternProj>(), 0, 0);
             }
+        }
+    }
+
+    public class JadeLanternFurniture : ModTile
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.tileFrameImportant[Type] = true;
+            Main.tileSolid[Type] = false;
+            TileObjectData.newTile.Height = 1;
+            TileObjectData.newTile.Width = 1;
+            TileObjectData.newTile.Origin = new Point16(0, 0); // Todo: make less annoying.
+            TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
+            TileObjectData.newTile.UsesCustomCanPlace = true;
+            TileObjectData.newTile.LavaDeath = false;
+            TileObjectData.newTile.CoordinateHeights = new int[] { 16 };
+            TileObjectData.newTile.CoordinateWidth = 16;
+            TileObjectData.newTile.CoordinatePadding = 2;
+            TileObjectData.addTile(Type);
+            ItemDrop = ModContent.ItemType<JadeLanternItem>();
+            ModTranslation name = CreateMapEntryName();
+            name.SetDefault("Spring Lantern");
+            AddMapEntry(new Color(207, 160, 118), name);
+        }
+
+        public override void NearbyEffects(int i, int j, bool closer)
+        {
+            var existingLantern = Main.projectile.Where(n => n.active && n.Center == new Vector2(i, j) * 16 && n.type == ModContent.ProjectileType<JadeLanternProjFurniture>()).FirstOrDefault();
+            if (existingLantern == default)
+            {
+                Projectile.NewProjectile(new EntitySource_Misc("Jade Lantern"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeLanternProjFurniture>(), 0, 0);
+            }
+        }
+    }
+
+    public class JadeLanternItemDebug : ModItem
+    {
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Spring Lantern DEBUG");
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 16;
+            Item.height = 16;
+            Item.maxStack = 999;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.consumable = true;
+            Item.createTile = TileType<JadeLantern>();
+            Item.rare = ItemRarityID.White;
+            Item.value = 5;
         }
     }
 
@@ -68,7 +125,7 @@ namespace JadeFables.Tiles.JadeLantern
             Item.useTime = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
-            Item.createTile = TileType<JadeLantern>();
+            Item.createTile = TileType<JadeLanternFurniture>();
             Item.rare = ItemRarityID.White;
             Item.value = 5;
         }
@@ -233,7 +290,7 @@ namespace JadeFables.Tiles.JadeLantern
 
         }
 
-        public void Break()
+        public virtual void Break()
         {
             Tile tile = Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)];
             RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
@@ -346,6 +403,21 @@ namespace JadeFables.Tiles.JadeLantern
         }
     }
 
+    public class JadeLanternProjFurniture : JadeLanternProj
+    {
+        public override string Texture => "JadeFables/Tiles/JadeLantern/JadeLanternProj";
+
+        public override void Load()
+        {
+            
+        }
+
+        public override void Break()
+        {
+            
+        }
+    }
+
     public class BreakJadeLanterns : GlobalItem
     {
         public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
@@ -358,6 +430,18 @@ namespace JadeFables.Tiles.JadeLantern
                 {
                     (proj.ModProjectile as JadeLanternProj).Break();
                 }
+            }
+        }
+    }
+
+    class SkeletonMerchantSellsLanterns : GlobalNPC
+    {
+        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        {
+            if (type == NPCID.SkeletonMerchant && Main.moonPhase > 2 && Main.moonPhase < 5)
+            {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<JadeLanternItem>());
+                nextSlot++;
             }
         }
     }

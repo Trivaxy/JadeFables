@@ -13,6 +13,7 @@ using Terraria.ObjectData;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Core;
 using Steamworks;
+using JadeFables.Tiles.JadeTorch;
 
 namespace JadeFables.Tiles.JadeLantern
 {
@@ -259,6 +260,89 @@ namespace JadeFables.Tiles.JadeLantern
 
             for (int i = 0; i < 13; i++)
                 Dust.NewDustPerfect(seg.posNow + Main.rand.NextVector2Circular(12, 12), DustID.Torch, Main.rand.NextVector2Circular(3, 3), default, default, Main.rand.NextFloat(1,1.3f));
+
+            Loot();
+        }
+
+        public void Loot()
+        {
+            RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
+            int i = (int)(seg.posNow.X / 16);
+            int j = (int)(seg.posNow.Y / 16);
+            EntitySource_TileBreak source = new((int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16));
+            if (Main.rand.NextBool(250))
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                    Projectile.NewProjectile(source, (i + 1.5f) * 16f, j * 16f, 0f, 0f, ProjectileID.CoinPortal, 0, 0, Main.myPlayer);
+            }
+            else
+            {
+                if (Main.expertMode ? Main.rand.Next(45) < 2 : Main.rand.NextBool(45))
+                {
+                    switch (Main.rand.Next(10))
+                    {
+                        case 0:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.BattlePotion);
+                            break;
+                        case 1:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.EndurancePotion);
+                            break;
+                        case 2:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.InvisibilityPotion);
+                            break;
+                        case 3:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.ManaRegenerationPotion);
+                            break;
+                        case 4:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.MagicPowerPotion);
+                            break;
+                        case 5:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.TitanPotion);
+                            break;
+                        case 6:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.WrathPotion);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (Main.rand.Next(7))
+                    {
+                        case 0:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.Heart);
+                            if (Main.rand.NextBool(2))
+                                Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.Heart);
+                            break;
+                        case 1:
+                            if (Main.tile[i, j].LiquidAmount == 255 && Main.tile[i, j].LiquidType == LiquidID.Water)
+                                Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.SpelunkerGlowstick, Main.rand.Next(Main.expertMode ? 5 : 4, Main.expertMode ? 18 : 12));
+                            else
+                                Item.NewItem(source, i * 16, j * 16, 32, 16, ModContent.ItemType<Tiles.JadeTorch.JadeTorch>(), Main.rand.Next(Main.expertMode ? 5 : 4, Main.expertMode ? 18 : 12));
+                            break;
+                        case 2:
+                            goto case 5;
+                        case 3:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.HealingPotion);
+                            if (Main.rand.NextBool(3)) { Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.HealingPotion); }
+                            break;
+                        case 4:
+                            Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.Bomb, Main.rand.Next(1, Main.expertMode ? 7 : 4));
+                            break;
+                        case 5:
+                            for (int k = 0; k < Main.rand.Next(1, 4); k++)
+                            {
+                                if (Main.rand.NextBool(2)) { Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.CopperCoin, Main.rand.Next(1, 99)); }
+                            }
+                            for (int k = 0; k < Main.rand.Next(1, 4); k++)
+                            {
+                                if (Main.rand.NextBool(2)) { Item.NewItem(source, i * 16, j * 16, 32, 16, ItemID.SilverCoin, Main.rand.Next(1, 3)); }
+                            }
+                            break;
+                        case 6:
+                            goto case 5;
+                    }
+                }
+            }
         }
     }
 

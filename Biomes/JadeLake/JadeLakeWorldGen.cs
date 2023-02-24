@@ -2,10 +2,12 @@
 using JadeFables.Helpers.FastNoise;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeWaterfall;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria.DataStructures;
@@ -181,10 +183,10 @@ namespace JadeFables.Biomes.JadeLake
 
         public class Area
         {
-            Point leftTop; 
-            Point rightTop;
-            Point leftBottom; 
-            Point rightBottom;
+            public Point leftTop;
+            public Point rightTop;
+            public Point leftBottom;
+            public Point rightBottom;
 
             public Area() 
             {
@@ -199,6 +201,35 @@ namespace JadeFables.Biomes.JadeLake
                 this.rightTop = rightTop;
                 this.leftBottom = leftBottom;
                 this.rightBottom = rightBottom;
+            }
+
+            //gets the smallest X and smallest Y value
+            public Point MinPoint()
+            {
+                return new Point(
+                    Math.Min(
+                        Math.Min(leftTop.X, rightTop.X), 
+                        Math.Min(leftBottom.X, rightBottom.X)
+                        ),
+                    Math.Min(
+                        Math.Min(leftTop.Y, rightTop.Y),
+                        Math.Min(leftBottom.Y, rightBottom.Y)
+                        )
+                    );
+            }
+
+            public Point MaxPoint()
+            {
+                return new Point(
+                    Math.Max(
+                        Math.Max(leftTop.X, rightTop.X),
+                        Math.Max(leftBottom.X, rightBottom.X)
+                        ),
+                    Math.Max(
+                        Math.Max(leftTop.Y, rightTop.Y),
+                        Math.Max(leftBottom.Y, rightBottom.Y)
+                        )
+                    );
             }
         }
 
@@ -240,9 +271,12 @@ namespace JadeFables.Biomes.JadeLake
                     }
                 }
 
+                //LARGE TODO: give random offset to pillar X pos
                 if (foundEnd)
                 {
-                    const int MaxPillarWidth = 5;
+                    const int MaxPillarWidth = 10;
+                    const int MaxPillarRandomOffset = 0;
+
                     int pillarBottomHeight = center.Y + scanEndOffset;
                     int pillarTopHeight = center.Y + scanStartOffset;
 
@@ -255,7 +289,7 @@ namespace JadeFables.Biomes.JadeLake
                     //finds edges/width
                     {
                         //bottom left side
-                        for (int h = 0; h < MaxPillarWidth; h++)
+                        for (int h = 0; h < MaxPillarWidth + Main.rand.Next(-MaxPillarRandomOffset, MaxPillarRandomOffset); h++)
                         {
                             if (FindGroundTile(center.X - h, pillarBottomHeight, MaxPillarWidth + 1, out int offset2))
                             {
@@ -266,7 +300,7 @@ namespace JadeFables.Biomes.JadeLake
                         }
 
                         //bottom right side
-                        for (int h = 0; h < MaxPillarWidth; h++)
+                        for (int h = 0; h < MaxPillarWidth + Main.rand.Next(-MaxPillarRandomOffset, MaxPillarRandomOffset); h++)
                         {
                             if (FindGroundTile(center.X + h, pillarBottomHeight, MaxPillarWidth + 1, out int offset1))
                             {
@@ -277,25 +311,41 @@ namespace JadeFables.Biomes.JadeLake
                         }
 
                         //top left side
-                        for (int h = 0; h < MaxPillarWidth; h++)
+                        for (int h = 0; h < MaxPillarWidth + Main.rand.Next(-MaxPillarRandomOffset, MaxPillarRandomOffset); h++)
                         {
-                            if (FindGroundTile(center.X - h, pillarTopHeight, MaxPillarWidth + 1, out int offset2))
+                            if (FindCeilingTile(center.X - h, pillarTopHeight, MaxPillarWidth + 1, out int offset2))
                             {
-                                PillarArea.leftTop = new Point(center.X - h, pillarBottomHeight + offset2);
+                                PillarArea.leftTop = new Point(center.X - h, pillarTopHeight + offset2);
                             }
                             else
                                 break;//if no valid tile is found it stops searching, so the last valid tile (or starting one) is used
                         }
 
                         //top right side
-                        for (int h = 0; h < MaxPillarWidth; h++)
+                        for (int h = 0; h < MaxPillarWidth + Main.rand.Next(-MaxPillarRandomOffset, MaxPillarRandomOffset); h++)
                         {
                             if (FindCeilingTile(center.X + h, pillarTopHeight, MaxPillarWidth + 1, out int offset1))
                             {
-                                PillarArea.rightTop = new Point(center.X + h, pillarBottomHeight + offset1);
+                                PillarArea.rightTop = new Point(center.X + h, pillarTopHeight + offset1);
                             }
                             else
                                 break;
+                        }
+                    }
+
+                    Point topleftBox = PillarArea.MinPoint();
+                    Point bottomrightBox = PillarArea.MaxPoint();
+
+                    for (int i = topleftBox.X; i < bottomrightBox.X; i++)
+                    {
+                        //large todo: base overscan off of pillar size
+                        for (int j = topleftBox.Y - (MaxPillarWidth); j < bottomrightBox.Y + (MaxPillarWidth); j++)//slightly "overscans" the area
+                        {
+                            if(PillarFunction(i, j, PillarArea))
+                            {
+                                WorldGen.PlaceWall(i, j, WallID.Dirt, true);
+                                //WorldGen.PlaceTile(i, j, TileID.LunarOre, true, true);
+                            }
                         }
                     }
 
@@ -309,8 +359,41 @@ namespace JadeFables.Biomes.JadeLake
                 }
             }
         }
+
         public static bool PillarFunction(int i, int j, Area area)
         {
+            const float pillarCurve = 5f;//large todo: move this and base curve off pillar size
+            const float pillarDome = 5f; //extra tiles above pillar. small todo: same as above (works good enough here with same size)
+
+            float Lerp(float a, float b, float x)
+            {
+                var diff = b - a;
+                return a + diff * x;
+            }
+
+            int topWidth = area.rightTop.X - area.leftTop.X;
+            float topLerp = Math.Clamp((float)(i - area.leftTop.X) / (float)topWidth, 0f, 1f);
+
+            int bottomWidth = area.rightBottom.X - area.leftBottom.X;
+            float bottomLerp = Math.Clamp((float)(i - area.leftBottom.X) / (float)bottomWidth, 0f, 1f);
+
+            int leftWidth = area.leftBottom.Y - area.leftTop.Y;
+            float leftLerp = Math.Clamp((float)(j - area.leftTop.Y) / (float)leftWidth, 0f, 1f);
+
+            int rightWidth = area.rightBottom.Y - area.rightTop.Y;
+            float rightLerp = Math.Clamp((float)(j - area.rightTop.Y) / (float)rightWidth, 0f, 1f);
+
+
+
+            if (
+                j >= (Lerp(area.leftTop.Y, area.rightTop.Y, topLerp) - ((float)Math.Sin(bottomLerp * (float)Math.PI) * pillarDome)) &&
+                j <= (Lerp(area.leftBottom.Y, area.rightBottom.Y, bottomLerp) + ((float)Math.Sin(bottomLerp * (float)Math.PI) * pillarDome)) &&
+                i >= (Lerp(area.leftTop.X, area.leftBottom.X, leftLerp) + ((float)Math.Sin(leftLerp * (float)Math.PI) * pillarCurve)) &&
+                i <= (Lerp(area.rightTop.X, area.rightBottom.X, rightLerp) - ((float)Math.Sin(rightLerp * (float)Math.PI) * pillarCurve))
+                )
+            {
+                return true;
+            }
 
             return false;
         }

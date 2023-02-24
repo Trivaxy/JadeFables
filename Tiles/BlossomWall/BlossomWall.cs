@@ -4,6 +4,7 @@ using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
 using Terraria.GameContent.Creative;
 using Terraria.ModLoader;
+using JadeFables.Biomes.JadeLake;
 
 namespace JadeFables.Tiles.BlossomWall
 {
@@ -56,8 +57,20 @@ namespace JadeFables.Tiles.BlossomWall
             Item.useTime = 7;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
+            Item.value = Item.buyPrice(0, 0, 1, 0);
             Item.createWall = ModContent.WallType<BlossomWall>(); // The ID of the wall that this item should place when used. ModContent.WallType<T>() method returns an integer ID of the wall provided to it through its generic type argument (the type in angle brackets).
+        }
+    }
 
+    class DryadSellsBlossom : GlobalNPC
+    {
+        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        {
+            if (type == NPCID.Dryad && Main.LocalPlayer.InModBiome<JadeLakeBiome>())
+            {
+                shop.item[nextSlot].SetDefaults(ModContent.ItemType<BlossomWallItem>());
+                nextSlot++;
+            }
         }
     }
 }

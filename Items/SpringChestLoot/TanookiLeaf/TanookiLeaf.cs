@@ -43,6 +43,8 @@ namespace JadeFables.Items.SpringChestLoot.TanookiLeaf
 				pressedJump = true;
                 player.GetModPlayer<TanookiLeafPlayer>().frameCounter = 7;
 
+                Helpers.Helper.PlayPitched("TanookiSpin", 0.1f, 0, player.Center);
+                cooldown = 12;
                 cooldown = 12;
 				player.velocity.Y *= 0.1f;
 			}

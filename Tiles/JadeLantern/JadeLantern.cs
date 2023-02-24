@@ -39,8 +39,8 @@ namespace JadeFables.Tiles.JadeLantern
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
-            var existingGrass = Main.projectile.Where(n => n.active && n.Center == new Vector2(i, j) * 16 && n.type == ModContent.ProjectileType<JadeLanternProj>()).FirstOrDefault();
-            if (existingGrass == default)
+            var existingLantern = Main.projectile.Where(n => n.active && n.Center == new Vector2(i, j) * 16 && n.type == ModContent.ProjectileType<JadeLanternProj>()).FirstOrDefault();
+            if (existingLantern == default)
             {
                 Projectile.NewProjectile(new EntitySource_Misc("Jade Lantern"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeLanternProj>(), 0, 0);
             }
@@ -82,6 +82,12 @@ namespace JadeFables.Tiles.JadeLantern
         private Rectangle lanternFrame;
 
         private Rectangle pivotFrame;
+
+        public override void Load()
+        {
+            for (int j = 1; j <= 3; j++)
+                GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Tiles/JadeLantern/JadeChainGore" + j);
+        }
 
         public override void SetStaticDefaults()
         {
@@ -139,6 +145,27 @@ namespace JadeFables.Tiles.JadeLantern
                 Projectile.timeLeft = 2;
 
             chain.UpdateChain();
+            foreach (RopeSegment segment in chain.ropeSegments)
+            {
+                if (Collision.CheckAABBvAABBCollision(Main.LocalPlayer.TopLeft, Main.LocalPlayer.Hitbox.Size(), segment.posNow - new Vector2(6,6), new Vector2(12,12)))
+                {
+                    segment.posNow.X += Main.LocalPlayer.velocity.X * 0.2f;
+                }
+            }
+
+            RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
+            Rectangle hitbox = new Rectangle((int)seg.posNow.X - 16, (int)seg.posNow.Y - 16, 32, 32);
+            if (Main.projectile.Any(n => n.active && n.friendly && n.Hitbox.Intersects(hitbox)))
+            {
+                foreach (RopeSegment segment in chain.ropeSegments)
+                {
+                    Gore.NewGoreDirect(Projectile.GetSource_Death(), segment.posNow, Main.rand.NextVector2Circular(3, 3), Mod.Find<ModGore>("JadeChainGore" + ((chainFrame.Y / 22) + 1)).Type);
+                }
+                Projectile.active = false;
+                
+                SoundEngine.PlaySound(SoundID.Shatter, seg.posNow);
+                tile.HasTile = false;
+            }
         }
     }
 }

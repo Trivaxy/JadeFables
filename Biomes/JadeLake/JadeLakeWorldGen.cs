@@ -343,7 +343,7 @@ namespace JadeFables.Biomes.JadeLake
                         {
                             if(PillarFunction(i, j, PillarArea))
                             {
-                                WorldGen.PlaceWall(i, j, WallID.Dirt, true);
+                                WorldGen.PlaceWall(i, j, ModContent.WallType<Tiles.JadeSandWall.JadeSandWall>(), true);
                                 //WorldGen.PlaceTile(i, j, TileID.LunarOre, true, true);
                             }
                         }

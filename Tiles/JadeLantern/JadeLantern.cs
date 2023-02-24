@@ -121,8 +121,18 @@ namespace JadeFables.Tiles.JadeLantern
             if (chain == null)
                 return false;
             Texture2D chainTex = ModContent.Request<Texture2D>(Texture + "_Chain").Value;
+            Texture2D glowTex = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
             Texture2D pivotTex = ModContent.Request<Texture2D>(Texture + "_Pivot").Value;
             Texture2D lanternTex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D backTex = ModContent.Request<Texture2D>(Texture + "_BackGlow").Value;
+
+            Color glowColor = Color.Orange;
+            glowColor.A = 0;
+
+            RopeSegment seg = chain.ropeSegments[chain.segmentCount - 2];
+            RopeSegment nextSeg = chain.ropeSegments[chain.segmentCount - 1];
+
+            Main.spriteBatch.Draw(backTex, nextSeg.posNow - Main.screenPosition, null, glowColor * 0.4f, 0, backTex.Size() / 2, 0.7f, SpriteEffects.None, 0f);
             for (int i = chain.segmentCount - 2; i >= 0; i--)
             {
                 RopeSegment segInner = chain.ropeSegments[i];
@@ -132,9 +142,8 @@ namespace JadeFables.Tiles.JadeLantern
 
             Main.spriteBatch.Draw(pivotTex, (Projectile.Center - new Vector2(0, 6)) - Main.screenPosition, pivotFrame, lightColor, 0, pivotFrame.Size() / 2, 1, SpriteEffects.None, 0f);
 
-            RopeSegment seg = chain.ropeSegments[chain.segmentCount - 2];
-            RopeSegment nextSeg = chain.ropeSegments[chain.segmentCount - 1];
             Main.spriteBatch.Draw(lanternTex, nextSeg.posNow - Main.screenPosition, lanternFrame, Lighting.GetColor((int)(nextSeg.posNow.X / 16), (int)(nextSeg.posNow.Y / 16)), seg.posNow.DirectionTo(nextSeg.posNow).ToRotation() - 1.57f, lanternFrame.Size() / 2, 1, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowTex, nextSeg.posNow - Main.screenPosition, lanternFrame, glowColor * 0.6f, seg.posNow.DirectionTo(nextSeg.posNow).ToRotation() - 1.57f, lanternFrame.Size() / 2, 1, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -154,6 +163,8 @@ namespace JadeFables.Tiles.JadeLantern
             }
 
             RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
+
+            Lighting.AddLight(seg.posNow, Color.Orange.ToVector3() * 0.6f);
             Rectangle hitbox = new Rectangle((int)seg.posNow.X - 16, (int)seg.posNow.Y - 16, 32, 32);
             if (Main.projectile.Any(n => n.active && n.friendly && n.Hitbox.Intersects(hitbox)))
             {

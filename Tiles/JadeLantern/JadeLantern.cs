@@ -225,7 +225,7 @@ namespace JadeFables.Tiles.JadeLantern
                         Projectile.active = false;
                     }
 
-                    for (int i = 0; i < 3; i++)
+                    for (int i = 0; i < 2; i++)
                         Dust.NewDustPerfect(burnSegment.posNow + new Vector2(0, -4) + Main.rand.NextVector2Circular(6, 6), ModContent.DustType<LanternGlow>(), Main.rand.NextVector2Circular(1.3f, 1.3f), 0, Color.OrangeRed, Main.rand.NextFloat(0.45f, 0.55f));
                 }
             }
@@ -254,8 +254,11 @@ namespace JadeFables.Tiles.JadeLantern
             {
                 Gore.NewGoreDirect(Projectile.GetSource_Death(), seg.posNow, Main.rand.NextVector2Circular(3, 3), Mod.Find<ModGore>("lantern" + ((lanternFrame.Y / 32) + 1) + "gore" + i).Type);
             }
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 5; i++)
                 Dust.NewDustPerfect(seg.posNow + Main.rand.NextVector2Circular(12, 12), ModContent.DustType<LanternGlow>(), Main.rand.NextVector2Circular(3, 3), 0, Color.OrangeRed, Main.rand.NextFloat(0.85f, 1.15f));
+
+            for (int i = 0; i < 13; i++)
+                Dust.NewDustPerfect(seg.posNow + Main.rand.NextVector2Circular(12, 12), DustID.Torch, Main.rand.NextVector2Circular(3, 3), default, default, Main.rand.NextFloat(1,1.3f));
         }
     }
 

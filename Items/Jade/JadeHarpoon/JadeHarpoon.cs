@@ -222,6 +222,12 @@ namespace JadeFables.Items.Jade.JadeHarpoon
            }
         }
 
+        public override void Kill(int timeLeft)
+        {
+            owner.fullRotation = 0;
+            owner.fullRotationOrigin = owner.Size / 2;
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
@@ -347,7 +353,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             if (target.life <= 0)
                 return;
             Projectile.tileCollide = false;
-            Projectile.timeLeft = 1000;
+            Projectile.timeLeft = 200;
             hooked = true;
             hookTarget = target;
             hookOffset = Projectile.Center - target.Center;

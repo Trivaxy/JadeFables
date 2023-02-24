@@ -12,6 +12,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Core;
+using Steamworks;
 
 namespace JadeFables.Tiles.JadeLantern
 {
@@ -39,8 +40,8 @@ namespace JadeFables.Tiles.JadeLantern
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
-            var existingGrass = Main.projectile.Where(n => n.active && n.Center == new Vector2(i, j) * 16 && n.type == ModContent.ProjectileType<JadeLanternProj>()).FirstOrDefault();
-            if (existingGrass == default)
+            var existingLantern = Main.projectile.Where(n => n.active && n.Center == new Vector2(i, j) * 16 && n.type == ModContent.ProjectileType<JadeLanternProj>()).FirstOrDefault();
+            if (existingLantern == default)
             {
                 Projectile.NewProjectile(new EntitySource_Misc("Jade Lantern"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeLanternProj>(), 0, 0);
             }
@@ -75,13 +76,42 @@ namespace JadeFables.Tiles.JadeLantern
     public class JadeLanternProj : ModProjectile
     {
 
+        public bool burning = false;
+
+        public bool burnable => chainFrame.Y == 0;
+
+        public int burnTimer = 0;
+
+        public int burnedSegments = 0;
         public VerletChain chain;
+
+        public Rectangle hitbox { get
+            {
+                RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
+
+                return new Rectangle((int)seg.posNow.X - 16, (int)seg.posNow.Y - 16, 32, 32);
+            } 
+        }
 
         private Rectangle chainFrame;
 
         private Rectangle lanternFrame;
 
         private Rectangle pivotFrame;
+
+        public override void Load()
+        {
+            for (int j = 1; j <= 3; j++)
+                GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Tiles/JadeLantern/JadeChainGore" + j);
+
+            for (int i = 1; i <= 4; i++)
+            {
+                for (int j = 1; j <= 4; j++)
+                {
+                    GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Tiles/JadeLantern/Gores/lantern" + i + "gore" + j);
+                }
+            }
+        }
 
         public override void SetStaticDefaults()
         {
@@ -115,9 +145,23 @@ namespace JadeFables.Tiles.JadeLantern
             if (chain == null)
                 return false;
             Texture2D chainTex = ModContent.Request<Texture2D>(Texture + "_Chain").Value;
+            Texture2D glowTex = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
             Texture2D pivotTex = ModContent.Request<Texture2D>(Texture + "_Pivot").Value;
             Texture2D lanternTex = ModContent.Request<Texture2D>(Texture).Value;
-            for (int i = chain.segmentCount - 2; i >= 0; i--)
+            Texture2D backTex = ModContent.Request<Texture2D>(Texture + "_BackGlow").Value;
+
+            Color glowColor = Color.Orange;
+            glowColor.A = 0;
+
+            RopeSegment seg = chain.ropeSegments[chain.segmentCount - 2];
+            RopeSegment nextSeg = chain.ropeSegments[chain.segmentCount - 1];
+
+            if (!burning)
+            {
+                Main.spriteBatch.Draw(backTex, nextSeg.posNow - Main.screenPosition, null, glowColor * 0.4f, 0, backTex.Size() / 2, 0.7f, SpriteEffects.None, 0f);
+            }
+
+            for (int i = (chain.segmentCount - 2) - burnedSegments; i >= 0; i--)
             {
                 RopeSegment segInner = chain.ropeSegments[i];
                 RopeSegment nextSegInner = chain.ropeSegments[i + 1];
@@ -126,9 +170,11 @@ namespace JadeFables.Tiles.JadeLantern
 
             Main.spriteBatch.Draw(pivotTex, (Projectile.Center - new Vector2(0, 6)) - Main.screenPosition, pivotFrame, lightColor, 0, pivotFrame.Size() / 2, 1, SpriteEffects.None, 0f);
 
-            RopeSegment seg = chain.ropeSegments[chain.segmentCount - 2];
-            RopeSegment nextSeg = chain.ropeSegments[chain.segmentCount - 1];
-            Main.spriteBatch.Draw(lanternTex, nextSeg.posNow - Main.screenPosition, lanternFrame, Lighting.GetColor((int)(nextSeg.posNow.X / 16), (int)(nextSeg.posNow.Y / 16)), seg.posNow.DirectionTo(nextSeg.posNow).ToRotation() - 1.57f, lanternFrame.Size() / 2, 1, SpriteEffects.None, 0f);
+            if (!burning)
+            {
+                Main.spriteBatch.Draw(lanternTex, nextSeg.posNow - Main.screenPosition, lanternFrame, Lighting.GetColor((int)(nextSeg.posNow.X / 16), (int)(nextSeg.posNow.Y / 16)), seg.posNow.DirectionTo(nextSeg.posNow).ToRotation() - 1.57f, lanternFrame.Size() / 2, 1, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(glowTex, nextSeg.posNow - Main.screenPosition, lanternFrame, glowColor * 0.6f, seg.posNow.DirectionTo(nextSeg.posNow).ToRotation() - 1.57f, lanternFrame.Size() / 2, 1, SpriteEffects.None, 0f);
+            }
             return false;
         }
 
@@ -139,6 +185,96 @@ namespace JadeFables.Tiles.JadeLantern
                 Projectile.timeLeft = 2;
 
             chain.UpdateChain();
+            for (int i = 0; i < chain.segmentCount - burnedSegments; i++)
+            {
+                RopeSegment segment = chain.ropeSegments[i];
+                if (Collision.CheckAABBvAABBCollision(Main.LocalPlayer.TopLeft, Main.LocalPlayer.Hitbox.Size(), segment.posNow - new Vector2(6,6), new Vector2(12,12)))
+                {
+                    segment.posNow.X += Main.LocalPlayer.velocity.X * 0.2f;
+                }
+            }
+
+            if (!burning)
+            {
+                RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
+
+                Lighting.AddLight(seg.posNow, Color.Orange.ToVector3() * 0.6f);
+                Rectangle hitbox = new Rectangle((int)seg.posNow.X - 16, (int)seg.posNow.Y - 16, 32, 32);
+                if (Main.projectile.Any(n => n.active && n.friendly && n.Hitbox.Intersects(hitbox)))
+                {
+                    Break();
+                }
+
+                if (Main.rand.NextBool(60))
+                {
+                    Dust.NewDustPerfect(seg.posNow + Main.rand.NextVector2Circular(6, 6), ModContent.DustType<LanternGlow>(), Main.rand.NextVector2Circular(1, 1), 0, Color.OrangeRed, Main.rand.NextFloat(0.35f, 0.55f));
+                }
+            }
+            else
+            {
+                burnTimer++;
+                if (burnTimer > 3)
+                {
+                    burnTimer = 0;
+                    RopeSegment burnSegment = chain.ropeSegments[(chain.segmentCount - 1) - burnedSegments];
+
+                    burnedSegments++;
+                    if (burnedSegments >= chain.segmentCount - 1)
+                    {
+                        tile.HasTile = false;
+                        Projectile.active = false;
+                    }
+
+                    for (int i = 0; i < 2; i++)
+                        Dust.NewDustPerfect(burnSegment.posNow + new Vector2(0, -4) + Main.rand.NextVector2Circular(6, 6), ModContent.DustType<LanternGlow>(), Main.rand.NextVector2Circular(1.3f, 1.3f), 0, Color.OrangeRed, Main.rand.NextFloat(0.45f, 0.55f));
+                }
+            }
+
+        }
+
+        public void Break()
+        {
+            Tile tile = Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)];
+            RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
+            if (!burnable)
+            {
+                foreach (RopeSegment segment in chain.ropeSegments)
+                {
+                    Gore.NewGoreDirect(Projectile.GetSource_Death(), segment.posNow, Main.rand.NextVector2Circular(3, 3), Mod.Find<ModGore>("JadeChainGore" + ((chainFrame.Y / 22) + 1)).Type);
+                }
+                Projectile.active = false;
+                tile.HasTile = false;
+            }
+            else
+                burning = true;
+
+            SoundEngine.PlaySound(SoundID.Shatter, seg.posNow);
+
+            for (int i = 1; i <= 4; i++)
+            {
+                Gore.NewGoreDirect(Projectile.GetSource_Death(), seg.posNow, Main.rand.NextVector2Circular(3, 3), Mod.Find<ModGore>("lantern" + ((lanternFrame.Y / 32) + 1) + "gore" + i).Type);
+            }
+            for (int i = 0; i < 5; i++)
+                Dust.NewDustPerfect(seg.posNow + Main.rand.NextVector2Circular(12, 12), ModContent.DustType<LanternGlow>(), Main.rand.NextVector2Circular(3, 3), 0, Color.OrangeRed, Main.rand.NextFloat(0.85f, 1.15f));
+
+            for (int i = 0; i < 13; i++)
+                Dust.NewDustPerfect(seg.posNow + Main.rand.NextVector2Circular(12, 12), DustID.Torch, Main.rand.NextVector2Circular(3, 3), default, default, Main.rand.NextFloat(1,1.3f));
+        }
+    }
+
+    public class BreakJadeLanterns : GlobalItem
+    {
+        public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
+        {
+            if (item.damage > 0 && !noHitbox)
+            {
+                Rectangle hitboxLocal = hitbox;
+                var breakable = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<JadeLanternProj>() && hitboxLocal.Intersects((n.ModProjectile as JadeLanternProj).hitbox) && !(n.ModProjectile as JadeLanternProj).burning).ToArray();
+                foreach (Projectile proj in breakable)
+                {
+                    (proj.ModProjectile as JadeLanternProj).Break();
+                }
+            }
         }
     }
 }

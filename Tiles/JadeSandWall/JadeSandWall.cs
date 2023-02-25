@@ -25,7 +25,7 @@ namespace JadeFables.Tiles.JadeSandWall
                 Texture2D tex = Request<Texture2D>("JadeFables/Tiles/BlossomWall/BlossomWallFlow").Value;
                 var rand = new Random(i + (j * 1000000));
 
-                if (rand.Next(40) == 2)
+                if (rand.Next(80) == 2)
                 {
                     float offset = i * j % 6.28f + (float)rand.NextDouble() / 8f;
                     float sin = (float)Math.Sin(Main.GameUpdateCount / 45f + offset);

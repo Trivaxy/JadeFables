@@ -288,6 +288,8 @@ namespace JadeFables.NPCs.GiantSnail
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Compass, 60));
+            npcLoot.Add(ItemDropRule.Common(ItemID.DepthMeter, 60));
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

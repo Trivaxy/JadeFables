@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Terraria.DataStructures;
 using Terraria.IO;
 using Terraria.WorldBuilding;
+using static JadeFables.Biomes.JadeLake.JadeLakeWorldGen;
 using static Terraria.ModLoader.PlayerDrawLayer;
 
 namespace JadeFables.Biomes.JadeLake
@@ -179,6 +180,9 @@ namespace JadeFables.Biomes.JadeLake
 
             //Places foreground waterfalls (has to be outside of polish pass because it only does the top half of the biome)
             PlaceForegroundWaterfalls(UpperIslandRect, 700);
+
+            //debug to see walls on map
+            ClearWater(WholeBiomeRect);
         }
 
         public class Area
@@ -228,9 +232,14 @@ namespace JadeFables.Biomes.JadeLake
                     Math.Max(
                         Math.Max(leftTop.Y, rightTop.Y),
                         Math.Max(leftBottom.Y, rightBottom.Y)
-                        )
-                    );
+                )
+                );
             }
+
+            public int TopWidth() => rightTop.X - leftTop.X;
+            public int BottomWidth() => rightBottom.X - leftBottom.X;
+            public int RightHeight() => rightBottom.Y - rightTop.Y;
+            public int LeftHeight() => leftBottom.Y - leftTop.Y;
         }
 
         public static void GenerateWallPillars(List<(Rectangle pos, bool water)> islandList, int maxPillarDistance)
@@ -272,9 +281,12 @@ namespace JadeFables.Biomes.JadeLake
                 }
 
                 //LARGE TODO: give random offset to pillar X pos
-                if (foundEnd)
+                if (!foundEnd)
                 {
-                    const int MaxPillarWidth = 10;
+                    scanEndOffset = scanStartOffset + Main.rand.Next((int)(maxPillarDistance * 0.33f), (int)(maxPillarDistance * 0.75f));
+                }
+
+                    int MaxPillarWidth = Main.rand.Next(8, pos.Width / 5);
                     const int MaxPillarRandomOffset = 0;
 
                     int pillarBottomHeight = center.Y + scanEndOffset;
@@ -286,8 +298,13 @@ namespace JadeFables.Biomes.JadeLake
                         leftBottom: new Point(center.X, pillarBottomHeight),
                         rightBottom: new Point(center.X, pillarBottomHeight));
 
-                    //finds edges/width
-                    {
+                if (PillarArea.leftBottom.X == PillarArea.rightBottom.X)
+                    PillarArea.rightBottom.X++;
+                if (PillarArea.leftTop.X == PillarArea.rightTop.X)
+                    PillarArea.rightTop.X++;
+
+                //finds edges/width
+                {
                         //bottom left side
                         for (int h = 0; h < MaxPillarWidth + Main.rand.Next(-MaxPillarRandomOffset, MaxPillarRandomOffset); h++)
                         {
@@ -339,7 +356,7 @@ namespace JadeFables.Biomes.JadeLake
                     for (int i = topleftBox.X; i < bottomrightBox.X; i++)
                     {
                         //large todo: base overscan off of pillar size
-                        for (int j = topleftBox.Y - (MaxPillarWidth); j < bottomrightBox.Y + (MaxPillarWidth); j++)//slightly "overscans" the area
+                        for (int j = topleftBox.Y - (MaxPillarWidth); j < bottomrightBox.Y + (foundEnd ? MaxPillarWidth : 0); j++)//slightly "overscans" the area
                         {
                             if(PillarFunction(i, j, PillarArea))
                             {
@@ -356,14 +373,15 @@ namespace JadeFables.Biomes.JadeLake
                     //}
 
                     //actually generate it
-                }
+                //}
             }
         }
 
         public static bool PillarFunction(int i, int j, Area area)
         {
             const float pillarCurve = 5f;//large todo: move this and base curve off pillar size
-            const float pillarDome = 5f; //extra tiles above pillar. small todo: same as above (works good enough here with same size)
+            float topPillarDome = area.TopWidth() * 0.5f; //extra tiles above pillar
+            float bottomPillarDome = area.BottomWidth() * 0.5f; //extra tiles above pillar
 
             float Lerp(float a, float b, float x)
             {
@@ -371,23 +389,14 @@ namespace JadeFables.Biomes.JadeLake
                 return a + diff * x;
             }
 
-            int topWidth = area.rightTop.X - area.leftTop.X;
-            float topLerp = Math.Clamp((float)(i - area.leftTop.X) / (float)topWidth, 0f, 1f);
-
-            int bottomWidth = area.rightBottom.X - area.leftBottom.X;
-            float bottomLerp = Math.Clamp((float)(i - area.leftBottom.X) / (float)bottomWidth, 0f, 1f);
-
-            int leftWidth = area.leftBottom.Y - area.leftTop.Y;
-            float leftLerp = Math.Clamp((float)(j - area.leftTop.Y) / (float)leftWidth, 0f, 1f);
-
-            int rightWidth = area.rightBottom.Y - area.rightTop.Y;
-            float rightLerp = Math.Clamp((float)(j - area.rightTop.Y) / (float)rightWidth, 0f, 1f);
-
-
+            float topLerp = Math.Clamp((float)(i - area.leftTop.X) / (float)area.TopWidth(), 0f, 1f);
+            float bottomLerp = Math.Clamp((float)(i - area.leftBottom.X) / (float)area.BottomWidth(), 0f, 1f);
+            float leftLerp = Math.Clamp((float)(j - area.leftTop.Y) / (float)area.LeftHeight(), 0f, 1f);
+            float rightLerp = Math.Clamp((float)(j - area.rightTop.Y) / (float)area.RightHeight(), 0f, 1f);
 
             if (
-                j >= (Lerp(area.leftTop.Y, area.rightTop.Y, topLerp) - ((float)Math.Sin(bottomLerp * (float)Math.PI) * pillarDome)) &&
-                j <= (Lerp(area.leftBottom.Y, area.rightBottom.Y, bottomLerp) + ((float)Math.Sin(bottomLerp * (float)Math.PI) * pillarDome)) &&
+                j >= (Lerp(area.leftTop.Y, area.rightTop.Y, topLerp) - ((float)Math.Sin(topLerp * (float)Math.PI) * topPillarDome)) &&
+                j <= (Lerp(area.leftBottom.Y, area.rightBottom.Y, bottomLerp) + ((float)Math.Sin(bottomLerp * (float)Math.PI) * bottomPillarDome)) &&
                 i >= (Lerp(area.leftTop.X, area.leftBottom.X, leftLerp) + ((float)Math.Sin(leftLerp * (float)Math.PI) * pillarCurve)) &&
                 i <= (Lerp(area.rightTop.X, area.rightBottom.X, rightLerp) - ((float)Math.Sin(rightLerp * (float)Math.PI) * pillarCurve))
                 )

@@ -16,26 +16,19 @@ using JadeFables.Core;
 using JadeFables.Helpers;
 using JadeFables.Helpers.FastNoise;
 using JadeFables.Items.BullfrogTree.BullfrogLegs;
+using JadeFables.Items.BullfrogTree.FrogInFroggle;
 
-namespace JadeFables.Items.BullfrogTree.FrogInFroggle
+namespace JadeFables.Items.BullfrogTree.Bulfrauble
 {
-    public class FrogInFroggle : ModItem
+    public class Bulfrauble : ModItem
     {
         public bool jumping = false;
 
-        private bool sailJump = true;
-        private bool basiliskJump = true;
-        private bool blizzardJump = true;
-        private bool sandstormJump = true;
-        private bool cloudJump = true;
-        private bool fartJump = true;
-        private bool santankJump = true;
-        private bool unicornJump = true;
-        private bool fleshJump = true;
+        public int cooldown = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Frog In A Froggle");
-            Tooltip.SetDefault("Jumping while moving boosts you forward \nAdds horizontal movement to double jumps");
+            DisplayName.SetDefault("Bulfrauble");
+            Tooltip.SetDefault("Jumping while moving boosts you further forward\nIncreases movement speed and acceleration\nProvides light when worn");
         }
         public override void SetDefaults()
         {
@@ -50,13 +43,17 @@ namespace JadeFables.Items.BullfrogTree.FrogInFroggle
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (player.controlJump && player.velocity.Y == 0 && !jumping)
+            Lighting.AddLight(player.Center, new Color(142, 196, 251).ToVector3() * 0.95f);
+            player.hasMagiluminescence = true;
+
+            if (cooldown-- < 0 && player.controlJump && player.velocity.Y == 0 && !jumping)
             {
+                cooldown = 40;
                 if (!player.controlLeft && !player.controlRight)
                     return;
 
                 SoundEngine.PlaySound(SoundID.Run, player.Center);
-                DoJump(player, 8);
+                DoJump(player, 12);
 
                 Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Bottom, Vector2.Zero, ModContent.ProjectileType<BullfrogLegRing>(), 0, 0, player.whoAmI, Main.rand.Next(30, 40), 1.57f + (0.78f * Math.Sign(player.velocity.X)));
                 for (int i = 0; i < 6; i++)
@@ -64,45 +61,6 @@ namespace JadeFables.Items.BullfrogTree.FrogInFroggle
                     Dust.NewDustPerfect(player.Bottom, ModContent.DustType<BullfrogLegDust>(), new Vector2(-Math.Sign(player.velocity.X), 1).RotatedByRandom(0.4f) * Main.rand.NextFloat(0.5f, 0.75f), 0, Color.White, Main.rand.NextFloat(0.4f, 0.7f));
                 }
             }
-
-            if (!player.canJumpAgain_Basilisk && basiliskJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Blizzard && blizzardJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Sail && sailJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Sandstorm && sandstormJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Cloud && cloudJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Fart && fartJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Santank && santankJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Unicorn && unicornJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_WallOfFleshGoat && fleshJump)
-                DoJump(player, 8);
-
-
-
-            basiliskJump = player.canJumpAgain_Basilisk;
-            sailJump = player.canJumpAgain_Sail;
-            blizzardJump = player.canJumpAgain_Blizzard;
-            sandstormJump = player.canJumpAgain_Sandstorm;
-            cloudJump = player.canJumpAgain_Cloud;
-            fartJump= player.canJumpAgain_Fart;
-            santankJump = player.canJumpAgain_Santank;
-            unicornJump = player.canJumpAgain_Unicorn;
-            fleshJump = player.canJumpAgain_WallOfFleshGoat;
 
             if (player.controlJump)
             {
@@ -116,13 +74,13 @@ namespace JadeFables.Items.BullfrogTree.FrogInFroggle
 
         public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
         {
-            int[] incompadible = new int[] { ModContent.ItemType<BullfrogLegs.BullfrogLegs>(), ModContent.ItemType<Bulfrauble.Bulfrauble>() };
-            if (equippedItem.type == ModContent.ItemType<FrogInFroggle>() && incompadible.Contains(incomingItem.type))
+            int[] incompadible = new int[] { ModContent.ItemType<BullfrogLegs.BullfrogLegs>(), ModContent.ItemType<FrogInFroggle.FrogInFroggle>(), ItemID.Magiluminescence};
+            if (equippedItem.type == ModContent.ItemType<Bulfrauble>() && incompadible.Contains(incomingItem.type))
             {
                 return false;
             }
 
-            if (incomingItem.type == ModContent.ItemType<FrogInFroggle>() && incompadible.Contains(equippedItem.type))
+            if (incomingItem.type == ModContent.ItemType<Bulfrauble>() && incompadible.Contains(equippedItem.type))
             {
                 return false;
             }
@@ -134,7 +92,7 @@ namespace JadeFables.Items.BullfrogTree.FrogInFroggle
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ModContent.ItemType<BullfrogLegs.BullfrogLegs>());
-            recipe.AddIngredient(ItemID.TsunamiInABottle, 1);
+            recipe.AddIngredient(ItemID.Magiluminescence, 1);
             recipe.AddTile(TileID.TinkerersWorkbench);
             recipe.Register();
         }

@@ -6,6 +6,15 @@ using Terraria;
 using Terraria.GameContent.Generation;
 using Terraria.WorldBuilding;
 using Microsoft.Xna.Framework;
+using JadeFables.Tiles.SpringChest;
+using JadeFables.Items.SpringChestLoot.FireworkPack;
+using JadeFables.Items.SpringChestLoot.TanookiLeaf;
+using JadeFables.Items.SpringChestLoot.Gong;
+using JadeFables.Tiles.JadeFountain;
+using Terraria.ModLoader;
+using JadeFables.Items.Potions.Heartbeat;
+using JadeFables.Items.Potions.Spine;
+using JadeFables.Items.Potions.JasmineTea;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -97,6 +106,7 @@ namespace JadeFables.Biomes.JadeLake
 
                     JadeLakeWorldGen.SurfaceItemPass(new GenerationProgress(), default);
                     JadeLakeWorldGen.PolishPass(new GenerationProgress(), default);
+                    PopulateChests();
                     Main.NewText("regened");
                 }
             }
@@ -140,6 +150,85 @@ namespace JadeFables.Biomes.JadeLake
                                 Dust.NewDustPerfect(new Vector2(x * 16, y * 16 + 8), DustType<Dusts.WhiteSparkle>(), Vector2.Zero, 0, default, 0.5f);
                         }
                     }
+            }
+        }
+
+        public override void PostWorldGen()
+        {
+            PopulateChests();
+        }
+
+        public static void PopulateChests()
+        {
+            int[] primaryLoot = new int[] { ModContent.ItemType<FireworkPack>(), ModContent.ItemType<TanookiLeaf>(), ModContent.ItemType<GongItem>() };
+            int[] secondaryLoot = new int[] { ModContent.ItemType<JadeFountainItem>(), ItemID.MagicConch, ItemID.SandcastleBucket, 5139 };
+
+            int[] ternaryLoot = new int[] {
+                ModContent.ItemType<Tiles.JadeTorch.JadeTorch>(),
+                ItemID.Rope,
+                ItemID.BouncyBomb,
+                ItemID.SwiftnessPotion,
+                ItemID.RegenerationPotion,
+                ItemID.GoldBar,
+                ItemID.PlatinumBar,
+                ItemID.LuckPotionLesser,
+                ItemID.LesserHealingPotion, };
+
+            int[] ternaryLootRare = new int[] {
+                ItemID.MagicPowerPotion,
+                ItemID.TeleportationPotion,
+                ItemID.HealingPotion,
+                ItemID.LuckPotion,
+                ModContent.ItemType<JasmineTea>(),
+                ModContent.ItemType<HeartbeatPotion>(),
+                ModContent.ItemType<SpinePotion>()};
+
+            int[] ternaryLootSingle = new int[]
+            {
+                ItemID.SuspiciousLookingEye,
+                ItemID.AngelStatue
+            };
+            for (int chestIndex = 0; chestIndex < 1000; chestIndex++)
+            {
+                Chest chest = Main.chest[chestIndex];
+                if (chest != null && Main.tile[chest.x, chest.y].TileType/*.frameX == 47 * 36*/ == ModContent.TileType<SpringChest>()) // if glass chest
+                {
+                    int primaryLootChoice = Main.rand.Next(primaryLoot.Length);
+                    chest.item[0].SetDefaults(primaryLoot[primaryLootChoice]);
+
+                    int secondaryLootChoice = Main.rand.Next(secondaryLoot.Length);
+                    chest.item[1].SetDefaults(secondaryLoot[secondaryLootChoice]);
+
+                    int slotsToFill = WorldGen.genRand.Next(5, 8);
+                    for (int inventoryIndex = 2; inventoryIndex < slotsToFill; inventoryIndex++)
+                    {
+                        if (inventoryIndex == slotsToFill - 1)
+                        {
+                            chest.item[inventoryIndex].SetDefaults(ItemID.GoldCoin);
+                            chest.item[inventoryIndex].stack = Main.rand.Next(1, 5);
+                        }
+                        else if (Main.rand.NextBool(5))
+                        {
+                            chest.item[inventoryIndex].SetDefaults(ternaryLootRare[Main.rand.Next(ternaryLootRare.Length)]);
+                            chest.item[inventoryIndex].stack = Main.rand.Next(2, 5);
+                        }
+                        else if (Main.rand.NextBool(6))
+                        {
+                            chest.item[inventoryIndex].SetDefaults(ternaryLootSingle[Main.rand.Next(ternaryLootSingle.Length)]);
+                            chest.item[inventoryIndex].stack = 1;
+                        }
+                        else
+                        {
+                            chest.item[inventoryIndex].SetDefaults(ternaryLoot[Main.rand.Next(ternaryLoot.Length)]);
+                            if (chest.item[inventoryIndex].type == ItemID.Rope)
+                            {
+                                chest.item[inventoryIndex].stack = Main.rand.Next(30, 50);
+                            }
+                            else
+                                chest.item[inventoryIndex].stack = Main.rand.Next(3, 8);
+                        }
+                    }
+                }
             }
         }
     }

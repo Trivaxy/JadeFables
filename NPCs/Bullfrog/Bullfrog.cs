@@ -111,7 +111,7 @@ namespace JadeFables.NPCs.Bullfrog
                 target = nearbyDragonfly;
                 NPC.spriteDirection = MathF.Sign(target.Center.X - NPC.Center.X);
             }
-            if (NPC.collideY || NPC.velocity.Y == 0)
+            if (NPC.collideY || NPC.velocity.Y == 0 || tongueing)
             {
                 NPC.velocity.X *= 0.9f;
                 Vector2 dir = target.Center - NPC.Center;

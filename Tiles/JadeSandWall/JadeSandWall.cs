@@ -15,7 +15,7 @@ namespace JadeFables.Tiles.JadeSandWall
 			Main.wallHouse[Type] = false;
 			DustType = DustID.Grass;
 			HitSound = SoundID.Grass;
-			AddMapEntry(Color.Brown);
+			AddMapEntry(new Color(107, 78, 50));
 		}
 
 	}

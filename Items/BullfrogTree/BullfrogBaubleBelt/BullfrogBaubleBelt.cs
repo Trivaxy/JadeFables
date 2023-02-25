@@ -50,7 +50,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogBaubleBelt
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            int jumpBoost = 12;
+            int jumpBoost = 10;
             Lighting.AddLight(player.Center, new Color(142, 196, 251).ToVector3() * 0.95f);
             player.hasMagiluminescence = true;
 
@@ -60,7 +60,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogBaubleBelt
                     return;
 
                 SoundEngine.PlaySound(SoundID.Run, player.Center);
-                DoJump(player, 12);
+                DoJump(player, 10);
 
                 Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Bottom, Vector2.Zero, ModContent.ProjectileType<BullfrogLegRing>(), 0, 0, player.whoAmI, Main.rand.Next(30, 40), 1.57f + (0.78f * Math.Sign(player.velocity.X)));
                 for (int i = 0; i < 6; i++)

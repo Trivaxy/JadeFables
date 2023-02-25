@@ -50,7 +50,7 @@ namespace JadeFables.Tiles.JadeTorch
 			// Create a white (1.0, 1.0, 1.0) light at the torch's approximate position, when the item is held.
 			Vector2 position = player.RotatedRelativePoint(new Vector2(player.itemLocation.X + 12f * player.direction + player.velocity.X, player.itemLocation.Y - 14f + player.velocity.Y), true);
 
-			Lighting.AddLight(position, 0f, 1f, 0.7f);
+			Lighting.AddLight(position, new Color(255, 29, 80).ToVector3() * 0.6f);
 		}
 
 		public override void PostUpdate() {
@@ -149,14 +149,14 @@ namespace JadeFables.Tiles.JadeTorch
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
             Tile tile = Main.tile[i, j];
-
+            Color color = new Color(255, 29, 80);
             // If the torch is on
             if (tile.TileFrameX < 66)
             {
                 // Make it emit the following light.
-                r = 0f;
-                g = 1f;
-                b = 0.7f;
+                r = color.R / 255f;
+                g = color.G / 255f;
+                b = color.B / 255f;
             }
         }
 

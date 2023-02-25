@@ -1,5 +1,4 @@
 ﻿//TODO
-//Bestiary
 //Balance
 //Gores
 //Banner
@@ -80,6 +79,15 @@ namespace JadeFables.NPCs.Bullfrog
             NPC.HitSound = SoundID.NPCHit21 with { Pitch = -0.45f };
             NPC.DeathSound = SoundID.NPCDeath53 with { Pitch = -0.6f};
             NPC.noGravity = false;
+        }
+
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                JadeSpawnConditions.JadeSprings,
+                new FlavorTextBestiaryInfoElement("She bull on my frog till I croak")
+            });
         }
 
         public override void AI()
@@ -195,6 +203,7 @@ namespace JadeFables.NPCs.Bullfrog
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BullfrogTree.BullfrogLegs.BullfrogLegs>(), 13));
         }
     }
     internal class Bullfrog_Tongue : ModProjectile

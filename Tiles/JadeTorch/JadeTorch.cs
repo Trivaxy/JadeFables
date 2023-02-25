@@ -150,6 +150,7 @@ namespace JadeFables.Tiles.JadeTorch
         {
             Tile tile = Main.tile[i, j];
             Color color = new Color(255, 29, 80);
+
             // If the torch is on
             if (tile.TileFrameX < 66)
             {

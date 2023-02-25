@@ -81,8 +81,8 @@ namespace JadeFables.NPCs.GiantSnail
             NPC.lifeMax = 1000;
             NPC.value = 10f;
             NPC.knockBackResist = 2.6f;
-            NPC.HitSound = SoundID.NPCHit23;
-            NPC.DeathSound = SoundID.NPCDeath26;
+            NPC.HitSound = SoundID.NPCHit33 with { Pitch = -0.6f};
+            NPC.DeathSound = SoundID.NPCDeath16 with { Pitch = -0.6f };
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.behindTiles = true;

@@ -224,9 +224,7 @@ namespace JadeFables.Biomes.JadeLake
 
                         if (safe && WorldGen.genRand.NextBool(chance))
                         {
-                            Tile toPlace = Framing.GetTileSafely(i, j + 1);
-                            toPlace.HasTile = true;
-                            toPlace.TileType = (ushort)ModContent.TileType<JadeLantern>();
+                            JadeLantern.Spawn(i, j + 1);
                         }
                     }
                 }

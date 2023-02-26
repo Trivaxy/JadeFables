@@ -1,5 +1,4 @@
 ﻿//TODO
-//Bestiary
 //Balance
 //Gores
 //Banner
@@ -51,6 +50,8 @@ namespace JadeFables.NPCs.Bullfrog
 
         private Projectile tongue = null;
 
+        private float speed;
+
         /*public override bool IsLoadingEnabled(Mod mod) {
             //Since this NPC is just about to be loaded and assigned its type, the current count BEFORE the load will be its type, which is why we can do this
             int npcType = NPCLoader.NPCCount;
@@ -82,6 +83,15 @@ namespace JadeFables.NPCs.Bullfrog
             NPC.noGravity = false;
         }
 
+        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
+        {
+            bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
+            {
+                JadeSpawnConditions.JadeSprings,
+                new FlavorTextBestiaryInfoElement("She bull on my frog till I croak")
+            });
+        }
+
         public override void AI()
         {
             if (Main.rand.NextBool(900))
@@ -103,7 +113,7 @@ namespace JadeFables.NPCs.Bullfrog
                 target = nearbyDragonfly;
                 NPC.spriteDirection = MathF.Sign(target.Center.X - NPC.Center.X);
             }
-            if (NPC.collideY || NPC.velocity.Y == 0)
+            if (NPC.collideY || NPC.velocity.Y == 0 || tongueing)
             {
                 NPC.velocity.X *= 0.9f;
                 Vector2 dir = target.Center - NPC.Center;
@@ -140,7 +150,7 @@ namespace JadeFables.NPCs.Bullfrog
                             tongue = Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), NPC.Center + tongueOffset * new Vector2(NPC.spriteDirection, 1), (NPC.Center + tongueOffset * new Vector2(NPC.spriteDirection, 1)).DirectionTo(target.Center) * 15, ModContent.ProjectileType<Bullfrog_Tongue>(), 30, 0, NPC.target);
                             (tongue.ModProjectile as Bullfrog_Tongue).parent = NPC;
                         }
-                        else if (!tongue.active)
+                        else if (!tongue.active || tongue.type != ModContent.ProjectileType<Bullfrog_Tongue>())
                         {
                             SoundEngine.PlaySound(SoundID.Item111, NPC.Center);
                             tongue = null;
@@ -156,14 +166,19 @@ namespace JadeFables.NPCs.Bullfrog
                 }
                 if (jumpCounter > 90 && !tongueing)
                 {
-                    NPC.velocity.X = Math.Sign(target.Center.X - NPC.Center.X) * 9;
-                    NPC.velocity.Y = -4;
+                    NPC.velocity.X = MathHelper.Clamp((target.Center.X - NPC.Center.X) / 30f, -10, 10);
+                    speed = NPC.velocity.X;
+                    NPC.velocity.Y = -5;
                     jumpCounter = 0;
                 }
             }
             else
             {
                 NPC.velocity.X *= 1.03f;
+                if (NPC.velocity.X == 0 && NPC.velocity.Y < 0)
+                {
+                    NPC.velocity.X = speed;
+                }
                 xFrame = 1;
                 yFrame = 0;
             }
@@ -190,11 +205,12 @@ namespace JadeFables.NPCs.Bullfrog
             return false;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) => !spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 20f : 0f;
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => !spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 4f : 0f;
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BullfrogTree.BullfrogLegs.BullfrogLegs>(), 13));
         }
     }
     internal class Bullfrog_Tongue : ModProjectile

@@ -8,10 +8,13 @@
 			dust.frame = new Rectangle(0, 0, 64, 64);
 
 			dust.shader = new Terraria.Graphics.Shaders.ArmorShaderData(new Ref<Effect>(JadeFables.Instance.Assets.Request<Effect>("Effects/GlowingDust", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value), "GlowingDustPass");
-		}
+            dust.shader.UseColor(Color.Transparent);
+        }
 
 		public override Color? GetAlpha(Dust dust, Color lightColor)
 		{
+			if (dust.alpha < 3)
+				return new Color(0, 0, 0, 0);
 			return dust.color;
 		}
 
@@ -22,6 +25,7 @@
 				dust.position -= Vector2.One * 32 * dust.scale;
 				dust.customData = true;
 			}
+			dust.alpha++;
 
 			Vector2 currentCenter = dust.position + Vector2.One.RotatedBy(dust.rotation) * 32 * dust.scale;
 

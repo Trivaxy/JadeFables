@@ -93,7 +93,7 @@ namespace JadeFables.NPCs.GiantSnail
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 JadeSpawnConditions.JadeSprings,
-                new FlavorTextBestiaryInfoElement("This mythical bottom feeder scoops up its prey using its wide, gaping jaws, retreating to the safety of its shell when provoked. best to avoid getting too close, or it might be the last thing you do…")
+                new FlavorTextBestiaryInfoElement("This mythical bottom feeder scoops up its prey using its wide, gaping jaws, retreating to the safety of its shell when provoked. Best to avoid getting too close, or it might be the last thing you do…")
             });
         }
 
@@ -288,6 +288,8 @@ namespace JadeFables.NPCs.GiantSnail
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ItemID.Compass, 60));
+            npcLoot.Add(ItemDropRule.Common(ItemID.DepthMeter, 60));
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

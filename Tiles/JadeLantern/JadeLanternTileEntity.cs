@@ -308,7 +308,7 @@ namespace JadeFables.Tiles.JadeLantern
                 chainFrameY = Main.rand.Next(3);
                 lanternFrameY = Main.rand.Next(4);
             }
-            chain = new VerletChain(length, true, WorldPosition, 14, true);
+            chain = new VerletChain(length, true, WorldPosition + new Vector2(8, 0), 14, true);
             chain.Start();
             chain.forceGravity = new Vector2(0, 0.4f);
 
@@ -346,7 +346,7 @@ namespace JadeFables.Tiles.JadeLantern
                 Main.spriteBatch.Draw(chainTex, segInner.posNow - Main.screenPosition, chainFrame, Lighting.GetColor((int)(segInner.posNow.X / 16), (int)(segInner.posNow.Y / 16)), segInner.posNow.DirectionTo(nextSegInner.posNow).ToRotation() + 1.57f, chainFrame.Size() / 2, 1, SpriteEffects.None, 0f);
             }
 
-            Main.spriteBatch.Draw(pivotTex, (WorldPosition - new Vector2(0, 6)) - Main.screenPosition, pivotFrame, Lighting.GetColor((int)(WorldPosition.X / 16), (int)(WorldPosition.Y / 16)), 0, pivotFrame.Size() / 2, 1, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(pivotTex, (WorldPosition - new Vector2(-8, 6)) - Main.screenPosition, pivotFrame, Lighting.GetColor((int)(WorldPosition.X / 16), (int)(WorldPosition.Y / 16)), 0, pivotFrame.Size() / 2, 1, SpriteEffects.None, 0f);
 
             if (!burning)
             {

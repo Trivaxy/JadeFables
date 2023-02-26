@@ -50,6 +50,8 @@ namespace JadeFables.NPCs.Bullfrog
 
         private Projectile tongue = null;
 
+        private float speed;
+
         /*public override bool IsLoadingEnabled(Mod mod) {
             //Since this NPC is just about to be loaded and assigned its type, the current count BEFORE the load will be its type, which is why we can do this
             int npcType = NPCLoader.NPCCount;
@@ -111,7 +113,7 @@ namespace JadeFables.NPCs.Bullfrog
                 target = nearbyDragonfly;
                 NPC.spriteDirection = MathF.Sign(target.Center.X - NPC.Center.X);
             }
-            if (NPC.collideY || NPC.velocity.Y == 0)
+            if (NPC.collideY || NPC.velocity.Y == 0 || tongueing)
             {
                 NPC.velocity.X *= 0.9f;
                 Vector2 dir = target.Center - NPC.Center;
@@ -164,14 +166,19 @@ namespace JadeFables.NPCs.Bullfrog
                 }
                 if (jumpCounter > 90 && !tongueing)
                 {
-                    NPC.velocity.X = Math.Sign(target.Center.X - NPC.Center.X) * 9;
-                    NPC.velocity.Y = -4;
+                    NPC.velocity.X = MathHelper.Clamp((target.Center.X - NPC.Center.X) / 30f, -10, 10);
+                    speed = NPC.velocity.X;
+                    NPC.velocity.Y = -5;
                     jumpCounter = 0;
                 }
             }
             else
             {
                 NPC.velocity.X *= 1.03f;
+                if (NPC.velocity.X == 0 && NPC.velocity.Y < 0)
+                {
+                    NPC.velocity.X = speed;
+                }
                 xFrame = 1;
                 yFrame = 0;
             }
@@ -198,7 +205,7 @@ namespace JadeFables.NPCs.Bullfrog
             return false;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) => !spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 20f : 0f;
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => !spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 4f : 0f;
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

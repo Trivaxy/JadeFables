@@ -376,7 +376,7 @@ namespace JadeFables.Biomes.JadeLake
                     for (int i = PillarAreaMin.X; i < PillarAreaMax.X; i++)
                     {
                         //large todo: base overscan off of pillar size
-                        for (int j = PillarAreaMin.Y - (PillarRadius); j < PillarAreaMax.Y + (foundEnd ? PillarRadius : -1); j++)//slightly "overscans" the area
+                        for (int j = PillarAreaMin.Y - (PillarRadius); j < PillarAreaMax.Y + (foundEnd ? PillarRadius : -5); j++)//slightly "overscans" the area
                         {
                             if (PillarFunction(i, j, PillarArea))
                             {

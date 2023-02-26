@@ -258,10 +258,10 @@ namespace JadeFables.Tiles.JadeLantern
 
                 Lighting.AddLight(seg.posNow, Color.Orange.ToVector3() * 0.6f);
                 Rectangle hitbox = new Rectangle((int)seg.posNow.X - 16, (int)seg.posNow.Y - 16, 32, 32);
-                if (Main.projectile.Any(n => n.active && n.friendly && n.Hitbox.Intersects(hitbox)))
+                /*if (Main.projectile.Any(n => n.active && n.friendly && n.Hitbox.Intersects(hitbox)))
                 {
                     Break();
-                }
+                }*/
 
                 if (Main.rand.NextBool(60))
                 {
@@ -426,6 +426,21 @@ namespace JadeFables.Tiles.JadeLantern
             {
                 Rectangle hitboxLocal = hitbox;
                 var breakable = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<JadeLanternProj>() && hitboxLocal.Intersects((n.ModProjectile as JadeLanternProj).hitbox) && !(n.ModProjectile as JadeLanternProj).burning).ToArray();
+                foreach (Projectile proj in breakable)
+                {
+                    (proj.ModProjectile as JadeLanternProj).Break();
+                }
+            }
+        }
+    }
+
+    public class BreakJadeLanternsProj : GlobalProjectile
+    {
+        public override void PostAI(Projectile projectile)
+        {
+            if (projectile.friendly)
+            {
+                var breakable = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<JadeLanternProj>() && projectile.Colliding(projectile.Hitbox, (n.ModProjectile as JadeLanternProj).hitbox) &&!(n.ModProjectile as JadeLanternProj).burning).ToArray();
                 foreach (Projectile proj in breakable)
                 {
                     (proj.ModProjectile as JadeLanternProj).Break();

@@ -89,6 +89,7 @@ namespace JadeFables.Tiles.JadeTorch
             TileID.Sets.FramesOnKillWall[Type] = true;
             TileID.Sets.DisableSmartCursor[Type] = true;
             TileID.Sets.Torch[Type] = true;
+            TileSets.TorchThatTriggersTorchGod[Type] = true;
 
             ItemDrop = ModContent.ItemType<JadeTorch>();
             //DustType = ModContent.DustType<Sparkle>();

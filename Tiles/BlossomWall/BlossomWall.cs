@@ -17,7 +17,7 @@ namespace JadeFables.Tiles.BlossomWall
 		{
 			Main.wallHouse[Type] = false;
 			WallID.Sets.Conversion.Grass[Type] = true;
-			DustType = DustID.Grass;
+			DustType = 282;
 			HitSound = SoundID.Grass;
 			AddMapEntry(Color.HotPink);
 		}

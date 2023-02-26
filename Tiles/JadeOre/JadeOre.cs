@@ -22,7 +22,7 @@ namespace JadeFables.Tiles.JadeOre
 
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Jade Ore");
-            AddMapEntry(Color.Green, name);
+            AddMapEntry(new Color(50, 160, 65), name);
         }
     }
 }

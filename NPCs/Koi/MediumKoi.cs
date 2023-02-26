@@ -37,6 +37,13 @@ namespace JadeFables.NPCs.Koi
 
         private int yFrame = 0;
         private int frameCounter = 0;
+
+        public override void Load()
+        {
+            for (int j = 1; j <= 4; j++)
+                GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/NPCs/Koi/MediumKoiGore" + j);
+
+        }
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Koi");
@@ -109,6 +116,12 @@ namespace JadeFables.NPCs.Koi
             Vector2 slopeOffset = new Vector2(0, NPC.gfxOffY);
             Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor, NPC.rotation, origin, NPC.scale, effects, 0f);
             return false;
+        }
+
+        public override void OnKill()
+        {
+            for (int i = 1; i <= 4; i++)
+                Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("MediumKoiGore" + i).Type);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

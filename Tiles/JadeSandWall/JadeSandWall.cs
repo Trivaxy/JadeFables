@@ -13,8 +13,8 @@ namespace JadeFables.Tiles.JadeSandWall
         public override void SetStaticDefaults()
 		{
 			Main.wallHouse[Type] = false;
-			DustType = DustID.Grass;
-			HitSound = SoundID.Grass;
+			DustType = DustID.Dirt;
+			HitSound = SoundID.Dig;
 			AddMapEntry(new Color(107, 78, 50));
 		}
 

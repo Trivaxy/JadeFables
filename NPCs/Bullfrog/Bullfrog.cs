@@ -150,7 +150,7 @@ namespace JadeFables.NPCs.Bullfrog
                             tongue = Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), NPC.Center + tongueOffset * new Vector2(NPC.spriteDirection, 1), (NPC.Center + tongueOffset * new Vector2(NPC.spriteDirection, 1)).DirectionTo(target.Center) * 15, ModContent.ProjectileType<Bullfrog_Tongue>(), 30, 0, NPC.target);
                             (tongue.ModProjectile as Bullfrog_Tongue).parent = NPC;
                         }
-                        else if (!tongue.active)
+                        else if (!tongue.active || tongue.type != ModContent.ProjectileType<Bullfrog_Tongue>())
                         {
                             SoundEngine.PlaySound(SoundID.Item111, NPC.Center);
                             tongue = null;

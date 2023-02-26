@@ -336,7 +336,7 @@ namespace JadeFables.NPCs.GiantSnail
             return false;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 25f : 0f;
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) && Main.npc.Count(n => n.active && n.type == ModContent.NPCType<GiantSnail>()) < 3 ? 25f : 0f;
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {

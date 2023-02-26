@@ -6,6 +6,7 @@ using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
+using System.Drawing.Text;
 using System.Linq;
 using System.Runtime;
 using System.Text;
@@ -244,10 +245,18 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void GenerateWallPillars(List<(Rectangle pos, bool water)> islandList, int maxPillarDistance)
         {
-            foreach(var (pos, water) in islandList)
+            foreach(var (islandBox, hasWater) in islandList)
             {
-                Point center = pos.Center;
-                int scanStartOffset = -10000;
+                Point center = islandBox.Center;
+
+                //gives a random offset to the X position of the pillar
+                int XOffsetRange = islandBox.Width / 4;
+                center.X += Main.rand.Next(-(XOffsetRange / 2), (XOffsetRange / 2) + 1);
+
+                //arbitrary default value (just needs to be impossible to achieve normally)
+                const int offStartingValue = -10000;
+
+                int scanStartOffset = offStartingValue;
                 int scanEndOffset = 0;
 
                 //finds start of pillar
@@ -266,7 +275,7 @@ namespace JadeFables.Biomes.JadeLake
                         hasSkippedStartingEmptySpace = true;
                 }
 
-                if (scanStartOffset == -10000)//if there was no valid tile found to move it up to do no generate pillar
+                if (scanStartOffset == offStartingValue)//if there was no valid tile found to move it up to do no generate pillar
                     continue;
                 bool foundEnd = false;
                 //finds end of pillar
@@ -280,91 +289,232 @@ namespace JadeFables.Biomes.JadeLake
                     }
                 }
 
-                //LARGE TODO: give random offset to pillar X pos
-                if (!foundEnd)
                 {
-                    scanEndOffset = scanStartOffset + Main.rand.Next((int)(maxPillarDistance * 0.33f), (int)(maxPillarDistance * 0.75f));
-                }
+                    if (!foundEnd)
+                    {
+                        //if there was no end found, it gives a random length
+                        //todo: better lengths here
+                        scanEndOffset = scanStartOffset + Main.rand.Next((int)(maxPillarDistance * 0.4f), (int)(maxPillarDistance * 0.8f));
+                    }
 
-                    int MaxPillarWidth = Main.rand.Next(8, pos.Width / 5);
-                    const int MaxPillarRandomOffset = 0;
+                    const int MinPillarRadius = 8;
+                    int MaxPillarRadius = islandBox.Width / 5;
+                    int PillarRadius = Main.rand.Next(MinPillarRadius, MaxPillarRadius);
+                    const int MaxCornerRandomOffset = 0;//offsets each corner slightly
 
-                    int pillarBottomHeight = center.Y + scanEndOffset;
-                    int pillarTopHeight = center.Y + scanStartOffset;
+                    int pillarBottomPosY = center.Y + scanEndOffset;
+                    int pillarTopPosY = center.Y + scanStartOffset;
 
                     Area PillarArea = new(
-                        leftTop: new Point(center.X, pillarTopHeight),
-                        rightTop: new Point(center.X, pillarTopHeight),
-                        leftBottom: new Point(center.X, pillarBottomHeight),
-                        rightBottom: new Point(center.X, pillarBottomHeight));
+                        leftTop: new Point(center.X, pillarTopPosY),
+                        rightTop: new Point(center.X + 1, pillarTopPosY),
+                        leftBottom: new Point(center.X, pillarBottomPosY),
+                        rightBottom: new Point(center.X + 1, pillarBottomPosY + 2));//fixes below mentioned bug but cleaner
 
-                if (PillarArea.leftBottom.X == PillarArea.rightBottom.X)
-                    PillarArea.rightBottom.X++;
-                if (PillarArea.leftTop.X == PillarArea.rightTop.X)
-                    PillarArea.rightTop.X++;
+                    ////prevents a bug if the positions are on top of eachother
+                    //if (PillarArea.leftBottom.X == PillarArea.rightBottom.X)
+                    //{
+                    //    PillarArea.rightBottom.X++;
+                    //    PillarArea.rightBottom.Y++;//test
+                    //}
+                    //if (PillarArea.leftTop.X == PillarArea.rightTop.X)
+                    //{
+                    //    PillarArea.rightTop.X++;
+                    //    PillarArea.rightTop.Y++;//test
+                    //}
 
-                //finds edges/width
-                {
+                    //finds edges/width
+                    {
                         //bottom left side
-                        for (int h = 0; h < MaxPillarWidth + Main.rand.Next(-MaxPillarRandomOffset, MaxPillarRandomOffset); h++)
+                        for (int h = 0; h < PillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                         {
-                            if (FindGroundTile(center.X - h, pillarBottomHeight, MaxPillarWidth + 1, out int offset2))
+                            if (FindGroundTile(center.X - h, pillarBottomPosY, PillarRadius + 1, out int offset2))
                             {
-                                PillarArea.leftBottom = new Point(center.X - h, pillarBottomHeight + offset2);
+                                PillarArea.leftBottom = new Point(center.X - h, pillarBottomPosY + offset2);
                             }
                             else
                                 break;//if no valid tile is found it stops searching, so the last valid tile (or starting one) is used
                         }
 
                         //bottom right side
-                        for (int h = 0; h < MaxPillarWidth + Main.rand.Next(-MaxPillarRandomOffset, MaxPillarRandomOffset); h++)
+                        for (int h = 0; h < PillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                         {
-                            if (FindGroundTile(center.X + h, pillarBottomHeight, MaxPillarWidth + 1, out int offset1))
+                            if (FindGroundTile(center.X + h, pillarBottomPosY, PillarRadius + 1, out int offset1))
                             {
-                                PillarArea.rightBottom = new Point(center.X + h, pillarBottomHeight + offset1);
+                                PillarArea.rightBottom = new Point(center.X + h, pillarBottomPosY + offset1);
                             }
                             else
                                 break;
                         }
 
                         //top left side
-                        for (int h = 0; h < MaxPillarWidth + Main.rand.Next(-MaxPillarRandomOffset, MaxPillarRandomOffset); h++)
+                        for (int h = 0; h < PillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                         {
-                            if (FindCeilingTile(center.X - h, pillarTopHeight, MaxPillarWidth + 1, out int offset2))
+                            if (FindCeilingTile(center.X - h, pillarTopPosY, PillarRadius + 1, out int offset2))
                             {
-                                PillarArea.leftTop = new Point(center.X - h, pillarTopHeight + offset2);
+                                PillarArea.leftTop = new Point(center.X - h, pillarTopPosY + offset2);
                             }
                             else
                                 break;//if no valid tile is found it stops searching, so the last valid tile (or starting one) is used
                         }
 
                         //top right side
-                        for (int h = 0; h < MaxPillarWidth + Main.rand.Next(-MaxPillarRandomOffset, MaxPillarRandomOffset); h++)
+                        for (int h = 0; h < PillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                         {
-                            if (FindCeilingTile(center.X + h, pillarTopHeight, MaxPillarWidth + 1, out int offset1))
+                            if (FindCeilingTile(center.X + h, pillarTopPosY, PillarRadius + 1, out int offset1))
                             {
-                                PillarArea.rightTop = new Point(center.X + h, pillarTopHeight + offset1);
+                                PillarArea.rightTop = new Point(center.X + h, pillarTopPosY + offset1);
                             }
                             else
                                 break;
                         }
                     }
 
-                    Point topleftBox = PillarArea.MinPoint();
-                    Point bottomrightBox = PillarArea.MaxPoint();
+                    Point PillarAreaMin = PillarArea.MinPoint();//reused later
+                    Point PillarAreaMax = PillarArea.MaxPoint();
 
-                    for (int i = topleftBox.X; i < bottomrightBox.X; i++)
+                    for (int i = PillarAreaMin.X; i < PillarAreaMax.X; i++)
                     {
                         //large todo: base overscan off of pillar size
-                        for (int j = topleftBox.Y - (MaxPillarWidth); j < bottomrightBox.Y + (foundEnd ? MaxPillarWidth : 0); j++)//slightly "overscans" the area
+                        for (int j = PillarAreaMin.Y - (PillarRadius); j < PillarAreaMax.Y + (foundEnd ? PillarRadius : -1); j++)//slightly "overscans" the area
                         {
-                            if(PillarFunction(i, j, PillarArea))
+                            if (PillarFunction(i, j, PillarArea))
                             {
                                 WorldGen.PlaceWall(i, j, ModContent.WallType<Tiles.JadeSandWall.JadeSandWall>(), true);
                                 //WorldGen.PlaceTile(i, j, TileID.LunarOre, true, true);
                             }
                         }
                     }
+
+                    bool TrySplit = PillarArea.TopWidth() > 20 ? Main.rand.NextBool(3, 4) : Main.rand.NextBool();//1/2 chance, 3/4 if its a large one
+
+                    #region subtract split
+                    if (foundEnd && TrySplit && Math.Abs(PillarArea.leftTop.Y - PillarArea.rightTop.Y) <= 5) //distance check avoids any weird top angles
+                    {
+                        int SubtractRadius = (int)(PillarRadius / Main.rand.NextFloat(1.8f, 2.4f));
+                        int SubtractHeight = (int)((PillarAreaMax.Y - PillarAreaMin.Y)) + Main.rand.Next(15, 25);
+
+                        int TopSubtractCenter = PillarArea.leftTop.X + (PillarArea.TopWidth() / 2);
+                        int BottomSubtractCenter = PillarArea.leftBottom.X + (PillarArea.BottomWidth() / 2) + 
+                            Main.rand.Next(-PillarArea.TopWidth() / 5, PillarArea.TopWidth() / 5);//defaults to aiming towards bottom of center, with a random angle offset
+
+                        Area SubtractArea = new(
+                            leftTop: new Point(TopSubtractCenter - SubtractRadius, PillarAreaMin.Y - 5),
+                            rightTop: new Point(TopSubtractCenter + SubtractRadius, PillarAreaMin.Y - 5),
+                            leftBottom: new Point(BottomSubtractCenter - 1, PillarAreaMin.Y + SubtractHeight + 2),
+                            rightBottom: new Point(BottomSubtractCenter, PillarAreaMin.Y + SubtractHeight));
+
+                        Point SubtractAreaMin = SubtractArea.MinPoint();
+                        Point SubtractAreaMax = SubtractArea.MaxPoint();
+
+                        for (int i = SubtractAreaMin.X; i < SubtractAreaMax.X; i++)
+                        {
+                            //large todo: base overscan off of pillar size
+                            for (int j = SubtractAreaMin.Y - SubtractRadius; j < SubtractAreaMax.Y + -1; j++)//slightly "overscans" the area
+                            {
+                                if (PillarFunction(i, j, SubtractArea))
+                                {
+                                    WorldGen.KillWall(i, j, false);
+                                    //WorldGen.PlaceTile(i, j, TileID.LunarOre, true, true);
+                                }
+                            }
+                        }
+                    }
+                    #endregion
+
+
+                    #region secondary pillar gen
+                    const int SecPillarMinRadius = 5;
+                    int SecPillarMaxRadius = Math.Max((int)(MaxPillarRadius * 0.66f), SecPillarMinRadius + 1);
+                    int SecPillarRadius = Main.rand.Next(SecPillarMinRadius, SecPillarMaxRadius);
+
+                    int SecPillarHeight = Main.rand.Next((int)(maxPillarDistance * 0.33f), (int)(maxPillarDistance * 0.75f));
+                    int SecPillarBottomY = PillarAreaMin.Y + SecPillarHeight;
+
+                    int SecPillarOffsetFromFirst = (int)((PillarArea.TopWidth() * 0.5f) + (SecPillarRadius) * Main.rand.NextFloat(0.33f, 1f) + Main.rand.Next(islandBox.Width / 10));
+
+                    int SecPillarCenterX = center.X + (SecPillarOffsetFromFirst * (Main.rand.NextBool() ? 1 : -1));
+
+                    if (FindCeilingTile(SecPillarCenterX, PillarAreaMin.Y + 10, SecPillarRadius + 10, out int offset0))
+                    {
+                        Area SecPillarArea =
+                        new(
+                            leftTop: new Point(SecPillarCenterX, PillarAreaMin.Y),
+                            rightTop: new Point(SecPillarCenterX + 1, PillarAreaMin.Y),
+                            leftBottom: new Point(SecPillarCenterX, SecPillarBottomY),
+                            rightBottom: new Point(SecPillarCenterX + 1, SecPillarBottomY + 1));
+
+                        bool foundEndSecond = false;
+
+                        {
+                            //bottom left side
+                            for (int h = 0; h < SecPillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                            {
+                                if (FindGroundTile(SecPillarCenterX - h, SecPillarBottomY, SecPillarRadius + 1, out int offset2))
+                                {
+                                    SecPillarArea.leftBottom = new Point(SecPillarCenterX - h, SecPillarBottomY + offset2);
+                                    foundEndSecond = true;
+                                }
+                                else
+                                    break;//if no valid tile is found it stops searching, so the last valid tile (or starting one) is used
+                            }
+
+                            //bottom right side
+                            for (int h = 0; h < SecPillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                            {
+                                if (FindGroundTile(SecPillarCenterX + h, SecPillarBottomY, SecPillarRadius + 1, out int offset1))
+                                {
+                                    SecPillarArea.rightBottom = new Point(SecPillarCenterX + h, SecPillarBottomY + offset1);
+                                    foundEndSecond = true;
+                                }
+                                else
+                                    break;
+                            }
+
+                            //top left side
+                            for (int h = 0; h < SecPillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                            {
+                                if (FindCeilingTile(SecPillarCenterX - h, PillarAreaMin.Y, SecPillarRadius + 1, out int offset2))
+                                {
+                                    SecPillarArea.leftTop = new Point(SecPillarCenterX - h, PillarAreaMin.Y + offset2);
+                                }
+                                else
+                                    break;//if no valid tile is found it stops searching, so the last valid tile (or starting one) is used
+                            }
+
+                            //top right side
+                            for (int h = 0; h < SecPillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                            {
+                                if (FindCeilingTile(SecPillarCenterX + h, PillarAreaMin.Y, SecPillarRadius + 1, out int offset1))
+                                {
+                                    SecPillarArea.rightTop = new Point(SecPillarCenterX + h, PillarAreaMin.Y + offset1);
+                                }
+                                else
+                                    break;
+                            }
+                        }
+
+                        Point pillar2Min = SecPillarArea.MinPoint();
+                        Point pillar2Max = SecPillarArea.MaxPoint();
+
+                        for (int i = pillar2Min.X; i < pillar2Max.X; i++)
+                        {
+                            //large todo: base overscan off of pillar size
+                            for (int j = pillar2Min.Y - (SecPillarRadius); j < pillar2Max.Y + (foundEndSecond ? PillarRadius : -1); j++)//slightly "overscans" the area
+                            {
+                                if (PillarFunction(i, j, SecPillarArea))
+                                {
+                                    WorldGen.PlaceWall(i, j, ModContent.WallType<Tiles.JadeSandWall.JadeSandWall>(), true);
+                                    //WorldGen.PlaceTile(i, j, TileID.AmberGemsparkOff, true, true);
+                                }
+                            }
+                        }
+                    }
+                    //else
+                    //{
+                    //    WorldGen.PlaceTile(SecPillarCenterX, PillarAreaMin.Y, TileID.TopazGemspark, true, true);
+                    //}
+                    #endregion
 
                     //debug
                     //for (int j = scanStartOffset; j < scanEndOffset; j++)
@@ -373,15 +523,16 @@ namespace JadeFables.Biomes.JadeLake
                     //}
 
                     //actually generate it
-                //}
+                    //}
+                }
             }
         }
 
         public static bool PillarFunction(int i, int j, Area area)
         {
             const float pillarCurve = 5f;//large todo: move this and base curve off pillar size
-            float topPillarDome = area.TopWidth() * 0.5f; //extra tiles above pillar
-            float bottomPillarDome = area.BottomWidth() * 0.5f; //extra tiles above pillar
+            float topPillarDome = area.TopWidth() * 0.33f; //extra tiles above pillar
+            float bottomPillarDome = area.BottomWidth() * 0.33f; //extra tiles above pillar
 
             float Lerp(float a, float b, float x)
             {

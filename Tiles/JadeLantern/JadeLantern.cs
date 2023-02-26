@@ -14,6 +14,7 @@ using JadeFables.Tiles.JadeSand;
 using JadeFables.Core;
 using Steamworks;
 using JadeFables.Tiles.JadeTorch;
+using static Terraria.ModLoader.PlayerDrawLayer;
 
 namespace JadeFables.Tiles.JadeLantern
 {
@@ -27,6 +28,7 @@ namespace JadeFables.Tiles.JadeLantern
             TileObjectData.newTile.Width = 1;
             TileObjectData.newTile.Origin = new Point16(0, 0); // Todo: make less annoying.
             TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
+            TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(ModContent.GetInstance<JadeLanternTileEntity>().Hook_AfterPlacement, -1, 0, true);
             TileObjectData.newTile.UsesCustomCanPlace = true;
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.newTile.CoordinateHeights = new int[] { 16 };
@@ -39,13 +41,24 @@ namespace JadeFables.Tiles.JadeLantern
             AddMapEntry(new Color(207, 160, 118), name);
         }
 
-        public override void NearbyEffects(int i, int j, bool closer)
+        public static bool Spawn(int i, int j)
         {
-            var existingLantern = Main.projectile.Where(n => n.active && n.Center == new Vector2(i, j) * 16 && n.type == ModContent.ProjectileType<JadeLanternProj>()).FirstOrDefault();
-            if (existingLantern == default)
+            if (Main.tile[i, j].HasTile)
+                return false;
+            bool success = WorldGen.PlaceTile(i, j, ModContent.TileType<JadeLantern>());
+
+            if (!success)
+                return false;
+
+            ModContent.GetInstance<JadeLanternTileEntity>().Place(i, j);
+
+            if (Main.netMode == NetmodeID.Server)
             {
-                Projectile.NewProjectile(new EntitySource_Misc("Jade Lantern"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeLanternProj>(), 0, 0);
+                NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i, j, ModContent.TileEntityType<JadeLanternTileEntity>(), 0f, 0, 0, 0);
+                NetMessage.SendTileSquare(-1, i, j, 2);
             }
+
+            return true;
         }
     }
 
@@ -59,6 +72,7 @@ namespace JadeFables.Tiles.JadeLantern
             TileObjectData.newTile.Width = 1;
             TileObjectData.newTile.Origin = new Point16(0, 0); // Todo: make less annoying.
             TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
+            TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(ModContent.GetInstance<JadeLanternFurnitureTileEntity>().Hook_AfterPlacement, -1, 0, true);
             TileObjectData.newTile.UsesCustomCanPlace = true;
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.newTile.CoordinateHeights = new int[] { 16 };
@@ -71,13 +85,37 @@ namespace JadeFables.Tiles.JadeLantern
             AddMapEntry(new Color(207, 160, 118), name);
         }
 
-        public override void NearbyEffects(int i, int j, bool closer)
+        public static bool Spawn(int i, int j)
         {
-            var existingLantern = Main.projectile.Where(n => n.active && n.Center == new Vector2(i, j) * 16 && n.type == ModContent.ProjectileType<JadeLanternProjFurniture>()).FirstOrDefault();
-            if (existingLantern == default)
+            if (Main.tile[i, j].HasTile)
             {
-                Projectile.NewProjectile(new EntitySource_Misc("Jade Lantern"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeLanternProjFurniture>(), 0, 0);
+                if (Main.tile[i,j].TileType == ModContent.TileType<JadeLanternFurniture>())
+                {
+                    TileEntity.ByPosition.TryGetValue(new Point16(i, j), out TileEntity tileEntity);
+
+                    var lantern = (tileEntity as JadeLanternFurnitureTileEntity);
+                    if (lantern != null && lantern.length < 35)
+                    {
+                        lantern.length++;
+                        lantern.SpawnIn();
+                    }
+                }
+                return false;
             }
+            bool success = WorldGen.PlaceTile(i, j, ModContent.TileType<JadeLanternFurniture>());
+
+            if (!success)
+                return false;
+
+            ModContent.GetInstance<JadeLanternFurnitureTileEntity>().Place(i, j);
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.TileEntityPlacement, -1, -1, null, i, j, ModContent.TileEntityType<JadeLanternFurnitureTileEntity>(), 0f, 0, 0, 0);
+                NetMessage.SendTileSquare(-1, i, j, 2);
+            }
+
+            return true;
         }
     }
 
@@ -97,12 +135,24 @@ namespace JadeFables.Tiles.JadeLantern
             Item.useTurn = true;
             Item.autoReuse = true;
             Item.useAnimation = 15;
-            Item.useTime = 10;
+            Item.useTime = 15;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
-            Item.createTile = TileType<JadeLantern>();
             Item.rare = ItemRarityID.White;
             Item.value = 5;
+        }
+
+        public override bool? UseItem(Player player)
+        {
+            if (player.whoAmI == Main.myPlayer && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
+            {
+                bool ret = JadeLantern.Spawn(Player.tileTargetX, Player.tileTargetY);
+
+                if (Main.netMode != NetmodeID.SinglePlayer)
+                    NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, Player.tileTargetX, Player.tileTargetY);
+                return ret;
+            }
+            return false;
         }
     }
 
@@ -122,18 +172,38 @@ namespace JadeFables.Tiles.JadeLantern
             Item.useTurn = true;
             Item.autoReuse = true;
             Item.useAnimation = 15;
-            Item.useTime = 10;
+            Item.useTime = 15;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
-            Item.createTile = TileType<JadeLanternFurniture>();
             Item.rare = ItemRarityID.White;
             Item.value = 5;
         }
+         public override bool? UseItem(Player player)
+        {
+            if (player.whoAmI == Main.myPlayer && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
+            {
+                bool ret = !JadeLanternFurniture.Spawn(Player.tileTargetX, Player.tileTargetY);
+
+                if (Main.netMode != NetmodeID.SinglePlayer)
+                    NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, Player.tileTargetX, Player.tileTargetY);
+
+                if (ret)
+                {
+                    Item.stack++;
+                    if (Main.tile[Player.tileTargetX, Player.tileTargetY].TileType == ModContent.TileType<JadeLanternFurniture>())
+                    {
+                        SoundEngine.PlaySound(SoundID.Dig, player.Center);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
     }
 
-    public class JadeLanternProj : ModProjectile
+    #region old jade lantern projectile code
+    /*public class JadeLanternProj : ModProjectile
     {
-
         public bool burning = false;
 
         public bool burnable => chainFrame.Y == 0;
@@ -258,10 +328,6 @@ namespace JadeFables.Tiles.JadeLantern
 
                 Lighting.AddLight(seg.posNow, Color.Orange.ToVector3() * 0.6f);
                 Rectangle hitbox = new Rectangle((int)seg.posNow.X - 16, (int)seg.posNow.Y - 16, 32, 32);
-                /*if (Main.projectile.Any(n => n.active && n.friendly && n.Hitbox.Intersects(hitbox)))
-                {
-                    Break();
-                }*/
 
                 if (Main.rand.NextBool(60))
                 {
@@ -416,38 +482,24 @@ namespace JadeFables.Tiles.JadeLantern
         {
             
         }
-    }
+    }*/
+    #endregion
 
-    public class BreakJadeLanterns : GlobalItem
-    {
-        public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
-        {
-            if (item.damage > 0 && !noHitbox)
-            {
+     public class BreakJadeLanterns : GlobalItem
+     {
+         public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
+         {
+             if (item.damage > 0 && !noHitbox)
+             {
                 Rectangle hitboxLocal = hitbox;
-                var breakable = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<JadeLanternProj>() && hitboxLocal.Intersects((n.ModProjectile as JadeLanternProj).hitbox) && !(n.ModProjectile as JadeLanternProj).burning).ToArray();
-                foreach (Projectile proj in breakable)
+                foreach (KeyValuePair<int, TileEntity> TEitem in TileEntity.ByID)
                 {
-                    (proj.ModProjectile as JadeLanternProj).Break();
+                    if (TEitem.Value is JadeLanternTileEntity te && !te.burning && hitboxLocal.Intersects(te.hitbox))
+                        te.Break();
                 }
-            }
-        }
-    }
-
-    public class BreakJadeLanternsProj : GlobalProjectile
-    {
-        public override void PostAI(Projectile projectile)
-        {
-            if (projectile.friendly)
-            {
-                var breakable = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<JadeLanternProj>() && projectile.Colliding(projectile.Hitbox, (n.ModProjectile as JadeLanternProj).hitbox) &&!(n.ModProjectile as JadeLanternProj).burning).ToArray();
-                foreach (Projectile proj in breakable)
-                {
-                    (proj.ModProjectile as JadeLanternProj).Break();
-                }
-            }
-        }
-    }
+             }
+         }
+     }
 
     class SkeletonMerchantSellsLanterns : GlobalNPC
     {

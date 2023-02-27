@@ -34,6 +34,7 @@ namespace JadeFables.Tiles.JadeLantern
     }
     public class JadeLanternTileEntity : ModTileEntity
     {
+        public bool broken = false;
         public bool initialized = false;
         public bool burning = false;
 
@@ -185,6 +186,9 @@ namespace JadeFables.Tiles.JadeLantern
 
         public virtual void Break()
         {
+            if (broken)
+                return;
+            broken = true;
             EntitySource_TileBreak source = new((int)(WorldPosition.X / 16), (int)(WorldPosition.Y / 16));
             Tile tile = Main.tile[(int)(WorldPosition.X / 16), (int)(WorldPosition.Y / 16)];
             RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];

@@ -26,15 +26,30 @@ namespace JadeFables.Biomes.JadeLake
             progress.Message = "Progress message jade springs placeholder";
 
             //Debug
-            Main.spawnTileX = Main.maxTilesX / 2;
-            Main.spawnTileY = Main.maxTilesY / 3;
-            Main.worldSurface = Main.spawnTileY;
+            //Main.spawnTileX = Main.maxTilesX / 2;
+            //Main.spawnTileY = Main.maxTilesY / 3;
+            //Main.worldSurface = Main.spawnTileY;
 
+            int tries = 0;
+            for (int i = 0; i < (Main.maxTilesX / 2400) + 1; i++)
+            {
+                int x = WorldGen.genRand.Next(300, Main.maxTilesX - 300);
+                int y = WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 500);
+                int size = (int)(WorldGen.genRand.Next(160, 200) * (Main.maxTilesX / 6400f));
+                if (!SpawnBiome(x,y,size) && tries++ < 999)
+                {
+                    i--;
+                }
+            }
+            //ClearWater(WholeBiomeRect);
+        }
+
+        public static bool SpawnBiome(int x, int y, int biomeSize)
+        {
             //very center of biome, used as origin for main arc raycasts
-            Point16 biomeCenter = new Point16(Main.spawnTileX, Main.spawnTileY);
+            Point16 biomeCenter = new Point16(x, y);
 
             //these 2 control the main size and shape of the biome
-            int biomeSize = 180;//vary based on world size and randomness
             float biomeWidthMult = 1.2f;//the width/height ratio
             int sideBeachSize = 12;
 
@@ -43,7 +58,7 @@ namespace JadeFables.Biomes.JadeLake
             float CONST_mainIslandBottomAmp = 0.5f;
             float CONST_mainIslandBodyHeightMult = 0.9f;
 
-            FastNoise fastnoise = new FastNoise(Main.rand.Next());
+            FastNoise fastnoise = new FastNoise(WorldGen.genRand.Next());
 
             //used for stuff that needs to iterate over the entire biome
             Rectangle WholeBiomeRect = new Rectangle(
@@ -67,15 +82,18 @@ namespace JadeFables.Biomes.JadeLake
                 (int)((biomeSize / 1.7f) * biomeWidthMult) * 2,
                 (int)((biomeSize / 1.9f) * CONST_mainIslandBodyHeightMult));
 
-
+            if (ContainsBlacklistBlock(WholeBiomeRect))
+            {
+                return false;
+            }
 
 
 
             //clears all water in biome area
             ClearWater(WholeBiomeRect);
             //FillArea(WholeBiomeRect, TileID.EmeraldGemspark, 0);
-            FillArea(LowerIslandRect, TileID.RubyGemspark, 1);//lower hitbox
-            FillArea(UpperIslandRect, TileID.EmeraldGemspark, 0);//upper hitbox
+            //FillArea(LowerIslandRect, TileID.RubyGemspark, 1);//lower hitbox
+            //FillArea(UpperIslandRect, TileID.EmeraldGemspark, 0);//upper hitbox
 
             Cup(LowerIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0.35f, false);
 
@@ -90,7 +108,7 @@ namespace JadeFables.Biomes.JadeLake
                 //method that gets passed to arc function to be called for every block placed around edge (the actual placing of blocks is disabled)
                 //void CalcOffshoots(int i, int j, float angle)
                 //{
-                //    if (Main.rand.NextFloat() < (0.03f) && (angle < 4f || angle > 5.4))
+                //    if (WorldGen.genRand.NextFloat() < (0.03f) && (angle < 4f || angle > 5.4))
                 //    {
                 //        upperOffshoots.Add((new Rectangle(i, j, LowerIslandRect.Width, LowerIslandRect.Height), CONST_mainIslandBottomAmp, 0));
                 //    }
@@ -177,13 +195,14 @@ namespace JadeFables.Biomes.JadeLake
             //slopes all tiles in biome
             //likely only needed for debug generation since vanilla has this pass
             SlopeTiles(WholeBiomeRect);
-            
+
 
             //Places foreground waterfalls (has to be outside of polish pass because it only does the top half of the biome)
             PlaceForegroundWaterfalls(UpperIslandRect, 700);
 
-            //debug to see walls on map
-            ClearWater(WholeBiomeRect);
+            ClearDebris(WholeBiomeRect);
+
+            return true;
         }
 
         public class Area
@@ -243,6 +262,30 @@ namespace JadeFables.Biomes.JadeLake
             public int LeftHeight() => leftBottom.Y - leftTop.Y;
         }
 
+        public static bool ContainsBlacklistBlock(Rectangle rect)
+        {
+            int[] blacklist = new int[] {
+
+            TileID.GreenDungeonBrick,
+            TileID.BlueDungeonBrick,
+            TileID.PinkDungeonBrick,
+            TileID.HardenedSand,
+            ModContent.TileType<JadeSandTile>(),
+            TileID.IceBlock,
+            TileID.JungleGrass };
+
+            for (int i = rect.Left; i < rect.Right; i++)
+            {
+                for (int j = rect.Top; j < rect.Bottom; j++)
+                {
+                    Tile tile = Main.tile[i, j];
+                    if (blacklist.Contains(tile.TileType))
+                        return true;
+                }
+            }
+            return false;
+        }
+
         public static void GenerateWallPillars(List<(Rectangle pos, bool water)> islandList, int maxPillarDistance)
         {
             foreach(var (islandBox, hasWater) in islandList)
@@ -251,7 +294,7 @@ namespace JadeFables.Biomes.JadeLake
 
                 //gives a random offset to the X position of the pillar
                 int XOffsetRange = islandBox.Width / 4;
-                center.X += Main.rand.Next(-(XOffsetRange / 2), (XOffsetRange / 2) + 1);
+                center.X += WorldGen.genRand.Next(-(XOffsetRange / 2), (XOffsetRange / 2) + 1);
 
                 //arbitrary default value (just needs to be impossible to achieve normally)
                 const int offStartingValue = -10000;
@@ -294,12 +337,12 @@ namespace JadeFables.Biomes.JadeLake
                     {
                         //if there was no end found, it gives a random length
                         //todo: better lengths here
-                        scanEndOffset = scanStartOffset + Main.rand.Next((int)(maxPillarDistance * 0.4f), (int)(maxPillarDistance * 0.8f));
+                        scanEndOffset = scanStartOffset + WorldGen.genRand.Next((int)(maxPillarDistance * 0.4f), (int)(maxPillarDistance * 0.8f));
                     }
 
                     const int MinPillarRadius = 8;
                     int MaxPillarRadius = islandBox.Width / 5;
-                    int PillarRadius = Main.rand.Next(MinPillarRadius, MaxPillarRadius);
+                    int PillarRadius = WorldGen.genRand.Next(Math.Min(MinPillarRadius, MaxPillarRadius), Math.Max(MinPillarRadius, MaxPillarRadius));
                     const int MaxCornerRandomOffset = 0;//offsets each corner slightly
 
                     int pillarBottomPosY = center.Y + scanEndOffset;
@@ -326,7 +369,7 @@ namespace JadeFables.Biomes.JadeLake
                     //finds edges/width
                     {
                         //bottom left side
-                        for (int h = 0; h < PillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                        for (int h = 0; h < PillarRadius + WorldGen.genRand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                         {
                             if (FindGroundTile(center.X - h, pillarBottomPosY, PillarRadius + 1, out int offset2))
                             {
@@ -337,7 +380,7 @@ namespace JadeFables.Biomes.JadeLake
                         }
 
                         //bottom right side
-                        for (int h = 0; h < PillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                        for (int h = 0; h < PillarRadius + WorldGen.genRand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                         {
                             if (FindGroundTile(center.X + h, pillarBottomPosY, PillarRadius + 1, out int offset1))
                             {
@@ -348,7 +391,7 @@ namespace JadeFables.Biomes.JadeLake
                         }
 
                         //top left side
-                        for (int h = 0; h < PillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                        for (int h = 0; h < PillarRadius + WorldGen.genRand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                         {
                             if (FindCeilingTile(center.X - h, pillarTopPosY, PillarRadius + 1, out int offset2))
                             {
@@ -359,7 +402,7 @@ namespace JadeFables.Biomes.JadeLake
                         }
 
                         //top right side
-                        for (int h = 0; h < PillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                        for (int h = 0; h < PillarRadius + WorldGen.genRand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                         {
                             if (FindCeilingTile(center.X + h, pillarTopPosY, PillarRadius + 1, out int offset1))
                             {
@@ -386,17 +429,17 @@ namespace JadeFables.Biomes.JadeLake
                         }
                     }
 
-                    bool TrySplit = PillarArea.TopWidth() > 20 ? Main.rand.NextBool(3, 4) : Main.rand.NextBool();//1/2 chance, 3/4 if its a large one
+                    bool TrySplit = PillarArea.TopWidth() > 20 ? WorldGen.genRand.NextBool(3, 4) : WorldGen.genRand.NextBool();//1/2 chance, 3/4 if its a large one
 
                     #region subtract split
                     if (foundEnd && TrySplit && Math.Abs(PillarArea.leftTop.Y - PillarArea.rightTop.Y) <= 5) //distance check avoids any weird top angles
                     {
-                        int SubtractRadius = (int)(PillarRadius / Main.rand.NextFloat(1.8f, 2.4f));
-                        int SubtractHeight = (int)((PillarAreaMax.Y - PillarAreaMin.Y)) + Main.rand.Next(15, 25);
+                        int SubtractRadius = (int)(PillarRadius / WorldGen.genRand.NextFloat(1.8f, 2.4f));
+                        int SubtractHeight = (int)((PillarAreaMax.Y - PillarAreaMin.Y)) + WorldGen.genRand.Next(15, 25);
 
                         int TopSubtractCenter = PillarArea.leftTop.X + (PillarArea.TopWidth() / 2);
                         int BottomSubtractCenter = PillarArea.leftBottom.X + (PillarArea.BottomWidth() / 2) + 
-                            Main.rand.Next(-PillarArea.TopWidth() / 5, PillarArea.TopWidth() / 5);//defaults to aiming towards bottom of center, with a random angle offset
+                            WorldGen.genRand.Next(-PillarArea.TopWidth() / 5, PillarArea.TopWidth() / 5);//defaults to aiming towards bottom of center, with a random angle offset
 
                         Area SubtractArea = new(
                             leftTop: new Point(TopSubtractCenter - SubtractRadius, PillarAreaMin.Y - 5),
@@ -426,14 +469,14 @@ namespace JadeFables.Biomes.JadeLake
                     #region secondary pillar gen
                     const int SecPillarMinRadius = 5;
                     int SecPillarMaxRadius = Math.Max((int)(MaxPillarRadius * 0.66f), SecPillarMinRadius + 1);
-                    int SecPillarRadius = Main.rand.Next(SecPillarMinRadius, SecPillarMaxRadius);
+                    int SecPillarRadius = WorldGen.genRand.Next(SecPillarMinRadius, SecPillarMaxRadius);
 
-                    int SecPillarHeight = Main.rand.Next((int)(maxPillarDistance * 0.33f), (int)(maxPillarDistance * 0.75f));
+                    int SecPillarHeight = WorldGen.genRand.Next((int)(maxPillarDistance * 0.33f), (int)(maxPillarDistance * 0.75f));
                     int SecPillarBottomY = PillarAreaMin.Y + SecPillarHeight;
 
-                    int SecPillarOffsetFromFirst = (int)((PillarArea.TopWidth() * 0.5f) + (SecPillarRadius) * Main.rand.NextFloat(0.33f, 1f) + Main.rand.Next(islandBox.Width / 10));
+                    int SecPillarOffsetFromFirst = (int)((PillarArea.TopWidth() * 0.5f) + (SecPillarRadius) * WorldGen.genRand.NextFloat(0.33f, 1f) + WorldGen.genRand.Next(islandBox.Width / 10));
 
-                    int SecPillarCenterX = center.X + (SecPillarOffsetFromFirst * (Main.rand.NextBool() ? 1 : -1));
+                    int SecPillarCenterX = center.X + (SecPillarOffsetFromFirst * (WorldGen.genRand.NextBool() ? 1 : -1));
 
                     if (FindCeilingTile(SecPillarCenterX, PillarAreaMin.Y + 10, SecPillarRadius + 10, out int offset0))
                     {
@@ -448,7 +491,7 @@ namespace JadeFables.Biomes.JadeLake
 
                         {
                             //bottom left side
-                            for (int h = 0; h < SecPillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                            for (int h = 0; h < SecPillarRadius + WorldGen.genRand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                             {
                                 if (FindGroundTile(SecPillarCenterX - h, SecPillarBottomY, SecPillarRadius + 1, out int offset2))
                                 {
@@ -460,7 +503,7 @@ namespace JadeFables.Biomes.JadeLake
                             }
 
                             //bottom right side
-                            for (int h = 0; h < SecPillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                            for (int h = 0; h < SecPillarRadius + WorldGen.genRand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                             {
                                 if (FindGroundTile(SecPillarCenterX + h, SecPillarBottomY, SecPillarRadius + 1, out int offset1))
                                 {
@@ -472,7 +515,7 @@ namespace JadeFables.Biomes.JadeLake
                             }
 
                             //top left side
-                            for (int h = 0; h < SecPillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                            for (int h = 0; h < SecPillarRadius + WorldGen.genRand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                             {
                                 if (FindCeilingTile(SecPillarCenterX - h, PillarAreaMin.Y, SecPillarRadius + 1, out int offset2))
                                 {
@@ -483,7 +526,7 @@ namespace JadeFables.Biomes.JadeLake
                             }
 
                             //top right side
-                            for (int h = 0; h < SecPillarRadius + Main.rand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
+                            for (int h = 0; h < SecPillarRadius + WorldGen.genRand.Next(-MaxCornerRandomOffset, MaxCornerRandomOffset); h++)
                             {
                                 if (FindCeilingTile(SecPillarCenterX + h, PillarAreaMin.Y, SecPillarRadius + 1, out int offset1))
                                 {
@@ -659,13 +702,13 @@ namespace JadeFables.Biomes.JadeLake
                         for (int j = target.Y; j < target.Y + target.Height; j++)
                         {
                             //if chance
-                            if (Main.rand.NextFloat() < chance)
+                            if (WorldGen.genRand.NextFloat() < chance)
                             {
                                 {
                                     //create rectangle centered on point
                                     Rectangle size = new Rectangle(i, j, 0, 0);
 
-                                    float randomMult = 1 + Main.rand.NextFloat(-CONST_sizeVariation, CONST_sizeVariation);
+                                    float randomMult = 1 + WorldGen.genRand.NextFloat(-CONST_sizeVariation, CONST_sizeVariation);
                                     //size.Inflade adds the value to both sides of the center
                                     size.Inflate((int)((SecondPoolsCurrent.xSize / 2) * randomMult), (int)((SecondPoolsCurrent.ySize / 2) * randomMult));
 
@@ -851,7 +894,7 @@ namespace JadeFables.Biomes.JadeLake
                             rect.Inflate((int)(rect.Width * (0.025f * mul)), (int)(rect.Height * (0.05f * mul)));
                         }
 
-                        bool water = Main.rand.NextFloat() < waterChance;
+                        bool water = WorldGen.genRand.NextFloat() < waterChance;
                         if (platform)
                         {
                             Platform(rect, noise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq);
@@ -870,7 +913,7 @@ namespace JadeFables.Biomes.JadeLake
 
 
                 SecondPoolsPrevious = SecondPoolsCurrent;
-                float randomSizeMult = Main.rand.NextFloat(0.96f, 1.03f);
+                float randomSizeMult = WorldGen.genRand.NextFloat(0.96f, 1.03f);
                 SecondPoolsCurrent =
                     new(new List<Rectangle>(), (int)(SecondPoolsPrevious.xSize * CONST_RepeatSizeMult * randomSizeMult), (int)(SecondPoolsPrevious.ySize * CONST_RepeatSizeMult * randomSizeMult));
             }
@@ -942,10 +985,10 @@ namespace JadeFables.Biomes.JadeLake
                 {
                     if (Main.tile[i, j].TileType == ModContent.TileType<Tiles.JadeSand.JadeSandTile>() && Main.tile[i, j].HasTile) 
                     {
-                        bool generateNew = Main.rand.NextFloat() < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, ((j - worldArea.Y) / worldArea.Height));
+                        bool generateNew = WorldGen.genRand.NextFloat() < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, ((j - worldArea.Y) / worldArea.Height));
                         if (generateNew && offshootsLeft > 0)
                         {
-                            WorldGen.PlaceTile(i, j, TileID.DiamondGemspark, true, true);
+                           // WorldGen.PlaceTile(i, j, TileID.DiamondGemspark, true, true);
                             var newWidth = worldArea.Width;
                             var newHeight = worldArea.Height;
                             var newAmp = amp;
@@ -991,7 +1034,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void Cup(Rectangle rect, FastNoise fastnoise, float amp, float freq, float depthScale = 0.25f, bool clearTop = false, bool water = false)
         {
-            fastnoise = new FastNoise(Main.rand.Next(0, 1000000));
+            fastnoise = new FastNoise(WorldGen.genRand.Next(0, 1000000));
             const int waterLevel = 255;
 
             //generates the wavy pattern on the bottom of the island
@@ -1021,8 +1064,12 @@ namespace JadeFables.Biomes.JadeLake
                     //places water if below below a certain threshold. and skips everything below on second iterations (?)
                     if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - depthScale)
                     {
-                        if (water)//Main.rand.NextBool(3))
-                            Main.tile[rect.X + i, rect.Y + j].LiquidAmount = waterLevel;
+                        if (water)//WorldGen.genRand.NextBool(3))
+                        {
+                            Tile waterTile = Main.tile[rect.X + i, rect.Y + j];
+                            waterTile.LiquidAmount = waterLevel;
+                            waterTile.LiquidType = LiquidID.Water;
+                        }
                         if (clearTop)
                             continue;
                     }
@@ -1042,7 +1089,7 @@ namespace JadeFables.Biomes.JadeLake
                     else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - (depthScale / 4))
                     {
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), true, true);
-                        //generateNew = Main.rand.NextFloat()/*Debug:make genrand later*/ < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, normalizedY);//???
+                        //generateNew = WorldGen.genRand.NextFloat()/*Debug:make genrand later*/ < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, normalizedY);//???
                     }
                     else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal)
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), true, true);
@@ -1080,7 +1127,7 @@ namespace JadeFables.Biomes.JadeLake
                     //places water if below below a certain threshold. and skips everything below on second iterations (?)
                     if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.25f)
                     {
-                        //if (Main.rand.NextBool(3))
+                        //if (WorldGen.genRand.NextBool(3))
                         //    Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 255;
                     }
 
@@ -1113,7 +1160,7 @@ namespace JadeFables.Biomes.JadeLake
             //if there is a passed in method to be run on each step
             bool onplace = placement != null;
 
-            FastNoise fastnoise = new FastNoise(Main.rand.Next());//debug change rand later
+            FastNoise fastnoise = new FastNoise(WorldGen.genRand.Next());//debug change rand later
 
             //step length
             float inc = (float)Math.Tau / (increment * radius * widthMult * (freq / 5f));
@@ -1139,7 +1186,10 @@ namespace JadeFables.Biomes.JadeLake
 
                         Main.tile[posX, posY].Get<TileWallWireStateData>().HasTile = false;
                         WorldGen.KillWall(posX, posY);
-                        Main.tile[posX, posY].LiquidAmount = waterLevel;
+                        Tile waterTile = Main.tile[posX, posY];
+
+                        waterTile.LiquidAmount = waterLevel;
+                        waterTile.LiquidType = LiquidID.Water;
                         //Main.tile[posX, posY].LiquidType = 0;
 
                         //if (!(Main.tile[posX, posY].TileType == ModContent.TileType<JadeSandTile>() || Main.tile[posX, posY].TileType == ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>()))
@@ -1164,6 +1214,28 @@ namespace JadeFables.Biomes.JadeLake
                 //    //Main.tile[(int)(centerPoint.X + (pos.X * widthMult)), (int)(centerPoint.Y + pos.Y)].Get<TileWallWireStateData>().HasTile = true;
                 //    //WorldGen.PlaceTile((int)(biomePosition.X + (pos.X * widtMult)), (int)(biomePosition.Y + pos.Y), tileType, true, true);
                 //}
+            }
+        }
+
+        public static void ClearDebris(Rectangle rect)
+        {
+            int[] debrisBlock = new int[]
+            {
+                21, //for some reason chests don't have a tile id
+                12, //and neither do life crystals
+            };
+            for (int i = rect.Left; i < rect.Right; i++)
+            {
+                for (int j = rect.Top; j < rect.Bottom; j++)
+                {
+                    Tile tile = Main.tile[i, j];
+                    if (debrisBlock.Contains(tile.TileType))
+                    {
+                        tile.HasTile = false;
+                        WorldGen.KillTile(i, j);
+                        WorldGen.DestroyHeart(i, j);
+                    }
+                }
             }
         }
     }

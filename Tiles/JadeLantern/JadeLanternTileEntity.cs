@@ -57,6 +57,8 @@ namespace JadeFables.Tiles.JadeLantern
 
         public int length;
 
+        private float swayTimer;
+
         private int chainFrameY;
         private Rectangle chainFrame;
 
@@ -138,6 +140,9 @@ namespace JadeFables.Tiles.JadeLantern
             if (chain == null)
                 return;
             chain.UpdateChain();
+
+            swayTimer += 0.025f;
+            chain.ropeSegments[chain.segmentCount - 1].posNow += new Vector2(MathF.Sin(swayTimer), 0) * 0.05f;
             for (int i = 0; i < chain.segmentCount - burnedSegments; i++)
             {
                 RopeSegment segment = chain.ropeSegments[i];
@@ -306,6 +311,7 @@ namespace JadeFables.Tiles.JadeLantern
 
         public void SpawnIn()
         {
+            swayTimer = Main.rand.NextFloat(6.28f);
             if (length == 0)
             {
                 length = StartLength;

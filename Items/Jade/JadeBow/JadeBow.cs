@@ -24,7 +24,7 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public override void SetDefaults()
         {
-            Item.damage = 15;
+            Item.damage = 11;
             Item.DamageType = DamageClass.Ranged;
             Item.width = 16;
             Item.height = 64;
@@ -209,7 +209,7 @@ namespace JadeFables.Items.Jade.JadeBow
                 var alreadyBuffed = Main.npc.Where(n => n.active && n.CountsAsACritter && n.GetGlobalNPC<JadeBowGNPC>().timer > 0);
 
                 for (int i = 0; i < alreadyBuffed.Count(); i++)
-                    mult *= 0.9f;
+                    mult *= 0.5f;
                 if (target.type != NPCID.ExplosiveBunny)
                     target.immortal = true;
                 if (target.GetGlobalNPC<JadeBowGNPC>().timer <= 0)

@@ -12,6 +12,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using JadeFables.Dusts;
+using System.Security.Cryptography.X509Certificates;
 
 namespace JadeFables.Tiles.JadeWaterfall
 {
@@ -31,6 +32,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             TileObjectData.newTile.CoordinateWidth = 16;
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
+            MinPick = 999;
 
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Waterfall");
@@ -51,7 +53,8 @@ namespace JadeFables.Tiles.JadeWaterfall
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Waterfall");
+            DisplayName.SetDefault("Waterfall Bucket");
+            Tooltip.SetDefault("Contains a small amount of waterfall\nCan be poured out");
         }
 
         public override void SetDefaults()
@@ -62,12 +65,34 @@ namespace JadeFables.Tiles.JadeWaterfall
             Item.useTurn = true;
             Item.autoReuse = true;
             Item.useAnimation = 15;
-            Item.useTime = 10;
+            Item.useTime = 15;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.createTile = TileType<JadeWaterfallTile>();
             Item.rare = ItemRarityID.White;
             Item.value = 5;
+        }
+
+        public override bool CanUseItem(Player player)
+        {
+            if (Main.tile[Player.tileTargetX, Player.tileTargetY].HasTile || !player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
+                return false;
+            return base.CanUseItem(player);
+        }
+
+        public override bool? UseItem(Player player)
+        {
+            if (Item.stack == 1)
+            {
+                Item.type = ItemID.EmptyBucket;
+                Item.SetDefaults();
+                return false;
+            }
+            else
+            {
+                Item.NewItem(Item.GetSource_ItemUse(Item), player.Center, ItemID.EmptyBucket);
+            }
+            return base.UseItem(player);
         }
     }
 
@@ -175,6 +200,22 @@ namespace JadeFables.Tiles.JadeWaterfall
             length = i;
             if (originLeft.HasTile && originLeft.TileType == ModContent.TileType<JadeWaterfallTile>())
                 Projectile.timeLeft = 2;
+        }
+    }
+
+    public class BucketObtainability : GlobalItem
+    {
+        public override bool? UseItem(Item item, Player player)
+        {
+            Tile tile = Main.tile[Player.tileTargetX, Player.tileTargetY];
+            if (player.itemAnimation == item.useAnimation - 1 && item.type == ItemID.EmptyBucket && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY) && tile.HasTile && tile.TileType == ModContent.TileType<JadeWaterfallTile>())
+            {
+                tile.HasTile = false;
+                item.stack--;
+                Item.NewItem(item.GetSource_ItemUse(item), player.Center, ModContent.ItemType<JadeWaterfallItem>());
+            }
+            
+            return base.UseItem(item, player);
         }
     }
 }

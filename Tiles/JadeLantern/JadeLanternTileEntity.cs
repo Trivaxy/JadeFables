@@ -34,6 +34,7 @@ namespace JadeFables.Tiles.JadeLantern
     }
     public class JadeLanternTileEntity : ModTileEntity
     {
+        public bool broken = false;
         public bool initialized = false;
         public bool burning = false;
 
@@ -55,6 +56,8 @@ namespace JadeFables.Tiles.JadeLantern
         }
 
         public int length;
+
+        private float swayTimer;
 
         private int chainFrameY;
         private Rectangle chainFrame;
@@ -137,6 +140,9 @@ namespace JadeFables.Tiles.JadeLantern
             if (chain == null)
                 return;
             chain.UpdateChain();
+
+            swayTimer += 0.025f;
+            chain.ropeSegments[chain.segmentCount - 1].posNow += new Vector2(MathF.Sin(swayTimer), 0) * 0.05f;
             for (int i = 0; i < chain.segmentCount - burnedSegments; i++)
             {
                 RopeSegment segment = chain.ropeSegments[i];
@@ -185,6 +191,9 @@ namespace JadeFables.Tiles.JadeLantern
 
         public virtual void Break()
         {
+            if (broken)
+                return;
+            broken = true;
             EntitySource_TileBreak source = new((int)(WorldPosition.X / 16), (int)(WorldPosition.Y / 16));
             Tile tile = Main.tile[(int)(WorldPosition.X / 16), (int)(WorldPosition.Y / 16)];
             RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
@@ -302,6 +311,7 @@ namespace JadeFables.Tiles.JadeLantern
 
         public void SpawnIn()
         {
+            swayTimer = Main.rand.NextFloat(6.28f);
             if (length == 0)
             {
                 length = StartLength;

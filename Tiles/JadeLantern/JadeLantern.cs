@@ -162,6 +162,7 @@ namespace JadeFables.Tiles.JadeLantern
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spring Lantern");
+            Tooltip.SetDefault("Place on top of an existing lantern to make it longer \nThis does not comsune the lantern");
         }
 
         public override void SetDefaults()

@@ -58,7 +58,7 @@ namespace JadeFables.Biomes.JadeLake
         private void AddLighting(On.Terraria.Main.orig_DoDraw orig, Main self, GameTime gameTime) {
             orig(self, gameTime);
 
-            float progress = MathHelper.Min(TotalBiomeCount, 300) / 300f;
+            float progress = MathHelper.Min(TotalBiomeCount, 3000) / 3000f;
 
             if (TotalBiomeCount == 0 && !forceLakeAesthetic)
                 return;

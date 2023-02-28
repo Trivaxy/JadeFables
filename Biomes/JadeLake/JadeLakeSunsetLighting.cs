@@ -6,12 +6,18 @@ namespace JadeFables.Biomes.JadeLake
 {
 	class JadeLakeSunsetLighting : ModSystem
 	{
+		public static float val = 0f;
 		public override void Load()
 		{
 			On.Terraria.Graphics.Light.TileLightScanner.GetTileLight += SunsetLighting;
 		}
 
-		private void SunsetLighting(On.Terraria.Graphics.Light.TileLightScanner.orig_GetTileLight orig, Terraria.Graphics.Light.TileLightScanner self, int x, int y, out Vector3 outputColor)
+        public override void PreUpdateWorld()
+        {
+			val = (0.95f * MathHelper.Min(1, GetInstance<JadeLakeSystem>().TotalBiomeCount * 0.0003f));
+        }
+
+        private void SunsetLighting(On.Terraria.Graphics.Light.TileLightScanner.orig_GetTileLight orig, Terraria.Graphics.Light.TileLightScanner self, int x, int y, out Vector3 outputColor)
 		{
 			orig(self, x, y, out outputColor);
 
@@ -23,7 +29,7 @@ namespace JadeFables.Biomes.JadeLake
 			if (Main.LocalPlayer.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) && tile.LiquidAmount == 0 && (!tile.HasTile || !Main.tileBlockLight[tile.TileType]))
 			{
 				Color baseColor = new Color(115, 86, 53);
-				outputColor += baseColor.ToVector3() * (0.95f * MathHelper.Min(1, GetInstance<JadeLakeSystem>().TotalBiomeCount * 0.0003f));
+				outputColor += baseColor.ToVector3() * val;
 			}
 		}
 	}

@@ -26,7 +26,7 @@ namespace JadeFables.Biomes.JadeLake
 
 			Tile tile = Framing.GetTileSafely(x, y);
 
-			if (Main.LocalPlayer.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) && tile.LiquidAmount == 0 && (!tile.HasTile || !Main.tileBlockLight[tile.TileType]))
+			if (Main.LocalPlayer.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) && tile.LiquidAmount == 0 && tile.WallType == 0 && (!tile.HasTile || !Main.tileBlockLight[tile.TileType]))
 			{
 				Color baseColor = new Color(255, 215, 215);
 				outputColor += baseColor.ToVector3() * val;

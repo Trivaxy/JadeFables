@@ -22,6 +22,8 @@ namespace JadeFables.Tiles.JadeSand
             TileID.Sets.ForAdvancedCollision.ForSandshark[Type] = true;
             //TileID.Sets.Falling[Type] = true;
 
+            TileSets.CanGrowBamboo[Type] = true;
+
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Sand");
             AddMapEntry(new Color(207, 160, 118), name);

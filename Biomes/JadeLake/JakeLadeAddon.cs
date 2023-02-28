@@ -157,6 +157,10 @@ namespace JadeFables.Biomes.JadeLake
         private bool ShouldDrawGradient(int i, int j)
         {
             Tile tile = Main.tile[i, j];
+
+            if (tile.LiquidType != LiquidID.Water)
+                return false;
+
             if (tile.LiquidAmount == 0)
                 return false;
 

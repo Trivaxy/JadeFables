@@ -217,7 +217,7 @@ namespace JadeFables.Biomes.JadeLake
                             chest.item[inventoryIndex].SetDefaults(type);
                             chest.item[inventoryIndex].stack = Main.rand.Next(2, 5);
                         }
-                        else if (Main.rand.NextBool(6))
+                        else if (Main.rand.NextBool(6) && ternaryLootSingleList.Count > 0)
                         {
                             int type = ternaryLootSingleList[Main.rand.Next(ternaryLootSingleList.Count)];
                             ternaryLootSingleList.Remove(type);

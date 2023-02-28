@@ -101,6 +101,8 @@ namespace JadeFables.Tiles.JadeWaterfall
         Tile originLeft => Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)];
         Tile originRight => Main.tile[(int)(Projectile.Center.X / 16) + 1, (int)(Projectile.Center.Y / 16)];
 
+        public readonly int FADEOUTLENGTH = 7;
+
         int length = 0;
 
         int frame = 0;
@@ -162,6 +164,19 @@ namespace JadeFables.Tiles.JadeWaterfall
                 Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             }
 
+            if (length == 120)
+            {
+                for (i = length; i < length + FADEOUTLENGTH; i++)
+                {
+                    int tileHeight = 4;
+                    Vector2 pos = Projectile.Center + (Vector2.UnitY * 16 * i);
+                    int frameHeight = (tex.Height / yFrames) / tileHeight;
+                    Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * ((((i - 1) / tileHeight) + frame) % yFrames)) + (frameHeight * ((i - 1) % tileHeight)), tex.Width, frameHeight);
+                    Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16)) * (1 - ((i - length) / (float)FADEOUTLENGTH));
+                    Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+                }
+            }
+
             if (!foundWater)
                 return;
             int bottomFrameHeight = bottomTex.Height / yFrames;
@@ -197,7 +212,23 @@ namespace JadeFables.Tiles.JadeWaterfall
                 if (foundWater)
                     break;
             }
+
             length = i;
+
+            if (length == 120)
+            {
+                for (i = length; i < length + FADEOUTLENGTH; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        int x = (int)(Projectile.Center.X / 16) + j;
+                        int y = (int)(Projectile.Center.Y / 16) + i;
+                        Tile tile = Main.tile[x, y];
+                        Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * 0.0030f * (1 - ((i - length) / (float)FADEOUTLENGTH)));
+                    }
+                }
+            }
+
             if (originLeft.HasTile && originLeft.TileType == ModContent.TileType<JadeWaterfallTile>())
                 Projectile.timeLeft = 2;
         }

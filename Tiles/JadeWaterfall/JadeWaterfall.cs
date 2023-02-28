@@ -185,7 +185,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                     int x = (int)(Projectile.Center.X / 16) + j;
                     int y = (int)(Projectile.Center.Y / 16) + i;
                     Tile tile = Main.tile[x, y];
-                    Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * 0.0025f);
+                    Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * 0.0030f);
                     if (tile.LiquidAmount == 255 && !tile.HasTile)
                     {
                         Vector2 velocity = Vector2.UnitY.RotatedByRandom(0.1f) * -Main.rand.NextFloat(1f, 1.5f);

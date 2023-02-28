@@ -23,7 +23,7 @@ namespace JadeFables.Biomes.JadeLake
     {
         public static void SurfaceItemPass(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = "Progress message jade springs placeholder";
+            progress.Message = "Steaming up the world";
 
             //Debug
             //Main.spawnTileX = Main.maxTilesX / 2;
@@ -35,7 +35,7 @@ namespace JadeFables.Biomes.JadeLake
             {
                 int x = WorldGen.genRand.Next(300, Main.maxTilesX - 300);
                 int y = WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 500);
-                int size = (int)(WorldGen.genRand.Next(160, 200) * ((Main.maxTilesX + 2100) / 6400f));
+                int size = (int)(WorldGen.genRand.Next(160, 200) * (Main.maxTilesX / 6400f));
                 if (!SpawnBiome(x,y,size) && tries++ < 999)
                 {
                     i--;

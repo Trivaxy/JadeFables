@@ -27,7 +27,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void PolishPass(GenerationProgress progress, GameConfiguration configuration)
         {
-            progress.Message = "Polishing jade biome";
+            progress.Message = "Filling up the hot springs";
 
 
             Rectangle worldRect = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
@@ -40,6 +40,9 @@ namespace JadeFables.Biomes.JadeLake
 
             //Places jade grass
             JadeGrassPopulation(worldRect, 0.1f, 5f);
+
+            //Places bamboo
+            BambooPopulation(worldRect, 10, 10f);
 
             //Places sand piles
             PlaceJadeSandPiles(worldRect, 5);
@@ -74,6 +77,48 @@ namespace JadeFables.Biomes.JadeLake
                         {
                             tileAbove.HasTile = true;
                             tileAbove.TileType = (ushort)ModContent.TileType<JadeGrassTile>();
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void BambooPopulation(Rectangle rect, int chance, float noiseFreq)
+        {
+            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            {
+                for (int j = rect.Top + 1; j < rect.Top + rect.Height; j++)
+                {
+                    Tile tileAbove = Framing.GetTileSafely(i, j - 1);
+                    Tile mainTile = Framing.GetTileSafely(i, j);
+
+                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>() && mainTile.BlockType == BlockType.Solid)
+                    {
+                        if (WorldGen.genRand.NextBool(chance))
+                        {
+                            int height = WorldGen.genRand.Next(10, 15);
+                            byte liquidLevel = tileAbove.LiquidAmount;
+                            tileAbove.LiquidAmount = 255;
+                            tileAbove.HasTile = true;
+                            tileAbove.TileType = TileID.Bamboo;
+                            tileAbove.TileFrameY = 0;
+                            tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(5) * 18);
+                            for (int x = 2; x < height; x++)
+                            {
+                                Tile tileAbove2 = Framing.GetTileSafely(i, j - x);
+                                if (tileAbove2.HasTile)
+                                    break;
+                                tileAbove2.HasTile = true;
+                                tileAbove2.TileType = TileID.Bamboo;
+                                tileAbove2.TileFrameY = 0;
+                                tileAbove2.TileFrameX = (short)(WorldGen.genRand.Next(5, 15) * 18);
+                                if (x == height - 1)
+                                {
+                                    tileAbove2.TileFrameX = (short)(WorldGen.genRand.Next(15, 20) * 18);
+                                }
+                            }
+
+                            tileAbove.LiquidAmount = liquidLevel;
                         }
                     }
                 }

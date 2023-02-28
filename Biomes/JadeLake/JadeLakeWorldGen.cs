@@ -35,7 +35,7 @@ namespace JadeFables.Biomes.JadeLake
             {
                 int x = WorldGen.genRand.Next(300, Main.maxTilesX - 300);
                 int y = WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 500);
-                int size = (int)(WorldGen.genRand.Next(160, 200) * (Main.maxTilesX / 6400f));
+                int size = (int)(WorldGen.genRand.Next(160, 200) * ((Main.maxTilesX + 2100) / 6400f));
                 if (!SpawnBiome(x,y,size) && tries++ < 999)
                 {
                     i--;
@@ -272,7 +272,9 @@ namespace JadeFables.Biomes.JadeLake
             TileID.HardenedSand,
             ModContent.TileType<JadeSandTile>(),
             TileID.IceBlock,
-            TileID.JungleGrass };
+            TileID.JungleGrass,
+            TileID.Ebonstone,
+            TileID.Crimstone};
 
             for (int i = rect.Left; i < rect.Right; i++)
             {

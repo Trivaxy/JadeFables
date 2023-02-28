@@ -6,8 +6,10 @@
 using JadeFables.Core;
 using JadeFables.Dusts;
 using JadeFables.Helpers;
+using JadeFables.Items.SpringChestLoot.FireworkPack;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -79,12 +81,13 @@ namespace JadeFables.Items.Jade.JadeStaff
         private float rotation;
 
         private int soundTimer;
+        private int timer = 0;
 
         private Projectile dragon;
 
         private bool released = false;
         private bool thrownDragon = false;
-
+        private int pulsesCompleted = 0;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Jade Staff");
@@ -96,26 +99,39 @@ namespace JadeFables.Items.Jade.JadeStaff
             Projectile.height = 16;
             Projectile.tileCollide = false;
             Projectile.friendly = false;
+            Projectile.scale = 0;
         }
 
         public override void AI()
         {
             if (!thrownDragon)
             {
+                /*
                 if (dragon == null)
                 {
-                    Projectile.scale = 0;
-                    dragon = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center + rotation.ToRotationVector2() * 80, Vector2.Zero, ModContent.ProjectileType<JadeStaffDragon>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
+                    dragon = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center + rotation.ToRotationVector2() * 80, Vector2.Zero, ModContent.ProjectileType<JadeStaffDragon>(), Projectile.damage * 2, Projectile.knockBack, owner.whoAmI);
                 }
                 if (dragon != null && dragon.active)
                 {
-                    dragon.timeLeft = 90;
+                    dragon.timeLeft = 130;
                     dragon.Center = owner.Center + rotation.ToRotationVector2() * 80;
                     (dragon.ModProjectile as JadeStaffDragon).flip = owner.direction == -1;
                 }
-                if (soundTimer++ % 30 == 0)
+                */
+
+                if (soundTimer++ % 18 == 0)
                 {
-                    SoundEngine.PlaySound(SoundID.Item1, owner.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing with { PitchVariance = 0.3f, Pitch = 0.2f, Volume = 0.35f }, owner.Center);
+                }
+
+                //Fire Pulse
+                if (timer % 60 == 0 && timer != 0)
+                {
+                    String sound = Main.rand.NextBool() ? "1" :"2";
+                    SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_book_staff_cast_" + sound) with { Pitch = -0.2f, PitchVariance = 0.35f, Volume = 0.45f };
+                    SoundEngine.PlaySound(style, owner.Center);
+                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<JadeStaffFirePulse>(), Projectile.damage, 0, owner.whoAmI);
+                    pulsesCompleted++;
                 }
 
                 Projectile.scale += 0.05f;
@@ -137,11 +153,11 @@ namespace JadeFables.Items.Jade.JadeStaff
                     if (dragon != null)
                     {
                         (dragon.ModProjectile as JadeStaffDragon).Launch();
-                        dragon.velocity = dragon.DirectionTo(Main.MouseWorld) * 13;
+                        dragon.velocity = dragon.DirectionTo(Main.MouseWorld) * 8.5f;
                     }
                 }
             }
-                Projectile.timeLeft = 2;
+            Projectile.timeLeft = 2;
 
             rotation += 0.15f * owner.direction;
             owner.itemAnimation = owner.itemTime = 2;
@@ -156,7 +172,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             owner.heldProj = Projectile.whoAmI;
             owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f);
             Projectile.Center = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f);
-
+            timer++;
             if (!Main.dedServ)
             {
                 ManageCache();
@@ -168,11 +184,12 @@ namespace JadeFables.Items.Jade.JadeStaff
         {
             DrawPrimitives();
             Texture2D glowTex = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
-            Color glowColor = Color.OrangeRed;
+            Color glowColor = new Color(200,69,0);
             glowColor.A = 0;
-            Vector2 glowPos = Projectile.Center + ((rotation - (0.1f * owner.direction)).ToRotationVector2() * 46 * Projectile.scale) + new Vector2(0, owner.gfxOffY);
+            Vector2 glowPos = Projectile.Center + ((rotation - (0.1f * owner.direction)).ToRotationVector2() * 40 * Projectile.scale) + new Vector2(0, owner.gfxOffY);
 
             float glowScale = (Projectile.scale + (0.15f * MathF.Sin((float)Main.timeForVisualEffects * 0.25f))) * 0.7f;
+
             Main.spriteBatch.Draw(glowTex, glowPos - Main.screenPosition, null, glowColor, 0, glowTex.Size() / 2, glowScale, SpriteEffects.None, 0f);
 
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
@@ -245,7 +262,7 @@ namespace JadeFables.Items.Jade.JadeStaff
 
         public bool flip;
 
-        private float burnProgress => EaseFunction.EaseCircularIn.Ease(1 - (Projectile.timeLeft / 90f));
+        private float burnProgress => EaseFunction.EaseCircularIn.Ease(1 - (Projectile.timeLeft / 130f));
 
         public override void SetStaticDefaults()
         {
@@ -259,8 +276,13 @@ namespace JadeFables.Items.Jade.JadeStaff
             Projectile.tileCollide = false;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
+            Projectile.timeLeft = 400; 
         }
 
+        int timeAfterLaunch = 0;
+        float velValue = 8.5f;
+        float eyeRot = MathHelper.PiOver4;
+        float eyeScale = 0.75f;
         public override void AI()
         {
             if (!Main.dedServ)
@@ -268,11 +290,89 @@ namespace JadeFables.Items.Jade.JadeStaff
                 ManageCache();
                 ManageTrail();
             }
+
+            if (timeAfterLaunch < 25 && timeAfterLaunch > 1)
+            {
+                Projectile.velocity = (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX) * 8;
+
+            }
+
+            if (launched)
+            {
+                Projectile.rotation = Projectile.velocity.ToRotation(); 
+
+                if (timeAfterLaunch >= 25 && timeAfterLaunch < 55)
+                {
+                    velValue = MathHelper.Lerp(velValue, 4, 0.04f);
+                    Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * velValue;
+                    //Projectile.velocity = Projectile.rotation.ToRotationVector2() * -1 * velValue;
+
+                }
+                else if (timeAfterLaunch >= 55 && timeAfterLaunch < 60)
+                {
+                    if (timeAfterLaunch == 55)
+                    {
+
+                        int a = Projectile.NewProjectile(null, Projectile.Center, Projectile.velocity * -0.5f, ModContent.ProjectileType<JadeStaffFirePulse>(), 0, 0, Projectile.owner);
+
+                        if (Main.projectile[a].ModProjectile is JadeStaffFirePulse pulse)
+                        {
+                            pulse.dim = new Vector2(0.25f, 1f) * 0.5f;
+                            pulse.oval = true;
+                            pulse.canDamage = false;
+                        }
+                        SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown, Projectile.Center);
+
+                    }
+                    velValue = Math.Clamp(MathHelper.Lerp(velValue, 56, 0.5f), 0, 40);
+                    Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * velValue;
+                    //Projectile.velocity = Projectile.rotation.ToRotationVector2() * -1 * velValue;
+
+                }
+                else if (timeAfterLaunch >= 60)
+                {
+                    velValue = MathHelper.Lerp(velValue, 8, 0.2f);
+                    Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * velValue;
+                    //Projectile.velocity = Projectile.rotation.ToRotationVector2() * -1 * velValue;
+                }
+
+                if (timeAfterLaunch > 30)
+                {
+                    eyeRot = Math.Clamp(MathHelper.Lerp(eyeRot, MathHelper.TwoPi + 0.7f, 0.07f), MathHelper.PiOver4, MathHelper.TwoPi);
+                    float progress = eyeRot / MathHelper.TwoPi; //from 0-1;
+
+                    eyeScale = 0.25f + (float)Math.Sin(progress * Math.PI) * 1.2f;   //sin(pi * x) always gives you a sin wave on values from 0-1
+                }
+
+                timeAfterLaunch++;
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             DrawPrimitives();
+
+            //Eye
+            Texture2D eye = ModContent.Request<Texture2D>("JadeFables/Items/Jade/JadeStaff/DragonEyeAlt").Value;
+            Vector2 eyePos = new Vector2(-50 * (Projectile.velocity.Length() / 13), 10 * (flip ? 1 : -1)).RotatedBy(Projectile.rotation);
+
+            //Vector2 eyeScale = new Vector2(0.5f, (Projectile.velocity.Length() / 13) * 0.5f);
+
+            if (timeAfterLaunch > 30 && timeAfterLaunch < 55)
+            {
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+
+                Main.spriteBatch.Draw(eye, Projectile.Center - Main.screenPosition + eyePos, eye.Frame(1, 1, 0, 0), Color.OrangeRed, Projectile.rotation + eyeRot, eye.Size() / 2, eyeScale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(eye, Projectile.Center - Main.screenPosition + eyePos, eye.Frame(1, 1, 0, 0), Color.OrangeRed, Projectile.rotation + eyeRot * -1, eye.Size() / 2, eyeScale, SpriteEffects.None, 0f);
+
+                Main.spriteBatch.Draw(eye, Projectile.Center - Main.screenPosition + eyePos, eye.Frame(1, 1, 0, 0), Color.White, Projectile.rotation + eyeRot, eye.Size() / 2, eyeScale * 0.5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(eye, Projectile.Center - Main.screenPosition + eyePos, eye.Frame(1, 1, 0, 0), Color.White, Projectile.rotation + eyeRot * -1, eye.Size() / 2, eyeScale * 0.5f, SpriteEffects.None, 0f);
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+            }
+
             return false;
         }
         private void ManageCache()
@@ -280,7 +380,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             if (cache == null)
             {
                 cache = new List<Vector2>();
-                for (int i = 0; i < NUMPOINTS; i++) 
+                for (int i = 0; i < NUMPOINTS; i++)
                 {
                     cache.Add(Projectile.Center - owner.Center);
                 }
@@ -407,4 +507,128 @@ namespace JadeFables.Items.Jade.JadeStaff
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
         }
     }
+
+    internal class JadeStaffFirePulse : ModProjectile
+    {
+        public override string Texture => "Terraria/Images/Projectile_0";
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Fire Pulse");
+        }
+
+        public bool oval = false;
+        public Vector2 dim = new Vector2(1f, 1f);
+        public bool canDamage = true;
+        public override void SetDefaults()
+        {
+            Projectile.width = 10;
+            Projectile.height = 10;
+
+            Projectile.hostile = false;
+            Projectile.friendly = true;
+
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.penetrate = -1;
+            Projectile.scale = 0.1f;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = -1;
+            Projectile.timeLeft = 45;
+        } 
+
+        private int timer = 0;
+        private bool dir = Main.rand.NextBool();
+        private Vector2 startingCenter = Vector2.Zero;
+
+        public override bool? CanDamage()
+        {
+            if (Projectile.timeLeft < 20)
+                return false;
+            return canDamage;
+        }
+        public override void AI()
+        {
+            if (timer == 0 && !oval)
+            {
+                Projectile.rotation = Main.rand.NextFloat(6.28f);
+                startingCenter = Projectile.Center;
+            }
+
+            Projectile.scale = MathHelper.Lerp(Projectile.scale, 0.7f, 0.15f); 
+            Projectile.rotation += dir ? 0.03f : -0.03f;
+            if (oval)
+            {
+                Projectile.rotation = Projectile.velocity.ToRotation();
+            }
+
+            if (!oval)
+            {
+                Projectile.width = (int)(375 * Projectile.scale);
+                Projectile.height = (int)(375 * Projectile.scale);
+                Projectile.Center = startingCenter;
+                Projectile.velocity = Vector2.Zero;
+            }
+
+
+            timer++;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            
+            Texture2D texture = Mod.Assets.Request<Texture2D>("Assets/energyball_10red").Value;
+
+            Effect myEffect = ModContent.Request<Effect>("JadeFables/Effects/FireBallShader", AssetRequestMode.ImmediateLoad).Value;
+            myEffect.Parameters["caustics"].SetValue(ModContent.Request<Texture2D>("JadeFables/Items/Jade/JadeStaff/JadePulseShaderStar").Value);
+            myEffect.Parameters["distort"].SetValue(ModContent.Request<Texture2D>("JadeFables/Assets/noise").Value);
+            myEffect.Parameters["gradient"].SetValue(ModContent.Request<Texture2D>("JadeFables/Assets/energyball_10red").Value);
+            myEffect.Parameters["uTime"].SetValue(timer * 0.03f); 
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
+            myEffect.CurrentTechnique.Passes[0].Apply();
+
+            int height1 = texture.Height;
+            Vector2 origin1 = new Vector2((float)texture.Width / 2f, (float)height1 / 2f);
+
+            if (Projectile.timeLeft > 20)
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin1, Projectile.scale * dim, SpriteEffects.None, 0.0f);
+            if (Projectile.timeLeft > 10)
+                Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin1, Projectile.scale * dim, SpriteEffects.None, 0.0f);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin1, Projectile.scale * dim, SpriteEffects.None, 0.0f);
+            Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, origin1, Projectile.scale * dim, SpriteEffects.None, 0.0f);
+
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+
+            return false;
+        }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            if (!target.HasBuff(BuffID.OnFire))
+            {
+                for (int i = 0; i < 15; i++)
+                {
+                    int dust = Dust.NewDust(target.position, target.width, target.height, DustID.Torch, newColor: Color.Red, Scale: Main.rand.NextFloat(2f, 2.2f));
+                    Main.dust[dust].velocity = Vector2.Normalize(target.Center - Main.dust[dust].position) * -1 * Main.rand.NextFloat(1.5f, 4f);
+                    Main.dust[dust].noGravity = true;
+
+                }
+
+            }
+
+            SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.35f };
+            SoundEngine.PlaySound(style, target.Center);
+
+
+            target.AddBuff(BuffID.OnFire, 120);
+        }
+    }
+
+    
 }

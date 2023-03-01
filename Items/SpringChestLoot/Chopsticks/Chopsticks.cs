@@ -73,7 +73,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
                 {
                     var modProj = proj.ModProjectile as ChopstickProj;
                     modProj.swordTexture = TextureAssets.Item[item.type].Value;
-                    modProj.length = ((float)Math.Sqrt(Math.Pow(modProj.swordTexture.Width, 2) + Math.Pow(modProj.swordTexture.Width, 2)) * item.scale) + 29;
+                    modProj.length = ((float)Math.Sqrt(Math.Pow(modProj.swordTexture.Width, 2) + Math.Pow(modProj.swordTexture.Width, 2)) * item.scale) + 40;
                     modProj.lifeSpan = item.useAnimation;
                     modProj.baseAngle = (Main.MouseWorld - Player.Center).ToRotation();
                     modProj.itemScale = item.scale;

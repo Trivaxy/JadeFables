@@ -196,7 +196,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void PlaceJadeSandPiles(Rectangle rect, int chance)
         {
-            int[] piles = new int[] { ModContent.TileType<JadeSandCastle1>(), ModContent.TileType<JadeSandCastle2>(), ModContent.TileType<JadeSandPile1>(), ModContent.TileType<JadeSandPile2>(), ModContent.TileType<JadeSandPile3>() };
+            int[] piles = new int[] { ModContent.TileType<JadeSandCastle1>(), ModContent.TileType<JadeSandCastle2>(), ModContent.TileType<JadeSandPile1>(), ModContent.TileType<JadeSandPile2>(), ModContent.TileType<JadeSandPile3>(), ModContent.TileType<JadeSandPile4>(), ModContent.TileType<JadeSandPile5>(), ModContent.TileType<JadeSandPile6>(), ModContent.TileType<JadeSandPile7>(), ModContent.TileType<JadeSandPile8>() };
             for (int i = rect.Left; i < rect.Left + rect.Width; i++)
             {
                 for (int j = rect.Top; j < rect.Top + rect.Height - 1; j++)

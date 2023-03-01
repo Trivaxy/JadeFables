@@ -15,7 +15,7 @@
 
 		public override bool IsBiomeActive(Player player)
 		{
-			return GetInstance<JadeLakeSystem>().TotalBiomeCount >= 300;
+			return GetInstance<JadeLakeSystem>().TotalBiomeCount >= 1000;
 		}
 	}
 }

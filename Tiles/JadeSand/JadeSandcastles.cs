@@ -128,6 +128,12 @@ namespace JadeFables.Tiles.JadeSand
         }
     }
 
+    public class JadeSandPile4 : JadeSandPile1 { }
+    public class JadeSandPile5 : JadeSandPile1 { }
+    public class JadeSandPile6 : JadeSandPile3 { }
+    public class JadeSandPile7 : JadeSandPile3 { }
+    public class JadeSandPile8 : JadeSandPile2 { }
+
     public class JadeSandcastleGItem : GlobalItem
     {
         public override void HoldItem(Item item, Player player)

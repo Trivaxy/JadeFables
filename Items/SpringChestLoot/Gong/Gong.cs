@@ -28,6 +28,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Gong and Ringer");
+            Tooltip.SetDefault("Left click to throw out a gong \nRight click to ring it, increasing it's damage");
         }
         public override void SetDefaults()
         {
@@ -42,7 +43,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Item.useAnimation = 10;
             Item.useTime = 10;
             Item.shootSpeed = 45.5f;
-            Item.damage = 10;
+            Item.damage = 13;
             Item.knockBack = 1.5f;
             Item.crit = 8;
             Item.value = Item.sellPrice(gold: 1);

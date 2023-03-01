@@ -58,7 +58,7 @@ namespace JadeFables.Biomes.JadeLake
         private void AddLighting(On.Terraria.Main.orig_DoDraw orig, Main self, GameTime gameTime) {
             orig(self, gameTime);
 
-            float progress = MathHelper.Min(TotalBiomeCount, 300) / 300f;
+            float progress = MathHelper.Min(TotalBiomeCount, 3000) / 3000f;
 
             if (TotalBiomeCount == 0 && !forceLakeAesthetic)
                 return;
@@ -72,13 +72,13 @@ namespace JadeFables.Biomes.JadeLake
                     {
                         Tile tile = Main.tile[x, y];
                         if (tile.LiquidAmount > 0) {
-                            float modifiedProgress = MathHelper.Min(TotalBiomeCount, 300);
-                            modifiedProgress = forceLakeAesthetic ? 300f : modifiedProgress;
+                            float modifiedProgress = MathHelper.Min(TotalBiomeCount, 3000);
+                            modifiedProgress = forceLakeAesthetic ? 3000f : modifiedProgress;
 
                             if (Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.00001f * modifiedProgress));
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.000001f * modifiedProgress));
                             else
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.0000001f * modifiedProgress));
+                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.00000001f * modifiedProgress));
                         }
                     }
             }
@@ -113,7 +113,7 @@ namespace JadeFables.Biomes.JadeLake
             else
                 pressed = false;
 
-            float progress = MathHelper.Min(TotalBiomeCount, 300) / 300f;
+            float progress = MathHelper.Min(TotalBiomeCount, 3000) / 3000f;
             if (TotalBiomeCount == 0 && !forceLakeAesthetic)
                 return;
 

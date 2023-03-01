@@ -12,6 +12,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using JadeFables.Dusts;
+using static JadeFables.Tiles.JadeWaterfall.WaterfallLight;
+using static JadeFables.Tiles.JadeWaterfall.JadeWaterfallProj;
 using System.Security.Cryptography.X509Certificates;
 
 namespace JadeFables.Tiles.JadeWaterfall
@@ -82,6 +84,7 @@ namespace JadeFables.Tiles.JadeWaterfall
 
         public override bool? UseItem(Player player)
         {
+            SoundEngine.PlaySound(SoundID.SplashWeak);
             if (Item.stack == 1)
             {
                 Item.type = ItemID.EmptyBucket;
@@ -100,6 +103,9 @@ namespace JadeFables.Tiles.JadeWaterfall
     {
         Tile originLeft => Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)];
         Tile originRight => Main.tile[(int)(Projectile.Center.X / 16) + 1, (int)(Projectile.Center.Y / 16)];
+
+        public static readonly int MAXLENGTH = 120;
+        public static readonly int FADEOUTLENGTH = 7;
 
         int length = 0;
 
@@ -162,6 +168,19 @@ namespace JadeFables.Tiles.JadeWaterfall
                 Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             }
 
+            if (length == MAXLENGTH)
+            {
+                for (i = length; i < length + FADEOUTLENGTH; i++)
+                {
+                    int tileHeight = 4;
+                    Vector2 pos = Projectile.Center + (Vector2.UnitY * 16 * i);
+                    int frameHeight = (tex.Height / yFrames) / tileHeight;
+                    Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * ((((i - 1) / tileHeight) + frame) % yFrames)) + (frameHeight * ((i - 1) % tileHeight)), tex.Width, frameHeight);
+                    Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16)) * (1 - ((i - length) / (float)FADEOUTLENGTH));
+                    Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+                }
+            }
+
             if (!foundWater)
                 return;
             int bottomFrameHeight = bottomTex.Height / yFrames;
@@ -177,7 +196,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             if (Projectile.frameCounter++ % 4 == 0)
                 frame++;
             int i = 0;
-            for (i = 0; i < 120; i++)
+            for (i = 0; i < MAXLENGTH; i++)
             {
                 foundWater = false;
                 for (int j = 0; j < 2; j++)
@@ -185,7 +204,10 @@ namespace JadeFables.Tiles.JadeWaterfall
                     int x = (int)(Projectile.Center.X / 16) + j;
                     int y = (int)(Projectile.Center.Y / 16) + i;
                     Tile tile = Main.tile[x, y];
-                    Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * 0.0030f);
+
+                    if (waterfallTiles.Contains((x, y))) waterfallTiles.Clear();
+                    waterfallTiles.Add((x, y));
+
                     if (tile.LiquidAmount == 255 && !tile.HasTile)
                     {
                         Vector2 velocity = Vector2.UnitY.RotatedByRandom(0.1f) * -Main.rand.NextFloat(1f, 1.5f);
@@ -197,7 +219,24 @@ namespace JadeFables.Tiles.JadeWaterfall
                 if (foundWater)
                     break;
             }
+
             length = i;
+
+            if (length == MAXLENGTH)
+            {
+                for (i = length; i < length + FADEOUTLENGTH; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        int x = (int)(Projectile.Center.X / 16) + j;
+                        int y = (int)(Projectile.Center.Y / 16) + i;
+                        Tile tile = Main.tile[x, y];
+
+                        if ((i - length) < FADEOUTLENGTH / 2) waterfallTiles.Add((x, y));
+                    }
+                }
+            }
+
             if (originLeft.HasTile && originLeft.TileType == ModContent.TileType<JadeWaterfallTile>())
                 Projectile.timeLeft = 2;
         }
@@ -207,15 +246,57 @@ namespace JadeFables.Tiles.JadeWaterfall
     {
         public override bool? UseItem(Item item, Player player)
         {
-            Tile tile = Main.tile[Player.tileTargetX, Player.tileTargetY];
-            if (player.itemAnimation == item.useAnimation - 1 && item.type == ItemID.EmptyBucket && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY) && tile.HasTile && tile.TileType == ModContent.TileType<JadeWaterfallTile>())
+            if (player.itemAnimation == item.useAnimation - 1 && item.type == ItemID.EmptyBucket && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
             {
-                tile.HasTile = false;
-                item.stack--;
-                Item.NewItem(item.GetSource_ItemUse(item), player.Center, ModContent.ItemType<JadeWaterfallItem>());
+                for (int j = 0; j < 2; j++)
+                {
+                    Tile tile = Main.tile[Player.tileTargetX - j, Player.tileTargetY];
+                    if (tile.HasTile && tile.TileType == ModContent.TileType<JadeWaterfallTile>())
+                    {
+                        tile.HasTile = false;
+                        item.stack--;
+                        Item.NewItem(item.GetSource_ItemUse(item), player.Center, ModContent.ItemType<JadeWaterfallItem>());
+                        SoundEngine.PlaySound(SoundID.SplashWeak, player.Center);
+                    }
+                }
             }
-            
             return base.UseItem(item, player);
+        }
+    }
+
+    public class WaterfallLight : GlobalWall
+    {
+        public static List<(int, int)> waterfallTiles = new();
+
+        public readonly int MAXTILES_PERWATERFALL = (MAXLENGTH + FADEOUTLENGTH) * 2;
+        public override void ModifyLight(int i, int j, int type, ref float r, ref float g, ref float b)
+        {
+            if (waterfallTiles.Count <= 0) return;
+
+            if (waterfallTiles.Contains((i, j)))
+            {
+                if (waterfallTiles.Count <= MAXTILES_PERWATERFALL && NoActiveWaterfalls()) waterfallTiles.Clear();
+
+                Color color = new Color(0, 220, 200);
+                const float brightness = 255f / 0.9f;
+
+                r = color.R / brightness;
+                g = color.G / brightness;
+                b = color.B / brightness;
+            }
+        }
+        private bool NoActiveWaterfalls()
+        {
+            int waterfallCount = 0;
+            for (int k = 0; k < Main.maxProjectiles; ++k)
+            {
+                if (Main.projectile[k].active && Main.projectile[k].type == ModContent.ProjectileType<JadeWaterfallProj>())
+                {
+                    waterfallCount++;
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

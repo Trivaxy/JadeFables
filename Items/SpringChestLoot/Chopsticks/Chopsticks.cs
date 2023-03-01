@@ -93,6 +93,8 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
     {
         public readonly float HALFSWINGARC = 1.57f;
 
+        private List<NPC> alreadyHit = new List<NPC>();
+
         public float length;
         public Texture2D swordTexture;
         public float lifeSpan;
@@ -109,7 +111,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.ownerHitCheck = true;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 1;
         }
 
         public override void AI()
@@ -142,6 +144,19 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             Main.spriteBatch.Draw(stickTex, Projectile.Center + new Vector2(0, Owner.gfxOffY) - Main.screenPosition, null, lightColor, Projectile.rotation + 1.47f, stickTex.Bounds.Bottom(), Projectile.scale, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(stickTex, Projectile.Center + new Vector2(0, Owner.gfxOffY) - Main.screenPosition, null, lightColor, Projectile.rotation + 1.67f, stickTex.Bounds.Bottom(), Projectile.scale, SpriteEffects.None, 0f);
             return false;
+        }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            Projectile.penetrate++;
+            alreadyHit.Add(target);
+        }
+
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (alreadyHit.Contains(target))
+                return false;
+            return base.CanHitNPC(target);
         }
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)

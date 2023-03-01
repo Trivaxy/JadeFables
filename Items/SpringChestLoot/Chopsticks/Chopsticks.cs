@@ -14,6 +14,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using static Humanizer.In;
 using static System.Net.Mime.MediaTypeNames;
+using Terraria.Enums;
 
 namespace JadeFables.Items.SpringChestLoot.Chopsticks
 {
@@ -164,7 +165,20 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
         {
             hitDirection = Math.Sign(target.Center.X - Owner.Center.X);
         }
-    }
+
+        public override bool? CanCutTiles()
+        {
+            return true;
+        }
+
+        public override void CutTiles()
+        {
+            Vector2 start = Projectile.Center;
+            Vector2 end = Projectile.Center + (Projectile.rotation.ToRotationVector2() * length);
+            DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            Utils.PlotTileLine(start, end, 15, DelegateMethods.CutTiles);
+        }
+        }
     public class ChopsticksNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;

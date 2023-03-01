@@ -8,6 +8,9 @@ using Terraria.ModLoader;
 using JadeFables.Items.Potions.Heartbeat;
 using JadeFables.Items.Potions.Spine;
 using Terraria.DataStructures;
+using Terraria.Enums;
+using Terraria.ObjectData;
+using JadeFables.Items.Fishing.DragonCrate;
 
 namespace JadeFables.Items.Fishing.SpringCrate
 {
@@ -26,8 +29,13 @@ namespace JadeFables.Items.Fishing.SpringCrate
 			Item.value = Item.sellPrice(gold : 1);
 			Item.rare = ItemRarityID.Green;
 			Item.maxStack = 30;
-			Item.autoReuse = true;
-		}
+            Item.createTile = ModContent.TileType<SpringCrateTile>();
+            Item.useAnimation = 15;
+            Item.useTime = 15;
+            Item.autoReuse = true;
+            Item.useStyle = 1;
+            Item.consumable = true;
+        }
 
 		public override bool CanRightClick() => true;
 
@@ -67,4 +75,24 @@ namespace JadeFables.Items.Fishing.SpringCrate
 
         }
 	}
+    public class SpringCrateTile : ModTile
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.tileSolidTop[Type] = true;
+            Main.tileFrameImportant[Type] = true;
+            Main.tileTable[Type] = true;
+            TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
+            TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide | AnchorType.Table, TileObjectData.newTile.Width, 0);
+            TileObjectData.addTile(Type);
+            ModTranslation name = CreateMapEntryName();
+            name.SetDefault("Spring Crate");
+            AddMapEntry(Color.DarkGreen, name);
+            DustType = DustID.WoodFurniture;
+        }
+        public override void KillMultiTile(int i, int j, int frameX, int frameY)
+        {
+            Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<SpringCrate>());
+        }
+    }
 }

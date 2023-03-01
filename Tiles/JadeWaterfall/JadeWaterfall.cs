@@ -15,6 +15,7 @@ using JadeFables.Dusts;
 using static JadeFables.Tiles.JadeWaterfall.WaterfallLight;
 using static JadeFables.Tiles.JadeWaterfall.JadeWaterfallProj;
 using System.Security.Cryptography.X509Certificates;
+using JadeFables.Biomes.JadeLake;
 
 namespace JadeFables.Tiles.JadeWaterfall
 {
@@ -77,9 +78,22 @@ namespace JadeFables.Tiles.JadeWaterfall
 
         public override bool CanUseItem(Player player)
         {
-            if (Main.tile[Player.tileTargetX, Player.tileTargetY].HasTile || !player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
+            if (Main.tile[Player.tileTargetX, Player.tileTargetY].HasTile || !TileInRange(player))
                 return false;
             return base.CanUseItem(player);
+        }
+
+        private bool TileInRange(Player player)
+        {
+            int i = Player.tileTargetX;
+            int j = Player.tileTargetY;
+            int rangeX = Player.tileRangeX + Item.tileBoost;
+            int rangeY = Player.tileRangeY + Item.tileBoost;
+            if (player.position.X / 16f - rangeX <= i && (player.position.X + player.width) / 16f + rangeX - 1f >= (float)i && player.position.Y / 16f - rangeY <= (float)j) // i dont know if the float cast does anything but im too scared to change it
+            {
+                return (player.position.Y + player.height) / 16f + rangeY - 2f >= (float)j;
+            }
+            return false;
         }
 
         public override bool? UseItem(Player player)
@@ -89,13 +103,13 @@ namespace JadeFables.Tiles.JadeWaterfall
             {
                 Item.type = ItemID.EmptyBucket;
                 Item.SetDefaults();
-                return false;
+                return true;
             }
             else
             {
                 Item.NewItem(Item.GetSource_ItemUse(Item), player.Center, ItemID.EmptyBucket);
             }
-            return base.UseItem(player);
+            return true;
         }
     }
 

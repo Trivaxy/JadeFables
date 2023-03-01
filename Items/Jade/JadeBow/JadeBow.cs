@@ -203,7 +203,9 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            if (shotFromBow && target.CountsAsACritter)
+            if (!shotFromBow)
+                return;
+            if (target.CountsAsACritter)
             {
                 float mult = 1;
                 var alreadyBuffed = Main.npc.Where(n => n.active && n.CountsAsACritter && n.GetGlobalNPC<JadeBowGNPC>().timer > 0);
@@ -216,15 +218,21 @@ namespace JadeFables.Items.Jade.JadeBow
                     Projectile.NewProjectile(projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeBowHitbox>(), damage, knockback, projectile.owner, target.whoAmI);
 
                 target.GetGlobalNPC<JadeBowGNPC>().timer = (int)(900 * mult);
+                target.GetGlobalNPC<JadeBowGNPC>().owner = Main.player[projectile.owner];
                 damage = 0;
             }
-
-            if (shotFromBow && target.townNPC)
+            else if (target.townNPC)
             {
                 target.immortal = true;
                 target.GetGlobalNPC<JadeBowGNPC>().timer = 3000;
                 damage = 0;
             }
+            else
+            {
+                Player player = Main.player[projectile.owner];
+                player.MinionAttackTargetNPC = target.whoAmI;
+            }
+
         }
 
         public override bool? CanHitNPC(Projectile projectile, NPC target)
@@ -251,6 +259,8 @@ namespace JadeFables.Items.Jade.JadeBow
 
         int jumpTimer = 0;
 
+        public Player owner;
+
         public override bool PreAI(NPC npc)
         {
             //if (timer > 0)
@@ -263,6 +273,10 @@ namespace JadeFables.Items.Jade.JadeBow
             if (timer-- > 0 && npc.CountsAsACritter)
             {
                 NPC target = Main.npc.Where(n => n.active && n.CanBeChasedBy() && n.Distance(npc.Center) < 900).OrderBy(n => n.Distance(npc.Center)).FirstOrDefault();
+                if (owner.HasMinionAttackTargetNPC)
+                {
+                    target = Main.npc[owner.MinionAttackTargetNPC];
+                }
                 if (target != default)
                 {
                     npc.direction = npc.spriteDirection = Math.Sign(target.Center.X - npc.Center.X);

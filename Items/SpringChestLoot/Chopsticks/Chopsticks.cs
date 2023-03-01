@@ -130,7 +130,8 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
         {
             Vector2 start = Projectile.Center;
             Vector2 end = Projectile.Center + (Projectile.rotation.ToRotationVector2() * length);
-            return Collision.CheckAABBvLineCollision2(targetHitbox.TopLeft(), targetHitbox.Size(), start, end);
+            float collisionPoint = 0f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, 15, ref collisionPoint);
         }
 
         public override bool PreDraw(ref Color lightColor)

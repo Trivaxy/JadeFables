@@ -137,7 +137,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 
             if (swordTexture == null)
                 return false;
-            Main.spriteBatch.Draw(swordTexture, Projectile.Center + new Vector2(0, Owner.gfxOffY) + (29 * Projectile.rotation.ToRotationVector2()) - Main.screenPosition, null, lightColor, (Projectile.rotation + 0.78f) + (Owner.direction == -1 ? 0f : 1.57f), new Vector2(Owner.direction == -1 ? 0 : swordTexture.Width, swordTexture.Height), Projectile.scale * itemScale, Owner.direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(swordTexture, Projectile.Center + new Vector2(0, Owner.gfxOffY) + (29 * Projectile.rotation.ToRotationVector2()) - Main.screenPosition, null, lightColor, (Projectile.rotation + 0.78f) + (Owner.direction == 1 ? 0f : 1.57f), new Vector2(Owner.direction == 1 ? 0 : swordTexture.Width, swordTexture.Height), Projectile.scale * itemScale, Owner.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
 
             Main.spriteBatch.Draw(stickTex, Projectile.Center + new Vector2(0, Owner.gfxOffY) - Main.screenPosition, null, lightColor, Projectile.rotation + 1.47f, stickTex.Bounds.Bottom(), Projectile.scale, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(stickTex, Projectile.Center + new Vector2(0, Owner.gfxOffY) - Main.screenPosition, null, lightColor, Projectile.rotation + 1.67f, stickTex.Bounds.Bottom(), Projectile.scale, SpriteEffects.None, 0f);

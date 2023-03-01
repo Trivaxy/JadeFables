@@ -1,5 +1,6 @@
 ﻿using JadeFables.Dusts;
 using JadeFables.Tiles.JadeSandstone;
+using JadeFables.Tiles.JasmineFlower;
 
 namespace JadeFables.Tiles.JadeSand
 {
@@ -90,6 +91,16 @@ namespace JadeFables.Tiles.JadeSand
                 return false;
             }
             return true;
+        }
+
+        public override void RandomUpdate(int i, int j)
+        {
+            Tile tile = Framing.GetTileSafely(i, j - 1);
+            if (!tile.HasTile && Main.rand.NextBool(500))
+            {
+                tile.HasTile = true;
+                tile.TileType = (ushort)ModContent.TileType<JasmineFlowerTile>();
+            }
         }
     }
 

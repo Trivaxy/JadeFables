@@ -11,6 +11,7 @@ using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ObjectData;
 using JadeFables.Items.Fishing.DragonCrate;
+using JadeFables.Biomes.JadeLake;
 
 namespace JadeFables.Items.Fishing.SpringCrate
 {
@@ -93,6 +94,20 @@ namespace JadeFables.Items.Fishing.SpringCrate
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
             Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ModContent.ItemType<SpringCrate>());
+        }
+    }
+
+    public class SpringCratePlayer : ModPlayer
+    {
+        public override void CatchFish(FishingAttempt attempt, ref int itemDrop, ref int npcSpawn, ref AdvancedPopupRequest sonar, ref Vector2 sonarPosition)
+        {
+            if (attempt.rare && Main.rand.NextBool(15) && Player.InModBiome<JadeLakeBiome>())
+            {
+                if (Main.hardMode)
+                    itemDrop = ModContent.ItemType<DragonCrate.DragonCrate>();
+                else
+                    itemDrop = ModContent.ItemType<SpringCrate>();
+            }
         }
     }
 }

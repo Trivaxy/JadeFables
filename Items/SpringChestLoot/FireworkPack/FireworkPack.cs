@@ -24,7 +24,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Firework Pack");
-			Tooltip.SetDefault("Enemies launch damaging fireworks when they die");
+			Tooltip.SetDefault("15 Damage \nEnemies launch damaging fireworks when they die");
 		}
 
 		public override void SetDefaults()

@@ -141,6 +141,11 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             Main.spriteBatch.Draw(swordTexture, Projectile.Center + new Vector2(0, Owner.gfxOffY) + (34 * Projectile.rotation.ToRotationVector2()) - Main.screenPosition, null, lightColor, (Projectile.rotation + 0.78f) + (Owner.direction == -1 ? 0f : 1.57f), new Vector2(Owner.direction == -1 ? 0 : swordTexture.Width, swordTexture.Height), Projectile.scale, Owner.direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
             return false;
         }
+
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            hitDirection = Math.Sign(target.Center.X - Owner.Center.X);
+        }
     }
     public class ChopsticksNPC : GlobalNPC
     {

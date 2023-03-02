@@ -219,7 +219,16 @@ namespace JadeFables.Tiles.JadeWaterfall
                     int y = (int)(Projectile.Center.Y / 16) + i;
                     Tile tile = Main.tile[x, y];
 
-                    if (waterfallTiles.Contains((x, y))) waterfallTiles.Clear();
+                    if (i == 0)
+                    {
+                        if (waterfallColumns.Contains(x) && waterfallTiles.Contains((x, y)))
+                        {
+                            waterfallTiles.Clear();
+                            waterfallColumns.Clear();
+                        }
+                        waterfallColumns.Add(x);
+                        waterfallColumns.Sort();
+                    }
                     waterfallTiles.Add((x, y));
 
                     if (tile.LiquidAmount == 255 && !tile.HasTile)
@@ -281,15 +290,23 @@ namespace JadeFables.Tiles.JadeWaterfall
     public class WaterfallLight : GlobalWall
     {
         public static List<(int, int)> waterfallTiles = new();
+        public static List<int> waterfallColumns = new();
 
         public readonly int MAXTILES_PERWATERFALL = (MAXLENGTH + FADEOUTLENGTH) * 2;
         public override void ModifyLight(int i, int j, int type, ref float r, ref float g, ref float b)
         {
             if (waterfallTiles.Count <= 0) return;
 
+            if (waterfallColumns[0] > i || waterfallColumns.Last() < i) return;
+            if (!waterfallColumns.Contains(i)) return;
+
             if (waterfallTiles.Contains((i, j)))
             {
-                if (waterfallTiles.Count <= MAXTILES_PERWATERFALL && NoActiveWaterfalls()) waterfallTiles.Clear();
+                if (waterfallTiles.Count <= MAXTILES_PERWATERFALL && NoActiveWaterfalls())
+                {
+                    waterfallTiles.Clear();
+                    waterfallColumns.Clear();
+                }
 
                 Color color = new Color(0, 220, 200);
                 const float brightness = 255f / 0.9f;

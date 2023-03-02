@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Terraria.GameContent;
 using Terraria.GameContent.Liquid;
+using Terraria.Graphics;
 
 namespace JadeFables.Core.Systems.Edits;
 
@@ -21,7 +23,229 @@ public sealed class BetterWaterTrianglesEdit : RuntimeDetourModSystem
             return;
         }
 
-        On.Terraria.GameContent.Drawing.TileDrawing.DrawPartialLiquid += RenderRealLiquidInPlaceOfPartial;
+        IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalPrepareDraw += PrepSlopeTiles;
+        IL.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += DrawSlopeTiles;
+
+    }
+
+    private void PrepSlopeTiles(ILContext il) {
+        // Comments and documentation coming soon (TM) - Mutant
+        ILCursor c = new ILCursor(il);
+
+        const byte thisTileCacheVar = 4;
+        const byte num2LocalVar = 6;
+        const byte aboveTileCacheVar = 11;
+        const byte leftTileCacheVar = 13;
+        const byte rightTileCacheVar = 14;
+
+        if (!c.TryGotoNext(i => i.MatchCall(typeof(Tile), "get_liquid"))) {
+            return;
+        }
+
+        c.Index += 5;
+
+        FieldReference liquidLevelRef = (FieldReference)c.Next.Operand;
+
+        if (!c.TryGotoNext(i => i.MatchCall(typeof(Tile), "get_type"))) {
+            return;
+        }
+
+        c.Index -= 4;
+
+        FieldReference hasLiquidRef = (FieldReference)c.Next.Operand;
+
+        if (!c.TryGotoNext(i => i.MatchCall(typeof(Tile), "liquidType"))) {
+            return;
+        }
+
+        c.Index++;
+
+        FieldReference liquidTypeRef = (FieldReference)c.Next.Operand;
+
+        if (!c.TryGotoPrev(i => i.MatchCall<WorldGen>(nameof(WorldGen.SolidOrSlopedTile)))) {
+            return;
+        }
+
+        c.Index -= 3;
+        FieldReference isHalfBlockRef = (FieldReference)c.Next.Operand;
+        c.Index++;
+        c.Emit(OpCodes.Ldloc_S, thisTileCacheVar);
+        c.Emit(OpCodes.Ldloc_S, thisTileCacheVar);
+        c.Emit(OpCodes.Ldfld, isHalfBlockRef);
+        c.Emit(OpCodes.Ldloc_1);
+        c.EmitDelegate<Func<bool, Tile, bool>>((isHalfBrick, tile) => isHalfBrick || tile.Slope is not SlopeType.Solid);
+        c.Emit(OpCodes.Stfld, isHalfBlockRef);
+
+        if (!c.TryGotoNext(i => i.MatchLdcR4(0.5f))) {
+            return;
+        }
+
+        c.Index += 3;
+        ILLabel endConditionLabel = (ILLabel)c.Next.Operand;
+        
+        if (!c.TryGotoPrev(i => i.OpCode == OpCodes.Stloc_S && i.Operand is VariableDefinition { Index: aboveTileCacheVar })) {
+            return;
+        }
+
+        c.Index -= 7;
+        List<Instruction> stolenInstructions = new List<Instruction>();
+
+        while (c.Next.OpCode != OpCodes.Stloc_S || c.Next.Operand is not VariableDefinition { Index: rightTileCacheVar }) {
+            stolenInstructions.Add(c.Next);
+            c.Index++;
+        }
+        stolenInstructions.Add(c.Next);
+        c.Index++;
+
+        if (!c.TryGotoPrev(i => i.MatchLdcR4(0f))) {
+            return;
+        }
+
+        c.Index += 2;
+        foreach (Instruction instruction in stolenInstructions) {
+            if (instruction.Operand is null) {
+                c.Emit(instruction.OpCode);
+            }
+            else {
+                c.Emit(instruction.OpCode, instruction.Operand);
+            }
+        }
+
+        c.Emit(OpCodes.Ldloc_S, thisTileCacheVar);
+        c.Emit(OpCodes.Ldfld, hasLiquidRef);
+
+        c.Emit(OpCodes.Ldloc_S, aboveTileCacheVar);
+        c.Emit(OpCodes.Ldfld, hasLiquidRef);
+
+        c.Emit(OpCodes.Ldloc_S, leftTileCacheVar);
+        c.Emit(OpCodes.Ldfld, hasLiquidRef);
+
+        c.Emit(OpCodes.Ldloc_S, rightTileCacheVar);
+        c.Emit(OpCodes.Ldfld, hasLiquidRef);
+
+        c.Emit(OpCodes.Ldloc_S, thisTileCacheVar);
+        c.Emit(OpCodes.Ldfld, liquidLevelRef);
+
+        c.Emit(OpCodes.Ldloc_S, leftTileCacheVar);
+        c.Emit(OpCodes.Ldfld, liquidLevelRef);
+
+        c.Emit(OpCodes.Ldloc_S, rightTileCacheVar);
+        c.Emit(OpCodes.Ldfld, liquidLevelRef);
+
+        c.EmitDelegate<Func<bool, bool, bool, bool, float, float, float, float>>((thisTileHasLiquid, aboveTileHasLiquid, leftTileHasLiquid, rightTileHasLiquid, thisTileLevel, leftTileLevel, rightTileLevel) => {
+            float finalLevel = 0f;
+            
+            if (!thisTileHasLiquid) {
+                if (aboveTileHasLiquid) {
+                    finalLevel = 1f;
+                }
+                else if (leftTileHasLiquid || rightTileHasLiquid) {
+                    finalLevel = leftTileLevel > rightTileLevel ? leftTileLevel : rightTileLevel;
+                }
+            }
+            else {
+                finalLevel = thisTileLevel;
+            }
+
+            return finalLevel;
+        });
+        c.Emit(OpCodes.Stloc_S, num2LocalVar);
+
+        c.Emit(OpCodes.Ldloc_S, thisTileCacheVar);
+
+        c.Emit(OpCodes.Ldloc_S, thisTileCacheVar);
+        c.Emit(OpCodes.Ldfld, hasLiquidRef);
+
+        c.Emit(OpCodes.Ldloc_S, aboveTileCacheVar);
+        c.Emit(OpCodes.Ldfld, hasLiquidRef);
+
+        c.Emit(OpCodes.Ldloc_S, leftTileCacheVar);
+        c.Emit(OpCodes.Ldfld, hasLiquidRef);
+
+        c.Emit(OpCodes.Ldloc_S, rightTileCacheVar);
+        c.Emit(OpCodes.Ldfld, hasLiquidRef);
+
+        c.Emit(OpCodes.Ldloc_S, thisTileCacheVar);
+        c.Emit(OpCodes.Ldfld, liquidTypeRef);
+
+        c.Emit(OpCodes.Ldloc_S, aboveTileCacheVar);
+        c.Emit(OpCodes.Ldfld, liquidTypeRef);
+
+        c.Emit(OpCodes.Ldloc_S, leftTileCacheVar);
+        c.Emit(OpCodes.Ldfld, liquidTypeRef);
+
+        c.Emit(OpCodes.Ldloc_S, rightTileCacheVar);
+        c.Emit(OpCodes.Ldfld, liquidTypeRef);
+
+        c.Emit(OpCodes.Ldloc_S, leftTileCacheVar);
+        c.Emit(OpCodes.Ldfld, liquidLevelRef);
+
+        c.Emit(OpCodes.Ldloc_S, rightTileCacheVar);
+        c.Emit(OpCodes.Ldfld, liquidLevelRef);
+
+        c.EmitDelegate<Func<bool, bool, bool, bool, byte, byte, byte, byte, float, float, byte>>((thisTileHasLiquid, aboveTileHasLiquid, leftTileHasLiquid, rightTileHasLiquid, thisTileType, aboveTileType, leftTileType, rightTileType, leftTileLevel, rightTileLevel) => {
+            if (thisTileHasLiquid) {
+                return thisTileType;
+            }
+
+            if (aboveTileHasLiquid) {
+                return aboveTileType;
+            }
+            if (leftTileHasLiquid || rightTileHasLiquid) {
+                 return leftTileLevel > rightTileLevel ? leftTileType : rightTileType;
+            }
+
+            return thisTileType;
+        });
+        c.Emit(OpCodes.Stfld, liquidTypeRef);
+
+        c.Emit(OpCodes.Br_S, endConditionLabel);
+    }
+
+    private void DrawSlopeTiles(ILContext il) {
+        // Comments and documentation coming soon (TM) - Mutant
+        ILCursor c = new ILCursor(il);
+
+        const byte drawOffsetArg = 2;
+
+        const byte iVar = 3;
+        const byte jVar = 4;
+        const byte liquidOffsetVar = 6;
+        const byte liquidTypeVar = 8;
+        const byte liquidColorVar = 9;
+
+        if (!c.TryGotoNext(MoveType.After, i => i.MatchCall<Main>(nameof(Main.DrawTileInWater)))) {
+            return;
+        }
+
+        ILLabel nonSlopeLabel = c.MarkLabel();
+        int oldIndex = c.Index;
+
+        if (!c.TryGotoNext(MoveType.After, i => i.MatchCallvirt<TileBatch>(nameof(TileBatch.Draw)))) {
+            return;
+        }
+
+        ILLabel endLabel = c.MarkLabel();
+
+        c.Index = oldIndex;
+
+        c.Emit(OpCodes.Ldloc_S, iVar);
+        c.Emit(OpCodes.Ldloc_S, jVar);
+        c.EmitDelegate<Func<int, int, bool>>((i, j) => Framing.GetTileSafely(i, j).Slope == SlopeType.Solid);
+        c.Emit(OpCodes.Brtrue_S, nonSlopeLabel);
+
+        //num2 (liquidType), i, j, drawOffset, liquidOffset, vertices (liquidColorVar)
+        c.Emit(OpCodes.Ldloc_S, liquidTypeVar);
+        c.Emit(OpCodes.Ldloc_S, iVar);
+        c.Emit(OpCodes.Ldloc_S, jVar);
+        c.Emit(OpCodes.Ldarg_S, drawOffsetArg);
+        c.Emit(OpCodes.Ldloc_S, liquidOffsetVar);
+        c.Emit(OpCodes.Ldloc_S, liquidColorVar);
+        c.EmitDelegate<Action<int, int, int, Vector2, Vector2, VertexColors>>((liquidType, i, j, drawOffset, liquidOffset, vertices) => {
+            Rectangle liquidSize = new Rectangle(18 * (int)(Framing.GetTileSafely(i, j).Slope - 1), 4, 16, 16);
+            Main.tileBatch.Draw(TextureAssets.LiquidSlope[liquidType < 12 ? liquidType : 0].Value, new Vector2(i << 4, j << 4) + drawOffset + liquidOffset, liquidSize, vertices, Vector2.Zero, 1f, SpriteEffects.None);
+        });
+        c.Emit(OpCodes.Br_S, endLabel);
     }
 
     private void InjectExtraDrawBlockConditions(ILContext il) {
@@ -80,80 +304,5 @@ public sealed class BetterWaterTrianglesEdit : RuntimeDetourModSystem
                || Framing.GetTileSafely(x + 1, y).LiquidAmount > 0
                || Framing.GetTileSafely(x - 1, y).LiquidAmount > 0
                || (Framing.GetTileSafely(x, y).IsHalfBlock && Framing.GetTileSafely(x - 1, y).LiquidAmount > 0 && Lighting.Brightness(x, y) > 0f);
-    }
-
-    private void RenderRealLiquidInPlaceOfPartial(
-        On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawPartialLiquid orig,
-        Terraria.GameContent.Drawing.TileDrawing self,
-        Tile tileCache,
-        Vector2 position,
-        Rectangle liquidSize,
-        int liquidType,
-        Color aColor
-    ) {
-        if (TileID.Sets.BlocksWaterDrawingBehindSelf[(int) tileCache.BlockType] || tileCache.Slope == SlopeType.Solid) {
-            orig(self, tileCache, position, liquidSize, liquidType, aColor);
-            return;
-        }
-
-        var drawPos = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
-        var drawOffset = drawPos - Main.screenPosition;
-        var tileCoords = (position + Main.screenPosition - drawPos).ToTileCoordinates();
-
-        Main.tileBatch.Begin();
-
-        Main.DrawTileInWater(drawOffset, tileCoords.X, tileCoords.Y);
-
-        var tile = Framing.GetTileSafely(tileCoords);
-        int liquidStyle = tile.LiquidType;
-        float opacity = tile.LiquidType switch
-        {
-            LiquidID.Water => 0.6f,
-            LiquidID.Lava => 0.95f,
-            LiquidID.Honey => 0.95f,
-            _ => 1f
-        };
-
-        switch (tile.LiquidType) {
-            case LiquidID.Water:
-                liquidStyle = Main.waterStyle;
-                opacity *= 0.75f;
-                break;
-
-            case LiquidID.Honey:
-                liquidStyle = WaterStyleID.Honey;
-                break;
-        }
-
-        opacity = Math.Min(opacity, 1f);
-        if (tile.WallType != 0) opacity = 0.5f;
-
-        Lighting.GetCornerColors(tileCoords.X, tileCoords.Y, out var vertices);
-        vertices.BottomLeftColor *= opacity;
-        vertices.BottomRightColor *= opacity;
-        vertices.TopLeftColor *= opacity;
-        vertices.TopRightColor *= opacity;
-
-        Main.DrawTileInWater(drawOffset, tileCoords.X, tileCoords.Y);
-
-        int frameYOffset = tile.LiquidAmount == 0 && !tile.HasTile ? 0 : 48;
-        var srcRect = new Rectangle(
-            16,
-            frameYOffset + (int) (animationFrameField!.GetValue(LiquidRenderer.Instance) ?? 0) * 80,
-            16,
-            16
-        );
-
-        Main.tileBatch.Draw(
-            TextureAssets.Liquid[liquidStyle].Value,
-            position + new Vector2(0f, tile.IsHalfBlock ? 8f : 0f),
-            srcRect,
-            vertices,
-            Vector2.Zero,
-            1f,
-            SpriteEffects.None
-        );
-
-        Main.tileBatch.End();
     }
 }

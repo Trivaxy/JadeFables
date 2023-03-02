@@ -289,7 +289,7 @@ namespace JadeFables.Tiles.JadeWaterfall
 
     public class WaterfallLight : GlobalWall
     {
-        public static List<(int, int)> waterfallTiles = new();
+        public static HashSet<(int, int)> waterfallTiles = new();
         public static List<int> waterfallColumns = new();
 
         public readonly int MAXTILES_PERWATERFALL = (MAXLENGTH + FADEOUTLENGTH) * 2;

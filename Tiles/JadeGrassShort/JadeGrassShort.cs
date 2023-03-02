@@ -42,7 +42,7 @@ namespace JadeFables.Tiles.JadeGrassShort
 		public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
 		{
 			Tile tileBelow = Framing.GetTileSafely(i, j + 1);
-			if (!tileBelow.HasTile || tileBelow.IsHalfBlock || tileBelow.TopSlope || tileBelow.TileType != ModContent.TileType<Tiles.JadeSand.JadeSandTile>()) 
+			if (!tileBelow.HasTile || tileBelow.IsHalfBlock || tileBelow.TopSlope || (tileBelow.TileType != ModContent.TileType<Tiles.JadeSand.JadeSandTile>() && tileBelow.TileType != ModContent.TileType<Tiles.OvergrownJadeSand.OvergrownJadeSandTile>()))
 				WorldGen.KillTile(i, j);
 			return true;
 		}
@@ -76,7 +76,7 @@ namespace JadeFables.Tiles.JadeGrassShort
             Tile tileBelow = Framing.GetTileSafely(i, j + 1);
 			if (tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeGrassTall>())
 				return true;
-            if (!tileBelow.HasTile || tileBelow.IsHalfBlock || tileBelow.TopSlope || tileBelow.TileType != ModContent.TileType<Tiles.JadeSand.JadeSandTile>())
+            if (!tileBelow.HasTile || tileBelow.IsHalfBlock || tileBelow.TopSlope || (tileBelow.TileType != ModContent.TileType<Tiles.JadeSand.JadeSandTile>() && tileBelow.TileType != ModContent.TileType<Tiles.OvergrownJadeSand.OvergrownJadeSandTile>()))
                 WorldGen.KillTile(i, j);
             return true;
         }

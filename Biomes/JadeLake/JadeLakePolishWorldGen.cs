@@ -9,6 +9,7 @@ using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeSandstone;
 using JadeFables.Tiles.JadeWaterfall;
 using JadeFables.Tiles.JasmineFlower;
+using JadeFables.Tiles.OvergrownJadeSand;
 using JadeFables.Tiles.SpringChest;
 using System;
 using System.Collections.Generic;
@@ -64,6 +65,9 @@ namespace JadeFables.Biomes.JadeLake
 
             //Places hanging lanterns
             PlaceJadeLanterns(worldRect, 15, 20);
+
+            //Places overgrown sand
+            PlaceOvergrownSand(worldRect, 0.1f, 2f);
         }
 
         public static void JadeGrassPopulation(Rectangle rect, float threshhold, float noiseFreq)
@@ -86,6 +90,28 @@ namespace JadeFables.Biomes.JadeLake
                         {
                             tileAbove.HasTile = true;
                             tileAbove.TileType = (ushort)ModContent.TileType<JadeGrassTile>();
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void PlaceOvergrownSand(Rectangle rect, float threshhold, float noiseFreq)
+        {
+            FastNoise fastnoise = new FastNoise(WorldGen.genRand.Next(0, 1000000));
+            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            {
+                for (int j = rect.Top + 1; j < rect.Top + rect.Height; j++)
+                {
+                    Tile tileAbove = Framing.GetTileSafely(i, j - 1);
+                    Tile mainTile = Framing.GetTileSafely(i, j);
+
+                    if ((!tileAbove.HasTile || !Main.tileSolid[tileAbove.TileType]) && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>())
+                    {
+                        float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
+                        if (noiseVal > threshhold)
+                        {
+                            mainTile.TileType = (ushort)ModContent.TileType<OvergrownJadeSandTile>();
                         }
                     }
                 }

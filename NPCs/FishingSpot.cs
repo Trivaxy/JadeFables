@@ -55,12 +55,12 @@ namespace JadeFables.NPCs
 
         public override void AI()
         {
-            Tile aboveTile = Framing.GetTileSafely((int)NPC.Center.X / 16, (int)(NPC.Center.Y / 16) - 1);
+            Tile aboveTile = Framing.GetTileSafely((int)NPC.Center.X / 16, (int)(NPC.Center.Y / 16) - 2);
             while (aboveTile.LiquidAmount > 0)
             {
                 NPC.position.Y -= 16;
                 NPC.position.Y -= (NPC.position.Y % 16);
-                aboveTile = Framing.GetTileSafely((int)NPC.Center.X / 16, (int)(NPC.Center.Y / 16) - 1);
+                aboveTile = Framing.GetTileSafely((int)NPC.Center.X / 16, (int)(NPC.Center.Y / 16) - 2);
             }
 
             if (aboveTile.HasTile && Main.tileSolid[aboveTile.TileType])

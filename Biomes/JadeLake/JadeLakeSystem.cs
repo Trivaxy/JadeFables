@@ -161,7 +161,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void PopulateChests()
         {
-            int[] primaryLoot = new int[] { ModContent.ItemType<FireworkPack>(), ModContent.ItemType<TanookiLeaf>(), ModContent.ItemType<GongItem>() };
+            int[] primaryLoot = new int[] { ModContent.ItemType<FireworkPack>(), ModContent.ItemType<TanookiLeaf>(), ModContent.ItemType<GongItem>(), ModContent.ItemType<Items.SpringChestLoot.Chopsticks.Chopsticks>()};
             int[] secondaryLoot = new int[] { ModContent.ItemType<JadeFountainItem>(), ItemID.MagicConch, ItemID.SandcastleBucket};
 
             int[] ternaryLoot = new int[] {

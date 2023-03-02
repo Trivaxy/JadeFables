@@ -200,6 +200,8 @@ namespace JadeFables.Biomes.JadeLake
             //Places foreground waterfalls (has to be outside of polish pass because it only does the top half of the biome)
             PlaceForegroundWaterfalls(UpperIslandRect, 700);
 
+
+            //Clear out chests and life crystals not destroyed in the worldgen.
             ClearDebris(WholeBiomeRect);
 
             return true;
@@ -1234,6 +1236,7 @@ namespace JadeFables.Biomes.JadeLake
                     if (debrisBlock.Contains(tile.TileType))
                     {
                         tile.HasTile = false;
+                        tile.TileType = 0;
                         WorldGen.KillTile(i, j);
                         WorldGen.DestroyHeart(i, j);
                     }

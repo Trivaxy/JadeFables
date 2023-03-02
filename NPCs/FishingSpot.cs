@@ -27,7 +27,7 @@ namespace JadeFables.NPCs
 
         public override void SetDefaults()
         {
-            Projectile.width = 64;
+            Projectile.width = 128;
             Projectile.height = 16;
             Projectile.tileCollide = false;
             Projectile.friendly = false;

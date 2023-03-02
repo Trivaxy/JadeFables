@@ -2,6 +2,7 @@
 using JadeFables.Helpers.FastNoise;
 using JadeFables.Tiles.BlossomWall;
 using JadeFables.Tiles.JadeGrass;
+using JadeFables.Tiles.JadeGrassShort;
 using JadeFables.Tiles.JadeLantern;
 using JadeFables.Tiles.JadeOre;
 using JadeFables.Tiles.JadeSand;
@@ -53,6 +54,9 @@ namespace JadeFables.Biomes.JadeLake
             //Places jasmine flowers
             PlaceJasmineFlowers(worldRect, 10);
 
+            //Places short jade grass
+            JadeGrassShortPopulation(worldRect, 1);
+
             //Places hanging lanterns
             PlaceJadeLanterns(worldRect, 15, 20);
         }
@@ -70,7 +74,7 @@ namespace JadeFables.Biomes.JadeLake
                     Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                     Tile mainTile = Framing.GetTileSafely(i, j);
 
-                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>())
+                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>() && tileAbove.LiquidAmount == 255)
                     {
                         float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
                         if (noiseVal > threshhold)
@@ -189,6 +193,35 @@ namespace JadeFables.Biomes.JadeLake
                     if (!mainTile.HasTile && tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
                     {
                         WorldGen.PlaceTile(i, j, ModContent.TileType<JasmineFlowerTile>());
+                        mainTile.TileFrameX = (short)(WorldGen.genRand.Next(3) * 18);
+                    }
+                }
+            }
+        }
+
+        public static void JadeGrassShortPopulation(Rectangle rect, int chance)
+        {
+            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            {
+                for (int j = rect.Top; j < rect.Top + rect.Height - 1; j++)
+                {
+                    Tile tileBelow = Framing.GetTileSafely(i, j + 1);
+                    Tile mainTile = Framing.GetTileSafely(i, j);
+                    Tile tileAbove = Framing.GetTileSafely(i, j - 1);
+
+                    if (!mainTile.HasTile && tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
+                    {
+                        short tileFrame = (short)(WorldGen.genRand.Next(6) * 18);
+                        if (WorldGen.genRand.NextBool(3))
+                        {
+                            WorldGen.PlaceTile(i, j, ModContent.TileType<JadeGrassTall>());
+                            tileAbove.TileFrameX = tileFrame;
+                        }
+                        else
+                        {
+                            WorldGen.PlaceTile(i, j, ModContent.TileType<JadeGrassShort>());
+                        }
+                        mainTile.TileFrameX = tileFrame;
                     }
                 }
             }

@@ -33,6 +33,10 @@ namespace JadeFables.Biomes.JadeLake
 
             Rectangle worldRect = new Rectangle(0, 0, Main.maxTilesX, Main.maxTilesY);
 
+            //Places foreground waterfalls (has to be outside of polish pass because it only does the top half of the biome)
+            foreach (Rectangle rect in UpperIslandRects)
+                PlaceForegroundWaterfalls(rect, 700);
+
             //Places spring chests
             PlaceJadeChests(worldRect, 40);
 
@@ -40,7 +44,8 @@ namespace JadeFables.Biomes.JadeLake
             BlossomWallPopulation(worldRect, 0.03f, 5f, 3, 5, 10, 10f, 3);
 
             //Places jade grass
-            JadeGrassPopulation(worldRect, 0.1f, 5f);
+            foreach (Rectangle rect in LowerIslandRects)
+                JadeGrassPopulation(rect, 0.1f, 5f);
 
             //Places bamboo
             BambooPopulation(worldRect, 10, 10f);
@@ -74,7 +79,7 @@ namespace JadeFables.Biomes.JadeLake
                     Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                     Tile mainTile = Framing.GetTileSafely(i, j);
 
-                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>() && tileAbove.LiquidAmount == 255)
+                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>())
                     {
                         float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
                         if (noiseVal > threshhold)
@@ -303,6 +308,29 @@ namespace JadeFables.Biomes.JadeLake
                         if (safe && WorldGen.genRand.NextBool(chance))
                         {
                             JadeLantern.Spawn(i, j + 1);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void PlaceForegroundWaterfalls(Rectangle rect, int chance)
+        {
+            int[] validTiles = new int[] { ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), ModContent.TileType<JadeSandTile>() };
+            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            {
+                for (int j = rect.Top; j < rect.Top + rect.Height; j++)
+                {
+                    Tile leftTile = Framing.GetTileSafely(i, j);
+                    Tile rightTile = Framing.GetTileSafely(i + 1, j);
+                    if (!leftTile.HasTile || !rightTile.HasTile)
+                        continue;
+                    if (validTiles.Contains(leftTile.TileType) && validTiles.Contains(rightTile.TileType))
+                    {
+                        if (WorldGen.genRand.NextBool(chance))
+                        {
+                            leftTile.TileType = (ushort)ModContent.TileType<JadeWaterfallTile>();
+                            i += 15;
                         }
                     }
                 }

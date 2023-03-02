@@ -21,6 +21,11 @@ namespace JadeFables.Biomes.JadeLake
 {
     internal static partial class JadeLakeWorldGen
     {
+
+        public static List<Rectangle> LowerIslandRects = new List<Rectangle>();
+        public static List<Rectangle> UpperIslandRects = new List<Rectangle>();
+        public static List<Rectangle> WholeBiomeRects = new List<Rectangle>();
+
         public static void SurfaceItemPass(GenerationProgress progress, GameConfiguration configuration)
         {
             progress.Message = "Steaming up the world";
@@ -29,6 +34,10 @@ namespace JadeFables.Biomes.JadeLake
             //Main.spawnTileX = Main.maxTilesX / 2;
             //Main.spawnTileY = Main.maxTilesY / 3;
             //Main.worldSurface = Main.spawnTileY;
+
+            LowerIslandRects = new List<Rectangle>();
+            UpperIslandRects = new List<Rectangle>();
+            WholeBiomeRects = new List<Rectangle>();
 
             int tries = 0;
             for (int i = 0; i < (Main.maxTilesX / 2400) + 1; i++)
@@ -196,14 +205,12 @@ namespace JadeFables.Biomes.JadeLake
             //likely only needed for debug generation since vanilla has this pass
             SlopeTiles(WholeBiomeRect);
 
-
-            //Places foreground waterfalls (has to be outside of polish pass because it only does the top half of the biome)
-            PlaceForegroundWaterfalls(UpperIslandRect, 700);
-
-
             //Clear out chests and life crystals not destroyed in the worldgen.
             ClearDebris(WholeBiomeRect);
 
+            UpperIslandRects.Add(UpperIslandRect);
+            LowerIslandRects.Add(LowerIslandRect);
+            WholeBiomeRects.Add(WholeBiomeRect);
             return true;
         }
 
@@ -1011,29 +1018,6 @@ namespace JadeFables.Biomes.JadeLake
                         }
                     }
                 }
-        }
-
-        public static void PlaceForegroundWaterfalls(Rectangle rect, int chance)
-        {
-            int[] validTiles = new int[] { ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), ModContent.TileType<JadeSandTile>() };
-            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
-            {
-                for (int j = rect.Top; j < rect.Top + rect.Height; j++)
-                {
-                    Tile leftTile = Framing.GetTileSafely(i, j);
-                    Tile rightTile = Framing.GetTileSafely(i + 1, j);
-                    if (!leftTile.HasTile || !rightTile.HasTile)
-                        continue;
-                    if (validTiles.Contains(leftTile.TileType) && validTiles.Contains(rightTile.TileType))
-                    {
-                        if (WorldGen.genRand.NextBool(chance))
-                        {
-                            leftTile.TileType = (ushort)ModContent.TileType<JadeWaterfallTile>();
-                            i += 15;
-                        }
-                    }
-                }
-            }
         }
 
         public static void Cup(Rectangle rect, FastNoise fastnoise, float amp, float freq, float depthScale = 0.25f, bool clearTop = false, bool water = false)

@@ -93,6 +93,8 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         NPC lastHit;
 
+        private float progress => 1 - ((Projectile.timeLeft - 60) / 60f);
+
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Firework");
@@ -122,7 +124,9 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
                     Vector2 direction = Projectile.DirectionTo(nearestNPC.Center);
                     float rotDifference = ((((direction.ToRotation() - Projectile.velocity.ToRotation()) % 6.28f) + 9.42f) % 6.28f) - 3.14f;
 
-                    Projectile.velocity = Projectile.velocity.RotatedBy(rotDifference * 0.2f);
+                    if (Projectile.timeLeft < 3)
+                        Projectile.timeLeft = 3;
+                    Projectile.velocity = Projectile.velocity.RotatedBy(rotDifference * MathHelper.Lerp(0.05f, 0.5f, progress));
                 }
             }
             Projectile.velocity *= 1.01f;

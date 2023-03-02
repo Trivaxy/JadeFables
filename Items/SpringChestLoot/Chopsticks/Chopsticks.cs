@@ -14,6 +14,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using static Humanizer.In;
 using static System.Net.Mime.MediaTypeNames;
+using Terraria.Enums;
 
 namespace JadeFables.Items.SpringChestLoot.Chopsticks
 {
@@ -73,7 +74,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
                 {
                     var modProj = proj.ModProjectile as ChopstickProj;
                     modProj.swordTexture = TextureAssets.Item[item.type].Value;
-                    modProj.length = ((float)Math.Sqrt(Math.Pow(modProj.swordTexture.Width, 2) + Math.Pow(modProj.swordTexture.Width, 2)) * item.scale) + 29;
+                    modProj.length = ((float)Math.Sqrt(Math.Pow(modProj.swordTexture.Width, 2) + Math.Pow(modProj.swordTexture.Width, 2)) * item.scale) + 40;
                     modProj.lifeSpan = item.useAnimation;
                     modProj.baseAngle = (Main.MouseWorld - Player.Center).ToRotation();
                     modProj.itemScale = item.scale;
@@ -93,6 +94,8 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
     {
         public readonly float HALFSWINGARC = 1.57f;
 
+        private List<NPC> alreadyHit = new List<NPC>();
+
         public float length;
         public Texture2D swordTexture;
         public float lifeSpan;
@@ -109,7 +112,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             Projectile.DamageType = DamageClass.Melee;
             Projectile.tileCollide = false;
             Projectile.ownerHitCheck = true;
-            Projectile.penetrate = -1;
+            Projectile.penetrate = 1;
         }
 
         public override void AI()
@@ -128,7 +131,8 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
         {
             Vector2 start = Projectile.Center;
             Vector2 end = Projectile.Center + (Projectile.rotation.ToRotationVector2() * length);
-            return Collision.CheckAABBvLineCollision2(targetHitbox.TopLeft(), targetHitbox.Size(), start, end);
+            float collisionPoint = 0f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, 15, ref collisionPoint);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -137,18 +141,44 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 
             if (swordTexture == null)
                 return false;
-            Main.spriteBatch.Draw(swordTexture, Projectile.Center + new Vector2(0, Owner.gfxOffY) + (29 * Projectile.rotation.ToRotationVector2()) - Main.screenPosition, null, lightColor, (Projectile.rotation + 0.78f) + (Owner.direction == -1 ? 0f : 1.57f), new Vector2(Owner.direction == -1 ? 0 : swordTexture.Width, swordTexture.Height), Projectile.scale * itemScale, Owner.direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(swordTexture, Projectile.Center + new Vector2(0, Owner.gfxOffY) + (29 * Projectile.rotation.ToRotationVector2()) - Main.screenPosition, null, lightColor, (Projectile.rotation + 0.78f) + (Owner.direction == 1 ? 0f : 1.57f), new Vector2(Owner.direction == 1 ? 0 : swordTexture.Width, swordTexture.Height), Projectile.scale * itemScale, Owner.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
 
             Main.spriteBatch.Draw(stickTex, Projectile.Center + new Vector2(0, Owner.gfxOffY) - Main.screenPosition, null, lightColor, Projectile.rotation + 1.47f, stickTex.Bounds.Bottom(), Projectile.scale, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(stickTex, Projectile.Center + new Vector2(0, Owner.gfxOffY) - Main.screenPosition, null, lightColor, Projectile.rotation + 1.67f, stickTex.Bounds.Bottom(), Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
 
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            Projectile.penetrate++;
+            alreadyHit.Add(target);
+        }
+
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (alreadyHit.Contains(target))
+                return false;
+            return base.CanHitNPC(target);
+        }
+
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             hitDirection = Math.Sign(target.Center.X - Owner.Center.X);
         }
-    }
+
+        public override bool? CanCutTiles()
+        {
+            return true;
+        }
+
+        public override void CutTiles()
+        {
+            Vector2 start = Projectile.Center;
+            Vector2 end = Projectile.Center + (Projectile.rotation.ToRotationVector2() * length);
+            DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
+            Utils.PlotTileLine(start, end, 15, DelegateMethods.CutTiles);
+        }
+        }
     public class ChopsticksNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;

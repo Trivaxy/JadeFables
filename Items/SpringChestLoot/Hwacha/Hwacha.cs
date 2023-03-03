@@ -1,10 +1,12 @@
 //TODO:
 //Sellprice
 //Balance
+//Description
 //Make it work with manual targetting
 //Obtainability
-//Add More accurate firing
-//Add push pull mechanic
+//Make the hwacha crumble to pieces when destroyed
+//Make push pull mechanic have rolling animation
+//Make pulling the hwacha more consistant
 using JadeFables.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -67,6 +69,13 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 		int direction = 1;
 
 		int arrows => arrowTimer / 60;
+
+        bool pulling;
+        float pullOffsetX;
+
+        Vector2 arcDir = Vector2.Zero;
+
+        Player owner => Main.player[Projectile.owner];
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Hwacha");
@@ -98,13 +107,29 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
 			if (target != default)
 			{
-				Vector2 directionVec = (Projectile.Center - new Vector2(0, 24)).DirectionTo(target.Center);
-                float rotDifference = ((((directionVec.ToRotation() - Projectile.rotation) % 6.28f) + 9.42f) % 6.28f) - 3.14f;
+				arcDir = ArcVelocityHelper.GetArcVel(Projectile.Center - new Vector2(0, 20), target.Center, 0.1f, 0, 200, 12);
+                float rotDifference = ((((arcDir.ToRotation() - Projectile.rotation) % 6.28f) + 9.42f) % 6.28f) - 3.14f;
 
-				Projectile.rotation = MathHelper.Lerp(Projectile.rotation, Projectile.rotation + rotDifference, 0.03f);
+				Projectile.rotation = MathHelper.Lerp(Projectile.rotation, Projectile.rotation + rotDifference, 0.08f);
 
 				direction = Math.Sign(Projectile.rotation.ToRotationVector2().X);
             }
+
+            if (owner == Main.LocalPlayer && Main.mouseRight && owner.Distance(Projectile.Center) < 30)
+            {
+                if (!pulling)
+                {
+                    pulling = true;
+                    pullOffsetX = Projectile.position.X - owner.Center.X;
+                }
+                owner.velocity.X *= 0.9f;
+                Projectile.position.X = owner.Center.X + pullOffsetX;
+                owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, owner.DirectionTo(Projectile.Center).ToRotation() - 1.57f);
+                float stepupSpeed = 5;
+                Collision.StepUp(ref Projectile.position, ref Projectile.velocity, Projectile.width, Projectile.height, ref stepupSpeed, ref Projectile.gfxOffY);
+            }
+            else
+                pulling = false;
 
             if (arrows >= 1)
             {
@@ -137,7 +162,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 						SoundEngine.PlaySound(SoundID.Item5, Projectile.Center);
                         for (int arr = 0; arr < arrows * 3; arr++)
                         {
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - new Vector2(0, 20) + Main.rand.NextVector2Circular(4, 4), Projectile.rotation.ToRotationVector2().RotatedByRandom(0.15f) * Main.rand.NextFloat(7,9), ModContent.ProjectileType<HwachaArrow>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - new Vector2(0, 20) + Main.rand.NextVector2Circular(4, 4), arcDir.RotatedByRandom(0.15f) * Main.rand.NextFloat(0.85f, 1.15f), ModContent.ProjectileType<HwachaArrow>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
                         }
                         arrowTimer = 0;
                         break;

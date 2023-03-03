@@ -1,7 +1,3 @@
-//TODO:
-//Make push pull mechanic have rolling animation
-//Make the hwacha not vibrate on slopes
-//Sfx
 using JadeFables.Core;
 using JadeFables.Helpers;
 using JadeFables.Tiles.JadeWaterfall;

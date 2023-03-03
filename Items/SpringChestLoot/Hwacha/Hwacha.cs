@@ -1,5 +1,4 @@
 //TODO:
-//Make the hwacha crumble to pieces when destroyed
 //Make push pull mechanic have rolling animation
 //Make the hwacha not vibrate on slopes
 //Sfx
@@ -8,6 +7,7 @@ using JadeFables.Helpers;
 using JadeFables.Tiles.JadeWaterfall;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mono.Cecil;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -29,7 +29,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 		public override void SetDefaults()
 		{
 			Item.CloneDefaults(ItemID.QueenSpiderStaff);
-			Item.damage = 20;
+			Item.damage = 13;
 			Item.mana = 12;
 			Item.width = 40;
 			Item.height = 40;
@@ -71,7 +71,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
         bool pulling;
         float pullOffsetX;
 
-        Vector2 arcDir = Vector2.Zero;
+        Vector2 arcDir = Vector2.One;
 
         Player owner => Main.player[Projectile.owner];
 
@@ -79,6 +79,8 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
         public override void Load()
         {
+            for (int j = 1; j <= 5; j++)
+                GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Items/SpringChestLoot/Hwacha/HwachaProj_Gore" + j);
             On.Terraria.Main.DrawPlayers_AfterProjectiles += DrawFrontWheels;
         }
 
@@ -156,6 +158,8 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
                 owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, owner.DirectionTo(Projectile.Center).ToRotation() - 1.57f);
                 float stepupSpeed = 5;
                 Collision.StepUp(ref Projectile.position, ref Projectile.velocity, Projectile.width, Projectile.height, ref stepupSpeed, ref Projectile.gfxOffY);
+
+                owner.RemoveAllGrapplingHooks();
             }
             else
                 pulling = false;
@@ -211,6 +215,12 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
             }
         }
 
+        public override void Kill(int timeLeft)
+        {
+            Helpers.Helper.PlayPitched("HwachaBreak", 0.6f, Main.rand.NextFloat(-0.1f, 0.1f), Projectile.Center);
+            for (int i = 1; i <= 5; i++)
+                Gore.NewGoreDirect(Projectile.GetSource_Death(), Projectile.Center, Main.rand.NextVector2Circular(1, 1), Mod.Find<ModGore>("HwachaProj_Gore" + i).Type);
+        }
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
         {
             fallThrough = false;

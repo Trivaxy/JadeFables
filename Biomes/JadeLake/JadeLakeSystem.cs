@@ -40,14 +40,15 @@ namespace JadeFables.Biomes.JadeLake
 
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
         {
-            int TerrainIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Terrain"));
-            int EndIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Tile Cleanup"));
+            //int CleanupIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Gems In Ice Biome"));
+            int CleanupIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Tile Cleanup"));
+            int EndIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Final Cleanup"));
 
-            tasks.Insert(TerrainIndex + 1, new PassLegacy("Jade Spring", JadeLakeWorldGen.SurfaceItemPass));
-            tasks.Insert(EndIndex + 1, new PassLegacy("Jade Spring 2", JadeLakeWorldGen.PolishPass));
+            tasks.Insert(CleanupIndex, new PassLegacy("Jade Spring", JadeLakeWorldGen.SurfaceItemPass));
+            tasks.Insert(EndIndex, new PassLegacy("Jade Spring 2", JadeLakeWorldGen.PolishPass));
 
             //debug
-            tasks.RemoveAll(x => x.Name != "Jade Spring");
+            //tasks.RemoveAll(x => x.Name != "Jade Spring");
         }
         bool pressed = false;
         public override void Load()
@@ -160,8 +161,8 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void PopulateChests()
         {
-            int[] primaryLoot = new int[] { ModContent.ItemType<FireworkPack>(), ModContent.ItemType<TanookiLeaf>(), ModContent.ItemType<GongItem>() };
-            int[] secondaryLoot = new int[] { ModContent.ItemType<JadeFountainItem>(), ItemID.MagicConch, ItemID.SandcastleBucket, 5139 };
+            int[] primaryLoot = new int[] { ModContent.ItemType<FireworkPack>(), ModContent.ItemType<TanookiLeaf>(), ModContent.ItemType<GongItem>(), ModContent.ItemType<Items.SpringChestLoot.Chopsticks.Chopsticks>()};
+            int[] secondaryLoot = new int[] { ModContent.ItemType<JadeFountainItem>(), ItemID.MagicConch, ItemID.SandcastleBucket};
 
             int[] ternaryLoot = new int[] {
                 ModContent.ItemType<Tiles.JadeTorch.JadeTorch>(),
@@ -190,6 +191,9 @@ namespace JadeFables.Biomes.JadeLake
             };
             for (int chestIndex = 0; chestIndex < 1000; chestIndex++)
             {
+                List<int> ternaryLootList = ternaryLoot.ToList();
+                List<int> ternaryLootRareList = ternaryLootRare.ToList();
+                List<int> ternaryLootSingleList = ternaryLootSingle.ToList();
                 Chest chest = Main.chest[chestIndex];
                 if (chest != null && Main.tile[chest.x, chest.y].TileType/*.frameX == 47 * 36*/ == ModContent.TileType<SpringChest>()) // if glass chest
                 {
@@ -209,17 +213,23 @@ namespace JadeFables.Biomes.JadeLake
                         }
                         else if (Main.rand.NextBool(5))
                         {
-                            chest.item[inventoryIndex].SetDefaults(ternaryLootRare[Main.rand.Next(ternaryLootRare.Length)]);
+                            int type = ternaryLootRareList[Main.rand.Next(ternaryLootRareList.Count)];
+                            ternaryLootRareList.Remove(type);
+                            chest.item[inventoryIndex].SetDefaults(type);
                             chest.item[inventoryIndex].stack = Main.rand.Next(2, 5);
                         }
-                        else if (Main.rand.NextBool(6))
+                        else if (Main.rand.NextBool(6) && ternaryLootSingleList.Count > 0)
                         {
-                            chest.item[inventoryIndex].SetDefaults(ternaryLootSingle[Main.rand.Next(ternaryLootSingle.Length)]);
+                            int type = ternaryLootSingleList[Main.rand.Next(ternaryLootSingleList.Count)];
+                            ternaryLootSingleList.Remove(type);
+                            chest.item[inventoryIndex].SetDefaults(type);
                             chest.item[inventoryIndex].stack = 1;
                         }
                         else
                         {
-                            chest.item[inventoryIndex].SetDefaults(ternaryLoot[Main.rand.Next(ternaryLoot.Length)]);
+                            int type = ternaryLootList[Main.rand.Next(ternaryLootList.Count)];
+                            ternaryLootList.Remove(type);
+                            chest.item[inventoryIndex].SetDefaults(type);
                             if (chest.item[inventoryIndex].type == ItemID.Rope)
                             {
                                 chest.item[inventoryIndex].stack = Main.rand.Next(30, 50);

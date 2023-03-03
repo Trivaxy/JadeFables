@@ -24,7 +24,7 @@ namespace JadeFables.Biomes.JadeLake
 		}
 
 		public override int GetDropletGore() {
-			return 1;
+			return GoreID.WaterDrip;
 		}
 
 		public override void LightColorMultiplier(ref float r, ref float g, ref float b) {

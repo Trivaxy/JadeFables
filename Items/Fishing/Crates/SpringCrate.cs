@@ -8,6 +8,7 @@ using Terraria.ObjectData;
 using Terraria.GameContent.ItemDropRules;
 using JadeFables.Biomes.JadeLake;
 using static JadeFables.Items.Fishing.Crates.CrateDropRules;
+using JadeFables.Items.SpringChestLoot.Hwacha;
 
 namespace JadeFables.Items.Fishing.Crates
 {
@@ -104,7 +105,7 @@ namespace JadeFables.Items.Fishing.Crates
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>()));
+            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>()));
             itemLoot.Add(goldCoin);
             itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(7, ores)));
             itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(4, bars)));
@@ -171,7 +172,7 @@ namespace JadeFables.Items.Fishing.Crates
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>()));
+            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>()));
             itemLoot.Add(goldCoin);
             itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(14, ores), new OneFromRulesRule(14, hardmodeOres)));
             itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(12, bars), new OneFromRulesRule(6, hardmodeBars)));

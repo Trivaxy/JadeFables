@@ -1,17 +1,11 @@
 //TODO:
-//Sellprice
-//Balance
-//Make it work with manual targetting
-//Obtainability
 //Make the hwacha crumble to pieces when destroyed
 //Make push pull mechanic have rolling animation
-//Make pulling the hwacha more consistant
-//Make the summoning position better
 //Make the hwacha not vibrate on slopes
-//Make front arm used when player is pushing hwacha
-//Make front wheel draw in front of player
 //Sfx
+using JadeFables.Core;
 using JadeFables.Helpers;
+using JadeFables.Tiles.JadeWaterfall;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -40,7 +34,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 			Item.width = 40;
 			Item.height = 40;
 			Item.value = Item.sellPrice(0, 1, 0, 0);
-			Item.rare = ItemRarityID.Green;
+			Item.rare = ItemRarityID.Blue;
 			Item.knockBack = 2.5f;
 			Item.UseSound = SoundID.Item25;
 			Item.shoot = ModContent.ProjectileType<HwachaProj>();
@@ -80,7 +74,24 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
         Vector2 arcDir = Vector2.Zero;
 
         Player owner => Main.player[Projectile.owner];
-		public override void SetStaticDefaults()
+
+        private float shakeVal = 0;
+
+        public override void Load()
+        {
+            On.Terraria.Main.DrawPlayers_AfterProjectiles += DrawFrontWheels;
+        }
+
+        private void DrawFrontWheels(On.Terraria.Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
+        {
+            orig(self);
+            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+            var toDraw = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<HwachaProj>()).ToList();
+            toDraw.ForEach(n => (n.ModProjectile as HwachaProj).DrawFrontWheel());
+            Main.spriteBatch.End();
+        }
+
+        public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Hwacha");
 			Main.projFrames[Projectile.type] = 6;
@@ -104,10 +115,22 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 			if (arrows < 5)
 				arrowTimer++;
 
+            if (shakeVal > 0)
+            {
+                shakeVal -= 0.05f;
+            }
+            else
+            {
+                shakeVal = 0;
+            }
+
             Projectile.velocity.Y = 5;
             Projectile.frame = (5 - arrows);
 
 			NPC target = Main.npc.Where(n => n.active && n.CanBeChasedBy(Projectile) && n.Distance(Projectile.Center) < 800).OrderBy(n => n.Distance(Projectile.Center)).FirstOrDefault();
+
+            if (owner.HasMinionAttackTargetNPC)
+                target = Main.npc[owner.MinionAttackTargetNPC];
 
 			if (target != default)
 			{
@@ -119,7 +142,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 				direction = Math.Sign(Projectile.rotation.ToRotationVector2().X);
             }
 
-            if (owner == Main.LocalPlayer && Main.mouseRight && owner.Distance(Projectile.Center) < 30)
+            if (owner == Main.LocalPlayer && Main.mouseRight && owner.Distance(Projectile.Center) < (pulling ? 60 : 30))
             {
                 if (!pulling)
                 {
@@ -128,6 +151,8 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
                 }
                 owner.velocity.X *= 0.9f;
                 Projectile.position.X = owner.Center.X + pullOffsetX;
+                if (owner.itemAnimation <= 0)
+                    owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, owner.DirectionTo(Projectile.Center).ToRotation() - 1.57f);
                 owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, owner.DirectionTo(Projectile.Center).ToRotation() - 1.57f);
                 float stepupSpeed = 5;
                 Collision.StepUp(ref Projectile.position, ref Projectile.velocity, Projectile.width, Projectile.height, ref stepupSpeed, ref Projectile.gfxOffY);
@@ -137,6 +162,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
             if (arrows >= 1)
             {
+                shakeVal = 1;
                 for (int i = 0; i < Main.projectile.Length; i++)
                 {
                     Projectile proj = Main.projectile[i];
@@ -166,7 +192,17 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 						SoundEngine.PlaySound(SoundID.Item5, Projectile.Center);
                         for (int arr = 0; arr < arrows * 3; arr++)
                         {
-                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - new Vector2(0, 20) + Main.rand.NextVector2Circular(4, 4), arcDir.RotatedByRandom(0.15f) * Main.rand.NextFloat(0.85f, 1.15f), ModContent.ProjectileType<HwachaArrow>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
+                            Item fakeItem = new Item(ItemID.WoodenBow);
+                            owner.PickAmmo(fakeItem, out int projToShoot, out float speed, out int damage, out float knockBack, out int usedAmmoItemID);
+                            if (projToShoot <= 0)
+                            {
+                                damage = 6;
+                                speed = 8;
+                                projToShoot = ModContent.ProjectileType<HwachaArrow>();
+                                knockBack = Projectile.knockBack;
+                            }
+                            Vector2 arrowVel = Vector2.Normalize(arcDir.RotatedByRandom(0.15f)) * Main.rand.NextFloat(0.85f, 1.15f) * MathHelper.Max(arcDir.Length(), speed); 
+                            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center - new Vector2(0, 20) + Main.rand.NextVector2Circular(4, 4), arrowVel, projToShoot, Projectile.damage + damage, knockBack, Projectile.owner);
                         }
                         arrowTimer = 0;
                         break;
@@ -189,9 +225,9 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
         public override bool PreDraw(ref Color lightColor)
         {
 			Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
-            Texture2D frontWheel = ModContent.Request<Texture2D>(Texture + "_Frontwheel").Value;
             Texture2D backWheel = ModContent.Request<Texture2D>(Texture + "_Backwheel").Value;
-            int frameHeight = tex.Height / Main.projFrames[Projectile.type];
+            Texture2D arrowTex = ModContent.Request<Texture2D>(Texture + "_Arrows").Value;
+            int frameHeight = tex.Height;
 
 			Rectangle frame = new Rectangle(0, frameHeight * Projectile.frame, tex.Width, frameHeight);
 
@@ -199,10 +235,37 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 			if (direction == 1)
 				origin.X = tex.Width - origin.X;
 
-            Main.spriteBatch.Draw(backWheel, Projectile.position + origin - Main.screenPosition, frame, lightColor, 0, origin, Projectile.scale, direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(tex, Projectile.position + origin - Main.screenPosition, frame, lightColor, Projectile.rotation - (direction == -1 ? 3.14f : 0), origin, Projectile.scale, direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(frontWheel, Projectile.position + origin - Main.screenPosition, frame, lightColor, 0, origin, Projectile.scale, direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+            float rotation = Projectile.rotation - (direction == -1 ? 3.14f : 0) + (MathF.Sin(shakeVal * 12.56f) * 0.2f * (shakeVal));
+
+            Main.spriteBatch.Draw(backWheel, Projectile.position + origin + new Vector2(0, Projectile.gfxOffY) - Main.screenPosition, frame, lightColor, 0, origin, Projectile.scale, direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+            for (int i = arrows + 2; i >= 0; i--)
+            {
+                frame = new Rectangle(0, frameHeight * (Main.projFrames[Projectile.type] - i), tex.Width, frameHeight);
+                float progress = 1;
+                if (i == arrows + 2)
+                {
+                    progress = (arrowTimer % 60) / 60f;
+                }
+                Vector2 offset = rotation.ToRotationVector2() * -15 * direction * (1 - progress);
+                Main.spriteBatch.Draw(arrowTex, Projectile.position + origin + offset + new Vector2(0, Projectile.gfxOffY) - Main.screenPosition, frame, lightColor * EaseFunction.EaseCircularIn.Ease(progress), rotation, origin, Projectile.scale, direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+            }
+            Main.spriteBatch.Draw(tex, Projectile.position + origin + new Vector2(0, Projectile.gfxOffY) - Main.screenPosition, null, lightColor, rotation, origin, Projectile.scale, direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
             return false;
+        }
+
+        public void DrawFrontWheel()
+        {
+            Color lightColor = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16);
+            Texture2D frontWheel = ModContent.Request<Texture2D>(Texture + "_Frontwheel").Value;
+            int frameHeight = frontWheel.Height / Main.projFrames[Projectile.type];
+
+            Rectangle frame = new Rectangle(0, frameHeight * Projectile.frame, frontWheel.Width, frameHeight);
+
+            Vector2 origin = new Vector2(22, 42);
+            if (direction == 1)
+                origin.X = frontWheel.Width - origin.X;
+
+            Main.spriteBatch.Draw(frontWheel, Projectile.position + origin + new Vector2(0, Projectile.gfxOffY) - Main.screenPosition, frame, lightColor, 0, origin, Projectile.scale, direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
         }
     }
 

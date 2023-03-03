@@ -8,6 +8,9 @@
 //Make pulling the hwacha more consistant
 //Make the summoning position better
 //Make the hwacha not vibrate on slopes
+//Make front arm used when player is pushing hwacha
+//Make front wheel draw in front of player
+//Sfx
 using JadeFables.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

@@ -170,6 +170,10 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
                     if (proj == null || !proj.active || proj.damage == 0 || !ProjectileID.Sets.IsAWhip[proj.type])
                         continue;
 
+                    int timeToFlyOut = Main.player[proj.owner].itemAnimationMax * proj.MaxUpdates;
+                    if (proj.ai[0] < timeToFlyOut / 2)
+                        continue;
+
                     ModProjectile modProj = proj.ModProjectile;
 
                     bool colliding = false;

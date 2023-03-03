@@ -1,12 +1,13 @@
 //TODO:
 //Sellprice
 //Balance
-//Description
 //Make it work with manual targetting
 //Obtainability
 //Make the hwacha crumble to pieces when destroyed
 //Make push pull mechanic have rolling animation
 //Make pulling the hwacha more consistant
+//Make the summoning position better
+//Make the hwacha not vibrate on slopes
 using JadeFables.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,7 +26,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Hwacha");
-			Tooltip.SetDefault("update later");
+			Tooltip.SetDefault("Summons a Hwacha to fight for you \nWhip the hwacha to fire it \nRight click to push and pull the hwacha");
 		}
 
 		public override void SetDefaults()
@@ -55,7 +56,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) 
 		{
 			player.FindSentryRestingSpot(type, out int worldX, out int worldY, out int pushYUp);
-            var proj = Projectile.NewProjectileDirect(source, Main.MouseWorld, velocity, type, damage, knockback, player.whoAmI);
+            var proj = Projectile.NewProjectileDirect(source, new Vector2(worldX, worldY) - new Vector2(0, 34), velocity, type, damage, knockback, player.whoAmI);
             proj.originalDamage = Item.damage;
             player.UpdateMaxTurrets();
 			return false;
@@ -107,7 +108,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
 			if (target != default)
 			{
-				arcDir = ArcVelocityHelper.GetArcVel(Projectile.Center - new Vector2(0, 20), target.Center, 0.1f, 0, 200, 12);
+				arcDir = ArcVelocityHelper.GetArcVel(Projectile.Center - new Vector2(0, 20), target.Center, 0.08f, 0, 200, 12);
                 float rotDifference = ((((arcDir.ToRotation() - Projectile.rotation) % 6.28f) + 9.42f) % 6.28f) - 3.14f;
 
 				Projectile.rotation = MathHelper.Lerp(Projectile.rotation, Projectile.rotation + rotDifference, 0.08f);

@@ -31,7 +31,6 @@ namespace JadeFables.Biomes.JadeLake
         /// of if the player is currently in the Jade Biome or not.
         /// </summary>
         public bool forceLakeAesthetic;
-
         public override void TileCountsAvailable(ReadOnlySpan<int> tileCounts)
         {
             JadeSandTileCount = tileCounts[TileType<JadeSandTile>()];
@@ -67,6 +66,9 @@ namespace JadeFables.Biomes.JadeLake
 
             progress = forceLakeAesthetic ? 1f : progress;
 
+            WaterLight.waterPoolTiles.Clear();
+            WaterLight.waterDepthTiles.Clear();
+
             for (int x = 0; x < Main.maxTilesX; x++)
             {
                 if (new Vector2(x * 16f, Main.LocalPlayer.Center.Y).Distance(Main.LocalPlayer.Center) < Main.screenWidth / 2)
@@ -78,9 +80,10 @@ namespace JadeFables.Biomes.JadeLake
                             modifiedProgress = forceLakeAesthetic ? 3000f : modifiedProgress;
 
                             if (Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 220, 200) * (0.000001f * modifiedProgress));
-                            else
-                                Lighting.AddLight(new Vector2(x * 16, y * 16), new Vector3(0, 200, 250) * (0.00000001f * modifiedProgress));
+                            {
+                                WaterLight.waterPoolTiles.Add((x, y));
+                            }
+                            else WaterLight.waterDepthTiles.Add((x, y));
                         }
                     }
             }
@@ -240,6 +243,38 @@ namespace JadeFables.Biomes.JadeLake
                         }
                     }
                 }
+            }
+        }
+    }
+    public class WaterLight : GlobalWall
+    {
+        public static HashSet<(int, int)> waterPoolTiles = new();
+        public static HashSet<(int, int)> waterDepthTiles = new();
+
+        public override void ModifyLight(int i, int j, int type, ref float r, ref float g, ref float b)
+        {
+            if (waterPoolTiles.Count <= 0) return;
+
+            if (waterPoolTiles.Contains((i, j)) || waterDepthTiles.Contains((i,j)))
+            {
+                JadeLakeSystem jadeLakeSystem = GetInstance<JadeLakeSystem>();
+
+                float modifiedProgress = MathHelper.Min(jadeLakeSystem.TotalBiomeCount, 3000);
+                modifiedProgress = jadeLakeSystem.forceLakeAesthetic ? 3000f : modifiedProgress;
+
+                Color color = new Color(0, 220, 200);
+                float brightness = 255f / 0.9f;
+                if (waterDepthTiles.Contains((i, j))) brightness = 255f / 0.175f;
+
+                if (jadeLakeSystem.TotalBiomeCount == 0)
+                {
+                    waterPoolTiles.Clear();
+                    waterDepthTiles.Clear();
+                }
+
+                r = color.R / brightness;
+                g = color.G / brightness;
+                b = color.B / brightness;
             }
         }
     }

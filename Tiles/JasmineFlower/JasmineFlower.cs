@@ -46,7 +46,7 @@ namespace JadeFables.Tiles.JasmineFlower
 		public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
 		{
 			Tile tileBelow = Framing.GetTileSafely(i, j + 1);
-			if (!tileBelow.HasTile || tileBelow.IsHalfBlock || tileBelow.TopSlope || tileBelow.TileType != ModContent.TileType<JadeSand.JadeSandTile>())
+			if (!tileBelow.HasTile || tileBelow.IsHalfBlock || tileBelow.TopSlope || (tileBelow.TileType != ModContent.TileType<JadeSand.JadeSandTile>() && tileBelow.TileType != ModContent.TileType<OvergrownJadeSand.OvergrownJadeSandTile>()))
 				WorldGen.KillTile(i, j);
 			return true;
 		}

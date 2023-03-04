@@ -174,6 +174,7 @@ namespace JadeFables.NPCs.Pufferfish
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Spine.SpineItem>(), 2));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IceCream, 40));
         }
     }
 

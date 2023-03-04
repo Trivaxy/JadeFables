@@ -127,6 +127,7 @@ namespace JadeFables.NPCs.Koi
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IceCream, 40));
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 50f : 0f;

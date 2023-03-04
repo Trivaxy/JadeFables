@@ -356,6 +356,7 @@ namespace JadeFables.Biomes.JadeLake
                         if (WorldGen.genRand.NextBool(chance))
                         {
                             leftTile.TileType = (ushort)ModContent.TileType<JadeWaterfallTile>();
+                            rightTile.HasTile = false;
                             i += 15;
                         }
                     }

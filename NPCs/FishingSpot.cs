@@ -53,6 +53,11 @@ namespace JadeFables.NPCs
             });
         }
 
+        public override void ModifyHoverBoundingBox(ref Rectangle boundingBox)
+        {
+            boundingBox = new Rectangle(0, 0, 0, 0);
+        }
+
         public override void AI()
         {
             Tile aboveTile = Framing.GetTileSafely((int)NPC.Center.X / 16, (int)(NPC.Center.Y / 16) - 2);

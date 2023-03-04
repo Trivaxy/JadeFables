@@ -21,6 +21,8 @@ using static Humanizer.In;
 using static Terraria.ModLoader.ModContent;
 using JadeFables.Core;
 using JadeFables.Core.Systems;
+using JadeFables.Helpers.FastNoise;
+using JadeFables.Helpers;
 
 namespace JadeFables.Items.Jade.JadeHarpoon
 {
@@ -43,7 +45,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             Item.useStyle = ItemUseStyleID.Swing;
             Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.knockBack = 1;
+            Item.knockBack = 0;
             Item.channel = true;
             Item.shoot = ProjectileType<JadeHarpoonHook>();
             Item.shootSpeed = 30f;
@@ -173,6 +175,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                     if (owner.controlRight)
                         owner.velocity.X = 8;
                     owner.fullRotation = 0;
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Bottom, Vector2.Zero, ModContent.ProjectileType<JadeHarpoonJumpRing>(), 0, 0, owner.whoAmI, Main.rand.Next(30, 40), owner.velocity.ToRotation());
                     return;
                 }
                 if (!owner.GetModPlayer<JadeHarpoonPlayer>().flipping)
@@ -458,6 +461,109 @@ namespace JadeFables.Items.Jade.JadeHarpoon
         {
             fallThrough = false;
             return base.TileCollideStyle(ref width, ref height, ref fallThrough, ref hitboxCenterFrac);
+        }
+    }
+
+    public class JadeHarpoonJumpRing : ModProjectile
+    {
+        private FastNoise noise;
+        private List<Vector2> cache;
+
+        private Trail trail;
+        private Trail trail2;
+
+        public int timeLeftStart = 25;
+
+        private float Progress => 1 - Projectile.timeLeft / (float)timeLeftStart;
+
+        private float Radius => Projectile.ai[0] * (float)Math.Sqrt(Math.Sqrt(Progress));
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 80;
+            Projectile.height = 80;
+            Projectile.friendly = false;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = timeLeftStart;
+        }
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Ring");
+        }
+
+        public override void AI()
+        {
+            noise = noise ?? new FastNoise(Main.rand.Next(0, 1000000));
+            noise.Frequency = 1f;
+            Projectile.velocity *= 0.95f;
+
+            if (Main.netMode != NetmodeID.Server)
+            {
+                ManageCaches();
+                ManageTrail();
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Main.spriteBatch.End();
+            DrawPrimitives();
+            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+            return false;
+        }
+
+        private void ManageCaches()
+        {
+            cache = new List<Vector2>();
+            float radius = Radius;
+
+            for (int i = 0; i < 65; i++) //TODO: Cache offsets, to improve performance
+            {
+                double rad = i / 34f * 6.28f;
+                var offset = new Vector2((float)Math.Sin(rad) * 0.4f, (float)Math.Cos(rad));
+                offset *= radius;
+                offset = offset.RotatedBy(Projectile.ai[1]);
+                cache.Add(Projectile.Center + offset);
+            }
+
+            while (cache.Count > 65)
+            {
+                cache.RemoveAt(0);
+            }
+        }
+
+        private void ManageTrail()
+        {
+            trail ??= new Trail(Main.instance.GraphicsDevice, 65, new TriangularTip(1), factor => 65 * (1 - Progress) * noise.GetSimplex(1 + (float)Math.Sin((factor + (Progress * 0.3f)) * 6.28f), 1 + (float)Math.Cos((factor + (Progress * 0.3f)) * 6.28f)), factor => Color.Green.MultiplyRGB(Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16)));
+
+            trail2 ??= new Trail(Main.instance.GraphicsDevice, 65, new TriangularTip(1), factor => 15 * (1 - Progress) * noise.GetSimplex(1 + (float)Math.Sin((factor + (Progress * 0.3f)) * 6.28f), 1 + (float)Math.Cos((factor + (Progress * 0.3f)) * 6.28f)), factor => Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16));
+            float nextplace = 65f / 64f;
+            var offset = new Vector2((float)Math.Sin(nextplace), (float)Math.Cos(nextplace));
+            offset *= Radius;
+
+            trail.Positions = cache.ToArray();
+            trail.NextPosition = Projectile.Center + offset;
+
+            trail2.Positions = cache.ToArray();
+            trail2.NextPosition = Projectile.Center + offset;
+        }
+
+        public void DrawPrimitives()
+        {
+            Effect effect = Filters.Scene["RingTrail"].GetShader().Shader;
+
+            var world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
+            Matrix view = Main.GameViewMatrix.ZoomMatrix;
+            var projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+
+            effect.Parameters["transformMatrix"].SetValue(world * view * projection);
+            effect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>("JadeFables/Assets/GlowTrail").Value);
+            effect.Parameters["alpha"].SetValue(1);
+
+            trail?.Render(effect);
+            trail2?.Render(effect);
         }
     }
 

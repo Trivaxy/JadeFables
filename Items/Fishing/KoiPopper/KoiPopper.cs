@@ -1,14 +1,4 @@
-﻿//TODO:
-//Obtainability
-//Sfx for item use Lclick
-//Sfx for item use Rclick
-//Sfx for bubble pop
-//Holdout offset
-//Bubble death effects
-//Deathring
-//Better visuals
-
-using JadeFables.Dusts;
+﻿using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -49,7 +40,7 @@ namespace JadeFables.Items.Fishing.KoiPopper
             Item.shootSpeed = 11f;
             Item.autoReuse = true;
             Item.useTurn = false;
-
+            Item.UseSound = SoundID.Item111;
             Item.value = Item.sellPrice(silver: 45);
             Item.rare = ItemRarityID.Blue;
         }
@@ -89,16 +80,20 @@ namespace JadeFables.Items.Fishing.KoiPopper
             }
             return false;
         }
+
+        public override Vector2? HoldoutOffset() => new Vector2(-4, 0);
     }
 
     internal class KoiPopperBubble : ModProjectile
     {
         private Player owner => Main.player[Projectile.owner];
 
+        private float scale;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bubble");
-            Main.projFrames[Projectile.type] = 3;
+            Main.projFrames[Projectile.type] = 1;
         }
 
         public override void SetDefaults()
@@ -112,12 +107,16 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public override void OnSpawn(IEntitySource source)
         {
-            Projectile.frame = Main.rand.Next(Main.projFrames[Projectile.type]);
+            Projectile.frame = 0;
+            scale = Main.rand.NextFloat(1, 1.65f);
         }
 
         public override void AI()
         {
+            Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.velocity *= 0.96f;
+            Projectile.scale = MathHelper.Min(scale, Projectile.timeLeft / 12f);
+            Lighting.AddLight(Projectile.Center, new Color(48, 213, 200).ToVector3() * 0.76f);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -126,7 +125,24 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
             int frameHeight = tex.Height / Main.projFrames[Projectile.type];
             Rectangle frameBox = new Rectangle(0, frameHeight * Projectile.frame, tex.Width, frameHeight);
-            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, frameBox, lightColor, Projectile.rotation, new Vector2(tex.Width / 2, frameHeight / 2), Projectile.scale, SpriteEffects.None, 0f);
+
+            float squash = MathHelper.Max(1 - (Projectile.velocity.Length() / 50f), 0.25f);
+            float stretch = 1 + Projectile.velocity.Length() / 30f;
+
+            Effect effect = Filters.Scene["ManualRotation"].GetShader().Shader;
+            float rotation = -Projectile.rotation;
+            effect.Parameters["uTime"].SetValue(rotation);
+            effect.Parameters["cosine"].SetValue(MathF.Cos(rotation));
+            effect.Parameters["uColor"].SetValue(lightColor.ToVector3());
+            effect.Parameters["uOpacity"].SetValue(0.7f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.TransformationMatrix);
+
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, new Vector2(tex.Width / 2, frameHeight / 2), Projectile.scale * new Vector2(stretch, squash), SpriteEffects.None, 0f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
 
@@ -142,22 +158,34 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public void Pop()
         {
+            SoundEngine.PlaySound(SoundID.Item54, Projectile.Center);
             Projectile.active = false;
-            Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<KoiPop>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
+            Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<KoiPop>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
+            proj.scale = scale;
+            /*for (int i = 0; i < 6; i++)
+            {
+                Vector2 dir = Main.rand.NextVector2CircularEdge(3, 3);
+                Dust.NewDustPerfect(Projectile.Center + (dir * 12), ModContent.DustType<GlowLineFast>(), dir, 0, Color.Pink, Main.rand.NextFloat(0.5f, 0.7f));
+            }
+
             for (int i = 0; i < 12; i++)
             {
-                Vector2 dir = Main.rand.NextVector2CircularEdge(3,3);
-                Dust.NewDustPerfect(Projectile.Center + (dir * 12), ModContent.DustType<GlowLineFast>(), dir, 0, Color.Pink, Main.rand.NextFloat(0.5f,0.7f));
-            }
+                int dustType = Main.rand.NextBool() ? 176 : 177;
+                Vector2 dir = Main.rand.NextVector2Circular(3, 3);
+                Dust.NewDustPerfect(Projectile.Center, dustType, dir, default, default, 1.3f).noGravity = true;
+            }*/
         }
     }
     internal class KoiPop : ModProjectile
     {
         private Player owner => Main.player[Projectile.owner];
 
+        private List<NPC> alreadyHit = new List<NPC>();
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bubble");
+            Main.projFrames[Projectile.type] = 3;
         }
 
         public override void SetDefaults()
@@ -167,13 +195,44 @@ namespace JadeFables.Items.Fishing.KoiPopper
             Projectile.tileCollide = false;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.friendly = true;
-            Projectile.timeLeft = 9;
-            Projectile.hide = true;
+            Projectile.timeLeft = 16;
+            Projectile.penetrate = 1;
         }
 
         public override void AI()
         {
-            
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter % 3 == 0)
+            {
+                Projectile.frame++;
+                if (Projectile.frame >= 3)
+                    Projectile.active = false;
+            }
+
+            Lighting.AddLight(Projectile.Center, new Color(48, 213, 200).ToVector3() * 1.1f);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+
+            int frameHeight = tex.Height / Main.projFrames[Projectile.type];
+            Rectangle frameBox = new Rectangle(0, frameHeight * Projectile.frame, tex.Width, frameHeight);
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, frameBox, lightColor * 0.7f, Projectile.rotation, new Vector2(tex.Width / 2, frameHeight / 2), Projectile.scale, SpriteEffects.None, 0f);
+            return false;
+        }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            Projectile.penetrate++;
+            alreadyHit.Add(target);
+        }
+
+        public override bool? CanHitNPC(NPC target)
+        {
+            if (alreadyHit.Contains(target))
+                return false;
+            return base.CanHitNPC(target);
         }
 
     }

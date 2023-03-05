@@ -4,9 +4,9 @@
 //Sfx for item use Rclick
 //Sfx for bubble pop
 //Holdout offset
-//Bubbles bounce off of tiles
 //Bubble death effects
 //Deathring
+//Better visuals
 
 using JadeFables.Dusts;
 using Microsoft.Xna.Framework;
@@ -36,7 +36,7 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public override void SetDefaults()
         {
-            Item.damage = 11;
+            Item.damage = 16;
             Item.DamageType = DamageClass.Ranged;
             Item.width = 16;
             Item.height = 64;
@@ -48,7 +48,7 @@ namespace JadeFables.Items.Fishing.KoiPopper
             Item.shoot = ProjectileType<KoiPopperBubble>();
             Item.shootSpeed = 11f;
             Item.autoReuse = true;
-            Item.useTurn = true;
+            Item.useTurn = false;
 
             Item.value = Item.sellPrice(silver: 45);
             Item.rare = ItemRarityID.Blue;
@@ -130,14 +130,24 @@ namespace JadeFables.Items.Fishing.KoiPopper
             return false;
         }
 
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            if (Projectile.velocity.X != oldVelocity.X)
+                Projectile.velocity.X = -oldVelocity.X;
+            if (Projectile.velocity.Y != oldVelocity.Y)
+                Projectile.velocity.Y = -oldVelocity.Y;
+
+            return false;
+        }
+
         public void Pop()
         {
             Projectile.active = false;
             Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<KoiPop>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
             for (int i = 0; i < 12; i++)
             {
-                Vector2 dir = Main.rand.NextVector2Circular(3, 3);
-                Dust.NewDustPerfect(Projectile.Center + (dir * 6), ModContent.DustType<GlowLineFast>(), dir, 0, Color.Pink, Main.rand.NextFloat(0.2f,0.4f));
+                Vector2 dir = Main.rand.NextVector2CircularEdge(3,3);
+                Dust.NewDustPerfect(Projectile.Center + (dir * 12), ModContent.DustType<GlowLineFast>(), dir, 0, Color.Pink, Main.rand.NextFloat(0.5f,0.7f));
             }
         }
     }

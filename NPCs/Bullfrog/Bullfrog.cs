@@ -88,7 +88,7 @@ namespace JadeFables.NPCs.Bullfrog
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 JadeSpawnConditions.JadeSprings,
-                new FlavorTextBestiaryInfoElement("She bull on my frog till I croak")
+                new FlavorTextBestiaryInfoElement("Giant and Insatiable, these amphibians use their extending tongue to hunt down their prey. Their diet consists mostly of the local dragonflies, but when there’s none around, they’ll gladly snack on you.")
             });
         }
 

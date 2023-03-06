@@ -71,7 +71,7 @@ namespace JadeFables.Biomes.JadeLake
 
             for (int x = 0; x < Main.maxTilesX; x++)
             {
-                if (new Vector2(x * 16f, Main.LocalPlayer.Center.Y).Distance(Main.LocalPlayer.Center) < Main.screenWidth / 2)
+                if (Vector2.DistanceSquared(Main.LocalPlayer.Center, new Vector2(x * 16f, Main.LocalPlayer.Center.Y)) < (Main.screenWidth / 2) * (Main.screenWidth / 2))
                     for (int y = 0; y < Main.maxTilesY; y++)
                     {
                         Tile tile = Main.tile[x, y];
@@ -126,7 +126,7 @@ namespace JadeFables.Biomes.JadeLake
 
             for (int x = 0; x < Main.maxTilesX; x++)
             {
-                if (new Vector2(x * 16f, Main.LocalPlayer.Center.Y).Distance(Main.LocalPlayer.Center) < Main.screenWidth / 2)
+                if (Vector2.DistanceSquared(Main.LocalPlayer.Center, new Vector2(x * 16f, Main.LocalPlayer.Center.Y)) < (Main.screenWidth / 2) * (Main.screenWidth / 2))
                     for (int y = 0; y < Main.maxTilesY; y++)
                     {
                         Tile tile = Main.tile[x, y];

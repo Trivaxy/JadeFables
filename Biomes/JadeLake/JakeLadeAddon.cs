@@ -27,27 +27,23 @@ namespace JadeFables.Biomes.JadeLake
 
 		public override void SpritebatchChange()
 		{
-
-			/*Main.spriteBatch.Begin();
+            /*Main.spriteBatch.Begin();
 			Main.spriteBatch.Draw(HotspringMapTarget.hotspringShineTarget, Microsoft.Xna.Framework.Vector2.Zero, Microsoft.Xna.Framework.Color.White);
 			Main.spriteBatch.End();*/
-			var effect = Filters.Scene["JadeLakeWater"].GetShader().Shader;
+            var effect = Filters.Scene["JadeLakeWater"].GetShader().Shader;
 
-			//var a = Vector2.Normalize(Helpers.Helper.ScreenSize);
-			//effect.Parameters["offset"].SetValue(Main.screenPosition - HotspringMapTarget.oldScreenPos);
-
-			Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
+            //var a = Vector2.Normalize(Helpers.Helper.ScreenSize);
+            //effect.Parameters["offset"].SetValue(Main.screenPosition - HotspringMapTarget.oldScreenPos);
+            Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
 		}
 
 		public override void SpritebatchChangeBack()
 		{
-            JadeLakeMapTarget.oldScreenPos = Main.screenPosition;
+            //JadeLakeMapTarget.oldScreenPos = Main.screenPosition;
             var effect = Filters.Scene["JadeLakeWater"].GetShader().Shader;
-
-			//the multiply by 1.3 and 1.5 seem to fix the jittering when moving, seems to be tied to the 2 magic numbers in Visuals.HotspringMapTarget.cs
-			//effect.Parameters["offset"].SetValue(Main.screenPosition - HotspringMapTarget.oldScreenPos);
-
-			Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
+            //the multiply by 1.3 and 1.5 seem to fix the jittering when moving, seems to be tied to the 2 magic numbers in Visuals.HotspringMapTarget.cs
+            //effect.Parameters["offset"].SetValue(Main.screenPosition - HotspringMapTarget.oldScreenPos);
+            Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
 		}
 	}
 
@@ -57,7 +53,15 @@ namespace JadeFables.Biomes.JadeLake
         public static RenderTarget2D jadelakeShineTarget;
         public static RenderTarget2D jadelakeBubbleTarget;
 
+        public static bool UpdateOffset = false;
+
         public static Vector2 oldScreenPos;
+        public static Vector2 oldTranslation;
+
+        public static Vector2 cameraDiff = Vector2.Zero;
+        public static Vector2 jerk = Vector2.Zero;
+
+        public static int framesSinceDraw = 0;
 
         public void Load(Mod mod)
         {
@@ -79,14 +83,37 @@ namespace JadeFables.Biomes.JadeLake
             if (Main.gameMenu || !GetInstance<JadeLakeAddon>().Visible)
                 return;
 
+            var translation = Main.screenPosition - oldScreenPos;
+            oldScreenPos = Main.screenPosition;
 
-            Vector2 RTratio = Main.ScreenSize.ToVector2() / Main.waterTarget.Size();
             var effect = Terraria.Graphics.Effects.Filters.Scene["JadeLakeWater"].GetShader().Shader;
-            effect.Parameters["offset"].SetValue(((Main.screenPosition - oldScreenPos) * -1));
+            jerk += (oldTranslation / 4) - translation;
+            cameraDiff = translation;
+            translation *= 4;
+
+            if (Main.renderCount == 1)
+            {
+                effect.Parameters["offset"].SetValue(Vector2.Zero);
+            }
+
             effect.Parameters["sampleTexture2"].SetValue(JadeLakeMapTarget.jadelakeMapTarget);
+            effect.Parameters["time"].SetValue(Main.GameUpdateCount / 20f);
             effect.Parameters["bubbleTex"].SetValue(JadeLakeMapTarget.jadelakeBubbleTarget);
             effect.Parameters["sampleTexture3"].SetValue(JadeLakeMapTarget.jadelakeShineTarget);
-            effect.Parameters["time"].SetValue(Main.GameUpdateCount / 20f);
+            if (Main.renderCount != 1)
+            {
+                framesSinceDraw++;
+                Vector2 offset = (jerk / -(Main.waterTarget.Size()));
+                effect.Parameters["offset"].SetValue(offset);
+                return;
+                //effect.Parameters["sampleTexture2"].SetValue(TextureAssets.MagicPixel.Value);
+            }
+            framesSinceDraw = 0;
+            oldTranslation = translation;
+            cameraDiff = Vector2.Zero;
+            oldScreenPos = Main.screenPosition;
+            jerk = Vector2.Zero;
+            Vector2 RTratio = Main.ScreenSize.ToVector2() / Main.waterTarget.Size();
 
             var graphics = Main.graphics.GraphicsDevice;
 
@@ -104,7 +131,7 @@ namespace JadeFables.Biomes.JadeLake
             graphics.SetRenderTarget(jadelakeMapTarget);
 
             graphics.Clear(Color.Transparent);
-            Main.spriteBatch.Begin(default, BlendState.Additive, default, default, default, default);
+            Main.spriteBatch.Begin(default, BlendState.Additive, default, default, default, default, Matrix.CreateTranslation(new Vector3(-translation.X, -translation.Y, 0)));
 
             DrawGradients();
 
@@ -114,7 +141,7 @@ namespace JadeFables.Biomes.JadeLake
 
             //if (Main.renderCount == 3)//
             //{
-            Main.spriteBatch.Begin(default, BlendState.Additive, SamplerState.PointWrap, default, default);
+            Main.spriteBatch.Begin(default, BlendState.Additive, SamplerState.PointWrap, default, default, default, Matrix.CreateTranslation(new Vector3(-translation.X, -translation.Y, 0)));
 
             Main.graphics.GraphicsDevice.SetRenderTarget(jadelakeShineTarget);
             Main.graphics.GraphicsDevice.Clear(Color.Transparent);
@@ -139,7 +166,7 @@ namespace JadeFables.Biomes.JadeLake
                 }
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(default, BlendState.AlphaBlend, SamplerState.PointWrap, default, default);
+            Main.spriteBatch.Begin(default, BlendState.AlphaBlend, SamplerState.PointWrap, default, default, default, Matrix.CreateTranslation(new Vector3(-translation.X, -translation.Y, 0)));
 
             Main.graphics.GraphicsDevice.SetRenderTarget(jadelakeBubbleTarget);
             Main.graphics.GraphicsDevice.Clear(Color.Transparent);

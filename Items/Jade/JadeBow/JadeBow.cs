@@ -98,7 +98,7 @@ namespace JadeFables.Items.Jade.JadeBow
             owner.direction = Math.Sign(owner.DirectionTo(Main.MouseWorld).X);
             Projectile.rotation = owner.DirectionTo(Main.MouseWorld).ToRotation();
             Projectile.velocity = Vector2.Zero;
-            Projectile.Center = owner.Center;
+            Projectile.Center = owner.MountedCenter;
 
             owner.itemRotation = Projectile.rotation;
 

@@ -47,11 +47,13 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public override bool AltFunctionUse(Player player)
         {
-            return true;
+            return false;
         }
 
         public override void UpdateInventory(Player player)
         {
+            if (Main.mouseRight)
+                popping = true;
             if (popping)
             {
                 var nearestBubble = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<KoiPopperBubble>() && n.owner == player.whoAmI).OrderBy(n => n.Distance(player.Center)).FirstOrDefault();

@@ -23,7 +23,7 @@ namespace JadeFables.Items.Fishing.Arowana
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Arowana");
+            DisplayName.SetDefault("Flying Arowana");
             Tooltip.SetDefault("Flies around your cursor, distracting nearby enemies");
         }
 

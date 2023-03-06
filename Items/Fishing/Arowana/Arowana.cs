@@ -68,7 +68,7 @@ namespace JadeFables.Items.Fishing.Arowana
             Projectile.height = 32;
             Projectile.tileCollide = false;
             Projectile.friendly = false;
-            Projectile.timeLeft = 200;
+            Projectile.timeLeft = 300;
         }
 
         public override void AI()

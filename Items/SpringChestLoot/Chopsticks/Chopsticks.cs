@@ -23,7 +23,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Chopsticks");
-			Tooltip.SetDefault("Non projectile swords have more range\nEnemies drop food more often");
+			Tooltip.SetDefault("Non projectile swords have more range");
 		}
 
 		public override void SetDefaults()
@@ -179,7 +179,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             Utils.PlotTileLine(start, end, 15, DelegateMethods.CutTiles);
         }
         }
-    public class ChopsticksNPC : GlobalNPC
+    /*public class ChopsticksNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
         public bool destroyNonFood = false;
@@ -264,5 +264,5 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
                 return true;
             return false;
         }
-    }
+    }*/
 }

@@ -113,8 +113,8 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
             if (arrows < 5)
             {
                 arrowTimer++;
-                if (arrowTimer % 60 == 0)
-                    SoundEngine.PlaySound(SoundID.MenuTick, Projectile.Center);
+               // if (arrowTimer % 60 == 0)
+                //    SoundEngine.PlaySound(SoundID.MenuTick, Projectile.Center);
             }
 
             if (shakeVal > 0)

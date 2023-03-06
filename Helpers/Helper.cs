@@ -44,6 +44,12 @@ namespace JadeFables.Helpers
                 if (input.HasFlag(value))
                     yield return value;
         }
+
+        public static string ReplaceText(ref string text, string oldText, string newText)
+        {
+            text = text.Replace(oldText, newText);
+            return text;
+        }
         public static Vector2 TileAdj => (Lighting.Mode == Terraria.Graphics.Light.LightMode.Retro || Lighting.Mode == Terraria.Graphics.Light.LightMode.Trippy) ? Vector2.Zero : Vector2.One * 12;
         public static Vector2 ScreenSize => new Vector2(Main.screenWidth, Main.screenHeight);
 

@@ -8,6 +8,8 @@
 
         public override string MapBackground => "JadeFables/Biomes/JadeLake/JadeBG";
 
+        public override string Name => "The Springs";
+
         public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.Find<ModUndergroundBackgroundStyle>("JadeFables/JadeUndergroundBackgroundStyle");
 
         public override void SetStaticDefaults()

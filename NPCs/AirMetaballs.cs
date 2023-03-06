@@ -18,7 +18,7 @@ namespace JadeFables.NPCs
     {
         public override bool Active => Main.projectile.Any(x => x.active && x.type == ModContent.ProjectileType<AirBubble>());
 
-        public override Color outlineColor => Color.Pink * 0.4f;
+        public override Color outlineColor => Color.Green * 0.8f;
 
         public virtual Color inColor => Color.Transparent;
 

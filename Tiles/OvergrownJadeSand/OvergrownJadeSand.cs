@@ -1,4 +1,5 @@
 ﻿using JadeFables.Dusts;
+using JadeFables.Tiles.JadeGrassShort;
 using JadeFables.Tiles.JadeSandstone;
 using JadeFables.Tiles.JasmineFlower;
 using Microsoft.Xna.Framework;
@@ -239,11 +240,39 @@ namespace JadeFables.Tiles.OvergrownJadeSand
 
         public override void RandomUpdate(int i, int j)
         {
-            Tile tile = Framing.GetTileSafely(i, j - 1);
-            if (!tile.HasTile && Main.rand.NextBool(500))
+            Tile tile = Framing.GetTileSafely(i, j);
+            Tile tileBelow = Framing.GetTileSafely(i, j + 1);
+            Tile tileAbove = Framing.GetTileSafely(i, j - 1);
+            Tile tileAbove2 = Framing.GetTileSafely(i, j - 2);
+
+            //try place foliage
+            if (WorldGen.genRand.NextBool(25) && !tileAbove.HasTile && !(tileBelow.LiquidType == LiquidID.Lava))
             {
-                tile.HasTile = true;
-                tile.TileType = (ushort)ModContent.TileType<JasmineFlowerTile>();
+                if (!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope)
+                {
+                    tileAbove.HasTile = true;
+                    tileAbove.TileFrameY = 0;
+                    if (Main.rand.NextBool(50))
+                    {
+                        tileAbove.TileType = (ushort)ModContent.TileType<JasmineFlowerTile>();
+                        tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(3) * 18);
+                    }
+                    else if (!tileAbove2.HasTile && Main.rand.NextBool(2))
+                    {
+                        short tileFrame = (short)(WorldGen.genRand.Next(6) * 18);
+                        WorldGen.PlaceTile(i, j - 1, ModContent.TileType<JadeGrassTall>());
+                        tileAbove.TileFrameX = tileFrame;
+                        tileAbove2.TileFrameX = tileFrame;
+                    }
+                    else
+                    {
+                        tileAbove.TileType = (ushort)ModContent.TileType<JadeGrassShort.JadeGrassShort>();
+                        tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(6) * 18);
+                    }
+                    WorldGen.SquareTileFrame(i, j + 1, true);
+                    if (Main.netMode == NetmodeID.Server)
+                        NetMessage.SendTileSquare(-1, i, j - 1, 3, TileChangeType.None);
+                }
             }
         }
     }

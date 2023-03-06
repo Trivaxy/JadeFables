@@ -99,6 +99,7 @@ namespace JadeFables.Tiles.JadeSand
             Tile tile = Framing.GetTileSafely(i, j);
             Tile tileBelow = Framing.GetTileSafely(i, j + 1);
             Tile tileAbove = Framing.GetTileSafely(i, j - 1);
+            Tile tileAbove2 = Framing.GetTileSafely(i, j - 2);
 
             //try place foliage
             if (WorldGen.genRand.NextBool(25) && !tileAbove.HasTile && !(tileBelow.LiquidType == LiquidID.Lava))
@@ -111,6 +112,13 @@ namespace JadeFables.Tiles.JadeSand
                     {
                         tileAbove.TileType = (ushort)ModContent.TileType<JasmineFlowerTile>();
                         tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(3) * 18);
+                    }
+                    else if (!tileAbove2.HasTile && Main.rand.NextBool(2))
+                    {
+                        short tileFrame = (short)(WorldGen.genRand.Next(6) * 18);
+                        WorldGen.PlaceTile(i, j - 1, ModContent.TileType<JadeGrassTall>());
+                        tileAbove.TileFrameX = tileFrame;
+                        tileAbove2.TileFrameX = tileFrame;
                     }
                     else
                     {

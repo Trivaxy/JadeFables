@@ -42,6 +42,7 @@ namespace JadeFables.NPCs
             NPC.noTileCollide = true;
             NPC.dontTakeDamage = true;
             NPC.immortal = true;
+            NPC.rarity = 1;
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)

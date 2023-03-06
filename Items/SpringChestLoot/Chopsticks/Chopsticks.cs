@@ -124,7 +124,10 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             Projectile.rotation = baseAngle + MathHelper.Lerp(-HALFSWINGARC * Owner.direction, HALFSWINGARC * Owner.direction, Progress);
 
             Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f);
-            Projectile.Center = Owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f);
+            Vector2 playerOrigin = Owner.position + Owner.fullRotationOrigin;
+            Vector2 offset = Owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f) - playerOrigin;
+            Projectile.Center = playerOrigin + offset.RotatedBy(Owner.fullRotation);
+            Projectile.rotation += Owner.fullRotation;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

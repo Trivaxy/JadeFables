@@ -81,7 +81,7 @@ namespace JadeFables.Items.Potions.SpringWater
             for (int i = 0; i < Player.MaxBuffs; i++)
             {
                 int type = player.buffType[i];
-                if (Main.debuff[type] && !BuffID.Sets.NurseCannotRemoveDebuff[type])
+                if (Main.debuff[type] && !BuffID.Sets.NurseCannotRemoveDebuff[type] && type != BuffID.TheTongue)
                     player.DelBuff(i);
             }
             base.Update(player, ref buffIndex);

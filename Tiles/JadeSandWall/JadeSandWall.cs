@@ -20,7 +20,7 @@ namespace JadeFables.Tiles.JadeSandWall
 
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
         {
-            if (i > Main.screenPosition.X / 16 && i < Main.screenPosition.X / 16 + Main.screenWidth / 16 && j > Main.screenPosition.Y / 16 && j < Main.screenPosition.Y / 16 + Main.screenHeight / 16)
+            if (i > (Main.screenPosition.X / 16) - 2 && i < (Main.screenPosition.X / 16 + Main.screenWidth / 16) + 2 && j > (Main.screenPosition.Y / 16) - 2 && j < (Main.screenPosition.Y / 16 + Main.screenHeight / 16) + 2)
             {
                 Texture2D tex = Request<Texture2D>("JadeFables/Tiles/BlossomWall/BlossomWallFlow").Value;
                 var rand = new Random(i + (j * 1000000));

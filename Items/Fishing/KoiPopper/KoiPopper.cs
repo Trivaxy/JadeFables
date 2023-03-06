@@ -64,7 +64,6 @@ namespace JadeFables.Items.Fishing.KoiPopper
                 else
                 {
                     (nearestBubble.ModProjectile as KoiPopperBubble).Pop();
-                    player.itemAnimation = player.itemTime = 2;
                 }
             }
         }

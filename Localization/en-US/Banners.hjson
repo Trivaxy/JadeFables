@@ -2,10 +2,12 @@
 
 	ItemName: {
 		PufferfishBannerItem: "Pufferfish Banner"
+		MediumKoiBannerItem: "Medium Koi Banner"
 	}
 
 	ItemTooltip: {
 		PufferfishBannerItem: "{$CommonItemTooltip.BannerBonus}Pufferfish"
+		MediumKoiBannerItem: "{$CommonItemTooltip.BannerBonus}Medium Koi"
 	}
 
 }

@@ -11,7 +11,8 @@ namespace JadeFables.Items.Potions.Dumpling
 		{
 			DisplayName.SetDefault("Dumpling");
 			Tooltip.SetDefault("Medium improvements to all stats\n'Almost unrecognizable'");
-		}
+            ItemID.Sets.DrinkParticleColors[Item.type] = new Color[1] { Color.Tan };
+        }
 
 
 		public override void SetDefaults()

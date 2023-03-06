@@ -53,10 +53,10 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
                 else if (player.controlRight)
                     player.velocity.X = 8;
 
-                Projectile.NewProjectile(player.GetSource_Accessory(Item), player.Bottom, Vector2.Zero, ModContent.ProjectileType<BullfrogLegRing>(), 0, 0, player.whoAmI, Main.rand.Next(30, 40), 1.57f + (0.78f * Math.Sign(player.velocity.X)));
+                Projectile.NewProjectileDirect(player.GetSource_Accessory(Item), player.Bottom, Vector2.Zero, ModContent.ProjectileType<BullfrogLegRingAlt>(), 0, 0, player.whoAmI).rotation = 1.57f - (0.78f * Math.Sign(player.velocity.X));
                 for (int i = 0; i < 6; i++)
                 {
-                    Dust.NewDustPerfect(player.Bottom, ModContent.DustType<BullfrogLegDust>(), new Vector2(-Math.Sign(player.velocity.X), 1).RotatedByRandom(0.4f) * Main.rand.NextFloat(0.5f, 0.75f), 0, Color.White, Main.rand.NextFloat(0.4f, 0.7f));
+                    //Dust.NewDustPerfect(player.Bottom, ModContent.DustType<BullfrogLegDust>(), new Vector2(-Math.Sign(player.velocity.X), 1).RotatedByRandom(0.4f) * Main.rand.NextFloat(0.5f, 0.75f), 0, Color.White, Main.rand.NextFloat(0.4f, 0.7f));
                 }
             }
 
@@ -170,6 +170,49 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
 
             trail?.Render(effect);
             trail2?.Render(effect);
+        }
+    }
+
+    internal class BullfrogLegRingAlt : ModProjectile
+    {
+        private Player owner => Main.player[Projectile.owner];
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Ring");
+            Main.projFrames[Projectile.type] = 7;
+        }
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.tileCollide = false;
+            Projectile.friendly = false;
+            Projectile.timeLeft = 999;
+            Projectile.penetrate = -1;
+        }
+
+        public override void AI()
+        {
+            Projectile.frameCounter++;
+            if (Projectile.frameCounter % 4 == 0)
+            {
+                Projectile.frame++;
+                if (Projectile.frame >= Main.projFrames[Projectile.type])
+                    Projectile.active = false;
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+
+            int frameHeight = tex.Height / Main.projFrames[Projectile.type];
+            Rectangle frameBox = new Rectangle(0, frameHeight * Projectile.frame, tex.Width, frameHeight);
+            SpriteEffects spriteEffects = Projectile.rotation > 1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, frameBox, lightColor * 0.7f, Projectile.rotation, new Vector2(tex.Width / 2, frameHeight / 2), Projectile.scale, spriteEffects, 0f);
+            return false;
         }
     }
 }

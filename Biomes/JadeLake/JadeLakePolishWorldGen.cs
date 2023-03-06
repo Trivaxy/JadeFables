@@ -83,7 +83,7 @@ namespace JadeFables.Biomes.JadeLake
                     Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                     Tile mainTile = Framing.GetTileSafely(i, j);
 
-                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>())
+                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>() && mainTile.BlockType == BlockType.Solid)
                     {
                         float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
                         if (noiseVal > threshhold)

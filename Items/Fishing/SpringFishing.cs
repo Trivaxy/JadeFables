@@ -18,6 +18,7 @@ namespace JadeFables.Items.Fishing.Crates
     {
         public override void CatchFish(FishingAttempt attempt, ref int itemDrop, ref int npcSpawn, ref AdvancedPopupRequest sonar, ref Vector2 sonarPosition)
         {
+            int[] springloot = new int[] { ModContent.ItemType<KoiPopper.KoiPopper>(), ModContent.ItemType<Arowana.Arowana>() };
             if (attempt.rare && Player.InModBiome<JadeLakeBiome>())
             {
                 if (attempt.crate)
@@ -28,7 +29,7 @@ namespace JadeFables.Items.Fishing.Crates
                         itemDrop = ModContent.ItemType<SpringCrate>();
                 }
                 else if (Main.rand.NextBool(4))
-                    itemDrop = ModContent.ItemType<KoiPopper.KoiPopper>();
+                    itemDrop = springloot[Main.rand.Next(springloot.Length)];
             }
         }
     }

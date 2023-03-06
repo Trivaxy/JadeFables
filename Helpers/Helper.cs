@@ -158,6 +158,22 @@ namespace JadeFables.Helpers
             return false;
         }
 
+        public static bool ClearSightline(Vector2 a, Vector2 b)
+        {
+            Vector2 dir = a - b;
+            float length = dir.Length();
+            dir.Normalize();
+
+            for (float i = 0; i < 1; i += 8 / length)
+            {
+                Vector2 point = Vector2.Lerp(a, b, i);
+                Tile tile = Framing.GetTileSafely((int)(point.X / 16), (int)(point.Y / 16));
+                if (tile.HasTile && Main.tileSolid[tile.TileType])
+                    return false;
+            }
+            return true;
+        }
+
         public static bool CheckCircularCollision(Vector2 center, int radius, Rectangle hitbox)
         {
             if (Vector2.Distance(center, hitbox.TopLeft()) <= radius) return true;

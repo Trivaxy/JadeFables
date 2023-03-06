@@ -272,7 +272,7 @@ namespace JadeFables.Items.Jade.JadeBow
         {
             if (timer-- > 0 && npc.CountsAsACritter)
             {
-                NPC target = Main.npc.Where(n => n.active && n.CanBeChasedBy() && n.Distance(npc.Center) < 900).OrderBy(n => n.Distance(npc.Center)).FirstOrDefault();
+                NPC target = Main.npc.Where(n => n.active && n.CanBeChasedBy() && Helpers.Helper.ClearSightline(n.Center, npc.Center) && n.Distance(npc.Center) < 900).OrderBy(n => n.Distance(npc.Center)).FirstOrDefault();
                 if (owner.HasMinionAttackTargetNPC)
                 {
                     target = Main.npc[owner.MinionAttackTargetNPC];

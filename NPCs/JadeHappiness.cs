@@ -23,7 +23,8 @@ namespace JadeFables.NPCs
         private static ShoppingSettings ShopHelper_GetShoppingSettings(On.Terraria.GameContent.ShopHelper.orig_GetShoppingSettings orig, ShopHelper self, Player player, NPC npc)
         {
             var val = orig(self, player, npc);
-            ModifyShoppingSettings(player, npc, ref val, self);
+            if (player.InModBiome<JadeLakeBiome>())
+                 ModifyShoppingSettings(player, npc, ref val, self);
             return val;
         }
         public static void ModifyShoppingSettings(Player player, NPC npc, ref ShoppingSettings settings, ShopHelper shopHelper)

@@ -78,7 +78,7 @@ namespace JadeFables.Items.Fishing.Arowana
             if (Projectile.Distance(Main.MouseWorld) > 40)
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(Main.MouseWorld) * 10, 0.025f);
 
-            if (Main.rand.NextBool(20))
+            if (Main.rand.NextBool(Projectile.timeLeft < 60 ? 10 : 20))
                 Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(20, 20), ModContent.DustType<GoldSparkle>(), Vector2.Zero);
 
             velStack += Projectile.velocity.Length();
@@ -87,6 +87,19 @@ namespace JadeFables.Items.Fishing.Arowana
                 ManageCache();
                 ManageTrail();
             }
+
+            if (!Main.dedServ && Projectile.timeLeft == 7)
+            {
+                foreach (Vector2 point in cache)
+                {
+                    Dust.NewDustPerfect(point + Main.rand.NextVector2Circular(23, 23), ModContent.DustType<GoldSparkle>(), Projectile.velocity.RotatedByRandom(0.7f) * 0.2f);
+                }
+            }
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -124,9 +137,12 @@ namespace JadeFables.Items.Fishing.Arowana
 
         private void ManageTrail()
         {
+            Color goldEnd = Color.Gold;
+            goldEnd.A = 0;
             trail = trail ?? new Trail(Main.instance.GraphicsDevice, NUMPOINTS, new TriangularTip(2), factor => 24, factor =>
             {
-                return Lighting.GetColor((int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16));
+                float transparency = Math.Min(1, Projectile.timeLeft / 60f);
+                return Color.Lerp(goldEnd, Lighting.GetColor((int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)), transparency) * (float)Math.Sqrt(transparency);
             });
 
             trail.Positions = cache.ToArray();

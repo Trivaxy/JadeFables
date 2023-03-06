@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Linq;
 using System.Collections.Generic;
 using Terraria;
@@ -207,4 +207,4 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
             }
         }
     }
-}
+}*/

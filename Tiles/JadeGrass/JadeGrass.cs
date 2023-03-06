@@ -44,6 +44,14 @@ namespace JadeFables.Tiles.JadeGrass
                 Projectile.NewProjectile(new EntitySource_Misc("Jade Grass"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeGrassProj>(), 0, 0);
             }
         }
+
+        public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
+        {
+            Tile tileBelow = Framing.GetTileSafely(i, j + 1);
+            if (!tileBelow.HasTile || tileBelow.IsHalfBlock || tileBelow.TopSlope || (tileBelow.TileType != ModContent.TileType<Tiles.JadeSand.JadeSandTile>() && tileBelow.TileType != ModContent.TileType<Tiles.OvergrownJadeSand.OvergrownJadeSandTile>()))
+                WorldGen.KillTile(i, j);
+            return true;
+        }
     }
 
     public class JadeGrassItem : ModItem

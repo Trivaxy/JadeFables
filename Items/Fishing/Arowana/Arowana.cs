@@ -81,6 +81,9 @@ namespace JadeFables.Items.Fishing.Arowana
             if (Main.rand.NextBool(Projectile.timeLeft < 60 ? 10 : 20))
                 Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(20, 20), ModContent.DustType<GoldSparkle>(), Vector2.Zero);
 
+            if (Main.rand.NextBool(Projectile.timeLeft < 60 ? 5 : 10))
+                Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(20, 20), DustID.GoldCoin, -Projectile.velocity.RotatedByRandom(0.5f) * 0.2f);
+
             velStack += Projectile.velocity.Length();
             if (!Main.dedServ)
             {

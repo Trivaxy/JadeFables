@@ -73,6 +73,9 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
         private float shakeVal = 0;
 
+        private float xDistanceTravelled;
+        private int wheelFrame;
+
         public override void Load()
         {
             for (int j = 1; j <= 5; j++)
@@ -152,6 +155,13 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
                     pullOffsetX = Projectile.position.X - owner.Center.X;
                 }
                 owner.velocity.X *= 0.9f;
+                xDistanceTravelled += Math.Abs(Projectile.position.X - (owner.Center.X + pullOffsetX));
+                if (xDistanceTravelled > 8)
+                {
+                    xDistanceTravelled = 0;
+                    wheelFrame++;
+                    wheelFrame %= 4;
+                }
                 Projectile.position.X = owner.Center.X + pullOffsetX;
                 if (owner.itemAnimation <= 0)
                     owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, owner.DirectionTo(Projectile.Center).ToRotation() - 1.57f);
@@ -251,7 +261,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
             float rotation = Projectile.rotation - (direction == -1 ? 3.14f : 0) + (MathF.Sin(shakeVal * 12.56f) * 0.2f * (shakeVal));
 
-            Main.spriteBatch.Draw(backWheel, Projectile.position + origin + new Vector2(0, Projectile.gfxOffY) - Main.screenPosition, frame, lightColor, 0, origin, Projectile.scale, direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(backWheel, Projectile.position + origin + new Vector2(0, Projectile.gfxOffY) - Main.screenPosition, new Rectangle(0, backWheel.Height / 4 * wheelFrame, backWheel.Width, backWheel.Height / 4), lightColor, 0, origin, Projectile.scale, direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
             for (int i = arrows + 2; i >= 0; i--)
             {
                 frame = new Rectangle(0, frameHeight * (Main.projFrames[Projectile.type] - i), tex.Width, frameHeight);
@@ -271,9 +281,9 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
         {
             Color lightColor = Lighting.GetColor((int)Projectile.Center.X / 16, (int)Projectile.Center.Y / 16);
             Texture2D frontWheel = ModContent.Request<Texture2D>(Texture + "_Frontwheel").Value;
-            int frameHeight = frontWheel.Height / Main.projFrames[Projectile.type];
+            int frameHeight = frontWheel.Height / 4;
 
-            Rectangle frame = new Rectangle(0, frameHeight * Projectile.frame, frontWheel.Width, frameHeight);
+            Rectangle frame = new Rectangle(0, frameHeight * wheelFrame, frontWheel.Width, frameHeight);
 
             Vector2 origin = new Vector2(22, 42);
             if (direction == 1)

@@ -50,11 +50,13 @@ namespace JadeFables.Items.Fishing.Arowana
 
     internal class ArowanaProj : ModProjectile
     {
-        private readonly int NUMPOINTS = 20;
+        private readonly int NUMPOINTS = 30;
 
         public Player owner => Main.player[Projectile.owner];
         private List<Vector2> cache;
         private Trail trail;
+
+        private float velStack = 0;
 
         public override void SetStaticDefaults()
         {
@@ -77,6 +79,8 @@ namespace JadeFables.Items.Fishing.Arowana
 
             if (Main.rand.NextBool(20))
                 Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(20, 20), ModContent.DustType<GoldSparkle>(), Vector2.Zero);
+
+            velStack += Projectile.velocity.Length();
             if (!Main.dedServ)
             {
                 ManageCache();
@@ -102,7 +106,15 @@ namespace JadeFables.Items.Fishing.Arowana
 
 
             }
-            cache.Add(Projectile.Center);
+            if (velStack > 5)
+            {
+                cache.Add(Projectile.Center);
+            }
+            while (velStack > 5)
+            {
+                velStack -= 5;
+                
+            }
             while (cache.Count > NUMPOINTS)
             {
                 cache.RemoveAt(0);

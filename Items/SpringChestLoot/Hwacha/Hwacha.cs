@@ -110,8 +110,12 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
         public override void AI()
         {
-			if (arrows < 5)
-				arrowTimer++;
+            if (arrows < 5)
+            {
+                arrowTimer++;
+                if (arrowTimer % 60 == 0)
+                    SoundEngine.PlaySound(SoundID.MenuTick, Projectile.Center);
+            }
 
             if (shakeVal > 0)
             {

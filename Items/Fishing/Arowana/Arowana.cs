@@ -74,6 +74,9 @@ namespace JadeFables.Items.Fishing.Arowana
         public override void AI()
         {
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(Main.MouseWorld) * 7, 0.05f);
+
+            if (Main.rand.NextBool(20))
+                Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(20, 20), ModContent.DustType<GoldSparkle>(), Vector2.Zero);
             if (!Main.dedServ)
             {
                 ManageCache();

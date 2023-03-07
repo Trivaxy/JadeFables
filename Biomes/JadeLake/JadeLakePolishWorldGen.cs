@@ -7,6 +7,7 @@ using JadeFables.Tiles.JadeLantern;
 using JadeFables.Tiles.JadeOre;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeSandstone;
+using JadeFables.Tiles.JadeSandWall;
 using JadeFables.Tiles.JadeWaterfall;
 using JadeFables.Tiles.JasmineFlower;
 using JadeFables.Tiles.OvergrownJadeSand;
@@ -42,7 +43,10 @@ namespace JadeFables.Biomes.JadeLake
             PlaceJadeChests(worldRect, 40);
 
             //Places blossom walls
-            BlossomWallPopulation(worldRect, 0.03f, 5f, 3, 5, 10, 10f, 3);
+            foreach(Rectangle rect in UpperIslandRects)
+                BlossomWallPopulation(rect, 0.03f, 5f, 3, 5, 10, 10f, 3);
+
+            BlossomWallPopulationInPillars(worldRect, 50);
 
             //Places jade grass
             foreach (Rectangle rect in LowerIslandRects)
@@ -126,7 +130,6 @@ namespace JadeFables.Biomes.JadeLake
                 {
                     Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                     Tile mainTile = Framing.GetTileSafely(i, j);
-
                     if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>() && mainTile.BlockType == BlockType.Solid)
                     {
                         if (WorldGen.genRand.NextBool(chance))
@@ -175,7 +178,7 @@ namespace JadeFables.Biomes.JadeLake
                         float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
                         if (noiseVal > threshhold && WorldGen.genRand.NextBool(chance))
                         {
-                            for (float rad = 0; rad < 6.28f; rad+= 0.03f)
+                            for (float rad = 0; rad < 6.28f; rad += 0.03f)
                             {
                                 float x = i + (float)Math.Cos(rad);
                                 float y = j + (float)Math.Sin(rad);
@@ -183,13 +186,30 @@ namespace JadeFables.Biomes.JadeLake
                                 for (int h = 0; h < height; h++)
                                 {
                                     x = i + ((MathF.Cos(rad) * h) / xShrink);
-                                    y =j + (MathF.Sin(rad) * h);
-                                    Tile wallTile = Framing.GetTileSafely((int)x,(int)y);
+                                    y = j + (MathF.Sin(rad) * h);
+                                    Tile wallTile = Framing.GetTileSafely((int)x, (int)y);
                                     if (!wallTile.HasTile && wallTile.WallType == 0)
                                         wallTile.WallType = (ushort)ModContent.WallType<BlossomWall>();
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        public static void BlossomWallPopulationInPillars(Rectangle rect, int chance)
+        {
+            FastNoise fastnoise = new FastNoise(WorldGen.genRand.Next(0, 10000));
+            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            {
+                for (int j = rect.Top + 1; j < rect.Top + rect.Height; j++)
+                {
+                    Tile mainTile = Framing.GetTileSafely(i, j);
+
+                    if (mainTile.WallType == ModContent.WallType<JadeSandWall>() && Main.rand.NextBool(chance))
+                    {
+                        mainTile.WallType = (ushort)ModContent.WallType<JadeSandBlossomWall>();
                     }
                 }
             }

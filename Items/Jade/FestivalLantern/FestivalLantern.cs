@@ -62,11 +62,17 @@ namespace JadeFables.Items.Jade.FestivalLantern
             recipe.Register();
         }
 
+        public override bool CanUseItem(Player player)
+        {
+            if (LanternNight.GenuineLanterns || LanternNight.NextNightIsLanternNight)
+                return false;
+            return true;
+        }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             for (int i = 0; i < 4; i++)
             {
-                Projectile.NewProjectile(source, position, ((i * -0.78f) - 0.4f).ToRotationVector2() * 3, type, damage, knockback, player.whoAmI, 100 + (15 * i));
+                Projectile.NewProjectile(source, position, ((i * -0.78f) - 0.4f).ToRotationVector2().RotatedByRandom(0.3f) * Main.rand.NextFloat(1.5f, 3f), type, damage, knockback, player.whoAmI, 100 + (15 * i));
             }
             return false;
         }

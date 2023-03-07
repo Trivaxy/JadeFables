@@ -100,7 +100,7 @@ namespace JadeFables.Items.Jade.FestivalLantern
                 if (timer == Projectile.ai[0])
                 {
                     Projectile.velocity = -Vector2.UnitY * 4;
-                    SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+                    SoundEngine.PlaySound(SoundID.Item110, Projectile.Center);
                 }
             }
             else

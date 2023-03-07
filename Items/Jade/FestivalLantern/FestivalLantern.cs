@@ -79,7 +79,7 @@ namespace JadeFables.Items.Jade.FestivalLantern
             Projectile.width = 24;
             Projectile.height = 24;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 130;
+            Projectile.timeLeft = 160;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
@@ -134,7 +134,7 @@ namespace JadeFables.Items.Jade.FestivalLantern
 
         public override void Kill(int timeLeft)
         {
-            if (Projectile.ai[0] == 80)
+            if (Projectile.ai[0] == 95)
             {
                 if (Main.dayTime)
                 {

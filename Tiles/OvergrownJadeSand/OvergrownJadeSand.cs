@@ -1,5 +1,6 @@
 ﻿using JadeFables.Dusts;
 using JadeFables.Tiles.JadeGrassShort;
+using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeSandstone;
 using JadeFables.Tiles.JasmineFlower;
 using Microsoft.Xna.Framework;
@@ -20,7 +21,7 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             MinPick = 10;
             DustType = DustType<Dusts.JadeSandDust>();
             HitSound = SoundID.Dig;
-            ItemDrop = ItemType<OvergrownJadeSandItem>();
+            ItemDrop = ItemType<JadeGrassSeeds>();
             Main.tileMerge[TileID.Stone][Type] = true;
             Main.tileBrick[Type] = true;
             Main.tileSolid[Type] = true;
@@ -277,17 +278,17 @@ namespace JadeFables.Tiles.OvergrownJadeSand
         }
     }
 
-    public class OvergrownJadeSandItem : ModItem
+    public class JadeGrassSeeds : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Overgrown Spring Sand");
+            DisplayName.SetDefault("Spring Grass Seeds");
         }
 
         public override void SetDefaults()
         {
-            Item.width = 16;
-            Item.height = 16;
+            Item.width = 14;
+            Item.height = 14;
             Item.maxStack = 999;
             Item.useTurn = true;
             Item.autoReuse = true;
@@ -297,7 +298,13 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             Item.consumable = true;
             Item.createTile = TileType<OvergrownJadeSandTile>();
             Item.rare = ItemRarityID.White;
-            Item.value = 5;
+            Item.value = 500;
+        }
+        public override bool CanUseItem(Player player)
+        {
+            if (Main.tile[Player.tileTargetX, Player.tileTargetY].TileType != TileType<JadeSandTile>() || !Helpers.Helper.TileInRange(player, Item))
+                return false;
+            return base.CanUseItem(player);
         }
     }
 }

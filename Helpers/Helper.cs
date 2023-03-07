@@ -71,15 +71,6 @@ namespace JadeFables.Helpers
 
         public static Vector3 ScreenCoord(this Vector3 vector) => new Vector3(-1 + vector.X / Main.screenWidth * 2, (-1 + vector.Y / Main.screenHeight * 2f) * -1, 0);
 
-        public static Color MoltenVitricGlow(float time)
-        {
-            Color MoltenGlowc = Color.White;
-            if (time > 30 && time < 60)
-                MoltenGlowc = Color.Lerp(Color.White, Color.Orange, Math.Min((time - 30f) / 20f, 1f));
-            else if (time >= 60)
-                MoltenGlowc = Color.Lerp(Color.Orange, Color.Lerp(Color.Red, Color.Transparent, Math.Min((time - 60f) / 50f, 1f)), Math.Min((time - 60f) / 30f, 1f));
-            return MoltenGlowc;
-        }
         public static float RotationDifference(float rotTo, float rotFrom)
         {
             return ((((rotTo - rotFrom) % 6.28f) + 9.42f) % 6.28f) - 3.14f;
@@ -406,6 +397,18 @@ namespace JadeFables.Helpers
             style.MaxInstances = 0;
 
             return SoundEngine.PlaySound(style, position);
+        }
+        public static bool TileInRange(Player player, Item item)
+        {
+            int i = Player.tileTargetX;
+            int j = Player.tileTargetY;
+            int rangeX = Player.tileRangeX + item.tileBoost;
+            int rangeY = Player.tileRangeY + item.tileBoost;
+            if (player.position.X / 16f - rangeX <= i && (player.position.X + player.width) / 16f + rangeX - 1f >= (float)i && player.position.Y / 16f - rangeY <= (float)j) // i dont know if the float cast does anything but im too scared to change it
+            {
+                return (player.position.Y + player.height) / 16f + rangeY - 2f >= (float)j;
+            }
+            return false;
         }
     }
 }

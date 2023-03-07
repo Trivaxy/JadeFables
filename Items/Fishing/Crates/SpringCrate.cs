@@ -106,7 +106,7 @@ namespace JadeFables.Items.Fishing.Crates
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>()));
+            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>(), ItemType<Jade.FestivalLantern.FestivalLantern>()));
             itemLoot.Add(goldCoin);
             itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(7, ores)));
             itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(4, bars)));
@@ -157,7 +157,7 @@ namespace JadeFables.Items.Fishing.Crates
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>()));
+            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>(), ItemType<Jade.FestivalLantern.FestivalLantern>()));
             itemLoot.Add(ItemDropRule.Common(4, ModContent.ItemType<JadeFountainItem>()));
             itemLoot.Add(goldCoin);
             itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(14, ores), new OneFromRulesRule(14, hardmodeOres)));

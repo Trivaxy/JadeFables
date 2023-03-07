@@ -1,6 +1,3 @@
-//TODO:
-//Launch sound effect
-
 using JadeFables.Items.Potions.Heartbeat;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
@@ -53,15 +50,6 @@ namespace JadeFables.Items.Jade.FestivalLantern
             Item.shootSpeed = 6;
         }
 
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.Silk, 6);
-            recipe.AddIngredient<JadeChunk.JadeChunk>(8);
-            recipe.AddTile(TileID.Anvils);
-            recipe.Register();
-        }
-
         public override bool CanUseItem(Player player)
         {
             if (LanternNight.GenuineLanterns || LanternNight.NextNightIsLanternNight)
@@ -72,7 +60,7 @@ namespace JadeFables.Items.Jade.FestivalLantern
         {
             for (int i = 0; i < 4; i++)
             {
-                Projectile.NewProjectile(source, position, ((i * -0.78f) - 0.4f).ToRotationVector2().RotatedByRandom(0.3f) * Main.rand.NextFloat(1.5f, 3f), type, damage, knockback, player.whoAmI, 100 + (15 * i));
+                Projectile.NewProjectile(source, position, ((i * -0.78f) - 0.4f).ToRotationVector2().RotatedByRandom(0.3f) * Main.rand.NextFloat(1.5f, 3f), type, damage, knockback, player.whoAmI, 50 + (15 * i));
             }
             return false;
         }
@@ -91,7 +79,7 @@ namespace JadeFables.Items.Jade.FestivalLantern
             Projectile.width = 24;
             Projectile.height = 24;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 300;
+            Projectile.timeLeft = 130;
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
@@ -111,13 +99,14 @@ namespace JadeFables.Items.Jade.FestivalLantern
                 Projectile.velocity *= 0.98f;
                 if (timer == Projectile.ai[0])
                 {
-                    Projectile.velocity = -Vector2.UnitY;
+                    Projectile.velocity = -Vector2.UnitY * 4;
+                    SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
                 }
             }
             else
             {
                 Projectile.velocity = Projectile.velocity.RotatedByRandom(0.07f);
-                Projectile.velocity *= 1.02f;
+                Projectile.velocity *= 1.05f;
                 for (int i = 0; i < 4; i++)
                 {
                     var pos = (Projectile.Center) + (Projectile.velocity * Main.rand.NextFloat(2));
@@ -145,16 +134,16 @@ namespace JadeFables.Items.Jade.FestivalLantern
 
         public override void Kill(int timeLeft)
         {
-            if (Projectile.ai[0] == 100)
+            if (Projectile.ai[0] == 80)
             {
                 if (Main.dayTime)
                 {
-                    Main.NewText("The festival awaits!", new Color(175, 75, 255));
+                    Main.NewText("The festival awaits!", Color.Orange);
                     LanternNight.NextNightIsLanternNight = true;
                 }
                 else
                 {
-                    Main.NewText("Let the festival begin!", new Color(175, 75, 255));
+                    Main.NewText("Let the festival begin!", Color.Orange);
                     LanternNight.GenuineLanterns = true;
                 }
             }

@@ -231,7 +231,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                     }
                     waterfallTiles.Add((x, y));
 
-                    if (tile.LiquidAmount == 255 && !tile.HasTile)
+                    if (tile.LiquidAmount == 255 && (!tile.HasTile || !Main.tileSolid[tile.TileType]))
                     {
                         Vector2 velocity = Vector2.UnitY.RotatedByRandom(0.1f) * -Main.rand.NextFloat(1f, 1.5f);
                         Vector2 pos = new Vector2(Projectile.Center.X + (j * 16), Projectile.Center.Y + (i * 16)) + new Vector2(8,8) + Main.rand.NextVector2Circular(4, 12);

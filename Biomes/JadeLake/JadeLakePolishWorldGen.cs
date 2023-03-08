@@ -1,7 +1,7 @@
 ﻿using JadeFables.Dusts;
 using JadeFables.Helpers.FastNoise;
 using JadeFables.Tiles.BlossomWall;
-using JadeFables.Tiles.JadeGrass;
+using JadeFables.Tiles.JadeSeaweed;
 using JadeFables.Tiles.JadeGrassShort;
 using JadeFables.Tiles.JadeLantern;
 using JadeFables.Tiles.JadeOre;
@@ -50,7 +50,7 @@ namespace JadeFables.Biomes.JadeLake
 
             //Places jade grass
             foreach (Rectangle rect in LowerIslandRects)
-                JadeGrassPopulation(rect, 0.1f, 5f);
+                JadeSeaweedPopulation(rect, 0.1f, 5f);
 
             //Places bamboo
             BambooPopulation(worldRect, 10, 10f);
@@ -74,10 +74,10 @@ namespace JadeFables.Biomes.JadeLake
             PlaceOvergrownSand(worldRect, 0.1f, 2f);
         }
 
-        public static void JadeGrassPopulation(Rectangle rect, float threshhold, float noiseFreq)
+        public static void JadeSeaweedPopulation(Rectangle rect, float threshhold, float noiseFreq)
         {
             //Debug method to wipe jade grass
-            Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<JadeGrassProj>()).ToList().ForEach(n => n.active = false);
+            Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<JadeSeaweedProj>()).ToList().ForEach(n => n.active = false);
 
             FastNoise fastnoise = new FastNoise(WorldGen.genRand.Next(0, 1000000));
             for (int i = rect.Left; i < rect.Left + rect.Width; i++)
@@ -93,7 +93,7 @@ namespace JadeFables.Biomes.JadeLake
                         if (noiseVal > threshhold)
                         {
                             tileAbove.HasTile = true;
-                            tileAbove.TileType = (ushort)ModContent.TileType<JadeGrassTile>();
+                            tileAbove.TileType = (ushort)ModContent.TileType<JadeSeaweedTile>();
                         }
                     }
                 }

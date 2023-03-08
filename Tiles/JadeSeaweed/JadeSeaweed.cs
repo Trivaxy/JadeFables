@@ -13,9 +13,9 @@ using Terraria.ObjectData;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.OvergrownJadeSand;
 
-namespace JadeFables.Tiles.JadeGrass
+namespace JadeFables.Tiles.JadeSeaweed
 {
-    public class JadeGrassTile : ModTile
+    public class JadeSeaweedTile : ModTile
     {
         public override void SetStaticDefaults()
         {
@@ -37,16 +37,16 @@ namespace JadeFables.Tiles.JadeGrass
             TileObjectData.addTile(Type);
 
             ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Spring Grass");
+            name.SetDefault("Spring Seaweed");
             AddMapEntry(new Color(207, 160, 118), name);
         }
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
-            var existingGrass = Main.projectile.Where(n => n.active && n.Center == new Vector2(i, j) * 16 && n.type == ModContent.ProjectileType<JadeGrassProj>()).FirstOrDefault();
-            if (existingGrass == default)
+            var existingSeaweed = Main.projectile.Where(n => n.active && n.Center == new Vector2(i, j) * 16 && n.type == ModContent.ProjectileType<JadeSeaweedProj>()).FirstOrDefault();
+            if (existingSeaweed == default)
             {
-                Projectile.NewProjectile(new EntitySource_Misc("Jade Grass"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeGrassProj>(), 0, 0);
+                Projectile.NewProjectile(new EntitySource_Misc("Spring Seaweed"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeSeaweedProj>(), 0, 0);
             }
         }
 
@@ -59,11 +59,11 @@ namespace JadeFables.Tiles.JadeGrass
         }
     }
 
-    public class JadeGrassItem : ModItem
+    public class JadeSeaweedItem : ModItem
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Grass");
+            DisplayName.SetDefault("Spring Seaweed");
         }
 
         public override void SetDefaults()
@@ -77,15 +77,15 @@ namespace JadeFables.Tiles.JadeGrass
             Item.useTime = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
-            Item.createTile = TileType<JadeGrassTile>();
+            Item.createTile = TileType<JadeSeaweedTile>();
             Item.rare = ItemRarityID.White;
             Item.value = 5;
         }
     }
 
-    public class JadeGrassProj : ModProjectile
+    public class JadeSeaweedProj : ModProjectile
     {
-        public class JadeGrassBlade
+        public class JadeSeaweedBlade
         {
             public float originalRotation;
 
@@ -127,14 +127,14 @@ namespace JadeFables.Tiles.JadeGrass
                 rotation = MathHelper.Lerp(rotation, originalRotation + (0.15f * (float)Math.Sin(sway)), springiness);
             }
 
-            public JadeGrassBlade() { }
+            public JadeSeaweedBlade() { }
         }
 
-        public List<JadeGrassBlade> blades = new List<JadeGrassBlade>();
+        public List<JadeSeaweedBlade> blades = new List<JadeSeaweedBlade>();
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Grass");
+            DisplayName.SetDefault("Spring Seaweed");
         }
 
         public override void SetDefaults()
@@ -152,7 +152,7 @@ namespace JadeFables.Tiles.JadeGrass
             for (int i = 0; i < 3; i++)
             {
                 int texNum = Main.rand.Next(1, 9);
-                JadeGrassBlade blade = new JadeGrassBlade();
+                JadeSeaweedBlade blade = new JadeSeaweedBlade();
                 blade.originalRotation = Main.rand.NextFloat(-0.2f, 0.2f) - 1.57f;
                 blade.texturePath = Texture + texNum.ToString();
                 switch (texNum)
@@ -203,7 +203,7 @@ namespace JadeFables.Tiles.JadeGrass
             Projectile.velocity = Vector2.Zero;
 
             Tile tile = Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)];
-            if (tile.HasTile && tile.TileType == ModContent.TileType<JadeGrassTile>())
+            if (tile.HasTile && tile.TileType == ModContent.TileType<JadeSeaweedTile>())
                 Projectile.timeLeft = 2;
         }
     }

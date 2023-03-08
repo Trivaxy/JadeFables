@@ -106,7 +106,9 @@ namespace JadeFables.Items.Fishing.Crates
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>(), ItemType<Jade.FestivalLantern.FestivalLantern>()));
+            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>()));
+            itemLoot.Add(ItemDropRule.Common(4, ItemType<JadeFountainItem>()));
+            itemLoot.Add(ItemDropRule.Common(6, ItemType<Jade.FestivalLantern.FestivalLantern>()));
             itemLoot.Add(goldCoin);
             itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(7, ores)));
             itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(4, bars)));

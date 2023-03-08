@@ -119,7 +119,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
                     item.ModItem.Shoot(Player, (EntitySource_ItemUse_WithAmmo)Player.GetSource_ItemUse_WithPotentialAmmo(item, usedAmmoItemId), Player.Center, velocity, projToShoot, damage, knockBack);
                 }
                 else
-                    Chopsticks.playerContentReader(Player, Player.whoAmI, item, item.damage);
+                    Chopsticks.playerItemCheckShoot(Player, Player.whoAmI, item, item.damage);
 
                 return false;
             }

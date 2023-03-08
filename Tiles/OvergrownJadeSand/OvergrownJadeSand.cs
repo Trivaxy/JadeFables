@@ -248,15 +248,15 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             Tile tileAbove = Framing.GetTileSafely(i, j - 1);
             Tile tileAbove2 = Framing.GetTileSafely(i, j - 2);
 
-            //try place foliage 
+            //try place foliage
             if (WorldGen.genRand.NextBool(25) && !tileAbove.HasTile && !(tileBelow.LiquidType == LiquidID.Lava))
             {
                 if (!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope)
                 {
-                    tileAbove.HasTile = true;
                     tileAbove.TileFrameY = 0;
                     if (Main.rand.NextBool(50))
                     {
+                        tileAbove.HasTile = true;
                         tileAbove.TileType = (ushort)ModContent.TileType<JasmineFlowerTile>();
                         tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(3) * 18);
                     }
@@ -266,9 +266,11 @@ namespace JadeFables.Tiles.OvergrownJadeSand
                         WorldGen.PlaceTile(i, j - 1, ModContent.TileType<JadeGrassTall>());
                         tileAbove.TileFrameX = tileFrame;
                         tileAbove2.TileFrameX = tileFrame;
+                        tileAbove2.TileFrameY = 0;
                     }
                     else
                     {
+                        tileAbove.HasTile = true;
                         tileAbove.TileType = (ushort)ModContent.TileType<JadeGrassShort.JadeGrassShort>();
                         tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(6) * 18);
                     }

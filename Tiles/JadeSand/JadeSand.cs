@@ -106,10 +106,10 @@ namespace JadeFables.Tiles.JadeSand
             {
                 if (!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope)
                 {
-                    tileAbove.HasTile = true;
                     tileAbove.TileFrameY = 0;
                     if (Main.rand.NextBool(50))
                     {
+                        tileAbove.HasTile = true;
                         tileAbove.TileType = (ushort)ModContent.TileType<JasmineFlowerTile>();
                         tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(3) * 18);
                     }
@@ -119,9 +119,11 @@ namespace JadeFables.Tiles.JadeSand
                         WorldGen.PlaceTile(i, j - 1, ModContent.TileType<JadeGrassTall>());
                         tileAbove.TileFrameX = tileFrame;
                         tileAbove2.TileFrameX = tileFrame;
+                        tileAbove2.TileFrameY = 0;
                     }
                     else
                     {
+                        tileAbove.HasTile = true;
                         tileAbove.TileType = (ushort)ModContent.TileType<JadeGrassShort.JadeGrassShort>();
                         tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(6) * 18);
                     }

@@ -198,7 +198,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
             Lighting.AddLight(Projectile.Center, color.ToVector3());
             for (int i = 0; i < 4; i++)
             {
-                var pos = (Projectile.Center + new Vector2(9, 9)) - (Projectile.velocity * Main.rand.NextFloat(2));
+                var pos = (Projectile.Center) - (Projectile.velocity * Main.rand.NextFloat(2));
                 Dust dust = Dust.NewDustPerfect(pos, ModContent.DustType<FireworkPackDust1>(), Vector2.Normalize(-Projectile.velocity).RotatedByRandom(0.6f) * Main.rand.NextFloat(3.5f), 0, AdjacentColor());
                 dust.scale = Main.rand.NextFloat(0.15f, 0.35f) * 0.75f;
                 dust.alpha = Main.rand.Next(50);
@@ -207,14 +207,14 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
             for (int j = 0; j < 1; j++)
             {
-                var pos = (Projectile.Center + new Vector2(9, 9)) - (Projectile.velocity * Main.rand.NextFloat(2));
+                var pos = (Projectile.Center) - (Projectile.velocity * Main.rand.NextFloat(2));
                 Dust dust2 = Dust.NewDustPerfect(pos, ModContent.DustType<FireworkPackDust2>(), Vector2.Normalize(-Projectile.velocity).RotatedByRandom(3.0f) * Main.rand.NextFloat(5.5f), 0, AdjacentColor());
                 dust2.scale = Main.rand.NextFloat(0.1f, 0.25f) * 0.75f;
                 dust2.alpha = Main.rand.Next(50);
                 dust2.rotation = Main.rand.NextFloatDirection();
             }
 
-            var pos2 = (Projectile.Center + new Vector2(9, 9)) - (Projectile.velocity * Main.rand.NextFloat(2));
+            var pos2 = (Projectile.Center) - (Projectile.velocity * Main.rand.NextFloat(2));
             Dust dust3 = Dust.NewDustPerfect(pos2, ModContent.DustType<FireworkPackGlowDust>(), Vector2.Normalize(-Projectile.velocity).RotatedByRandom(2.6f) * Main.rand.NextFloat(3.5f), 0, AdjacentColor());
             dust3.scale = Main.rand.NextFloat(0.25f, 1f) * 0.5f;
             dust3.alpha = Main.rand.Next(50);

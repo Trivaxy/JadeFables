@@ -1,10 +1,7 @@
-﻿//TODO
-//Bestiary
-//Banners
-//Balance
-//Gores
-//Clean up scared transition
-
+﻿//TO ALL WHO OPEN THIS FILE:
+//This snail is cursed. Spare yourself. Do not go further
+//When I wrote this code, only I understood it. It has been months, I no longer understand it.
+//If you do venture forward, good fucking luck
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;

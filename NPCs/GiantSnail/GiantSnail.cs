@@ -28,6 +28,7 @@ using JadeFables.Helpers;
 using static System.Formats.Asn1.AsnWriter;
 using JadeFables.Biomes.JadeLake;
 using Terraria.GameContent.Bestiary;
+using JadeFables.Tiles.Banners;
 using Terraria.GameContent.ItemDropRules;
 
 namespace JadeFables.NPCs.GiantSnail
@@ -66,6 +67,18 @@ namespace JadeFables.NPCs.GiantSnail
         private bool flippedOnce = false;
 
         private int flipCountdown = 0;
+
+        public override bool IsLoadingEnabled(Mod mod)
+        {
+            //Since this NPC is just about to be loaded and assigned its type, the current count BEFORE the load will be its type, which is why we can do this
+            int npcType = NPCLoader.NPCCount;
+
+            DefaultNPCBanner.AddBannerAndItemForNPC(mod, npcType, "GiantSnail", out int bannerType);
+            Banner = npcType;
+            BannerItem = bannerType;
+
+            return true;
+        }
 
         public override void SetStaticDefaults()
         {

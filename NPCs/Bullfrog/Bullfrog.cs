@@ -52,16 +52,17 @@ namespace JadeFables.NPCs.Bullfrog
 
         private float speed;
 
-        /*public override bool IsLoadingEnabled(Mod mod) {
+        public override bool IsLoadingEnabled(Mod mod)
+        {
             //Since this NPC is just about to be loaded and assigned its type, the current count BEFORE the load will be its type, which is why we can do this
             int npcType = NPCLoader.NPCCount;
-           
-            DefaultNPCBanner.AddBannerAndItemForNPC(mod, npcType, "Pufferfish", out int bannerType);
+
+            DefaultNPCBanner.AddBannerAndItemForNPC(mod, npcType, "Bullfrog", out int bannerType);
             Banner = npcType;
             BannerItem = bannerType;
 
             return true;
-        }*/
+        }
 
         public override void SetStaticDefaults()
         {

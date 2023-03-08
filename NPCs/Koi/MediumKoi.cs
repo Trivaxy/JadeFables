@@ -1,6 +1,4 @@
 ﻿//TODO
-//Bestiary
-//Banners
 //Balance
 //Gores
 //Better sound effects

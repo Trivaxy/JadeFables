@@ -203,6 +203,8 @@ namespace JadeFables.Items.Fishing.Arowana
 
         public override bool PreAI(NPC npc)
         {
+            if (npc.boss)
+                return true;
             Projectile arowana = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<ArowanaProj>()).OrderBy(n => n.Distance(npc.Center)).FirstOrDefault();
             if (arowana != default)
             {

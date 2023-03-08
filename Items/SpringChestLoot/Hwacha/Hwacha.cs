@@ -67,7 +67,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
         bool pulling;
         float pullOffsetX;
 
-        Vector2 arcDir = Vector2.One;
+        Vector2 arcDir = new Vector2(1, 0);
 
         Player owner => Main.player[Projectile.owner];
 

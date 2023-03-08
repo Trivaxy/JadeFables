@@ -63,7 +63,7 @@ namespace JadeFables.Tiles.JasmineFlower
 		public override void SetDefaults()
 		{
 			Item.width = 24;
-			Item.height = 32;
+			Item.height = 24;
 			Item.maxStack = 30; //Change this when Labor of Love drops?
 
 			Item.value = Item.sellPrice(silver: 30);

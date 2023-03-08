@@ -296,9 +296,9 @@ namespace JadeFables.Tiles.OvergrownJadeSand
         {
             if (player.flowerBoots)
             {
-                Tile tile = Framing.GetTileSafely(i, j);
                 int i = (int)(player.Center.X / 16);
                 int j = (int)(player.Bottom.Y / 16);
+                Tile tile = Framing.GetTileSafely(i, j);
                 Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                 Tile tileAbove2 = Framing.GetTileSafely(i, j - 2);
 

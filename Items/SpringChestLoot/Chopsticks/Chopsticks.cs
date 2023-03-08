@@ -15,12 +15,25 @@ using Terraria.GameContent;
 using static Humanizer.In;
 using static System.Net.Mime.MediaTypeNames;
 using Terraria.Enums;
+using System.Reflection;
+using Microsoft.Xna.Framework.Content;
+using System.IO;
 
 namespace JadeFables.Items.SpringChestLoot.Chopsticks
 {
 	public class Chopsticks : ModItem
 	{
-		public override void SetStaticDefaults()
+        public static MethodInfo? playerItemCheckShoot_Info;
+        public static Action<Player, int, Item, int>? playerItemCheckShoot;
+        public override void Load()
+        {
+            playerItemCheckShoot_Info = typeof(Player).GetMethod("ItemCheck_Shoot", BindingFlags.NonPublic | BindingFlags.Instance);
+            //Here we cache this method for performance
+            playerItemCheckShoot = (Action<Player, int, Item, int>)Delegate.CreateDelegate(
+                typeof(Action<Player, int, Item, int>), playerItemCheckShoot_Info);
+        }
+
+        public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Chopsticks");
 			Tooltip.SetDefault("Non projectile swords have more range");
@@ -59,7 +72,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             if (item != Player.HeldItem)
                 return true;
 
-            if (item.DamageType.Type == DamageClass.Melee.Type && item.pick <= 0 && item.axe <= 0 && item.hammer <= 0 && item.shoot <= ProjectileID.None && item.useStyle == Terraria.ID.ItemUseStyleID.Swing && !item.noMelee)
+            if (item.DamageType.Type == DamageClass.Melee.Type && item.pick <= 0 && item.axe <= 0 && item.hammer <= 0 && !item.channel && item.useStyle == Terraria.ID.ItemUseStyleID.Swing && !item.noMelee)
             {
                 if (Main.projectile.Any(n => n.active && n.type == ModContent.ProjectileType<ChopstickProj>() && n.owner == Player.whoAmI))
                     return false;
@@ -82,6 +95,31 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 
                 if (item.UseSound.HasValue)
                     Terraria.Audio.SoundEngine.PlaySound(item.UseSound.Value, Player.Center);
+
+                if (item.ModItem != null)
+                {
+                    if (!item.ModItem.CanShoot(Player))
+                        return base.CanUseItem(item);
+
+                    int usedAmmoItemId = 0;
+                    int projToShoot = item.shoot;
+                    float speed = item.shootSpeed;
+                    int damage = item.damage;
+                    bool canShoot = false;
+                    float knockBack = item.knockBack;
+                    Vector2 position = Player.Center;
+                    Vector2 velocity = Player.Center.DirectionTo(Main.MouseWorld) * speed;
+
+                    if (item.useAmmo > 0)
+                    {
+                        Player.PickAmmo(item, out projToShoot, out speed, out damage, out knockBack, out usedAmmoItemId, ItemID.Sets.gunProj[item.type]);
+                    }
+
+                    item.ModItem.ModifyShootStats(Player, ref position, ref velocity, ref projToShoot, ref damage, ref knockBack);
+                    item.ModItem.Shoot(Player, (EntitySource_ItemUse_WithAmmo)Player.GetSource_ItemUse_WithPotentialAmmo(item, usedAmmoItemId), Player.Center, velocity, projToShoot, damage, knockBack);
+                }
+                else
+                    Chopsticks.playerContentReader(Player, Player.whoAmI, item, item.damage);
 
                 return false;
             }

@@ -326,6 +326,10 @@ namespace JadeFables.Tiles.OvergrownJadeSand
                 }
             }
         }
+        public override void WalkDust(ref int dustType, ref bool makeDust, ref Color color)
+        {
+            base.WalkDust(ref dustType, ref makeDust, ref color);
+        }
     }
 
     public class JadeGrassSeeds : ModItem
@@ -333,6 +337,7 @@ namespace JadeFables.Tiles.OvergrownJadeSand
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Spring Grass Seeds");
+            Tooltip.SetDefault("Can be placed");
         }
 
         public override void SetDefaults()

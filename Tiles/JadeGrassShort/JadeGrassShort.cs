@@ -46,6 +46,10 @@ namespace JadeFables.Tiles.JadeGrassShort
 				WorldGen.KillTile(i, j);
 			return true;
 		}
+		public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
+		{
+			if (!fail && Main.rand.NextBool(10)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<JadeGrassSeeds>());
+		}
 	}
 
 	public class JadeGrassTall : JadeGrassShort
@@ -80,5 +84,9 @@ namespace JadeFables.Tiles.JadeGrassShort
                 WorldGen.KillTile(i, j);
             return true;
         }
-    }
+		public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
+		{
+			if (!fail && Main.rand.NextBool(10)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<JadeGrassSeeds>());
+		}
+	}
 }

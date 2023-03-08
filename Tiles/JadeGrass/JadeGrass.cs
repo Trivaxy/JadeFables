@@ -11,6 +11,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using JadeFables.Tiles.JadeSand;
+using JadeFables.Tiles.OvergrownJadeSand;
 
 namespace JadeFables.Tiles.JadeGrass
 {
@@ -18,6 +19,10 @@ namespace JadeFables.Tiles.JadeGrass
     {
         public override void SetStaticDefaults()
         {
+            DustType = DustID.OasisCactus;
+            HitSound = SoundID.Grass;
+            MineResist = 0.9f;
+
             Main.tileFrameImportant[Type] = true;
             Main.tileSolid[Type] = false;
             TileObjectData.newTile.Height = 1;
@@ -51,6 +56,10 @@ namespace JadeFables.Tiles.JadeGrass
             if (!tileBelow.HasTile || tileBelow.IsHalfBlock || tileBelow.TopSlope || (tileBelow.TileType != ModContent.TileType<Tiles.JadeSand.JadeSandTile>() && tileBelow.TileType != ModContent.TileType<Tiles.OvergrownJadeSand.OvergrownJadeSandTile>()))
                 WorldGen.KillTile(i, j);
             return true;
+        }
+        public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
+        {
+            if (!fail && Main.rand.NextBool(10)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<JadeGrassSeeds>());
         }
     }
 

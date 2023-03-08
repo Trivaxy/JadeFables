@@ -1,4 +1,5 @@
-﻿using JadeFables.Dusts;
+﻿using JadeFables.Biomes.JadeLake;
+using JadeFables.Dusts;
 using JadeFables.Tiles.JadeGrassShort;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeSandstone;
@@ -19,9 +20,10 @@ namespace JadeFables.Tiles.OvergrownJadeSand
         public override void SetStaticDefaults()
         {
             MinPick = 10;
-            DustType = DustType<Dusts.JadeSandDust>();
+            MineResist = 0f;
+            DustType = DustID.JungleGrass;
             HitSound = SoundID.Dig;
-            ItemDrop = ItemType<JadeGrassSeeds>();
+            ItemDrop = ItemType<JadeSandItem>();
             Main.tileMerge[TileID.Stone][Type] = true;
             Main.tileBrick[Type] = true;
             Main.tileSolid[Type] = true;
@@ -276,6 +278,18 @@ namespace JadeFables.Tiles.OvergrownJadeSand
                 }
             }
         }
+
+        public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
+        {
+            if (fail)
+            {
+                for (int k = 0; k < 3; k++)
+                {
+                    WorldGen.KillTile_MakeTileDust(i, j, Main.tile[i, j]);
+                }
+                WorldGen.PlaceTile(i, j, TileType<JadeSandTile>(), mute: true, forced: true);
+            }
+        }
     }
 
     public class JadeGrassSeeds : ModItem
@@ -296,15 +310,39 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             Item.useTime = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
-            Item.createTile = TileType<OvergrownJadeSandTile>();
+            //Item.createTile = TileType<OvergrownJadeSandTile>();
             Item.rare = ItemRarityID.White;
             Item.value = 500;
         }
-        public override bool CanUseItem(Player player)
+        public override bool? UseItem(Player player)
         {
-            if (Main.tile[Player.tileTargetX, Player.tileTargetY].TileType != TileType<JadeSandTile>() || !Helpers.Helper.TileInRange(player, Item))
+            if (Main.tile[Player.tileTargetX, Player.tileTargetY].TileType != TileType<JadeSandTile>() || !Helpers.Helper.TileInRange(player, Item) || player.itemAnimation != player.itemAnimationMax)
                 return false;
-            return base.CanUseItem(player);
+            WorldGen.PlaceTile(Player.tileTargetX, Player.tileTargetY, TileType<OvergrownJadeSandTile>(), mute: false, forced: true);
+            return true;
+        }
+    }
+    public class StaffOfRegrowthCompatability : GlobalItem
+    {
+        public override bool? UseItem(Item item, Player player)
+        {
+            if (item.type != ItemID.StaffofRegrowth)
+                return null;
+            if (Main.tile[Player.tileTargetX, Player.tileTargetY].TileType != TileType<JadeSandTile>() || !Helpers.Helper.TileInRange(player, item) || player.itemAnimation != player.itemAnimationMax)
+                return null;
+            WorldGen.PlaceTile(Player.tileTargetX, Player.tileTargetY, TileType<OvergrownJadeSandTile>(), mute: false, forced: true);
+            return true;
+        }
+    }
+    public class DryadSpringSeedsShop : GlobalNPC
+    {
+        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        {
+            if (type == NPCID.Dryad && Main.LocalPlayer.InModBiome<JadeLakeBiome>())
+            {
+                shop.item[nextSlot].SetDefaults(ItemType<JadeGrassSeeds>());
+                nextSlot++;
+            }
         }
     }
 }

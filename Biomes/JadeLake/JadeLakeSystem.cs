@@ -264,8 +264,9 @@ namespace JadeFables.Biomes.JadeLake
                 modifiedProgress = jadeLakeSystem.forceLakeAesthetic ? 3000f : modifiedProgress;
 
                 Color color = new Color(0, 220, 200);
-                float brightness = 255f / 0.9f;
-                if (waterDepthTiles.Contains((i, j))) brightness = 255f / 0.175f;
+                float brightness = 0.9f;
+                if (waterDepthTiles.Contains((i, j))) brightness = 0.175f;
+                brightness *= modifiedProgress / 3000f;
 
                 if (jadeLakeSystem.TotalBiomeCount == 0)
                 {
@@ -273,9 +274,9 @@ namespace JadeFables.Biomes.JadeLake
                     waterDepthTiles.Clear();
                 }
 
-                r = color.R / brightness;
-                g = color.G / brightness;
-                b = color.B / brightness;
+                r = color.R / (255f / brightness);
+                g = color.G / (255f / brightness);
+                b = color.B / (255f / brightness);
             }
         }
     }

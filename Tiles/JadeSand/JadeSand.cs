@@ -18,6 +18,7 @@ namespace JadeFables.Tiles.JadeSand
             Main.tileSolid[Type] = true;
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
+            TileID.Sets.CanBeDugByShovel[Type] = true;
             //Main.tileSand[Type] = true;
             TileID.Sets.TouchDamageSands[Type] = 15;
             TileID.Sets.Conversion.Sand[Type] = true;

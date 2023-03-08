@@ -26,6 +26,10 @@ namespace JadeFables.Tiles.JadeGrassShort
 			DustType = DustID.Plantera_Green;
 			HitSound = SoundID.Grass;
 
+			TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
+			TileObjectData.newTile.StyleHorizontal = true;
+			TileObjectData.addTile(Type);
+
 			AddMapEntry(Color.Green);
 		}
 
@@ -49,7 +53,7 @@ namespace JadeFables.Tiles.JadeGrassShort
 		}
 		public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 		{
-			if (!fail && Main.rand.NextBool(10)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<JadeGrassSeeds>());
+			if (!fail && Main.rand.NextBool(20)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<JadeGrassSeeds>());
 		}
 	}
 
@@ -71,7 +75,8 @@ namespace JadeFables.Tiles.JadeGrassShort
             TileObjectData.newTile.Height = 2;
             TileObjectData.newTile.Origin = new Point16(0, 1);
             TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
-            TileObjectData.addTile(Type);
+			TileObjectData.newTile.StyleHorizontal = true;
+			TileObjectData.addTile(Type);
 
             AddMapEntry(Color.Green);
         }
@@ -87,7 +92,7 @@ namespace JadeFables.Tiles.JadeGrassShort
         }
 		public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
 		{
-			if (!fail && Main.rand.NextBool(10)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<JadeGrassSeeds>());
+			if (!fail && Main.rand.NextBool(20)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<JadeGrassSeeds>());
 		}
 	}
 }

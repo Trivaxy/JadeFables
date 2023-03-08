@@ -292,43 +292,27 @@ namespace JadeFables.Tiles.OvergrownJadeSand
                 WorldGen.PlaceTile(i, j, TileType<JadeSandTile>(), mute: true, forced: true);
             }
         }
-
-        public override void NearbyEffects(int i, int j, bool closer)
+        public override void FloorVisuals(Player player)
         {
-            Player player = Main.player[Player.FindClosest(new Vector2(i, j) * 16, 16, 16)];
-            if (!closer)
-                return;
-            if (player.flowerBoots && player.position.Y - (j * 16) == -42 && player.Left.X <= i * 16 && player.Right.X >= i * 16)
+            if (player.flowerBoots)
             {
+                Tile tile = Framing.GetTileSafely(i, j);
+                int i = (int)(player.Center.X / 16);
+                int j = (int)(player.Bottom.Y / 16);
                 Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                 Tile tileAbove2 = Framing.GetTileSafely(i, j - 2);
-                Tile tile = Framing.GetTileSafely(i, j);
+
                 if (tileAbove.HasTile || tile.BlockType != BlockType.Solid)
                     return;
-                tileAbove.TileFrameY = 0;
                 if (!tileAbove2.HasTile && Main.rand.NextBool(2))
                 {
-                    short tileFrame = (short)(WorldGen.genRand.Next(6) * 18);
-                    tileAbove.HasTile = true;
-                    tileAbove2.HasTile = true;
-                    tileAbove.TileType = (ushort)ModContent.TileType<JadeGrassShort.JadeGrassTall>();
-                    tileAbove2.TileType = (ushort)ModContent.TileType<JadeGrassShort.JadeGrassTall>();
-                    tileAbove.TileFrameX = tileFrame;
-                    tileAbove2.TileFrameX = tileFrame;
-                    tileAbove2.TileFrameY = 0;
-                    tileAbove.TileFrameY = 18;
+                    WorldGen.PlaceObject(i, j - 1, TileType<JadeGrassTall>(), true, WorldGen.genRand.Next(6));
                 }
                 else
                 {
-                    tileAbove.HasTile = true;
-                    tileAbove.TileType = (ushort)ModContent.TileType<JadeGrassShort.JadeGrassShort>();
-                    tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(6) * 18);
+                    WorldGen.PlaceObject(i, j - 1, TileType<JadeGrassShort.JadeGrassShort>(), true, WorldGen.genRand.Next(6));
                 }
             }
-        }
-        public override void WalkDust(ref int dustType, ref bool makeDust, ref Color color)
-        {
-            base.WalkDust(ref dustType, ref makeDust, ref color);
         }
     }
 

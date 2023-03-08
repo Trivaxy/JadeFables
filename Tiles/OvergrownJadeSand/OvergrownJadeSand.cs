@@ -248,7 +248,7 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             Tile tileAbove = Framing.GetTileSafely(i, j - 1);
             Tile tileAbove2 = Framing.GetTileSafely(i, j - 2);
 
-            //try place foliage
+            //try place foliage 
             if (WorldGen.genRand.NextBool(25) && !tileAbove.HasTile && !(tileBelow.LiquidType == LiquidID.Lava))
             {
                 if (!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope)

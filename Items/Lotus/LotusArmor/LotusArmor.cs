@@ -79,7 +79,8 @@ namespace JadeFables.Items.Lotus.LotusArmor
 
         public override void UpdateArmorSet(Player player)
         {
-            player.setBonus = "Decreases enemy spawnrates by 50%"; 
+            player.setBonus = "Decreases enemy spawnrates by 50%";
+            player.GetModPlayer<LotusArmorPlayer>().equipped = true;
         }
     }
 
@@ -114,6 +115,25 @@ namespace JadeFables.Items.Lotus.LotusArmor
                 .AddIngredient<LotusFiber.LotusFiber>(25)
                 .AddTile(TileID.WorkBenches)
                 .Register();
+        }
+    }
+
+    public class LotusArmorPlayer : ModPlayer
+    {
+        public bool equipped = false;
+
+        public override void ResetEffects()
+        {
+            equipped = false;
+        }
+    }
+
+    public class LotusArmorGNPC : GlobalNPC
+    {
+        public override void EditSpawnRate(Player player, ref int spawnRate, ref int maxSpawns)
+        {
+            if (player.GetModPlayer<LotusArmorPlayer>().equipped)
+                spawnRate /= 2;
         }
     }
 }

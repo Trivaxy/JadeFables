@@ -105,7 +105,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
                 Projectile proj = Main.projectile[i];
 
                 proj.timeLeft = item.useAnimation;
-                proj.scale = item.scale;
+                //proj.scale = item.scale;
 
                 if (proj.ModProjectile is ChopstickProj)
                 {
@@ -211,7 +211,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             Vector2 start = Projectile.Center;
-            Vector2 end = Projectile.Center + (Projectile.rotation.ToRotationVector2() * length);
+            Vector2 end = Projectile.Center + (Projectile.rotation.ToRotationVector2() * length * itemScale);
             float collisionPoint = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, 15, ref collisionPoint);
         }

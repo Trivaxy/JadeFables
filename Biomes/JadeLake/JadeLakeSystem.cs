@@ -96,7 +96,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public override void PostUpdateEverything()
         {
-            if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.OemCloseBrackets))
+            /*if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.OemCloseBrackets))
             {
                 if (!pressed)
                 {
@@ -117,7 +117,7 @@ namespace JadeFables.Biomes.JadeLake
                 }
             }
             else
-                pressed = false;
+                pressed = false;*/
 
             float progress = MathHelper.Min(TotalBiomeCount, 3000) / 3000f;
             if (TotalBiomeCount == 0 && !forceLakeAesthetic)

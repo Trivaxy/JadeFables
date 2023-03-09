@@ -18,6 +18,7 @@ using Terraria.Enums;
 using System.Reflection;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
+using System;
 
 namespace JadeFables.Items.SpringChestLoot.Chopsticks
 {
@@ -32,9 +33,8 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
         public static MethodInfo? playerItemCheckEmitUseVisuals_Info;
         public static Func<Player, Item, Rectangle, Rectangle>? playerItemCheckEmitUseVisuals;
 
-        public delegate void playerItemCheck_GetMeleeHitboxDelegate(Player player, Item item, Rectangle rect, out bool dontAttack, out Rectangle itemRect);
-        public static playerItemCheck_GetMeleeHitboxDelegate getMeleeHitboxDelegate;
-        public static MethodInfo getMeleeHitboxDelegate_Info;
+        public static MethodInfo? ApplyNPCOnHitEffects_Info;
+        public static Action<Player, Item, Rectangle, int, float, int, int, int>? ApplyNPCOnHitEffects;
         public override void Load()
         {
             playerItemCheckShoot_Info = typeof(Player).GetMethod("ItemCheck_Shoot", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -50,9 +50,11 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             playerItemCheckEmitUseVisuals = (Func<Player, Item, Rectangle, Rectangle>)Delegate.CreateDelegate(
                 typeof(Func<Player, Item, Rectangle, Rectangle>), playerItemCheckEmitUseVisuals_Info);
 
-            getMeleeHitboxDelegate_Info = typeof(Player).GetMethod("ItemCheck_GetMeleeHitbox", BindingFlags.NonPublic | BindingFlags.Instance);
-            getMeleeHitboxDelegate = (playerItemCheck_GetMeleeHitboxDelegate)Delegate.CreateDelegate(
-                typeof(playerItemCheck_GetMeleeHitboxDelegate), getMeleeHitboxDelegate_Info);
+            ApplyNPCOnHitEffects_Info = typeof(Player).GetMethod("ApplyNPCOnHitEffects", BindingFlags.NonPublic | BindingFlags.Instance);
+            //Here we cache this method for performance
+            ApplyNPCOnHitEffects = (Action<Player, Item, Rectangle, int, float, int, int, int>)Delegate.CreateDelegate(
+                typeof(Action<Player, Item, Rectangle, int, float, int, int, int>), ApplyNPCOnHitEffects_Info);
+
         }
 
         public override void SetStaticDefaults()
@@ -168,6 +170,8 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 
         public Item item;
 
+        public Rectangle itemRect;
+
         public bool dontAttack_;
         public Rectangle itemRect_;
 
@@ -198,7 +202,9 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             Projectile.Center = playerOrigin + offset.RotatedBy(Owner.fullRotation);
             Projectile.rotation += Owner.fullRotation;
 
-            Chopsticks.getMeleeHitboxDelegate(Owner, item, Item.GetDrawHitbox(item.type, Owner), out bool dontAttack, out Rectangle itemRect);
+            Vector2 itemRectStart = Projectile.Center + (Projectile.rotation.ToRotationVector2() * length * 0.5f);
+            Rectangle itemRect = new Rectangle((int)itemRectStart.X, (int)itemRectStart.Y, 2, 2);
+            itemRect.Inflate((int)length / 2, (int)length / 2);
             itemRect_ = Chopsticks.playerItemCheckEmitUseVisuals(Owner, item, itemRect);
         }
 
@@ -226,6 +232,12 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             Projectile.penetrate++;
+            ItemLoader.OnHitNPC(item, Owner, target, damage, knockback, crit);
+            NPCLoader.OnHitByItem(target, Owner, item, damage, knockback, crit);
+            PlayerLoader.OnHitNPC(Owner, item, target, damage, knockback, crit);
+            Owner.StatusToNPC(item.type, target.whoAmI);
+            Chopsticks.ApplyNPCOnHitEffects(Owner, item, itemRect_, Projectile.damage, knockback, target.whoAmI, Main.DamageVar(damage, Owner.luck), damage);
+            //Owner.ApplyNPCOnHitEffects(sItem, itemRectangle, num, knockBack, i, num6, dmgDone);
             alreadyHit.Add(target);
         }
 
@@ -238,8 +250,6 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
-            Chopsticks.playerItemCheckMeleeHitNPCs(Owner, item, Projectile.getRect(), Projectile.damage, Projectile.knockBack);
-
             hitDirection = Math.Sign(target.Center.X - Owner.Center.X);
         }
 

@@ -25,18 +25,40 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 	{
         public static MethodInfo? playerItemCheckShoot_Info;
         public static Action<Player, int, Item, int>? playerItemCheckShoot;
+
+        public static MethodInfo? playerItemCheckMeleeHitNPCs_Info;
+        public static Action<Player, Item, Rectangle, int, float>? playerItemCheckMeleeHitNPCs;
+
+        public static MethodInfo? playerItemCheckEmitUseVisuals_Info;
+        public static Func<Player, Item, Rectangle, Rectangle>? playerItemCheckEmitUseVisuals;
+
+        public delegate void playerItemCheck_GetMeleeHitboxDelegate(Player player, Item item, Rectangle rect, out bool dontAttack, out Rectangle itemRect);
+        public static playerItemCheck_GetMeleeHitboxDelegate getMeleeHitboxDelegate;
+        public static MethodInfo getMeleeHitboxDelegate_Info;
         public override void Load()
         {
             playerItemCheckShoot_Info = typeof(Player).GetMethod("ItemCheck_Shoot", BindingFlags.NonPublic | BindingFlags.Instance);
             //Here we cache this method for performance
             playerItemCheckShoot = (Action<Player, int, Item, int>)Delegate.CreateDelegate(
                 typeof(Action<Player, int, Item, int>), playerItemCheckShoot_Info);
+
+            playerItemCheckMeleeHitNPCs_Info = typeof(Player).GetMethod("ItemCheck_MeleeHitNPCs", BindingFlags.NonPublic | BindingFlags.Instance);
+            playerItemCheckMeleeHitNPCs = (Action<Player, Item, Rectangle, int, float>)Delegate.CreateDelegate(
+                typeof(Action<Player, Item, Rectangle, int, float>), playerItemCheckMeleeHitNPCs_Info);
+
+            playerItemCheckEmitUseVisuals_Info = typeof(Player).GetMethod("ItemCheck_EmitUseVisuals", BindingFlags.NonPublic | BindingFlags.Instance);
+            playerItemCheckEmitUseVisuals = (Func<Player, Item, Rectangle, Rectangle>)Delegate.CreateDelegate(
+                typeof(Func<Player, Item, Rectangle, Rectangle>), playerItemCheckEmitUseVisuals_Info);
+
+            getMeleeHitboxDelegate_Info = typeof(Player).GetMethod("ItemCheck_GetMeleeHitbox", BindingFlags.NonPublic | BindingFlags.Instance);
+            getMeleeHitboxDelegate = (playerItemCheck_GetMeleeHitboxDelegate)Delegate.CreateDelegate(
+                typeof(playerItemCheck_GetMeleeHitboxDelegate), getMeleeHitboxDelegate_Info);
         }
 
         public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Chopsticks");
-			Tooltip.SetDefault("Non projectile swords have more range");
+			Tooltip.SetDefault("Swords have more range and become omnidirectional");
 		}
 
 		public override void SetDefaults()
@@ -91,35 +113,39 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
                     modProj.lifeSpan = item.useAnimation;
                     modProj.baseAngle = (Main.MouseWorld - Player.Center).ToRotation();
                     modProj.itemScale = item.scale;
+                    modProj.item = item;
                 }
 
                 if (item.UseSound.HasValue)
                     Terraria.Audio.SoundEngine.PlaySound(item.UseSound.Value, Player.Center);
 
-                if (item.ModItem != null)
+                if (Main.myPlayer == Player.whoAmI)
                 {
-                    if (!item.ModItem.CanShoot(Player))
-                        return base.CanUseItem(item);
-
-                    int usedAmmoItemId = 0;
-                    int projToShoot = item.shoot;
-                    float speed = item.shootSpeed;
-                    int damage = item.damage;
-                    bool canShoot = false;
-                    float knockBack = item.knockBack;
-                    Vector2 position = Player.Center;
-                    Vector2 velocity = Player.Center.DirectionTo(Main.MouseWorld) * speed;
-
-                    if (item.useAmmo > 0)
+                    /*if (item.ModItem != null)
                     {
-                        Player.PickAmmo(item, out projToShoot, out speed, out damage, out knockBack, out usedAmmoItemId, ItemID.Sets.gunProj[item.type]);
-                    }
+                        if (!item.ModItem.CanShoot(Player))
+                            return base.CanUseItem(item);
 
-                    item.ModItem.ModifyShootStats(Player, ref position, ref velocity, ref projToShoot, ref damage, ref knockBack);
-                    item.ModItem.Shoot(Player, (EntitySource_ItemUse_WithAmmo)Player.GetSource_ItemUse_WithPotentialAmmo(item, usedAmmoItemId), Player.Center, velocity, projToShoot, damage, knockBack);
+                        int usedAmmoItemId = 0;
+                        int projToShoot = item.shoot;
+                        float speed = item.shootSpeed;
+                        int damage = item.damage;
+                        bool canShoot = false;
+                        float knockBack = item.knockBack;
+                        Vector2 position = Player.Center;
+                        Vector2 velocity = Player.Center.DirectionTo(Main.MouseWorld) * speed;
+
+                        if (item.useAmmo > 0)
+                        {
+                            Player.PickAmmo(item, out projToShoot, out speed, out damage, out knockBack, out usedAmmoItemId, ItemID.Sets.gunProj[item.type]);
+                        }
+
+                        item.ModItem.ModifyShootStats(Player, ref position, ref velocity, ref projToShoot, ref damage, ref knockBack);
+                        item.ModItem.Shoot(Player, (EntitySource_ItemUse_WithAmmo)Player.GetSource_ItemUse_WithPotentialAmmo(item, usedAmmoItemId), Player.Center, velocity, projToShoot, damage, knockBack);
+                    }
+                    else*/
+                        Chopsticks.playerItemCheckShoot(Player, Player.whoAmI, item, item.damage);
                 }
-                else
-                    Chopsticks.playerItemCheckShoot(Player, Player.whoAmI, item, item.damage);
 
                 return false;
             }
@@ -139,6 +165,11 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
         public float lifeSpan;
         public float baseAngle;
         public float itemScale;
+
+        public Item item;
+
+        public bool dontAttack_;
+        public Rectangle itemRect_;
 
         public float Progress => 1 - Projectile.timeLeft / (float)lifeSpan;
         public int Direction => (Math.Abs(baseAngle) < Math.PI / 2f) ? 1 : -1;
@@ -166,6 +197,9 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             Vector2 offset = Owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f) - playerOrigin;
             Projectile.Center = playerOrigin + offset.RotatedBy(Owner.fullRotation);
             Projectile.rotation += Owner.fullRotation;
+
+            Chopsticks.getMeleeHitboxDelegate(Owner, item, Item.GetDrawHitbox(item.type, Owner), out bool dontAttack, out Rectangle itemRect);
+            itemRect_ = Chopsticks.playerItemCheckEmitUseVisuals(Owner, item, itemRect);
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -204,6 +238,8 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            Chopsticks.playerItemCheckMeleeHitNPCs(Owner, item, Projectile.getRect(), Projectile.damage, Projectile.knockBack);
+
             hitDirection = Math.Sign(target.Center.X - Owner.Center.X);
         }
 

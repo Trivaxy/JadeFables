@@ -7,14 +7,14 @@ using Terraria;
 
 namespace JadeFables.Core.Boids
 {
-	internal class Fish : Entity, IComponent
+	public class Fish : Entity, IComponent
 	{
 		public Vector2 Acceleration { get; set; }
 		public bool CanDespawn => Lifespan < 0 && SpawnTimer > SpawnTimerTicks;
 
 		public const float Vision = 100;
 		private const float MaxForce = 0.02f;
-		private const float MaxVelocity = 2f;
+		private float MaxVelocity => !Wet() ? 6f : 2f;
 		private const int SpawnTimerTicks = 100;
 		private const int LifespanTicks = 2000;
 
@@ -211,9 +211,10 @@ namespace JadeFables.Core.Boids
 		{
 			velocity += Acceleration;
 			velocity = Limit(velocity, MaxVelocity);
-			position += velocity;
+            velocity = TileCollision(position, velocity);
+            position += velocity;
 			Acceleration *= 0;
-		}
+        }
 
 		public void Update()
 		{
@@ -228,6 +229,11 @@ namespace JadeFables.Core.Boids
 			Acceleration += Cohesion(50) * 1f;
 			Acceleration += AvoidHooman(50) * 4f;
 			Acceleration += AvoidTiles(100) * 5f;
+
+			if (!Wet())
+			{
+				Acceleration = new Vector2(0, 0.1f);
+			}
 			ApplyForces();
 
 			if (Main.rand.NextBool(4000))
@@ -240,5 +246,36 @@ namespace JadeFables.Core.Boids
 			//Should lifespan only be decremented after (de)spawning transition?
 			Lifespan--;
 		}
-	}
+
+        public Vector2 TileCollision(Vector2 pos, Vector2 vel)
+        {
+            Vector2 newVel = Collision.noSlopeCollision(pos - (new Vector2(8, 8)), vel, 16, 16, true, true);
+            Vector2 ret = new Vector2(vel.X, vel.Y);
+            if (Math.Abs(newVel.X) < Math.Abs(vel.X))
+                ret.X *= 0;
+
+			if (Math.Abs(newVel.Y) < Math.Abs(vel.Y))
+			{
+				if (!Wet())
+				{
+					if (ret.Y > 0)
+					{
+                        ret.X = Main.rand.NextFloat(-2, 2);
+                        ret.Y *= -1;
+						ret.Y = MathHelper.Clamp(ret.Y, -1, 1);
+					}
+				}
+				else
+                    ret.Y *= 0;
+            }
+
+            return ret;
+        }
+
+		public bool Wet()
+		{
+			Tile tile = Framing.GetTileSafely((int)position.X / 16, (int)position.Y / 16);
+			return tile.LiquidAmount > 100;
+		}
+    }
 }

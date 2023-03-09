@@ -9,7 +9,7 @@ namespace JadeFables.Core.Boids
 {
 	public class BoidHost : ModSystem
 	{
-		internal List<Flock> Flocks = new List<Flock>();
+		public List<Flock> Flocks = new List<Flock>();
 		private const int SPAWNRATE = 10;
 
 		public void Draw(SpriteBatch spriteBatch)

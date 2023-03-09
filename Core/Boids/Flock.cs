@@ -5,7 +5,7 @@ using Terraria.GameContent;
 
 namespace JadeFables.Core.Boids
 {
-    internal class Flock : ComponentManager<Fish>
+    public class Flock : ComponentManager<Fish>
     {
         public Texture2D[] FlockTextures { get; set; }
         public int FishCount => Objects.Count;

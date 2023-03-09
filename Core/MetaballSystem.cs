@@ -52,7 +52,8 @@ namespace JadeFables.Core
 
 		private void DrawTargets(On.Terraria.Main.orig_DrawNPCs orig, Main self, bool behindTiles = false)
 		{
-			if (behindTiles)
+			
+			if (behindTiles && !Main.gameMenu)
 				Actors.ForEach(a => a.DrawTarget(Main.spriteBatch));
 
 			orig(self, behindTiles);
@@ -60,15 +61,17 @@ namespace JadeFables.Core
 
 		private void BuildTargets(On.Terraria.Main.orig_CheckMonoliths orig)
 		{
-			if (Main.graphics.GraphicsDevice != null)
+			if (!Main.gameMenu)
 			{
-				if (Main.screenWidth != oldScreenWidth || Main.screenHeight != oldScreenHeight)
-					UpdateWindowSize(Main.screenWidth, Main.screenHeight);
+				if (Main.graphics.GraphicsDevice != null)
+				{
+					if (Main.screenWidth != oldScreenWidth || Main.screenHeight != oldScreenHeight)
+						UpdateWindowSize(Main.screenWidth, Main.screenHeight);
+				}
+
+				if (Main.spriteBatch != null && Main.graphics.GraphicsDevice != null)
+					Actors.ForEach(a => a.DrawToTarget(Main.spriteBatch, Main.graphics.GraphicsDevice));
 			}
-
-			if (Main.spriteBatch != null && Main.graphics.GraphicsDevice != null)
-				Actors.ForEach(a => a.DrawToTarget(Main.spriteBatch, Main.graphics.GraphicsDevice));
-
 			orig();
 		}
 	}

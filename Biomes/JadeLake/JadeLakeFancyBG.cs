@@ -122,11 +122,11 @@ namespace JadeFables.Biomes.JadeLake
 
             for (int i = 4; i >= 0; i--)
             {
-                DrawLayer(basePoint, Request<Texture2D>("JadeFables/Assets/Backgrounds/BigBG" + i).Value, i + 1, 0, new Vector2(0, Main.screenHeight / -2), Color.White, false);
+                DrawLayer(basePoint, Request<Texture2D>("JadeFables/Assets/Backgrounds/BigBG" + i).Value, i + 1, size.X, new Vector2(0, 0), Color.White, false);
             }
         }
 
-        private static void DrawLayer(Vector2 basepoint, Texture2D texture, float parallax, float height, Vector2 off = default, Color color = default, bool flip = false)
+        private static void DrawLayer(Vector2 basepoint, Texture2D texture, float parallax, float width, Vector2 off = default, Color color = default, bool flip = false)
         {
             if (color == default)
             {
@@ -140,11 +140,11 @@ namespace JadeFables.Biomes.JadeLake
 
             for (int k = 0; k <= 5; k++)
             {
-                float x = basepoint.X + off.X + k * 739 * 4 + GetParallaxOffset(basepoint.X, parallax * 0.1f) - (int)Main.screenPosition.X;
-                float y = (basepoint.Y + off.Y - (int)Main.screenPosition.Y) + GetParallaxOffsetY(basepoint.Y + height * 8, 0.8f);
+                float x = (basepoint.X + off.X - (int)Main.screenPosition.X) + GetParallaxOffsetX(basepoint.X + width *0.5f, 0.1f);
+                float y = basepoint.Y + off.Y + k * 739 * 4 + GetParallaxOffset(basepoint.Y, parallax * 0.1f) - (int)Main.screenPosition.Y;
 
                 if (x > -texture.Width && x < Main.screenWidth + 30)
-                    Main.spriteBatch.Draw(texture, new Vector2(x, y), null, color, 0f, Vector2.Zero, 1f, flip ? SpriteEffects.FlipVertically : 0, 0);
+                    Main.spriteBatch.Draw(texture, new Vector2(x, y), null, color, 0f, Vector2.Zero, 1f, flip ? SpriteEffects.FlipHorizontally : 0, 0);
             }
         }
 
@@ -261,18 +261,18 @@ namespace JadeFables.Biomes.JadeLake
         private static int GetParallaxOffset2(float startpoint, float factor)
         {
             float vanillaParallax = 1 - (Main.caveParallax - 0.8f) / 0.2f;
-            return (int)((Main.screenWidth / 2 - startpoint) * factor * vanillaParallax);
+            return (int)((Main.screenHeight / 2 - startpoint) * factor * vanillaParallax);
         }
 
         private static int GetParallaxOffset(float startpoint, float factor)
         {
             float vanillaParallax = 1 - (Main.caveParallax - 0.8f) / 0.2f;
-            return (int)((Main.screenPosition.X + Main.screenWidth / 2 - startpoint) * factor * vanillaParallax);
+            return (int)((Main.screenPosition.Y + Main.screenHeight / 2 - startpoint) * factor * vanillaParallax);
         }
 
-        private static int GetParallaxOffsetY(float startpoint, float factor)
+        private static int GetParallaxOffsetX(float startpoint, float factor)
         {
-            return (int)((Main.screenPosition.Y + Main.screenHeight / 2 - startpoint) * factor);
+            return (int)((Main.screenPosition.X + Main.screenWidth / 2 - startpoint) * factor);
         }
     }
 }

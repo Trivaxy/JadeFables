@@ -32,6 +32,7 @@ namespace JadeFables
                 BackgroundTextureLoader.AddBackgroundTexture(JadeFables.Instance, "JadeFables/Biomes/JadeLake/JadeBiomeUnderground1");
                 BackgroundTextureLoader.AddBackgroundTexture(JadeFables.Instance, "JadeFables/Biomes/JadeLake/JadeBiomeUnderground2");
                 BackgroundTextureLoader.AddBackgroundTexture(JadeFables.Instance, "JadeFables/Biomes/JadeLake/JadeBiomeUnderground3");
+                BackgroundTextureLoader.AddBackgroundTexture(JadeFables.Instance, "JadeFables/Assets/Invisible");
             }
         }
 

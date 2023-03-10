@@ -43,11 +43,7 @@ namespace JadeFables.Items.Critters
         }
         internal void OnCatchBoidFish(Player player, List<Fish> caughtFish)
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                int itemWhoAmI = Item.NewItem(NPC.GetSource_NaturalSpawn(), (int)player.Center.X, (int)player.Center.Y, 0, 0, ItemType<KoiItem>(), caughtFish.Count, noBroadcast: true, 0, noGrabDelay: true);
-                NetMessage.SendData(MessageID.SyncItem, -1, -1, null, itemWhoAmI, 1f);
-            }
+            player.QuickSpawnItem(NPC.GetSource_NaturalSpawn(), ItemType<KoiItem>(), caughtFish.Count);
         }
     }
 }

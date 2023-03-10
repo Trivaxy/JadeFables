@@ -119,6 +119,11 @@ namespace JadeFables.Biomes.JadeLake
 
             Texture2D gradiant = ModContent.Request<Texture2D>("JadeFables/Assets/Backgrounds/BigBG5").Value;
             Main.spriteBatch.Draw(gradiant, pos - Main.screenPosition, null, Color.White, 0, gradiant.Size() / 2, size / gradiant.Size(), SpriteEffects.None, 0f);
+
+            for (int i = 4; i >= 0; i--)
+            {
+                DrawLayer(basePoint, Request<Texture2D>("JadeFables/Assets/Backgrounds/BigBG" + i).Value, i + 1, 0, new Vector2(0, Main.screenHeight / -2), Color.White, false);
+            }
         }
 
         private static void DrawLayer(Vector2 basepoint, Texture2D texture, float parallax, float height, Vector2 off = default, Color color = default, bool flip = false)
@@ -136,7 +141,7 @@ namespace JadeFables.Biomes.JadeLake
             for (int k = 0; k <= 5; k++)
             {
                 float x = basepoint.X + off.X + k * 739 * 4 + GetParallaxOffset(basepoint.X, parallax * 0.1f) - (int)Main.screenPosition.X;
-                float y = basepoint.Y + off.Y - (int)Main.screenPosition.Y + GetParallaxOffsetY(basepoint.Y + height * 8, parallax * 0.04f);
+                float y = (basepoint.Y + off.Y - (int)Main.screenPosition.Y) + GetParallaxOffsetY(basepoint.Y + height * 8, 0.8f);
 
                 if (x > -texture.Width && x < Main.screenWidth + 30)
                     Main.spriteBatch.Draw(texture, new Vector2(x, y), null, color, 0f, Vector2.Zero, 1f, flip ? SpriteEffects.FlipVertically : 0, 0);

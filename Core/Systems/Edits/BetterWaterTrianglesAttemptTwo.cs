@@ -43,8 +43,27 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
         //On.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += LiquidRenderer_InternalDraw;
         On.Terraria.Main.CheckMonoliths += DrawToRT;
         On.Terraria.GameContent.Drawing.TileDrawing.DrawTile_LiquidBehindTile += TileDrawing_DrawTile_LiquidBehindTile;
-
+        On.Terraria.GameContent.Drawing.TileDrawing.DrawPartialLiquid += TileDrawing_DrawPartialLiquid;
         On.Terraria.Main.DoDraw_Tiles_Solid += Main_DoDraw_Tiles_Solid;
+    }
+
+    private void TileDrawing_DrawPartialLiquid(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawPartialLiquid orig, TileDrawing self, Tile tileCache, Vector2 position, Rectangle liquidSize, int liquidType, Color aColor)
+    {
+        if (!Main.LocalPlayer.InModBiome<JadeLakeBiome>() || liquidType != LiquidID.Water)
+        {
+            orig(self, tileCache, position, liquidSize, liquidType, aColor);
+        }
+        else
+        {
+            int num = (int)tileCache.BlockType;
+            if (!TileID.Sets.BlocksWaterDrawingBehindSelf[tileCache.TileType] || num == 0)
+            {
+                Main.spriteBatch.Draw(ModContent.Request<Texture2D>("JadeFables/Biomes/JadeLake/JadeLakeWaterStyle_Block").Value, position, liquidSize, aColor * 0.7f, 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
+                return;
+            }
+            liquidSize.X += 18 * (num - 1);
+            Main.spriteBatch.Draw(ModContent.Request<Texture2D>("JadeFables/Biomes/JadeLake/JadeLakeWaterStyle_Block").Value, position, liquidSize, aColor * 0.7f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+        }
     }
 
     private void Main_DoDraw_Tiles_Solid(On.Terraria.Main.orig_DoDraw_Tiles_Solid orig, Main self)
@@ -56,7 +75,7 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
             //var a = Vector2.Normalize(Helpers.Helper.ScreenSize);
             //effect.Parameters["offset"].SetValue(Main.screenPosition - HotspringMapTarget.oldScreenPos);
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, effect, Main.Transform);
-            Main.spriteBatch.Draw(waterSlopeTarget, -new Vector2(Main.offScreenRange, Main.offScreenRange), null, Color.White * 0.3f);
+            Main.spriteBatch.Draw(waterSlopeTarget, -new Vector2(Main.offScreenRange, Main.offScreenRange), null, Color.White);
             Main.spriteBatch.End();
         }
         orig(self);
@@ -65,7 +84,9 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
     private void TileDrawing_DrawTile_LiquidBehindTile(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawTile_LiquidBehindTile orig, TileDrawing self, bool solidLayer, int waterStyleOverride, Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, TileDrawInfo drawData)
     {
         if (drawWater)
+        {
             orig(self, solidLayer, waterStyleOverride, screenPosition, screenOffset, tileX, tileY, drawData);
+        }
     }
 
     private void DrawToRT(On.Terraria.Main.orig_CheckMonoliths orig)
@@ -95,7 +116,13 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
             {
                 for (int j = (int)(Main.screenPosition.Y / 16) - 12; j < (int)((Main.screenPosition.Y + Main.screenHeight) / 16) + 16; j++)
                 {
-                    DrawTile_LiquidBehindTile(Main.instance.TilesRenderer, true, 0, Main.screenPosition, new Vector2(Main.offScreenRange, Main.offScreenRange), i, j, new TileDrawInfo());
+                    TileDrawInfo drawInfo = new TileDrawInfo();
+                    drawInfo.tileCache = Framing.GetTileSafely(i, j);
+                    Vector3[] colorSlices = new Vector3[9];
+                    Lighting.GetColor9Slice(i, j, ref colorSlices);
+                    drawInfo.colorSlices = colorSlices;
+                    if (drawInfo.tileCache.HasTile && Main.tileSolid[drawInfo.tileCache.TileType])
+                        DrawTile_LiquidBehindTile(Main.instance.TilesRenderer, true, 0, Main.screenPosition, new Vector2(Main.offScreenRange, Main.offScreenRange), i, j, drawInfo);
                 }
             }
             Main.spriteBatch.End();

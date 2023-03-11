@@ -110,9 +110,8 @@ namespace JadeFables.Items.Fishing.Crates
             itemLoot.Add(ItemDropRule.Common(4, ItemType<JadeFountainItem>()));
             itemLoot.Add(ItemDropRule.Common(6, ItemType<Jade.FestivalLantern.FestivalLantern>()));
             itemLoot.Add(goldCoin);
+            //note: SequentialRulesNotScalingWithLuck unfortunately makes droprules later in the sequential list less common, as it will exit out as soon as any droprule succeeds.
             itemLoot.Add(ItemDropRule.SequentialRulesNotScalingWithLuck(1, new OneFromRulesRule(4, bars), new OneFromRulesRule(7, ores)));
-            //itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(7, ores)));
-            //itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(4, bars)));
             itemLoot.Add(new OneFromRulesRule(4, potions));
             itemLoot.Add(new OneFromRulesRule(2, recoveryPotions));
             itemLoot.Add(new OneFromRulesRule(2, extraBait));
@@ -164,8 +163,6 @@ namespace JadeFables.Items.Fishing.Crates
             itemLoot.Add(ItemDropRule.Common(4, ItemType<JadeFountainItem>()));
             itemLoot.Add(ItemDropRule.Common(6, ItemType<Jade.FestivalLantern.FestivalLantern>()));
             itemLoot.Add(goldCoin);
-            //itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(14, ores), new OneFromRulesRule(14, hardmodeOres)));
-            //itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(12, bars), new OneFromRulesRule(6, hardmodeBars)));
             itemLoot.Add(ItemDropRule.SequentialRulesNotScalingWithLuck(1, new OneFromRulesRule(6, hardmodeBars), new OneFromRulesRule(14, hardmodeOres), new OneFromRulesRule(12, bars), new OneFromRulesRule(14, ores)));
             itemLoot.Add(new OneFromRulesRule(4, potions));
             itemLoot.Add(new OneFromRulesRule(2, recoveryPotions));

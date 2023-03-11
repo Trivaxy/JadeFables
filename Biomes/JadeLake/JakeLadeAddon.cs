@@ -201,6 +201,25 @@ namespace JadeFables.Biomes.JadeLake
             return true;
         }
 
+        private int WaterDepthPixels(int i, int j)
+        {
+            int depth = 0;
+            //depth = -16 + (Main.tile[i, j].LiquidAmount / 16); unnecessary precision
+            for (int y = j; y <= j + 5; y++)
+            {
+                Tile tile = Framing.GetTileSafely(i, y);
+
+                if (tile.LiquidAmount > 0 && tile.LiquidType == LiquidID.Water)
+                {
+                    depth += 16;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return depth;
+        }
         private void DrawGradients()
         {
             Texture2D glowTex = ModContent.Request<Texture2D>("JadeFables/Assets/WaterGradient").Value;
@@ -213,7 +232,7 @@ namespace JadeFables.Biomes.JadeLake
                         Tile tile = Main.tile[i, j];
                         if (ShouldDrawGradient(i, j))
                         {
-                            Main.spriteBatch.Draw(glowTex, (new Vector2(i, j) * 16) - Main.sceneWaterPos, null, Color.White * 0.4f, 0, new Vector2(glowTex.Width / 2, 0), new Vector2(1, 2), SpriteEffects.None, 0f);
+                            Main.spriteBatch.Draw(glowTex, (new Vector2(i, j) * 16) - Main.sceneWaterPos, new Rectangle(0, 0, glowTex.Width, Math.Min(WaterDepthPixels(i, j) / 2, glowTex.Height)), Color.White * 0.4f, 0, new Vector2(glowTex.Width / 2, 0), new Vector2(1, 2), SpriteEffects.None, 0f);
                             /*float heightScale = ((float)Math.Sin(Main.GameUpdateCount * 0.025f) / 8) + 1;
 
                             Color overlayColor = Color.White;

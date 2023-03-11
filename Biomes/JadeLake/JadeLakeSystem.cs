@@ -274,9 +274,9 @@ namespace JadeFables.Biomes.JadeLake
                     waterDepthTiles.Clear();
                 }
 
-                r = color.R / (255f / brightness);
-                g = color.G / (255f / brightness);
-                b = color.B / (255f / brightness);
+                r += color.R / (255f / brightness);
+                g += color.G / (255f / brightness);
+                b += color.B / (255f / brightness);
             }
         }
     }

@@ -295,11 +295,11 @@ namespace JadeFables.Tiles.JadeWaterfall
                 }
 
                 Color color = new Color(0, 220, 200);
-                const float brightness = 255f / 0.9f;
+                const float brightness = 0.9f;
 
-                r = color.R / brightness;
-                g = color.G / brightness;
-                b = color.B / brightness;
+                r += color.R / (255f / brightness);
+                g += color.G / (255f / brightness);
+                b += color.B / (255f / brightness);
             }
         }
         private bool NoActiveWaterfalls()

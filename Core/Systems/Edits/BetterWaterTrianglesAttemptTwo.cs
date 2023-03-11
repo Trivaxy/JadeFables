@@ -132,10 +132,4 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
         }
         drawWater = !Main.LocalPlayer.InModBiome<JadeLakeBiome>();
     }
-
-    private void LiquidRenderer_InternalDraw(On.Terraria.GameContent.Liquid.LiquidRenderer.orig_InternalDraw orig, LiquidRenderer self, SpriteBatch spriteBatch, Vector2 drawOffset, int waterStyle, float globalAlpha, bool isBackgroundDraw)
-    {
-        if (drawWater)
-            orig(self, spriteBatch, drawOffset, waterStyle, globalAlpha, isBackgroundDraw);
-    }
 }

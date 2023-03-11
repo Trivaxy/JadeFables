@@ -17,6 +17,7 @@ using JadeFables.Items.Potions.Spine;
 using JadeFables.Items.Potions.JasmineTea;
 using JadeFables.Items.SpringChestLoot.Hwacha;
 using JadeFables.Items.Jade.FestivalLantern;
+using Terraria.ModLoader.IO;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -162,6 +163,28 @@ namespace JadeFables.Biomes.JadeLake
         public override void PostWorldGen()
         {
             PopulateChests();
+        }
+
+        public override void SaveWorldData(TagCompound tag)
+        {
+            tag["numberOfSprings"] = JadeLakeWorldGen.WholeBiomeRects.Count;
+            for (int i = 0; i < JadeLakeWorldGen.WholeBiomeRects.Count; i++)
+            {
+                tag["Spring" + i + "X"] = JadeLakeWorldGen.WholeBiomeRects[i].X;
+                tag["Spring" + i + "Y"] = JadeLakeWorldGen.WholeBiomeRects[i].Y;
+                tag["Spring" + i + "Width"] = JadeLakeWorldGen.WholeBiomeRects[i].Width;
+                tag["Spring" + i + "Height"] = JadeLakeWorldGen.WholeBiomeRects[i].Height;
+            }
+        }
+
+        public override void LoadWorldData(TagCompound tag)
+        {
+            JadeLakeWorldGen.WholeBiomeRects = new List<Rectangle>();
+            float numSprings = tag.GetInt("numberOfSprings");
+            for (int i = 0; i < numSprings; i++)
+            {
+                JadeLakeWorldGen.WholeBiomeRects.Add(new Rectangle(tag.GetInt("Spring" + i + "X"), tag.GetInt("Spring" + i + "Y"), tag.GetInt("Spring" + i + "Width"), tag.GetInt("Spring" + i + "Height")));
+            }
         }
 
         public static void PopulateChests()

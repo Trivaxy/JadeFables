@@ -205,7 +205,7 @@ namespace JadeFables.Biomes.JadeLake
         {
             int depth = 0;
             //depth = -16 + (Main.tile[i, j].LiquidAmount / 16); unnecessary precision
-            for (int y = j; y <= j + 5; y++)
+            for (int y = j; y < j + 10; y++)
             {
                 Tile tile = Framing.GetTileSafely(i, y);
 

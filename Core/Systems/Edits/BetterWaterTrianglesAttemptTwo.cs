@@ -21,7 +21,7 @@ using Terraria.Utilities;
 
 namespace JadeFables.Core.Systems.Edits;
 
-public sealed class BetterWaterTrianglesAttmptTwo : IOrderedLoadable
+public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
 {
     public static bool drawWater = false;
 
@@ -30,9 +30,7 @@ public sealed class BetterWaterTrianglesAttmptTwo : IOrderedLoadable
 
     public static RenderTarget2D waterSlopeTarget;
 
-    public float Priority => 0.95f;
-
-    public void Load()
+    public override void OnModLoad() 
     {
         if (Main.dedServ)
             return;
@@ -47,11 +45,6 @@ public sealed class BetterWaterTrianglesAttmptTwo : IOrderedLoadable
         On.Terraria.GameContent.Drawing.TileDrawing.DrawTile_LiquidBehindTile += TileDrawing_DrawTile_LiquidBehindTile;
         On.Terraria.GameContent.Drawing.TileDrawing.DrawPartialLiquid += TileDrawing_DrawPartialLiquid;
         On.Terraria.Main.DoDraw_Tiles_Solid += Main_DoDraw_Tiles_Solid;
-    }
-
-    public void Unload()
-    {
-
     }
 
     private void TileDrawing_DrawPartialLiquid(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawPartialLiquid orig, TileDrawing self, Tile tileCache, Vector2 position, Rectangle liquidSize, int liquidType, Color aColor)

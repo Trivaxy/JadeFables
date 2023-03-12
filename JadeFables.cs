@@ -17,7 +17,7 @@ namespace JadeFables
 {
 	public class JadeFables : Mod
 	{
-        public List<IOrderedLoadable> loadCache;
+        private List<IOrderedLoadable> loadCache;
 
         public static JadeFables Instance;
 		public override void Load()

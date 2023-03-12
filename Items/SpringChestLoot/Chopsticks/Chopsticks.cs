@@ -96,7 +96,18 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             if (item != Player.HeldItem)
                 return true;
 
-            if (item.DamageType.Type == DamageClass.Melee.Type && item.pick <= 0 && item.axe <= 0 && item.hammer <= 0 && !item.channel && item.useStyle == Terraria.ID.ItemUseStyleID.Swing && !item.noMelee)
+            List<int> validClasses = new List<int>();
+            validClasses.Add(DamageClass.Melee.Type);
+            validClasses.Add(DamageClass.MeleeNoSpeed.Type);
+            bool found = ModContent.TryFind<DamageClass>("CalamityMod", "TrueMeleeDamageClass", out DamageClass calDamage1);
+            bool found2 = ModContent.TryFind<DamageClass>("CalamityMod", "TrueMeleeNoSpeedDamageClass", out DamageClass calDamage2);
+
+            if (found)
+                validClasses.Add(calDamage1.Type);
+            if (found2)
+                validClasses.Add(calDamage2.Type);
+
+            if (validClasses.Contains(item.DamageType.Type) && item.pick <= 0 && item.axe <= 0 && item.hammer <= 0 && !item.channel && item.useStyle == Terraria.ID.ItemUseStyleID.Swing && !item.noMelee)
             {
                 if (Main.projectile.Any(n => n.active && n.type == ModContent.ProjectileType<ChopstickProj>() && n.owner == Player.whoAmI))
                     return false;
@@ -116,6 +127,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
                     modProj.baseAngle = (Main.MouseWorld - Player.Center).ToRotation();
                     modProj.itemScale = item.scale;
                     modProj.item = item;
+                    proj.DamageType = item.DamageType;
                 }
 
                 if (item.UseSound.HasValue)

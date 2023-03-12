@@ -10,6 +10,8 @@
 
         public override string Name => "The Springs";
 
+        public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
+
         public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.Find<ModUndergroundBackgroundStyle>("JadeFables/JadeUndergroundBackgroundStyle");
 
         public override void SetStaticDefaults()

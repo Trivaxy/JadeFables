@@ -68,13 +68,13 @@ namespace JadeFables.Items.Fishing.Crates
         };
         public static IItemDropRule[] recoveryPotions = new IItemDropRule[]
         {
-            ItemDropRule.NotScalingWithLuck(ItemID.HealingPotion, 1, 1, 3),
-            ItemDropRule.NotScalingWithLuck(ItemID.ManaPotion, 1, 1, 3),
+            ItemDropRule.NotScalingWithLuck(ItemID.HealingPotion, 1, 5, 17), 
+            ItemDropRule.NotScalingWithLuck(ItemID.ManaPotion, 1, 5, 17),
         };
         public static IItemDropRule[] extraBait = new IItemDropRule[]
         {
-            ItemDropRule.NotScalingWithLuck(ItemID.MasterBait, 1, 2, 4),
-            ItemDropRule.NotScalingWithLuck(ItemID.JourneymanBait, 1, 2, 4)
+            ItemDropRule.NotScalingWithLuck(ItemID.MasterBait, 1, 2, 6),
+            ItemDropRule.NotScalingWithLuck(ItemID.JourneymanBait, 1, 2, 6)
         };
     }
 
@@ -110,8 +110,8 @@ namespace JadeFables.Items.Fishing.Crates
             itemLoot.Add(ItemDropRule.Common(4, ItemType<JadeFountainItem>()));
             itemLoot.Add(ItemDropRule.Common(6, ItemType<Jade.FestivalLantern.FestivalLantern>()));
             itemLoot.Add(goldCoin);
-            itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(7, ores)));
-            itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(4, bars)));
+            //note: SequentialRulesNotScalingWithLuck unfortunately makes droprules later in the sequential list less common, as it will exit out as soon as any droprule succeeds.
+            itemLoot.Add(ItemDropRule.SequentialRulesNotScalingWithLuck(1, new OneFromRulesRule(4, bars), new OneFromRulesRule(7, ores)));
             itemLoot.Add(new OneFromRulesRule(4, potions));
             itemLoot.Add(new OneFromRulesRule(2, recoveryPotions));
             itemLoot.Add(new OneFromRulesRule(2, extraBait));
@@ -163,8 +163,7 @@ namespace JadeFables.Items.Fishing.Crates
             itemLoot.Add(ItemDropRule.Common(4, ItemType<JadeFountainItem>()));
             itemLoot.Add(ItemDropRule.Common(6, ItemType<Jade.FestivalLantern.FestivalLantern>()));
             itemLoot.Add(goldCoin);
-            itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(14, ores), new OneFromRulesRule(14, hardmodeOres)));
-            itemLoot.Add(new OneFromRulesRule(1, new OneFromRulesRule(12, bars), new OneFromRulesRule(6, hardmodeBars)));
+            itemLoot.Add(ItemDropRule.SequentialRulesNotScalingWithLuck(1, new OneFromRulesRule(6, hardmodeBars), new OneFromRulesRule(14, hardmodeOres), new OneFromRulesRule(12, bars), new OneFromRulesRule(14, ores)));
             itemLoot.Add(new OneFromRulesRule(4, potions));
             itemLoot.Add(new OneFromRulesRule(2, recoveryPotions));
             itemLoot.Add(new OneFromRulesRule(2, extraBait));

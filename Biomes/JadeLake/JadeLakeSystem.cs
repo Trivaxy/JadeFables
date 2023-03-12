@@ -77,7 +77,7 @@ namespace JadeFables.Biomes.JadeLake
                     for (int y = 0; y < Main.maxTilesY; y++)
                     {
                         Tile tile = Main.tile[x, y];
-                        if (tile.LiquidAmount > 0) {
+                        if (tile.LiquidAmount > 0 && tile.LiquidType == LiquidID.Water) {
                             float modifiedProgress = MathHelper.Min(TotalBiomeCount, 3000);
                             modifiedProgress = forceLakeAesthetic ? 3000f : modifiedProgress;
 
@@ -132,7 +132,7 @@ namespace JadeFables.Biomes.JadeLake
                     for (int y = 0; y < Main.maxTilesY; y++)
                     {
                         Tile tile = Main.tile[x, y];
-                        if (tile.LiquidAmount > 0)
+                        if (tile.LiquidAmount > 0 && tile.LiquidType == LiquidID.Water)
                         {
                             if (Main.tile[x, y - 1].LiquidAmount <= 0 && !Main.tile[x, y - 1].HasTile)
                             {
@@ -297,9 +297,9 @@ namespace JadeFables.Biomes.JadeLake
                     waterDepthTiles.Clear();
                 }
 
-                r = color.R / (255f / brightness);
-                g = color.G / (255f / brightness);
-                b = color.B / (255f / brightness);
+                r += color.R / (255f / brightness);
+                g += color.G / (255f / brightness);
+                b += color.B / (255f / brightness);
             }
         }
     }

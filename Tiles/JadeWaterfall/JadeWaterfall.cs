@@ -99,6 +99,15 @@ namespace JadeFables.Tiles.JadeWaterfall
         }
     }
 
+    public class JadeWaterfallHashSetsReset : ModSystem
+    {
+        public override void PreUpdateProjectiles()
+        {
+            waterfallTiles.Clear();
+            waterfallColumns.Clear();
+        }
+    }
+
     public class JadeWaterfallProj : ModProjectile
     {
         Tile originLeft => Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)];
@@ -207,11 +216,6 @@ namespace JadeFables.Tiles.JadeWaterfall
 
                     if (i == 0)
                     {
-                        if (waterfallColumns.Contains(x) && waterfallTiles.Contains((x, y)))
-                        {
-                            waterfallTiles.Clear();
-                            waterfallColumns.Clear();
-                        }
                         waterfallColumns.Add(x);
                         waterfallColumns.Sort();
                     }
@@ -277,8 +281,6 @@ namespace JadeFables.Tiles.JadeWaterfall
     {
         public static HashSet<(int, int)> waterfallTiles = new();
         public static List<int> waterfallColumns = new();
-
-        public readonly int MAXTILES_PERWATERFALL = (MAXLENGTH + FADEOUTLENGTH) * 2;
         public override void ModifyLight(int i, int j, int type, ref float r, ref float g, ref float b)
         {
             if (waterfallTiles.Count <= 0) return;
@@ -288,32 +290,13 @@ namespace JadeFables.Tiles.JadeWaterfall
 
             if (waterfallTiles.Contains((i, j)))
             {
-                if (waterfallTiles.Count <= MAXTILES_PERWATERFALL && NoActiveWaterfalls())
-                {
-                    waterfallTiles.Clear();
-                    waterfallColumns.Clear();
-                }
-
                 Color color = new Color(0, 220, 200);
-                const float brightness = 255f / 0.9f;
+                const float brightness = 0.9f;
 
-                r = color.R / brightness;
-                g = color.G / brightness;
-                b = color.B / brightness;
+                r += color.R / (255f / brightness);
+                g += color.G / (255f / brightness);
+                b += color.B / (255f / brightness);
             }
-        }
-        private bool NoActiveWaterfalls()
-        {
-            int waterfallCount = 0;
-            for (int k = 0; k < Main.maxProjectiles; ++k)
-            {
-                if (Main.projectile[k].active && Main.projectile[k].type == ModContent.ProjectileType<JadeWaterfallProj>())
-                {
-                    waterfallCount++;
-                    return false;
-                }
-            }
-            return true;
         }
     }
 }

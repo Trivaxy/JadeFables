@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿/*using System.Reflection;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -305,4 +305,4 @@ public sealed class BetterWaterTrianglesEdit : RuntimeDetourModSystem
                || Framing.GetTileSafely(x - 1, y).LiquidAmount > 0
                || (Framing.GetTileSafely(x, y).IsHalfBlock && Framing.GetTileSafely(x - 1, y).LiquidAmount > 0 && Lighting.Brightness(x, y) > 0f);
     }
-}
+}*/

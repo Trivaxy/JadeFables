@@ -59,7 +59,7 @@ namespace JadeFables.Core.Boids
 					{
 						Tile tile = Framing.GetTileSafely(tilePos.X + i, tilePos.Y + j);
 						float pdist = Vector2.DistanceSquared(position, new Vector2(tilePos.X + i, tilePos.Y + j) * 16);
-						if (pdist < range * range && pdist > 0 && (tile.HasTile && Main.tileSolid[tile.TileType] || tile.LiquidAmount < 100))
+						if (pdist < range * range && pdist > 0 && ((tile.HasTile && Main.tileSolid[tile.TileType] && !tile.IsActuated) || tile.LiquidAmount < 100))
 						{
 							Vector2 d = position - new Vector2(tilePos.X + i, tilePos.Y + j) * 16;
 							Vector2 norm = Vector2.Normalize(d);

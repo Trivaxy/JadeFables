@@ -90,7 +90,7 @@ namespace JadeFables.Biomes.JadeLake
             graphics.SetRenderTarget(circle);
 
             graphics.Clear(Color.Transparent);
-            Main.spriteBatch.Begin(default, default, SamplerState.PointClamp, default, default, default, Main.GameViewMatrix.ZoomMatrix);
+            Main.spriteBatch.Begin(default, default, SamplerState.PointClamp, default, default, default);
 
             bgPoints = GetBgPoints();
 
@@ -104,7 +104,7 @@ namespace JadeFables.Biomes.JadeLake
 
             graphics.SetRenderTarget(background);
             graphics.Clear(Color.Transparent);
-            Main.spriteBatch.Begin(default, default, SamplerState.PointClamp, default, default, default, Main.GameViewMatrix.ZoomMatrix);
+            Main.spriteBatch.Begin(default, default, SamplerState.PointClamp, default, default, default);
             foreach (Vector4 vec4 in bgPoints)
             {
                 DrawBGRT(vec4);

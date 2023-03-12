@@ -288,7 +288,7 @@ namespace JadeFables.Biomes.JadeLake
 
                 Color color = new Color(0, 220, 200);
                 float brightness = 0.9f;
-                if (waterDepthTiles.Contains((i, j))) brightness = 0.175f;
+                if (waterDepthTiles.Contains((i, j))) brightness = 0.2f;
                 brightness *= modifiedProgress / 3000f;
 
                 if (jadeLakeSystem.TotalBiomeCount == 0)

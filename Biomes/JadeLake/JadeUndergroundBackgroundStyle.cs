@@ -6,11 +6,11 @@ namespace JadeFables.Biomes.JadeLake
 	{
 		public override void FillTextureArray(int[] textureSlots)
 		{
-			textureSlots[0] = BackgroundTextureLoader.GetBackgroundSlot(Mod, "Assets/Invisible");
-			textureSlots[1] = BackgroundTextureLoader.GetBackgroundSlot(Mod, "Assets/Invisible");
-			textureSlots[2] = BackgroundTextureLoader.GetBackgroundSlot(Mod, "Assets/Invisible");
-			textureSlots[3] = BackgroundTextureLoader.GetBackgroundSlot(Mod, "Assets/Invisible");
-		}
+            textureSlots[0] = BackgroundTextureLoader.GetBackgroundSlot(Mod, "Biomes/JadeLake/JadeBiomeUnderground0");
+            textureSlots[1] = BackgroundTextureLoader.GetBackgroundSlot(Mod, "Biomes/JadeLake/JadeBiomeUnderground1");
+            textureSlots[2] = BackgroundTextureLoader.GetBackgroundSlot(Mod, "Biomes/JadeLake/JadeBiomeUnderground2");
+            textureSlots[3] = BackgroundTextureLoader.GetBackgroundSlot(Mod, "Biomes/JadeLake/JadeBiomeUnderground3");
+        }
 	}
 	
 }

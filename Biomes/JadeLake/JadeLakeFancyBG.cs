@@ -173,7 +173,7 @@ namespace JadeFables.Biomes.JadeLake
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
 
-            //Main.spriteBatch.Draw(background, Vector2.Zero, null, Color.White);
+            Main.spriteBatch.Draw(background, Vector2.Zero, null, Color.White);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.ZoomMatrix);
         }

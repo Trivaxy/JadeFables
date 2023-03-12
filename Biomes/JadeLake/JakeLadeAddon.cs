@@ -16,11 +16,13 @@ using static tModPorter.ProgressUpdate;
 
 namespace JadeFables.Biomes.JadeLake
 {
-	class JadeLakeAddon : WaterAddon
+	class JadeLakeAddon : WaterAddon, IOrderedLoadable
 	{
 		public override bool Visible => Main.LocalPlayer.InModBiome<JadeLakeBiome>() || GetInstance<JadeLakeSystem>().forceLakeAesthetic;
 
-		public override Texture2D BlockTexture(Texture2D normal, int x, int y)
+        public static bool VisibleStatic => Main.LocalPlayer.InModBiome<JadeLakeBiome>() || GetInstance<JadeLakeSystem>().forceLakeAesthetic;
+
+        public override Texture2D BlockTexture(Texture2D normal, int x, int y)
 		{
 			return normal;
 		}
@@ -51,7 +53,7 @@ namespace JadeFables.Biomes.JadeLake
 		}
 	}
 
-    class JadeLakeMapTarget : ILoadable
+    class JadeLakeMapTarget : IOrderedLoadable
     {
         public static RenderTarget2D jadelakeMapTarget;
         public static RenderTarget2D jadelakeShineTarget;
@@ -67,7 +69,9 @@ namespace JadeFables.Biomes.JadeLake
 
         public static int framesSinceDraw = 0;
 
-        public void Load(Mod mod)
+        public float Priority => 0.9f;
+
+        public void Load()
         {
             if (Main.dedServ)
                 return;
@@ -84,7 +88,7 @@ namespace JadeFables.Biomes.JadeLake
         {
             orig();
 
-            if (Main.gameMenu || !GetInstance<JadeLakeAddon>().Visible)
+            if (Main.gameMenu || !JadeLakeAddon.VisibleStatic)
                 return;
 
             var translation = Main.screenPosition - oldScreenPos;

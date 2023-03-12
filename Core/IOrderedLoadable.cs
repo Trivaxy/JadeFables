@@ -1,6 +1,6 @@
 ﻿namespace JadeFables.Core
 {
-	interface IOrderedLoadable
+	public interface IOrderedLoadable
 	{
 		void Load();
 		void Unload();

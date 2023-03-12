@@ -18,17 +18,20 @@ using Terraria.Graphics.Renderers;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System.Transactions;
+using JadeFables.Core.Systems.LightingSystem;
 
 namespace JadeFables.Biomes.JadeLake
 {
-	class JadeLakeFancyBG : ILoadable
+	class JadeLakeFancyBG : IOrderedLoadable
 	{
 		public static List<Vector4> bgPoints; //w is width, z is height
 
         public static RenderTarget2D circle;
 
         public static RenderTarget2D background;
-		public void Load(Mod mod)
+
+        public float Priority => 1.1f;
+		public void Load()
 		{
             if (Main.dedServ)
                 return;
@@ -160,6 +163,8 @@ namespace JadeFables.Biomes.JadeLake
 
             if (!Main.LocalPlayer.InModBiome<JadeLakeBiome>())
                 return;
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.ZoomMatrix);
 
             DrawTilingBackground(Main.spriteBatch);
             var effect = Filters.Scene["BackgroundMask"].GetShader().Shader;
@@ -168,7 +173,7 @@ namespace JadeFables.Biomes.JadeLake
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
 
-            Main.spriteBatch.Draw(background, Vector2.Zero, null, Color.White);
+            //Main.spriteBatch.Draw(background, Vector2.Zero, null, Color.White);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.ZoomMatrix);
         }
@@ -186,30 +191,7 @@ namespace JadeFables.Biomes.JadeLake
                 for (int y = -tex.Height; y <= Main.screenHeight + tex.Height; y += tex.Height)
                 {
                     Vector2 pos = new Vector2(x, y) - new Vector2(Main.screenPosition.X % tex.Width, Main.screenPosition.Y % tex.Height);
-                    /*Texture2D drawtex;
-                    bool drawMain = CheckBackground(pos, tex.Size());
-                    if (!CheckBackground(pos + new Vector2(0, tex.Height), tex.Size(), true) && CheckBackground(pos, tex.Size()))
-                    {
-                        drawMain = false;
-                        spriteBatch.Draw(texTop, pos, null, Color.White);
-                    }
-                    if (!CheckBackground(pos + new Vector2(0, -tex.Height), tex.Size(), true) && CheckBackground(pos, tex.Size()))
-                    {
-                        drawMain = false;
-                        spriteBatch.Draw(texBot, pos, null, Color.White);
-                    }
-                    if (!CheckBackground(pos + new Vector2(-tex.Width, 0), tex.Size(), true) && CheckBackground(pos, tex.Size()))
-                    {
-                        drawMain = false;
-                        spriteBatch.Draw(texRight, pos, null, Color.White);
-                    }
-                    if (!CheckBackground(pos + new Vector2(tex.Width, 0), tex.Size(), true) && CheckBackground(pos, tex.Size()))
-                    {
-                        drawMain = false;
-                        spriteBatch.Draw(texLeft, pos, null, Color.White);
-                    }
-                    if (drawMain)*/
-                        spriteBatch.Draw(tex, pos, null, Color.White);
+                    LightingBufferRenderer.DrawWithLighting(pos, tex);
                 }
             }
         }

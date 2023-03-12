@@ -45,14 +45,23 @@ namespace JadeFables.Biomes.JadeLake
 
         private void Main_DoDraw_WallsTilesNPCs(On.Terraria.Main.orig_DoDraw_WallsTilesNPCs orig, Main self)
         {
-             if (Main.gameMenu || Main.dedServ)
+            if (Main.gameMenu || Main.dedServ)
+            {
+                orig(self);
                 return;
+            }
 
             if (circle == null || background == null)
+            {
+                orig(self);
                 return;
+            }
 
             if (!Main.LocalPlayer.InModBiome<JadeLakeBiome>())
+            {
+                orig(self);
                 return;
+            }
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.ZoomMatrix);
 

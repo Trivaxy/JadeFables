@@ -15,7 +15,7 @@ using Terraria.ID;
 
 namespace JadeFables.Core
 {
-	public abstract class WaterAddon : ILoadable
+	public abstract class WaterAddon : IOrderedLoadable
 	{
 		/// <summary>
 		/// call Main.SpriteBatch.Begin with the parameters you want for the front of water. Primarily used for applying shaders
@@ -30,7 +30,9 @@ namespace JadeFables.Core
 
 		public abstract Texture2D BlockTexture(Texture2D normal, int x, int y);
 
-		public void Load(Mod mod)
+		public float Priority => 0.8f;
+
+		public void Load()
 		{
 			WaterAddonHandler.addons.Add(this);
 		}

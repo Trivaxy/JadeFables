@@ -52,7 +52,7 @@ namespace JadeFables.Items.Jade.FestivalLantern
 
         public override bool CanUseItem(Player player)
         {
-            if (LanternNight.GenuineLanterns || LanternNight.NextNightIsLanternNight)
+            if (LanternNight.GenuineLanterns || LanternNight.NextNightIsLanternNight || Main.projectile.Any(n => n.active && n.type == ModContent.ProjectileType<FestivalLanternProj>()))
                 return false;
             return true;
         }

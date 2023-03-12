@@ -36,7 +36,6 @@ namespace JadeFables.Biomes.JadeLake
             if (Main.dedServ)
                 return;
 
-            //On.Terraria.Main.DrawBackgroundBlackFill += DrawJadeBackground;
             On.Terraria.Main.DrawBlack += ForceDrawBlack;
             IL.Terraria.Main.DrawBlack += ChangeBlackThreshold;
             On.Terraria.Main.CheckMonoliths += DrawToTargets;
@@ -185,33 +184,6 @@ namespace JadeFables.Biomes.JadeLake
                 if (x > -texture.Width && x < Main.screenWidth + 30)
                     Main.spriteBatch.Draw(texture, new Vector2(x, y), null, color, 0f, Vector2.Zero, 1f, flip ? SpriteEffects.FlipHorizontally : 0, 0);
             }
-        }
-
-        private void DrawJadeBackground(On.Terraria.Main.orig_DrawBackgroundBlackFill orig, Main self)
-        {
-            orig(self);
-
-            if (Main.gameMenu || Main.dedServ)
-                return;
-
-            if (circle == null || background == null)
-                return;
-
-            if (!Main.LocalPlayer.InModBiome<JadeLakeBiome>())
-                return;
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.ZoomMatrix);
-
-            DrawTilingBackground(Main.spriteBatch);
-            var effect = Filters.Scene["BackgroundMask"].GetShader().Shader;
-            effect.Parameters["mask"].SetValue(circle);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
-
-            Main.spriteBatch.Draw(background, Vector2.Zero, null, Color.White);
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.ZoomMatrix);
         }
 
         private void DrawTilingBackground(SpriteBatch spriteBatch)

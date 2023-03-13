@@ -573,6 +573,8 @@ namespace JadeFables.Items.Jade.JadeHarpoon
         public bool flipping;
         public Vector2 jumpVelocity = Vector2.Zero;
 
+        public int flipTimer;
+
         public float storedBodyRotation = 0f;
         public override void PreUpdate()
         {
@@ -598,12 +600,15 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                 Player.fullRotation = storedBodyRotation;
                 Player.fullRotationOrigin = Player.Size / 2;
                 Player.mount?.Dismount(Player);
+
+                flipTimer++;
             }
-            if (Player.velocity.Y == 0)
+            if (Player.velocity.Y == 0 || flipTimer > 150)
             {
                 storedBodyRotation = 0;
                 if (flipping)
                 {
+                    flipTimer = 0;
                     Player.fullRotation = 0;
                     flipping = false;
                     iframes = 30;

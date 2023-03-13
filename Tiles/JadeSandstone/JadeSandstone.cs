@@ -18,7 +18,7 @@ namespace JadeFables.Tiles.JadeSandstone
 
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Sandstone");
-            AddMapEntry(new Color(163, 117, 76), name);
+            AddMapEntry(jadeSandDark, name);
         }
     }
 

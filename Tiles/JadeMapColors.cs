@@ -6,16 +6,14 @@ namespace JadeFables.Tiles
         public static Color jadeGrassLime = new Color(120, 155, 20);
         public static Color jadeLanternYellow = new Color(255, 255, 80);
 
-        public static Color jadeSandLight = new Color(207, 160, 118);
-
-        public static Color jadeSandDarkWall = new Color(107, 78, 50);
+        public static Color jadeSandLight = new Color(215, 170, 125);
+        public static Color jadeSandMid = new Color(185, 135, 90); //i cant believe it jade sand confirmed mid!!!!!!!!!
+        public static Color jadeSandDark = new Color(160, 110, 70);
+        public static Color jadeSandDarkWall = new Color(105, 70, 45);
 
         public static Color jadeStoneGray = new Color(100, 110, 100);
 
         //Unused due to only appearing once
-
-        //public static Color jadeSandMid = new Color(180, 130, 85); //i cant believe it jade sand confirmed mid!!!!!!!!!
-        //public static Color jadeSandDark = new Color(163, 117, 76);
 
         //public static Color jadeOreColor = new Color(50, 160, 65);
         //public static Color jadeChestColor = new Color(155, 50, 50);

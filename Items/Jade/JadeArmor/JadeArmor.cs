@@ -160,6 +160,7 @@ namespace JadeFables.Items.Jade.JadeArmor
 
             if (CanUseDash() && dashDirection.Length() > 0f && dashCooldown <= 0)
             {
+                Player.maxFallSpeed = 2000f;
                 Player.velocity = dashDirection * 15f;
                 oldDashDirection = dashDirection;
 

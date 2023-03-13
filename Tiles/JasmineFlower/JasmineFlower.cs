@@ -24,7 +24,9 @@ namespace JadeFables.Tiles.JasmineFlower
 			DustType = DustID.Plantera_Green;
 			HitSound = SoundID.Grass;
 
-			AddMapEntry(new Color(100, 150, 66));
+			ModTranslation name = CreateMapEntryName();
+			name.SetDefault("Jasmine Flower");
+			AddMapEntry(new Color(175, 190, 135), name);
 		}
 
 		public override void NumDust(int i, int j, bool fail, ref int num)

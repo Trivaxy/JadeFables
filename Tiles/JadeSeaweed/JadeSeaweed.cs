@@ -38,7 +38,7 @@ namespace JadeFables.Tiles.JadeSeaweed
 
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Seaweed");
-            AddMapEntry(new Color(207, 160, 118), name);
+            AddMapEntry(jadeGrassLime, name);
         }
 
         public override void NearbyEffects(int i, int j, bool closer)

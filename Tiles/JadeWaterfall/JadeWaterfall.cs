@@ -37,9 +37,9 @@ namespace JadeFables.Tiles.JadeWaterfall
             TileObjectData.addTile(Type);
             MinPick = 999;
 
-            ModTranslation name = CreateMapEntryName();
+            /*ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Waterfall");
-            AddMapEntry(new Color(207, 160, 118), name);
+            AddMapEntry(new Color(9, 61, 191), name);*/ //Don't display since it'd be weird to have it only take up one tile
         }
 
         public override void NearbyEffects(int i, int j, bool closer)
@@ -270,6 +270,8 @@ namespace JadeFables.Tiles.JadeWaterfall
                         item.stack--;
                         Item.NewItem(item.GetSource_ItemUse(item), player.Center, ModContent.ItemType<JadeWaterfallItem>());
                         SoundEngine.PlaySound(SoundID.SplashWeak, player.Center);
+
+                        return true;
                     }
                 }
             }

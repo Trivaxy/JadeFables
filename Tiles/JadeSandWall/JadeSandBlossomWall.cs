@@ -16,7 +16,7 @@ namespace JadeFables.Tiles.JadeSandWall
 			DustType = DustID.Dirt;
 			HitSound = SoundID.Dig;
             ItemDrop = ModContent.ItemType<JadeSandWallItem>();
-			AddMapEntry(new Color(107, 78, 50));
+			AddMapEntry(jadeSandDarkWall);
 		}
 
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch)

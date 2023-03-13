@@ -118,7 +118,7 @@ namespace JadeFables.Tiles.JadeTorch
 
             name.SetDefault("Torch");
 
-            AddMapEntry(new Color(200, 200, 200), name);
+            AddMapEntry(new Color(0, 170, 140), name);
 
             // Assets
             if (!Main.dedServ)

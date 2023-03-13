@@ -19,7 +19,7 @@ namespace JadeFables.Tiles.HardenedJadeSand
             Main.tileBlockLight[Type] = true;
 
             ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Hardened Spring Sandstone");
+            name.SetDefault("Hardened Spring Sand");
             AddMapEntry(new Color(180, 130, 85), name);
         }
     }

@@ -29,7 +29,7 @@ namespace JadeFables.Tiles.JadeSand
 
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Sand");
-            AddMapEntry(new Color(207, 160, 118), name);
+            AddMapEntry(jadeSandLight, name);
         }
 
         public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)

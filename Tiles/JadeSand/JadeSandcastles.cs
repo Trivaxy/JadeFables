@@ -31,7 +31,7 @@ namespace JadeFables.Tiles.JadeSand
             DustType = DustID.Sand;
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Jade Sandcastle");
-            AddMapEntry(new Color(207, 160, 118), name);
+            AddMapEntry(jadeSandLight, name);
         }
         public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
         {
@@ -70,7 +70,7 @@ namespace JadeFables.Tiles.JadeSand
             DustType = DustID.Sand;
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Jade Sandcastle");
-            AddMapEntry(new Color(207, 160, 118), name);
+            AddMapEntry(jadeSandLight, name);
         }
     }
 
@@ -92,7 +92,7 @@ namespace JadeFables.Tiles.JadeSand
             DustType = DustID.Sand;
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Jade Sandcastle");
-            AddMapEntry(new Color(207, 160, 118), name);
+            AddMapEntry(jadeSandLight, name);
         }
 
         public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
@@ -124,7 +124,7 @@ namespace JadeFables.Tiles.JadeSand
             DustType = DustID.Sand;
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Jade Sandcastle");
-            AddMapEntry(new Color(207, 160, 118), name);
+            AddMapEntry(jadeSandLight, name);
         }
     }
 

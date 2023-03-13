@@ -38,8 +38,8 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             TileSets.CanGrowBamboo[Type] = true;
 
             ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Spring Sand");
-            AddMapEntry(new Color(207, 160, 118), name);
+            name.SetDefault("Overgrown Spring Sand");
+            AddMapEntry(jadeGrassLime, name);
         }
 
         public override void DrawEffects(int i, int j, SpriteBatch spriteBatch, ref TileDrawInfo drawData)

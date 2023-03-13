@@ -30,7 +30,7 @@ namespace JadeFables.Tiles.JadeGrassShort
 			TileObjectData.newTile.StyleHorizontal = true;
 			TileObjectData.addTile(Type);
 
-			AddMapEntry(Color.Green);
+			AddMapEntry(jadeGrassLime);
 		}
 
 		public override void NumDust(int i, int j, bool fail, ref int num)
@@ -78,7 +78,7 @@ namespace JadeFables.Tiles.JadeGrassShort
 			TileObjectData.newTile.StyleHorizontal = true;
 			TileObjectData.addTile(Type);
 
-            AddMapEntry(Color.Green);
+            AddMapEntry(jadeGrassLime);
         }
 
         public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)

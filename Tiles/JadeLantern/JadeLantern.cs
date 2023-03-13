@@ -38,7 +38,7 @@ namespace JadeFables.Tiles.JadeLantern
 
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Lantern");
-            AddMapEntry(new Color(207, 160, 118), name);
+            AddMapEntry(jadeLanternYellow, name);
         }
 
         public static bool Spawn(int i, int j)
@@ -82,7 +82,7 @@ namespace JadeFables.Tiles.JadeLantern
             ItemDrop = ModContent.ItemType<JadeLanternItem>();
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Lantern");
-            AddMapEntry(new Color(207, 160, 118), name);
+            AddMapEntry(jadeLanternYellow, name);
         }
 
         public static bool Spawn(int i, int j)

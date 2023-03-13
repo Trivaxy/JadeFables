@@ -129,7 +129,7 @@ namespace JadeFables.Items.Fishing.Crates
             TileObjectData.addTile(Type);
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Spring Crate");
-            AddMapEntry(Color.DarkGreen, name);
+            AddMapEntry(new Color(35, 175, 95), name);
         }
         public override void NumDust(int i, int j, bool fail, ref int num)
         {
@@ -181,7 +181,7 @@ namespace JadeFables.Items.Fishing.Crates
             TileObjectData.addTile(Type);
             ModTranslation name = CreateMapEntryName();
             name.SetDefault("Dragon Crate");
-            AddMapEntry(Color.DarkGreen, name);
+            AddMapEntry(new Color(200, 65, 140), name);
         }
         public override void NumDust(int i, int j, bool fail, ref int num)
         {

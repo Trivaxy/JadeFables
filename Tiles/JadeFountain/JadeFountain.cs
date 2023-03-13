@@ -33,7 +33,9 @@ namespace JadeFables.Tiles.JadeFountain
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
             AnimationFrameHeight = 72;
-            AddMapEntry(new Color(200, 200, 200));
+            ModTranslation name = CreateMapEntryName();
+            name.SetDefault("Spring Fountain");
+            AddMapEntry(jadeStoneGray, name);
         }
 
         public override void NumDust(int i, int j, bool fail, ref int num)
@@ -103,7 +105,7 @@ namespace JadeFables.Tiles.JadeFountain
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Fountain");
+            DisplayName.SetDefault("Spring Fountain");
             Tooltip.SetDefault("Makes nearby water sparkly");
         }
 

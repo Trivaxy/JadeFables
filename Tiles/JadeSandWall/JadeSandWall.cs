@@ -16,7 +16,7 @@ namespace JadeFables.Tiles.JadeSandWall
 			DustType = DustID.Dirt;
             ItemDrop = ModContent.ItemType<JadeSandWallItem>();
             HitSound = SoundID.Dig;
-			AddMapEntry(new Color(107, 78, 50));
+			AddMapEntry(jadeSandDarkWall);
 		}
     }
 

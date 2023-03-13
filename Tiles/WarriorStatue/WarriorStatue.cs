@@ -31,7 +31,7 @@ namespace JadeFables.Tiles.WarriorStatue
 
 			ModTranslation name = CreateMapEntryName();
 			name.SetDefault("Warrior Statue");
-			AddMapEntry(Color.Gray, name);
+			AddMapEntry(jadeStoneGray, name);
 		}
 
 		public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;

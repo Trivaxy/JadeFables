@@ -36,7 +36,7 @@ namespace JadeFables.Tiles.SpringChest
 
 			ModTranslation name = CreateMapEntryName();
 			name.SetDefault("Spring Chest");
-			AddMapEntry(new Color(200, 200, 200), name, MapChestName);
+			AddMapEntry(new Color(155, 50, 50), name, MapChestName);
 
 			// Placement
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);

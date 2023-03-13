@@ -206,7 +206,7 @@ namespace JadeFables.NPCs.Bullfrog
             return false;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) => !spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 4f : 0f;
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => !spawnInfo.Water && !spawnInfo.PlayerSafe && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 4f : 0f;
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

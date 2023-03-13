@@ -168,7 +168,7 @@ namespace JadeFables.NPCs.Pufferfish
             target.AddBuff(BuffID.Poisoned, 200);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Water && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 150f : 0f;
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Water && !spawnInfo.PlayerSafe && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 150f : 0f;
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

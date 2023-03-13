@@ -116,10 +116,22 @@ namespace JadeFables.NPCs
 
             Color color = Color.Lerp(Color.Cyan, Color.Green, 0.5f);
             effect.Parameters["inputColor"].SetValue(color.ToVector4() * (1.3f * MathHelper.Min(deathCounter / 20f, 1)));
+            Rectangle scissorRect = spriteBatch.GraphicsDevice.ScissorRectangle;
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(default, BlendState.Additive, default, default, default, effect, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.spriteBatch.Draw(tex, (NPC.Center - screenPos) + new Vector2(0, NPC.IsABestiaryIconDummy ? -4 : 4), null, Color.Green, 3.14f, NPC.IsABestiaryIconDummy ? tex.Size() / 2 : tex.Bounds.Top(), new Vector2(0.5f, 0.3f), SpriteEffects.None, 0f);
+
+            RasterizerState state = new RasterizerState();
+            state.ScissorTestEnable = true;
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.PointClamp, default, state, effect, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.GraphicsDevice.ScissorRectangle = scissorRect;
+            if (NPC.IsABestiaryIconDummy)
+            {
+                Main.spriteBatch.Draw(tex, (NPC.Center - screenPos) + new Vector2(0, 32), null, Color.Green, 3.14f, tex.Bounds.Top(), new Vector2(0.5f, 0.3f), SpriteEffects.None, 0f);
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+                return false;
+            }
+            Main.spriteBatch.Draw(tex, (NPC.Center - screenPos) + new Vector2(0, 4), null, Color.Green, 3.14f, tex.Bounds.Top(), new Vector2(0.5f, 0.3f), SpriteEffects.None, 0f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);

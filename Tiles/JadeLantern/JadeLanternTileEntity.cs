@@ -212,7 +212,7 @@ namespace JadeFables.Tiles.JadeLantern
 
             for (int i = 1; i <= 4; i++)
             {
-                Gore.NewGoreDirect(source, seg.posNow, Main.rand.NextVector2Circular(3, 3), Mod.Find<ModGore>("lantern" + ((lanternFrame.Y / 32) + 1) + "gore" + i).Type);
+                Gore.NewGoreDirect(source, seg.posNow, Main.rand.NextVector2Circular(3, 3), Mod.Find<ModGore>("lantern" + ((lanternFrame.Y / 34) + 1) + "gore" + i).Type);
             }
             for (int i = 0; i < 5; i++)
                 Dust.NewDustPerfect(seg.posNow + Main.rand.NextVector2Circular(12, 12), ModContent.DustType<LanternGlow>(), Main.rand.NextVector2Circular(3, 3), 0, Color.OrangeRed, Main.rand.NextFloat(0.85f, 1.15f));
@@ -324,7 +324,7 @@ namespace JadeFables.Tiles.JadeLantern
 
             chainFrame = new Rectangle(0, 22 * chainFrameY, 12, 22);
             pivotFrame = new Rectangle(0, 10 * chainFrameY, 14, 10);
-            lanternFrame = new Rectangle(0, 32 * lanternFrameY, 32, 32);
+            lanternFrame = new Rectangle(0, 34 * lanternFrameY, 32, 32);
         }
 
         public void Draw()

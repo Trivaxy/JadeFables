@@ -59,7 +59,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
         public override bool CanUseItem(Player player)
         {
-            return !Main.projectile.Any(n => n.active && n.owner == player.whoAmI && n.type == ProjectileType<JadeHarpoonHook>());
+            return !Main.projectile.Any(n => n.active && n.owner == player.whoAmI && n.type == ProjectileType<JadeHarpoonHook>()) && player.GetModPlayer<JadeHarpoonPlayer>().iframes < -20;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)

@@ -110,7 +110,7 @@ namespace JadeFables.Tiles.WarriorStatue
             Lighting.AddLight(Projectile.Center + new Vector2(40, 50), Color.Teal.ToVector3() * 1.6f);
             if (Main.rand.NextBool(7))
             {
-                Vector2 dustPos = Projectile.Center + new Vector2(Main.rand.Next(80), 30);
+                Vector2 dustPos = Projectile.Center + new Vector2(Main.rand.Next(10, 70), 0);
                 Dust.NewDustPerfect(dustPos, ModContent.DustType<Dusts.GlowLineFast>(), Vector2.UnitY * -4, 0, Color.Teal, 1.0f);
             }
         }

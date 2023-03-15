@@ -1,3 +1,4 @@
+using JadeFables.Tiles.SpringChest;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -35,7 +36,14 @@ namespace JadeFables.Tiles.WarriorStatue
 			AddMapEntry(jadeStoneGray, name);
 		}
 
-		public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
+        public override void MouseOver(int i, int j)
+        {
+            Player player = Main.LocalPlayer;
+            player.cursorItemIconText = "";
+            player.cursorItemIconID = ItemID.SilverCoin;
+        }
+
+        public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
 		public override void KillMultiTile(int i, int j, int frameX, int frameY) => Item.NewItem(new EntitySource_TileBreak(i, j), (i + 3) * 16, (j + 5) * 16, 16, 32, ModContent.ItemType<WarriorStatueItem>());
 
         public override bool RightClick(int i, int j) {

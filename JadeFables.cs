@@ -10,12 +10,25 @@ global using Terraria.ID;
 global using Microsoft.Xna.Framework;
 global using Microsoft.Xna.Framework.Graphics;
 using JadeFables.Biomes.JadeLake;
+using System.Reflection;
 
 namespace JadeFables
 {
-	public class JadeFables : Mod
+    public class TemporaryFix : PreJITFilter
+    {
+        public override bool ShouldJIT(MemberInfo member)
+        {
+            return false;
+        }
+    }
+    public class JadeFables : Mod
 	{
 		public static JadeFables Instance;
+
+		public JadeFables()
+		{
+            PreJITFilter = new TemporaryFix();
+        }
 		public override void Load()
 		{
 			Instance = this;

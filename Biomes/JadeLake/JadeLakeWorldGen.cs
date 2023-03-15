@@ -2,8 +2,10 @@
 using JadeFables.Helpers.FastNoise;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeWaterfall;
+using JadeFables.Tiles.Pearls;
 using Steamworks;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Drawing.Text;
@@ -13,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria.DataStructures;
 using Terraria.IO;
+using Terraria.Utilities;
 using Terraria.WorldBuilding;
 using static JadeFables.Biomes.JadeLake.JadeLakeWorldGen;
 using static Terraria.ModLoader.PlayerDrawLayer;
@@ -195,6 +198,8 @@ namespace JadeFables.Biomes.JadeLake
                 //FillArea(PlatformArea, TileID.SapphireGemspark, 0);
 
                 GenerateWallPillars(platformList, biomeSize / 3);
+
+                GeneratePagoda(platformList);
             }
 
 
@@ -269,6 +274,50 @@ namespace JadeFables.Biomes.JadeLake
             public int BottomWidth() => rightBottom.X - leftBottom.X;
             public int RightHeight() => rightBottom.Y - rightTop.Y;
             public int LeftHeight() => leftBottom.Y - leftTop.Y;
+        }
+
+        public static void GeneratePagoda(List<(Rectangle pos, bool water)> list)
+        {
+            WeightedRandom<Rectangle> pool = new(WorldGen.genRand);
+            foreach (var island in list)
+            {
+                if (!island.water)
+                {
+                    pool.Add(island.pos, 1.0f);
+                }
+            }
+
+            Vector2 pagodaBase = pool.Get().Top();
+
+            int x = (int)pagodaBase.X;
+            int y = (int)pagodaBase.Y;
+
+            while (!Main.tile[x,y].HasTile || !Main.tileSolid[Main.tile[x, y].TileType])
+            {
+                y++;
+            }
+            string pagodaPrefix = "";
+            if (Main.maxTilesX < 5000) //small world
+            {
+                pagodaPrefix = "Small";
+                y += 3;
+            }
+            else if (Main.maxTilesX < 7000) //medium world
+            {
+                pagodaPrefix = "Medium";
+                y += 4;
+            }
+            else
+            {
+                pagodaPrefix = "Large";
+                y += 4;
+            }
+            Point16 dimensions = new Point16(0, 0);
+            StructureHelper.Generator.GetDimensions("Structures/" + pagodaPrefix + "Pagoda", JadeFables.Instance, ref dimensions, false);
+            x -= dimensions.X / 2;
+            y -= dimensions.Y;
+            StructureHelper.Generator.GenerateStructure("Structures/" + pagodaPrefix + "Pagoda", new Point16(x, y), JadeFables.Instance, false);
+            
         }
 
         public static bool ContainsBlacklistBlock(Rectangle rect)

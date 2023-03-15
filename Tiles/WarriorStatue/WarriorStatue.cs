@@ -39,6 +39,7 @@ namespace JadeFables.Tiles.WarriorStatue
         public override void MouseOver(int i, int j)
         {
             Player player = Main.LocalPlayer;
+            player.cursorItemIconEnabled = true;
             player.cursorItemIconText = "";
             player.cursorItemIconID = ItemID.SilverCoin;
         }

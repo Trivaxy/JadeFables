@@ -41,7 +41,7 @@ namespace JadeFables.Tiles.WarriorStatue
             Player player = Main.LocalPlayer;
             player.cursorItemIconEnabled = true;
             player.cursorItemIconText = "";
-            player.cursorItemIconID = ItemID.SilverCoin;
+            player.cursorItemIconID = ItemID.GoldCoin;
         }
 
         public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
@@ -50,7 +50,7 @@ namespace JadeFables.Tiles.WarriorStatue
         public override bool RightClick(int i, int j) {
             if (Main.tile[i, j].TileFrameY >= 126)
                 return false;
-            int gillsCost = Item.silver * 25;
+            int gillsCost = Item.gold;
             Player player = Main.LocalPlayer;
 
             if (!player.CanBuyItem(gillsCost)) {

@@ -32,7 +32,13 @@ namespace JadeFables.Tiles.Pearls
 		/// </summary>
 		public virtual int ItemType { get; set; }
 
+		/// <summary>
+		/// Pretty self explanatory. Higher = higher spawnrate
+		/// </summary>
+		public virtual float SpawnChance { get; set; }
+
 		public Vector2 WorldPosition => Position.ToVector2() * 16;
+
 
 		public virtual void Draw(SpriteBatch spriteBatch)
 		{
@@ -105,15 +111,21 @@ namespace JadeFables.Tiles.Pearls
     public class BlackPearl : Pearl
     {
         public override int ItemType => ItemID.BlackPearl;
+
+		public override float SpawnChance => 1f;
     }
 
     public class WhitePearl : Pearl
     {
         public override int ItemType => ItemID.WhitePearl;
+
+		public override float SpawnChance => 1f;
     }
 
     public class PinkPearl : Pearl
     {
         public override int ItemType => ItemID.PinkPearl;
+
+        public override float SpawnChance => 0.01f;
     }
 }

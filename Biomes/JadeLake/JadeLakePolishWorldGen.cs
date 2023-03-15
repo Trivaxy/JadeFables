@@ -98,9 +98,9 @@ namespace JadeFables.Biomes.JadeLake
                     {
                         WeightedRandom<Pearl> pool = new(WorldGen.genRand);
 
-                        foreach (Pearl pearl in JadeFables.Instance.GetContent<Pearl>()) //Support for future spawnchance differences between pearls
+                        foreach (Pearl pearl in JadeFables.Instance.GetContent<Pearl>()) 
                         {
-                            pool.Add(pearl, 1.0f);
+                            pool.Add(pearl, pearl.SpawnChance);
                         }
 
                         pool.Get().Place(i, j);

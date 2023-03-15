@@ -208,7 +208,7 @@ namespace JadeFables.Biomes.JadeLake
 
             //slopes all tiles in biome
             //likely only needed for debug generation since vanilla has this pass
-            SlopeTiles(WholeBiomeRect);
+            //SlopeTiles(WholeBiomeRect);
 
             //Clear out chests and life crystals not destroyed in the worldgen.
             ClearDebris(WholeBiomeRect);

@@ -240,7 +240,7 @@ namespace JadeFables.Biomes.JadeLake
                                 chest.item[inventoryIndex].stack = Main.rand.Next(30, 50);
                             }
                             else
-                                chest.item[inventoryIndex].stack = Main.rand.Next(3, 8);
+                                chest.item[inventoryIndex].stack = Main.rand.Next(2, 6);
                         }
                     }
                 }

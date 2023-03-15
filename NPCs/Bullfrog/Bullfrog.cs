@@ -213,6 +213,7 @@ namespace JadeFables.NPCs.Bullfrog
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
             npcLoot.Add(ItemDropRule.Common(ItemID.IceCream, 40));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BullfrogTree.BullfrogLegs.BullfrogLegs>(), 13));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BullfrogTree.BullfrogTongue.BullfrogTongue> (), 20));
         }
     }
     internal class Bullfrog_Tongue : ModProjectile

@@ -20,6 +20,7 @@ using JadeFables.Items.BullfrogTree.FrogInFroggle;
 
 namespace JadeFables.Items.BullfrogTree.Bulfrauble
 {
+    [AutoloadEquip(EquipType.Neck)]
     public class Bulfrauble : ModItem
     {
         public bool jumping = false;

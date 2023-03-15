@@ -19,6 +19,7 @@ using JadeFables.Items.BullfrogTree.BullfrogLegs;
 
 namespace JadeFables.Items.BullfrogTree.FrogInFroggle
 {
+    [AutoloadEquip(EquipType.Waist)]
     public class FrogInFroggle : ModItem
     {
         public bool jumping = false;

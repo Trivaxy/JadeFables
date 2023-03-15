@@ -21,6 +21,7 @@ using JadeFables.Helpers.FastNoise;
 
 namespace JadeFables.Items.BullfrogTree.BullfrogLegs
 {
+    [AutoloadEquip(EquipType.Shoes)]
     public class BullfrogLegs : ModItem
     {
         public bool jumping = false;

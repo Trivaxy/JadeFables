@@ -20,8 +20,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria.DataStructures;
 using Terraria.IO;
+using JadeFables.Tiles.Pearls;
 using Terraria.WorldBuilding;
 using static Terraria.ModLoader.PlayerDrawLayer;
+using Terraria.Utilities;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -72,6 +74,39 @@ namespace JadeFables.Biomes.JadeLake
 
             //Places overgrown sand
             PlaceOvergrownSand(worldRect, 0.1f, 2f);
+
+            //Places pearls
+            PlacePearls(worldRect, 80);
+        }
+
+        public static void PlacePearls(Rectangle rect, int chance)
+        {
+            int[] validTiles = new int[] { ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), ModContent.TileType<JadeSandTile>() };
+            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            {
+                for (int j = rect.Top + 1; j < rect.Top + rect.Height; j++)
+                {
+                    Tile tile = Framing.GetTileSafely(i, j);
+                    Tile leftTile = Framing.GetTileSafely(i - 1, j);
+                    Tile rightTile = Framing.GetTileSafely(i + 1, j);
+                    Tile topTile = Framing.GetTileSafely(i, j - 1);
+                    Tile bottomTile = Framing.GetTileSafely(i, j + 1);
+
+                    if (leftTile.HasTile && Main.tileSolid[leftTile.TileType] && rightTile.HasTile && Main.tileSolid[rightTile.TileType] && topTile.HasTile && Main.tileSolid[topTile.TileType] && bottomTile.HasTile && Main.tileSolid[bottomTile.TileType])
+                        continue;
+                    if (tile.HasTile && validTiles.Contains(tile.TileType) && WorldGen.genRand.NextBool(chance))
+                    {
+                        WeightedRandom<Pearl> pool = new(WorldGen.genRand);
+
+                        foreach (Pearl pearl in JadeFables.Instance.GetContent<Pearl>()) //Support for future spawnchance differences between pearls
+                        {
+                            pool.Add(pearl, 1.0f);
+                        }
+
+                        pool.Get().Place(i, j);
+                    }
+                }
+            }
         }
 
         public static void JadeSeaweedPopulation(Rectangle rect, float threshhold, float noiseFreq)

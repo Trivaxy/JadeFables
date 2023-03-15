@@ -24,7 +24,7 @@ namespace JadeFables.Tiles.Pearls
 		/// <summary>
 		/// The rate at which sparkles spawn. Increase for lower spawnrate.
 		/// </summary>
-		public virtual int SparkleRate => 40;
+		public virtual int SparkleRate => 80;
 
 
 		/// <summary>
@@ -75,7 +75,7 @@ namespace JadeFables.Tiles.Pearls
 
 			int modifiedSparkleRate = (int)(SparkleRate / sparkleMult); //spawns sparkles relative to light level
 			if (Main.rand.NextBool(modifiedSparkleRate))
-				Dust.NewDustPerfect(WorldPosition + Size * new Vector2(Main.rand.NextFloat(), Main.rand.NextFloat()), SparkleDust, Vector2.Zero);
+				Dust.NewDustPerfect(WorldPosition + Size * new Vector2(Main.rand.NextFloat(), Main.rand.NextFloat()), SparkleDust, Vector2.Zero, default, default, 0.7f);
 		}
 
 		public void GenericDraw(SpriteBatch spriteBatch) //I have no idea why but the drawing is offset by -192 on each axis by default, so I had to correct it

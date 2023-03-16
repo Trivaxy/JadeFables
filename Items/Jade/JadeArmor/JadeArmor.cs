@@ -41,7 +41,7 @@ namespace JadeFables.Items.Jade.JadeArmor
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.setBonus = "Gives the player a dash"; // This is the setbonus tooltip
+            player.setBonus = "Allows the ability to dash"; // This is the setbonus tooltip
             player.GetModPlayer<JadeArmorPlayer>().equipped = true;
         }
 

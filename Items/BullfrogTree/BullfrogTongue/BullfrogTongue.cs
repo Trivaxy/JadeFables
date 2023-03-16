@@ -22,7 +22,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogTongue
 
 	public class BullfrogTongueProj : BaseWhip
 	{
-		public BullfrogTongueProj() : base("Bullfrog Tongue", 15, 0.57f, new Color(153, 122, 97)) { }
+		public BullfrogTongueProj() : base("Bullfrog Tongue", 15, 0.47f, new Color(153, 122, 97)) { }
 
 		public override int SegmentVariant(int segment)
 		{

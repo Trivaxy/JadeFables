@@ -10,11 +10,26 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 using JadeFables.Helpers;
+using Terraria.Audio;
+using JadeFables.Core.Systems;
 
 namespace JadeFables.Items.Jade.JadeKunai
 {
     public class JadeKunai : ModItem
     {
+        public override void Load()
+        {
+            for (int j = 1; j <= 3; j++)
+                GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, Texture + "_Gore" + j);
+        }
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Throws a flurry of magical kunai" +
+                "\nStrike enemies to inflict them with stacks of weakening jade" +
+                "\nFirst stack causes non-kunai to always crit" +
+                "\nFurther stacks increase non-kunai damage up to 60%" +
+                "\nKunai deal 10% increased damage to enemies with maximum weakness");
+        }
         public override void SetDefaults()
         {
             Item.width = 32;
@@ -149,6 +164,8 @@ namespace JadeFables.Items.Jade.JadeKunai
         }
 
         int stabTimer;
+
+        bool stabbed;
         public override void AI()
         {
             if (StabActive)
@@ -162,24 +179,18 @@ namespace JadeFables.Items.Jade.JadeKunai
                     stabTimer = 100;
                 }
 
-                if (stabbedTarget.active)
-                {
-                    Projectile.Center = stabbedTarget.Center + sTOffset;
-                    if (stabbedTarget.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack == 0)
-                    {
-                        stabbedTarget = null;
-                        Projectile.velocity = Vector2.Normalize(sTOffset) * 6;
-                        Projectile.friendly = false;
-                        Projectile.timeLeft = 2000;
-                        Projectile.tileCollide = true;
-                    }
-                }
-
+                Projectile.Center = stabbedTarget.Center + sTOffset;
                 Projectile.velocity *= 0.75f;
                 Projectile.Center += Projectile.velocity;
             }
             else
             {
+                if (stabbed)
+                {
+                    Projectile.Kill();
+                    return;
+                }
+
                 if (stabTimer > 0)
                 {
                     stabTimer--;
@@ -234,9 +245,51 @@ namespace JadeFables.Items.Jade.JadeKunai
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
-            target.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack++;
-            if (target.GetGlobalNPC<JadeKunaiStackNPC>().KunaiStack == 10)
-                target.GetGlobalNPC<JadeKunaiStackNPC>().flashOpacity = 1;
+            var gNPC = target.GetGlobalNPC<JadeKunaiStackNPC>();
+            gNPC.KunaiStack++;
+            if (gNPC.KunaiStack >= 10)
+            {
+                if (!gNPC.getCrit)
+                    gNPC.getCrit = true;
+                else
+                    gNPC.damageIncrease += 0.3f;
+
+
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    Projectile proj = Main.projectile[i];
+                    if (proj.active && proj.type == Type && proj.ModProjectile != null && (proj.ModProjectile as JadeKunaiProjectile).stabbedTarget != null && (proj.ModProjectile as JadeKunaiProjectile).stabbedTarget == target)
+                    {
+                        for (int d = 0; d < 8; d++)
+                        {
+                            Dust.NewDustPerfect(proj.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), proj.Center.DirectionTo(Main.player[Projectile.owner].Center).RotatedByRandom(0.5f) * Main.rand.NextFloat(5f), 0, new Color(0, Main.rand.Next(100, 255), 0, 150), Main.rand.NextFloat(0.4f, 0.8f));
+                        }
+
+                        for (int d = 1; d < 4; d++)
+                        {
+                            Gore.NewGorePerfect(proj.GetSource_FromThis(), proj.Center + Main.rand.NextVector2Circular(2f, 2f), proj.Center.DirectionTo(Main.player[Projectile.owner].Center).RotatedByRandom(0.35f) * Main.rand.NextFloat(5f), Mod.Find<ModGore>("JadeKunai_Gore" + d).Type, 1f).timeLeft = 30;
+                        }
+
+                        proj.Kill();
+                    }
+                }
+
+                SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact with {Pitch = 0.5f}, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.Shatter with { Pitch = -0.35f }, Projectile.Center);
+
+                Projectile.NewProjectileDirect(Projectile.GetSource_OnHit(target), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, Projectile.owner).scale = 0.15f;
+                for (int i = 0; i < 15; i++)
+                {
+                    for (int d = 0; d < 5; d++)
+                    {
+                        Dust.NewDustPerfect(target.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.One.RotatedBy(MathHelper.TwoPi * (d / 5f)) * MathHelper.Lerp(1f, 5f, i / 15f), 0, new Color(0, 255, 0, 100), MathHelper.Lerp(1f, 0.25f, i / 15f));
+                    }
+                }
+
+                CameraSystem.Shake += 5;
+
+                gNPC.flashOpacity = 1;
+            }
 
             Dust.NewDustPerfect(
                 Projectile.Center, 
@@ -247,10 +300,18 @@ namespace JadeFables.Items.Jade.JadeKunai
                 Main.rand.NextFloat(0.75f, 1.25f)
                 );
 
+            Projectile.NewProjectileDirect(Projectile.GetSource_OnHit(target), Projectile.Center + Projectile.velocity, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, Projectile.owner).scale = 0.05f;
+
+            for (int i = 0; i < 5; i++)
+            {
+                Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), -Projectile.velocity.RotatedByRandom(0.35f) * Main.rand.NextFloat(0.25f), 0, new Color(0, 255, 0, 150), 0.5f);
+            }
+
             stabImpactTimer = 1;
             sTOffset = Projectile.Center - target.Center;
             stabbedTarget = target;
             Projectile.tileCollide = false;
+            stabbed = true;
         }
 
         const int TimeLeftOnCollide = 40;
@@ -315,6 +376,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             trail.Positions = trailCache;
             trail.NextPosition = Projectile.Center;
         }
+
         public override bool PreDraw(ref Color lightColor)
         {
             void BeginDefault() => Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
@@ -413,6 +475,52 @@ namespace JadeFables.Items.Jade.JadeKunai
         }
     }
 
+    class JadeKunaiHitEffect : ModProjectile
+    {
+        public int maxTimeLeft;
+        public float originalScale;
+        public override void SetDefaults()
+        {
+            Projectile.Size = new Vector2(2);
+
+            Projectile.friendly = false;
+            Projectile.hostile = false;
+
+            Projectile.timeLeft = Main.rand.Next(20, 45);
+            maxTimeLeft = Projectile.timeLeft;
+
+            Projectile.tileCollide = false;
+        }
+
+        public override bool ShouldUpdatePosition() => false;
+
+        public override void AI()
+        {
+            if (Projectile.timeLeft == maxTimeLeft)
+                originalScale = Projectile.scale;
+
+            Projectile.scale = MathHelper.Lerp(originalScale, 0, 1f - Projectile.timeLeft / (float)maxTimeLeft);
+
+            Projectile.rotation += 0.025f;
+        }
+
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
+        {
+            overPlayers.Add(index);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D bloom = ModContent.Request<Texture2D>("JadeFables/Assets/GlowAlpha").Value;
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, new Color(0, 255, 100, 0) * (Projectile.timeLeft / (float)maxTimeLeft), Projectile.rotation, tex.Size() / 2f, Projectile.scale, 0, 0);
+
+            Main.spriteBatch.Draw(bloom, Projectile.Center - Main.screenPosition, null, new Color(0, 255, 100, 0) * (Projectile.timeLeft / (float)maxTimeLeft) * 0.5f, Projectile.rotation, bloom.Size() / 2f, MathHelper.Lerp(originalScale * 20f, 0f, 1f - (Projectile.timeLeft / (float)maxTimeLeft)), 0, 0);
+
+            return false;
+        }
+    }
+
     public class JadeKunaiStackNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
@@ -422,21 +530,95 @@ namespace JadeFables.Items.Jade.JadeKunai
 
         public int KunaiStack { get; set; }
 
+        public bool getCrit;
+
+        public float damageIncrease;
+
+        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (getCrit)
+            {
+                crit = true;
+
+                damage = (int)(damage * (1f + damageIncrease));
+
+                getCrit = false;
+
+                Projectile.NewProjectileDirect(item.GetSource_OnHit(npc), npc.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, player.whoAmI).scale = 0.035f;
+
+                for (int i = 0; i < 15; i++)
+                {
+                    Dust.NewDustPerfect(item.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), npc.DirectionTo(player.Center).RotatedByRandom(0.45f) * Main.rand.NextFloat(5f), 0, new Color(0, 255, 0, 150), 0.65f);
+                }
+
+                for (int i = 0; i < 15; i++)
+                {
+                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height), ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.UnitY * -Main.rand.NextFloat(1f, 3.5f), 0, new Color(0, 255, 0, 150), Main.rand.NextFloat(0.3f, 0.75f));
+                }
+            }
+        }
+
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             if (projectile.type == ModContent.ProjectileType<JadeKunaiProjectile>())
-                return;
-
-            if (KunaiStack > 10)
             {
-                crit = true;
-                KunaiStack = 0;
+                if (damageIncrease >= 0.6f)
+                    damage = (int)(damage * 1.1f);
+            }
+            else
+            {
+                if (getCrit)
+                {
+                    crit = true;
+
+                    damage = (int)(damage * (1f + damageIncrease));
+
+                    getCrit = false;
+
+                    Projectile.NewProjectileDirect(projectile.GetSource_OnHit(npc), projectile.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, projectile.owner).scale = 0.035f;
+
+                    for (int i = 0; i < 15; i++)
+                    {
+                        Dust.NewDustPerfect(projectile.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), -projectile.velocity.RotatedByRandom(0.45f) * Main.rand.NextFloat(1f), 0, new Color(0, 255, 0, 150), 0.65f);
+                    }
+
+                    for (int i = 0; i < 15; i++)
+                    {
+                        Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height), ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.UnitY * -Main.rand.NextFloat(1f, 3.5f), 0, new Color(0, 255, 0, 150), Main.rand.NextFloat(0.3f, 0.75f));
+                    }
+                }
             }
         }
 
         public override void ResetEffects(NPC npc)
         {
             flashOpacity -= 0.03f;
+
+            damageIncrease = Utils.Clamp(damageIncrease, 0f, 0.6f);
+            if (!getCrit)
+                damageIncrease = 0f;
+
+            KunaiStack = Utils.Clamp(KunaiStack, 0, 10);
+
+            if (!npc.active)
+            {
+                KunaiStack = 0;
+                damageIncrease = 0;
+                getCrit = false;
+            }
+        }
+
+        public override void AI(NPC npc)
+        {
+            if (getCrit)
+            {
+                int rand = 10;
+                if (damageIncrease > 0)
+                    rand = (int)MathHelper.Lerp(10, 4, damageIncrease / 0.6f);
+
+                if (Main.rand.NextBool(rand))
+                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height), ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.UnitY * -Main.rand.NextFloat(1f, 3.5f), 0, new Color(0, 255, 0, 150), Main.rand.NextFloat(0.3f, 0.75f));
+            }
         }
     }
 }

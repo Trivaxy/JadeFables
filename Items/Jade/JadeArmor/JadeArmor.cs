@@ -145,9 +145,9 @@ namespace JadeFables.Items.Jade.JadeArmor
             else if (Player.controlUp && Player.releaseUp && Player.doubleTapCardinalTimer[1] < 15)
                 dashDirection = new(0f, -1f);
             else if (Player.controlRight && Player.releaseRight && Player.doubleTapCardinalTimer[2] < 15)
-                dashDirection = new(1f, 0f);
+                dashDirection = new(1f, 0.01f);
             else if (Player.controlLeft && Player.releaseLeft && Player.doubleTapCardinalTimer[3] < 15)
-                dashDirection = new(-1f, 0f);
+                dashDirection = new(-1f, 0.01f);
             else
                 dashDirection = new();
         }

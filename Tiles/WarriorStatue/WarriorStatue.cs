@@ -61,6 +61,13 @@ namespace JadeFables.Tiles.WarriorStatue
             // 15 minute buff
             player.AddBuff(BuffID.Gills, 60 * 60 * 15, false);
 
+            SoundEngine.PlaySound(SoundID.CoinPickup);
+            for (int k = 0; k < 3; k++)
+            {
+                int dust = Dust.NewDust(player.position, player.width, player.height, DustID.GoldCoin, 0, -2);
+                Main.dust[dust].velocity.X = 0;
+                Main.dust[dust].velocity.Y *= 0.3f;
+            }
             SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen);
             //SoundEngine.PlaySound(SoundID.Item155 with {PitchVariance = 0.125f});
 

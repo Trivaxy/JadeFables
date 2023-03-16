@@ -380,13 +380,17 @@ namespace JadeFables.NPCs.GiantSnail
         {
             Vector2 retVec = Vector2.Zero;
             float mult = 1;
-            foreach (float rot in rots)
+            for (int i = 0; i < rots.Count; i++)
             {
+                float rot = rots[i];
                 Vector2 newVec = rot.ToRotationVector2() * mult;
-                mult += 0.03f;
+                mult += 0.1f;
                 retVec += newVec;
             }
-            return retVec.ToRotation();
+            float firstHalf = (cache[cache.Count - 1] - cache[cache.Count / 2]).ToRotation();
+            float secondHalf = (cache[cache.Count / 2] - cache[0]).ToRotation();
+            float ret2 = (firstHalf.ToRotationVector2() + secondHalf.ToRotationVector2() + Vector2.Normalize(retVec)).ToRotation();
+            return ret2;
         }
 
         public static List<Vector2> SmoothBezierPointRetreivalFunction(IEnumerable<Vector2> originalPositions, int totalTrailPoints, int divider)

@@ -27,7 +27,7 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public override void SetDefaults()
         {
-            Item.damage = 16;
+            Item.damage = 20;
             Item.DamageType = DamageClass.Ranged;
             Item.width = 16;
             Item.height = 64;

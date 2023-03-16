@@ -42,7 +42,7 @@ namespace JadeFables.Items.Jade.JadeKunai
 
             Item.autoReuse = true;
 
-            Item.DamageType = DamageClass.Throwing;
+            Item.DamageType = DamageClass.Ranged;
             Item.damage = 19;
             Item.knockBack = 3f;
             Item.crit = 4;
@@ -52,6 +52,7 @@ namespace JadeFables.Items.Jade.JadeKunai
 
             Item.value = Item.sellPrice(silver: 40);
             Item.rare = ItemRarityID.Blue;
+            Item.noMelee = true;
 
             Item.UseSound = SoundID.Item1;
         }
@@ -74,7 +75,6 @@ namespace JadeFables.Items.Jade.JadeKunai
                 );
 
                 kunai.tileCollide = false;
-
                 lastShotKunai[i] = kunai;
             }
 
@@ -87,8 +87,10 @@ namespace JadeFables.Items.Jade.JadeKunai
 
         private static int swingDirection = -1;
         private Vector2 directionToMouse;
-        public override void UseItemHitbox(Player player, ref Rectangle hitbox, ref bool noHitbox)
+        public override void HoldItem(Player player)
         {
+            if (player.itemTime == 0)
+                return;
             Vector2 shoulderPos = player.RotatedRelativePoint(player.MountedCenter) + new Vector2(-4 * player.direction, -2);
 
             if (player.whoAmI == Main.myPlayer)
@@ -228,7 +230,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             }
         }
 
-        public override bool PreAI() => !(Main.player[Projectile.owner]?.HeldItem?.ModItem is JadeKunai kunaiItem && kunaiItem.lastShotKunai?.FirstOrDefault(p => p.whoAmI == Projectile.whoAmI) is not null);
+        public override bool PreAI() => true;
         public override bool ShouldUpdatePosition() => PreAI() && !StabActive;
 
         bool StabActive => stabbedTarget is not null && stabbedTarget.life > 0 && stabbedTarget.active;
@@ -241,7 +243,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             {
                 return false;
             }
-            return null;
+            return base.CanHitNPC(target);
         }
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
@@ -544,16 +546,14 @@ namespace JadeFables.Items.Jade.JadeKunai
 
                 getCrit = false;
 
+                CameraSystem.Shake += 9;
+
                 Projectile.NewProjectileDirect(item.GetSource_OnHit(npc), npc.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, player.whoAmI).scale = 0.035f;
 
-                for (int i = 0; i < 15; i++)
-                {
-                    Dust.NewDustPerfect(item.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), npc.DirectionTo(player.Center).RotatedByRandom(0.45f) * Main.rand.NextFloat(5f), 0, new Color(0, 255, 0, 150), 0.65f);
-                }
 
                 for (int i = 0; i < 15; i++)
                 {
-                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height), ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.UnitY * -Main.rand.NextFloat(1f, 3.5f), 0, new Color(0, 255, 0, 150), Main.rand.NextFloat(0.3f, 0.75f));
+                    Dust.NewDustPerfect(npc.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), npc.DirectionTo(player.Center).RotatedByRandom(0.45f) * Main.rand.NextFloat(10f), 0, new Color(0, 255, 0, 150), 0.85f);
                 }
             }
         }
@@ -569,22 +569,20 @@ namespace JadeFables.Items.Jade.JadeKunai
             {
                 if (getCrit)
                 {
+                    Player player = Main.player[projectile.owner];
                     crit = true;
 
                     damage = (int)(damage * (1f + damageIncrease));
 
                     getCrit = false;
 
-                    Projectile.NewProjectileDirect(projectile.GetSource_OnHit(npc), projectile.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, projectile.owner).scale = 0.035f;
+                    CameraSystem.Shake += 9;
+
+                    Projectile.NewProjectileDirect(projectile.GetSource_OnHit(npc), npc.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, projectile.owner).scale = 0.035f;
 
                     for (int i = 0; i < 15; i++)
                     {
-                        Dust.NewDustPerfect(projectile.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), -projectile.velocity.RotatedByRandom(0.45f) * Main.rand.NextFloat(1f), 0, new Color(0, 255, 0, 150), 0.65f);
-                    }
-
-                    for (int i = 0; i < 15; i++)
-                    {
-                        Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height), ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.UnitY * -Main.rand.NextFloat(1f, 3.5f), 0, new Color(0, 255, 0, 150), Main.rand.NextFloat(0.3f, 0.75f));
+                        Dust.NewDustPerfect(npc.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), -npc.DirectionTo(player.Center).RotatedByRandom(0.45f) * Main.rand.NextFloat(10f), 0, new Color(0, 255, 0, 150), 0.85f);
                     }
                 }
             }

@@ -24,5 +24,10 @@ namespace JadeFables.Tiles.JadeOre
             name.SetDefault("Jade Ore");
             AddMapEntry(new Color(50, 160, 65), name);
         }
+
+        public override bool CanExplode(int i, int j)
+        {
+            return false;
+        }
     }
 }

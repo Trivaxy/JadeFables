@@ -51,10 +51,11 @@ namespace JadeFables.Items.Jade.JadeKunai
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Color color = new Color(27, 198, 116);
+            Color color = new Color(0, 255, 100);
             Effect effect = Filters.Scene["JadeKunaiFlash"].GetShader().Shader;
             effect.Parameters["uImageSize0"].SetValue(new Vector2(Main.screenWidth, Main.screenHeight) / 1.5f);
             effect.Parameters["alpha"].SetValue(opacityNPC.GetGlobalNPC<JadeKunaiStackNPC>().flashOpacity);
+            effect.Parameters["drawColor"].SetValue(color.ToVector4());
 
             effect.CurrentTechnique.Passes[0].Apply();
             spriteBatch.Draw(jadeBowRT, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White);

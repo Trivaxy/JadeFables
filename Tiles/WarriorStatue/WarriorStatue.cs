@@ -61,7 +61,7 @@ namespace JadeFables.Tiles.WarriorStatue
             // 15 minute buff
             player.AddBuff(BuffID.Gills, 60 * 60 * 15, false);
 
-            SoundEngine.PlaySound(SoundID.Coins);
+            SoundEngine.PlaySound(SoundID.DD2_EtherianPortalOpen);
             //SoundEngine.PlaySound(SoundID.Item155 with {PitchVariance = 0.125f});
 
             Tile tile = Framing.GetTileSafely(i, j); //Selects current tile

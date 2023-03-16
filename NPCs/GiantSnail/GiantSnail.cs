@@ -53,9 +53,9 @@ namespace JadeFables.NPCs.GiantSnail
 
         private Vector2 climbCenter = Vector2.Zero;
 
-        private int climbHalfSize = 4;
+        private int climbHalfSize = 2;
 
-        private bool scared => NPC.life < NPC.lifeMax / 4;
+        private bool scared => false;
 
         private bool fullyScared = false;
 
@@ -379,9 +379,11 @@ namespace JadeFables.NPCs.GiantSnail
         private float ExperimentalAverage(List<float> rots)
         {
             Vector2 retVec = Vector2.Zero;
+            float mult = 1;
             foreach (float rot in rots)
             {
-                Vector2 newVec = rot.ToRotationVector2();
+                Vector2 newVec = rot.ToRotationVector2() * mult;
+                mult += 0.03f;
                 retVec += newVec;
             }
             return retVec.ToRotation();

@@ -106,7 +106,7 @@ namespace JadeFables.Items.Jade.JadeKunai
 
             if (lastShotKunai is not null)
             {
-                float armLen = 30;
+                float armLen = 10;
                 player.heldProj = lastShotKunai[0].whoAmI;
                 if (rotFunc < 0.45f)
                 {
@@ -398,7 +398,8 @@ namespace JadeFables.Items.Jade.JadeKunai
 
                 Main.spriteBatch.End();
 
-                trail.Render(effect);
+                if (Projectile.timeLeft < 1970 && Projectile.tileCollide)
+                    trail.Render(effect);
 
                 BeginDefault();
             }
@@ -548,13 +549,16 @@ namespace JadeFables.Items.Jade.JadeKunai
 
                 CameraSystem.Shake += 9;
 
-                Projectile.NewProjectileDirect(item.GetSource_OnHit(npc), npc.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, player.whoAmI).scale = 0.035f;
+                Projectile.NewProjectileDirect(item.GetSource_OnHit(npc), npc.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, player.whoAmI).scale = 0.075f;
 
 
                 for (int i = 0; i < 15; i++)
                 {
                     Dust.NewDustPerfect(npc.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), npc.DirectionTo(player.Center).RotatedByRandom(0.45f) * Main.rand.NextFloat(10f), 0, new Color(0, 255, 0, 150), 0.85f);
                 }
+
+                Helper.PlayPitched("FancySwoosh", 1f, 0f, npc.Center);
+                Helper.PlayPitched("FancySwoosh", 1f, 1f, npc.Center);
             }
         }
 
@@ -578,12 +582,15 @@ namespace JadeFables.Items.Jade.JadeKunai
 
                     CameraSystem.Shake += 9;
 
-                    Projectile.NewProjectileDirect(projectile.GetSource_OnHit(npc), npc.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, projectile.owner).scale = 0.035f;
+                    Projectile.NewProjectileDirect(projectile.GetSource_OnHit(npc), npc.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, projectile.owner).scale = 0.075f;
 
                     for (int i = 0; i < 15; i++)
                     {
                         Dust.NewDustPerfect(npc.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), -npc.DirectionTo(player.Center).RotatedByRandom(0.45f) * Main.rand.NextFloat(10f), 0, new Color(0, 255, 0, 150), 0.85f);
                     }
+
+                    Helper.PlayPitched("FancySwoosh", 1f, 0f, npc.Center);
+                    Helper.PlayPitched("FancySwoosh", 1f, 1f, npc.Center);
                 }
             }
         }
@@ -612,10 +619,10 @@ namespace JadeFables.Items.Jade.JadeKunai
             {
                 int rand = 10;
                 if (damageIncrease > 0)
-                    rand = (int)MathHelper.Lerp(10, 4, damageIncrease / 0.6f);
+                    rand = (int)MathHelper.Lerp(10, 2, damageIncrease / 0.6f);
 
                 if (Main.rand.NextBool(rand))
-                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height), ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.UnitY * -Main.rand.NextFloat(1f, 3.5f), 0, new Color(0, 255, 0, 150), Main.rand.NextFloat(0.3f, 0.75f));
+                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height), ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.UnitY * -Main.rand.NextFloat(1f, 5f), 0, new Color(0, 255, 0, 150), Main.rand.NextFloat(0.3f, 0.75f));
             }
         }
     }

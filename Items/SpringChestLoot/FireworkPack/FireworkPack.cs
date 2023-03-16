@@ -69,6 +69,9 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 			if (!owner.GetModPlayer<FireworkPackPlayer>().equipped)
 				return;
 
+            if (target.SpawnedFromStatue)
+                return;
+
 			int amt = Main.rand.Next(1, 4);
 			for (int i = 0; i < amt; i++)
 			{

@@ -28,7 +28,7 @@ namespace JadeFables.Items.Jade.JadePickaxe
             Item.useTime = 20;
             Item.useAnimation = 20;
             Item.autoReuse = true;
-            Item.pick = 60;
+            Item.pick = 65;
             Item.useTurn = true;
 
             Item.DamageType = DamageClass.Melee;

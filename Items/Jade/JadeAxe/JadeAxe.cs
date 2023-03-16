@@ -28,7 +28,7 @@ namespace JadeFables.Items.Jade.JadeAxe
             Item.useTime = 20;
             Item.useAnimation = 20;
             Item.autoReuse = true;
-            Item.axe = 12;
+            Item.axe = 15;
             Item.useTurn = true;
 
             Item.DamageType = DamageClass.Melee;

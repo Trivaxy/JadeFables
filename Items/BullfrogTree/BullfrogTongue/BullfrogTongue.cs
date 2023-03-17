@@ -16,7 +16,8 @@ namespace JadeFables.Items.BullfrogTree.BullfrogTongue
 		public override void SetDefaults()
 		{
 			Item.DefaultToWhip(ModContent.ProjectileType<BullfrogTongueProj>(), 12, 1.2f, 5f, 25);
-			Item.SetShopValues(ItemRarityID.White, Item.sellPrice(0, 0, 50));
+			Item.rare = ItemRarityID.Blue;
+			Item.value = Item.sellPrice(0, 0, 20, 0);
 		}
 	}
 

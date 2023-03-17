@@ -23,7 +23,6 @@ namespace JadeFables.Core.Systems.Edits;
 
 public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
 {
-    public static Vector2 rtPos = Vector2.Zero;
     public static bool drawWater = false;
 
     public static MethodInfo? DrawTile_LiquidBehindTile_Info;
@@ -76,10 +75,7 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
             //var a = Vector2.Normalize(Helpers.Helper.ScreenSize);
             //effect.Parameters["offset"].SetValue(Main.screenPosition - HotspringMapTarget.oldScreenPos);
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, effect, Main.Transform);
-
-            if (waterSlopeTarget != null)
-                Main.spriteBatch.Draw(waterSlopeTarget, -new Vector2(Main.offScreenRange, Main.offScreenRange) + (Main.screenPosition - rtPos), null, Color.White);
-
+            Main.spriteBatch.Draw(waterSlopeTarget, -new Vector2(Main.offScreenRange, Main.offScreenRange), null, Color.White);
             Main.spriteBatch.End();
         }
         orig(self);
@@ -96,11 +92,6 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
     private void DrawToRT(On.Terraria.Main.orig_CheckMonoliths orig)
     {
         orig();
-        if (Main.renderCount == 0 || Main.renderCount == 2)
-        {
-            return;
-        }
-        rtPos = Main.screenPosition;
         var graphics = Main.graphics.GraphicsDevice;
 
         int RTwidth = Main.waterTarget.Width;

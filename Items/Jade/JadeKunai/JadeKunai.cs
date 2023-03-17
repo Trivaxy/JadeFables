@@ -168,6 +168,8 @@ namespace JadeFables.Items.Jade.JadeKunai
         int stabTimer;
 
         bool stabbed;
+
+        int fadeTimer;
         public override void AI()
         {
             if (StabActive)
@@ -228,6 +230,9 @@ namespace JadeFables.Items.Jade.JadeKunai
             {
                 stabImpactTimer = 0;
             }
+
+            if (fadeTimer < 60)
+                fadeTimer++;
         }
 
         public override bool PreAI() => true;
@@ -269,7 +274,8 @@ namespace JadeFables.Items.Jade.JadeKunai
 
                         for (int d = 1; d < 4; d++)
                         {
-                            Gore.NewGorePerfect(proj.GetSource_FromThis(), proj.Center + Main.rand.NextVector2Circular(2f, 2f), proj.Center.DirectionTo(Main.player[Projectile.owner].Center).RotatedByRandom(0.35f) * Main.rand.NextFloat(5f), Mod.Find<ModGore>("JadeKunai_Gore" + d).Type, 1f).timeLeft = 30;
+                            Vector2 unitY = Vector2.UnitY.RotatedByRandom(0.2f) * -Main.rand.NextFloat(1f, 3f);
+                            Gore.NewGorePerfect(proj.GetSource_FromThis(), proj.Center + Main.rand.NextVector2Circular(2f, 2f), unitY + proj.Center.DirectionTo(Main.player[Projectile.owner].Center).RotatedByRandom(0.35f) * Main.rand.NextFloat(5f), Mod.Find<ModGore>("JadeKunai_Gore" + d).Type, 1f).timeLeft = 30;
                         }
 
                         proj.Kill();
@@ -406,6 +412,10 @@ namespace JadeFables.Items.Jade.JadeKunai
 
             Vector2 KunaiOrigin(Texture2D tex) => new Vector2(tex.Width * 0.5f, tex.Height * 0.5f);
 
+            float fade = fadeTimer / 60f;
+
+            lightColor *= fade;
+
             Texture2D kunaiTexture = TextureAssets.Projectile[Type].Value;
             Main.EntitySpriteDraw(
                 kunaiTexture,
@@ -424,6 +434,9 @@ namespace JadeFables.Items.Jade.JadeKunai
 
             Color color = Color.Lerp(Color.Green, Color.White, stabImpactTimer) * ((0.4f + stabImpactTimer * 0.7f) + (MathF.Sin(Main.GameUpdateCount * 0.05f) / 8));
             color.A = 0;
+
+            color *= fade;
+
             Main.EntitySpriteDraw(
                 glowTex,
                 Projectile.Center - Main.screenPosition,
@@ -518,7 +531,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             Texture2D bloom = ModContent.Request<Texture2D>("JadeFables/Assets/GlowAlpha").Value;
             Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, new Color(0, 255, 100, 0) * (Projectile.timeLeft / (float)maxTimeLeft), Projectile.rotation, tex.Size() / 2f, Projectile.scale, 0, 0);
 
-            Main.spriteBatch.Draw(bloom, Projectile.Center - Main.screenPosition, null, new Color(0, 255, 100, 0) * (Projectile.timeLeft / (float)maxTimeLeft) * 0.5f, Projectile.rotation, bloom.Size() / 2f, MathHelper.Lerp(originalScale * 20f, 0f, 1f - (Projectile.timeLeft / (float)maxTimeLeft)), 0, 0);
+            Main.spriteBatch.Draw(bloom, Projectile.Center - Main.screenPosition, null, new Color(0, 255, 100, 0) * (Projectile.timeLeft / (float)maxTimeLeft) * 0.25f, Projectile.rotation, bloom.Size() / 2f, MathHelper.Lerp(originalScale * 25f, 0f, 1f - (Projectile.timeLeft / (float)maxTimeLeft)), 0, 0);
 
             return false;
         }
@@ -555,6 +568,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 for (int i = 0; i < 15; i++)
                 {
                     Dust.NewDustPerfect(npc.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), npc.DirectionTo(player.Center).RotatedByRandom(0.45f) * Main.rand.NextFloat(10f), 0, new Color(0, 255, 0, 150), 0.85f);
+                    Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height), ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.UnitY * -Main.rand.NextFloat(1f, 5f), 0, new Color(0, 255, 0, 150), Main.rand.NextFloat(0.3f, 0.75f));
                 }
 
                 Helper.PlayPitched("FancySwoosh", 1f, 0f, npc.Center);
@@ -587,6 +601,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                     for (int i = 0; i < 15; i++)
                     {
                         Dust.NewDustPerfect(npc.Center, ModContent.DustType<Dusts.GlowFastDecelerate>(), -npc.DirectionTo(player.Center).RotatedByRandom(0.45f) * Main.rand.NextFloat(10f), 0, new Color(0, 255, 0, 150), 0.85f);
+                        Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height), ModContent.DustType<Dusts.GlowFastDecelerate>(), Vector2.UnitY * -Main.rand.NextFloat(1f, 5f), 0, new Color(0, 255, 0, 150), Main.rand.NextFloat(0.3f, 0.75f));
                     }
 
                     Helper.PlayPitched("FancySwoosh", 1f, 0f, npc.Center);

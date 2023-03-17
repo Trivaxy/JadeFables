@@ -76,6 +76,8 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
         private float xDistanceTravelled;
         private int wheelFrame;
 
+        private int specialArrowTimer = 0;
+
         public override void Load()
         {
             for (int j = 1; j <= 5; j++)
@@ -116,8 +118,17 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
             if (arrows < 5)
             {
                 arrowTimer++;
-               // if (arrowTimer % 60 == 0)
-                //    SoundEngine.PlaySound(SoundID.MenuTick, Projectile.Center);
+                Item fakeItem = new Item(ItemID.WoodenBow);
+                owner.PickAmmo(fakeItem, out int projToShoot, out float speed, out int damage, out float knockBack, out int usedAmmoItemID, true);
+                if (projToShoot == ProjectileID.HolyArrow || projToShoot == ProjectileID.HellfireArrow || projToShoot == ProjectileID.UnholyArrow || projToShoot == ProjectileID.JestersArrow)
+                {
+                    specialArrowTimer++;
+                }
+                if (specialArrowTimer >= 5)
+                {
+                    specialArrowTimer = 0;
+                    arrowTimer--;
+                }
             }
 
             if (shakeVal > 0)

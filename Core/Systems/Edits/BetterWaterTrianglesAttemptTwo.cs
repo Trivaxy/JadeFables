@@ -107,7 +107,6 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
 
         if (Main.LocalPlayer.InModBiome<JadeLakeBiome>())
         {
-            Vector2 drawOffset = (Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange)) - Main.screenPosition;
             drawWater = true;
 
             Main.graphics.GraphicsDevice.SetRenderTarget(waterSlopeTarget);

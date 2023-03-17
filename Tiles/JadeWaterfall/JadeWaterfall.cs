@@ -16,6 +16,7 @@ using static JadeFables.Tiles.JadeWaterfall.WaterfallLight;
 using static JadeFables.Tiles.JadeWaterfall.JadeWaterfallProj;
 using System.Security.Cryptography.X509Certificates;
 using JadeFables.Biomes.JadeLake;
+using System.Diagnostics;
 
 namespace JadeFables.Tiles.JadeWaterfall
 {
@@ -78,7 +79,8 @@ namespace JadeFables.Tiles.JadeWaterfall
 
         public override bool CanUseItem(Player player)
         {
-            if (Main.tile[Player.tileTargetX, Player.tileTargetY].HasTile || !Helpers.Helper.TileInRange(player, Item))
+            Tile tile = Main.tile[Player.tileTargetX, Player.tileTargetY];
+            if (tile.HasTile && !Main.tileCut[tile.TileType] || !Helpers.Helper.TileInRange(player, Item))
                 return false;
             return base.CanUseItem(player);
         }
@@ -105,6 +107,7 @@ namespace JadeFables.Tiles.JadeWaterfall
         {
             waterfallTiles.Clear();
             waterfallColumns.Clear();
+            paintedWaterfalls.Clear();
         }
     }
 
@@ -165,7 +168,8 @@ namespace JadeFables.Tiles.JadeWaterfall
             int topFrameHeight = topTex.Height / yFrames;
             Rectangle topFrameBox = new Rectangle(0, (frame % yFrames) * topFrameHeight, topTex.Width, topFrameHeight);
             Color topColor = Lighting.GetColor((int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16));
-            Main.spriteBatch.Draw(topTex, Projectile.Center - Main.screenPosition, topFrameBox, topColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+
+            PaintHelper.DrawWithPaint(originLeft.TileColor, Texture + "_Top", Projectile.Center - Main.screenPosition, topFrameBox, topColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             int i;
             for (i = 1; i < length; i++)
             {
@@ -174,7 +178,8 @@ namespace JadeFables.Tiles.JadeWaterfall
                 int frameHeight = (tex.Height / yFrames) / tileHeight;
                 Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * ((((i - 1) / tileHeight) + frame) % yFrames)) + (frameHeight * ((i - 1) % tileHeight)), tex.Width, frameHeight);
                 Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16));
-                Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+
+                PaintHelper.DrawWithPaint(originLeft.TileColor, Texture, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             }
 
             if (length == MAXLENGTH)
@@ -186,7 +191,8 @@ namespace JadeFables.Tiles.JadeWaterfall
                     int frameHeight = (tex.Height / yFrames) / tileHeight;
                     Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * ((((i - 1) / tileHeight) + frame) % yFrames)) + (frameHeight * ((i - 1) % tileHeight)), tex.Width, frameHeight);
                     Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16)) * (1 - ((i - length) / (float)FADEOUTLENGTH));
-                    Main.spriteBatch.Draw(tex, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+
+                    PaintHelper.DrawWithPaint(originLeft.TileColor, Texture, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
                 }
             }
 
@@ -196,7 +202,9 @@ namespace JadeFables.Tiles.JadeWaterfall
             Rectangle bottomFrameBox = new Rectangle(0, ((i + frame) % yFrames) * bottomFrameHeight, bottomTex.Width, bottomFrameHeight);
             Vector2 bottomPos = Projectile.Center + (Vector2.UnitY * 16 * i) - new Vector2(16, 16);
             Color bottomColor = Lighting.GetColor((int)(bottomPos.X / 16), (int)(bottomPos.Y / 16));
-            Main.spriteBatch.Draw(bottomTex, bottomPos - Main.screenPosition, bottomFrameBox, bottomColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+
+            PaintHelper.DrawWithPaint(originLeft.TileColor, Texture + "_Bottom", bottomPos - Main.screenPosition, bottomFrameBox, bottomColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+            
             return;
         }
 
@@ -220,6 +228,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                         waterfallColumns.Sort();
                     }
                     waterfallTiles.Add((x, y));
+                    if (originLeft.TileColor != PaintID.None) paintedWaterfalls.Add((x, y), originLeft.TileColor);
 
                     if (tile.LiquidAmount == 255 && (!tile.HasTile || !Main.tileSolid[tile.TileType] || tile.IsActuated))
                     {
@@ -246,6 +255,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                         Tile tile = Main.tile[x, y];
 
                         if ((i - length) < FADEOUTLENGTH / 2) waterfallTiles.Add((x, y));
+                        if (originLeft.TileColor != PaintID.None) paintedWaterfalls.Add((x, y), originLeft.TileColor);
                     }
                 }
             }
@@ -283,6 +293,8 @@ namespace JadeFables.Tiles.JadeWaterfall
     {
         public static HashSet<(int, int)> waterfallTiles = new();
         public static List<int> waterfallColumns = new();
+        public static Dictionary<(int, int), byte> paintedWaterfalls = new();
+
         public override void ModifyLight(int i, int j, int type, ref float r, ref float g, ref float b)
         {
             if (waterfallTiles.Count <= 0) return;
@@ -293,12 +305,33 @@ namespace JadeFables.Tiles.JadeWaterfall
             if (waterfallTiles.Contains((i, j)))
             {
                 Color color = new Color(0, 220, 200);
+                byte paintType;
+                if (paintedWaterfalls.TryGetValue((i, j), out paintType))
+                {
+                    if (paintType == PaintID.NegativePaint) color = new Color(255 - color.R, 255 - color.G, 255 - color.B);
+                    else color = WorldGen.paintColor(paintType);
+                }
+
                 const float brightness = 0.9f;
 
                 r += color.R / (255f / brightness);
                 g += color.G / (255f / brightness);
                 b += color.B / (255f / brightness);
             }
+        }
+    }
+    public static class PaintHelper
+    {
+        public static void DrawWithPaint(byte paintType, string texturePath, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
+        {
+            color = color.MultiplyRGB(WorldGen.paintColor(paintType));
+
+            if (paintType == PaintID.None || paintType == PaintID.IlluminantPaint) ;
+            else if (paintType == PaintID.NegativePaint) texturePath += "_Negative";
+            else texturePath += "_Grayscale";
+
+            Texture2D texture = ModContent.Request<Texture2D>(texturePath).Value;
+            Main.spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
         }
     }
 }

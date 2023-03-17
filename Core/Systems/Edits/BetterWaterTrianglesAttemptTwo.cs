@@ -121,9 +121,9 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
                 {
                     TileDrawInfo drawInfo = new TileDrawInfo();
                     drawInfo.tileCache = Framing.GetTileSafely(i, j);
-                    Vector3[] colorSlices = new Vector3[9];
-                    Lighting.GetColor9Slice(i, j, ref colorSlices);
-                    drawInfo.colorSlices = colorSlices;
+                    //Vector3[] colorSlices = new Vector3[9];
+                    //Lighting.GetColor9Slice(i, j, ref colorSlices);
+                    //drawInfo.colorSlices = colorSlices;
                     if (drawInfo.tileCache.HasTile && Main.tileSolid[drawInfo.tileCache.TileType])
                         DrawTile_LiquidBehindTile(Main.instance.TilesRenderer, true, 0, Main.screenPosition, new Vector2(Main.offScreenRange, Main.offScreenRange), i, j, drawInfo);
                 }

@@ -37,7 +37,7 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
         if (Main.dedServ)
             return;
 
-        waterTex = ModContent.Request<Texture2D>("JadeFables/Biomes/JadeLake/JadeLakeWaterStyle_Block").Value;
+        waterTex = ModContent.Request<Texture2D>("JadeFables/Biomes/JadeLake/JadeLakeWaterStyle_Block", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         DrawTile_LiquidBehindTile_Info = typeof(TileDrawing).GetMethod("DrawTile_LiquidBehindTile", BindingFlags.NonPublic | BindingFlags.Instance);
         //Here we cache this method for performance
         DrawTile_LiquidBehindTile = (Action<TileDrawing, bool, int, Vector2, Vector2, int, int, TileDrawInfo>)Delegate.CreateDelegate(

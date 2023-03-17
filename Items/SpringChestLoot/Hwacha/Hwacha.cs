@@ -19,7 +19,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 		public override void SetStaticDefaults()
 		{
 			DisplayName.SetDefault("Hwacha");
-			Tooltip.SetDefault("Summons a Hwacha to fight for you \nWhip the hwacha to fire it \nRight click to push and pull the hwacha");
+			Tooltip.SetDefault("Summons a Hwacha to fight for you \nWhip the hwacha to fire it with arrows from your inventory\nRight click to push and pull the hwacha");
 		}
 
 		public override void SetDefaults()

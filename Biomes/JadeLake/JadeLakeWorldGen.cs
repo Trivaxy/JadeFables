@@ -46,7 +46,7 @@ namespace JadeFables.Biomes.JadeLake
             for (int i = 0; i < (Main.maxTilesX / 2400) + 1; i++)
             {
                 int x = WorldGen.genRand.Next(300, Main.maxTilesX - 300);
-                int y = WorldGen.genRand.Next((int)Main.rockLayer, Main.maxTilesY - 500);
+                int y = WorldGen.genRand.Next((int)Main.rockLayer + 100, Main.maxTilesY - 500);
                 int size = (int)(WorldGen.genRand.Next(160, 200) * (Main.maxTilesX / 6400f));
                 if (!SpawnBiome(x,y,size) && tries++ < 999)
                 {

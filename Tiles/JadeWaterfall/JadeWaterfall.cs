@@ -343,7 +343,7 @@ namespace JadeFables.Tiles.JadeWaterfall
     {
         public static void DrawWithPaint(byte paintType, string texturePath, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
         {
-            color = color.MultiplyRGB(WorldGen.paintColor(paintType));
+            color = color.MultiplyRGBA(WorldGen.paintColor(paintType));
 
             if (paintType == PaintID.None || paintType == PaintID.IlluminantPaint) ;
             else if (paintType == PaintID.NegativePaint) texturePath += "_Negative";

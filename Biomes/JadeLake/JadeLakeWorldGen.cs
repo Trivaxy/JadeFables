@@ -29,6 +29,8 @@ namespace JadeFables.Biomes.JadeLake
         public static List<Rectangle> UpperIslandRects = new List<Rectangle>();
         public static List<Rectangle> WholeBiomeRects = new List<Rectangle>();
 
+        public static List<Rectangle> PagodaRects = new List<Rectangle>();
+
         public static void SurfaceItemPass(GenerationProgress progress, GameConfiguration configuration)
         {
             progress.Message = "Steaming up the world";
@@ -41,6 +43,7 @@ namespace JadeFables.Biomes.JadeLake
             LowerIslandRects = new List<Rectangle>();
             UpperIslandRects = new List<Rectangle>();
             WholeBiomeRects = new List<Rectangle>();
+            PagodaRects = new List<Rectangle>();
 
             int tries = 0;
             for (int i = 0; i < (Main.maxTilesX / 2400) + 1; i++)
@@ -317,6 +320,8 @@ namespace JadeFables.Biomes.JadeLake
             x -= dimensions.X / 2;
             y -= dimensions.Y;
             StructureHelper.Generator.GenerateStructure("Structures/" + pagodaPrefix + "Pagoda", new Point16(x, y), JadeFables.Instance, false);
+
+            PagodaRects.Add(new Rectangle(x, y, dimensions.X, dimensions.Y));
             
         }
 

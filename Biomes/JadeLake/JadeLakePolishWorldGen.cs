@@ -24,6 +24,7 @@ using JadeFables.Tiles.Pearls;
 using Terraria.WorldBuilding;
 using static Terraria.ModLoader.PlayerDrawLayer;
 using Terraria.Utilities;
+using JadeFables.Tiles.HardenedJadeSand;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -42,7 +43,8 @@ namespace JadeFables.Biomes.JadeLake
                 PlaceForegroundWaterfalls(rect, 700);
 
             //Places spring chests
-            PlaceJadeChests(worldRect, 40);
+            foreach (Rectangle rect in WholeBiomeRects)
+                PlaceJadeChests(rect, WorldGen.genRand.Next(4, 7));
 
             //Places blossom walls
             foreach(Rectangle rect in UpperIslandRects)
@@ -250,21 +252,68 @@ namespace JadeFables.Biomes.JadeLake
             }
         }
 
-        public static void PlaceJadeChests(Rectangle rect, int chance)
+        public static void PlaceJadeChests(Rectangle rect, int number)
         {
-            for (int i = rect.Left; i < rect.Left + rect.Width; i++)
+            int tries = 0;
+            for (int k = 0; k < number; k++)
             {
-                for (int j = rect.Top; j < rect.Top + rect.Height - 1; j++)
+                tries++;
+                if (tries > 99999)
+                    break;
+                int i = rect.Left + WorldGen.genRand.Next(rect.Width);
+                int j = rect.Top + WorldGen.genRand.Next(rect.Height);
+                if (CanPlaceChest(i, j))
                 {
-                    Tile tileBelow = Framing.GetTileSafely(i, j + 1);
-                    Tile mainTile = Framing.GetTileSafely(i, j);
-
-                    if (tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
+                    if (k == 0) //place waterfall above one chest
                     {
-                        WorldGen.PlaceChest(i, j, (ushort)ModContent.TileType<SpringChest>());
+                        bool success = false;
+                        for (int y = j; y > j - 100; y--)
+                        {
+                            Tile leftTile = Framing.GetTileSafely(i, y);
+                            Tile rightTile = Framing.GetTileSafely(i + 1, y);
+                            if (leftTile.LiquidAmount > 0 || rightTile.LiquidAmount > 0)
+                                break;
+                            if (leftTile.HasTile && leftTile.TileType == ModContent.TileType<HardenedJadeSandTile>() && rightTile.HasTile && rightTile.TileType == ModContent.TileType<HardenedJadeSandTile>())
+                            {
+                                success = true;
+                                leftTile.TileType = (ushort)ModContent.TileType<JadeWaterfallTile>();
+                                rightTile.HasTile = false;
+                                break;
+                            }
+                        }
+
+                        if (success)
+                        {
+                            WorldGen.PlaceChest(i, j, (ushort)ModContent.TileType<SpringChest>());
+                        }
+                        else
+                            k--;
                     }
+                    else
+                        WorldGen.PlaceChest(i, j, (ushort)ModContent.TileType<SpringChest>());
                 }
+                else
+                    k--;
             }
+        }
+
+        public static bool CanPlaceChest(int x, int y)
+        {
+            for (int i = x; i < x + 2; i++)
+            {
+                Tile tile1 = Framing.GetTileSafely(x, y - 1);
+                if (tile1.HasTile)
+                    return false;
+
+                Tile tile2 = Framing.GetTileSafely(x, y);
+                if (tile2.HasTile)
+                    return false;
+
+                Tile tile3 = Framing.GetTileSafely(x, y + 1);
+                if (!tile3.HasTile || tile3.TileType != ModContent.TileType<JadeSandTile>() || tile3.BlockType != BlockType.Solid)
+                    return false;
+            }
+            return true;
         }
 
         public static void PlaceJasmineFlowers(Rectangle rect, int chance)

@@ -202,7 +202,7 @@ namespace JadeFables.Biomes.JadeLake
                 Chest chest = Main.chest[chestIndex];
                 if (chest != null && Main.tile[chest.x, chest.y].TileType/*.frameX == 47 * 36*/ == ModContent.TileType<SpringChest>()) // if glass chest
                 {
-                    int primaryLootChoice = Main.rand.Next(primaryLoot.Length);
+                    int primaryLootChoice = chestIndex % primaryLoot.Length;
                     chest.item[0].SetDefaults(primaryLoot[primaryLootChoice]);
 
                     int secondaryLootChoice = Main.rand.Next(secondaryLoot.Length);

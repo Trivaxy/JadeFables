@@ -53,12 +53,13 @@ namespace JadeFables.Tiles.JadeWaterfall
         }
     }
 
-    public class JadeWaterfallItem : ModItem
+    public class JadeWaterfallBucket : ModItem
     {
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Waterfall Bucket");
             Tooltip.SetDefault("Contains a small amount of waterfall\nCan be poured out");
+            ItemID.Sets.AlsoABuildingItem[Type] = true;
         }
 
         public override void SetDefaults()
@@ -72,7 +73,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             Item.useTime = 15;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
-            Item.createTile = TileType<JadeWaterfallTile>();
+            //Item.createTile = TileType<JadeWaterfallTile>();
             Item.rare = ItemRarityID.White;
             Item.value = 5;
         }
@@ -87,17 +88,34 @@ namespace JadeFables.Tiles.JadeWaterfall
         public override bool? UseItem(Player player)
         {
             SoundEngine.PlaySound(SoundID.SplashWeak);
-            if (Item.stack == 1)
-            {
-                Item.type = ItemID.EmptyBucket;
-                Item.SetDefaults();
-                return true;
-            }
-            else
-            {
-                Item.NewItem(Item.GetSource_ItemUse(Item), player.Center, ItemID.EmptyBucket);
-            }
+            player.PutItemInInventoryFromItemUsage(ItemID.EmptyBucket, player.selectedItem);
+            WorldGen.PlaceTile(Player.tileTargetX, Player.tileTargetY, TileType<JadeWaterfallTile>(), true);
             return true;
+        }
+    }
+
+    public class BucketObtainability : GlobalItem
+    {
+        public override bool? UseItem(Item item, Player player)
+        {
+            if (player.itemAnimation == item.useAnimation - 1 && item.type == ItemID.EmptyBucket && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    Tile tile = Main.tile[Player.tileTargetX - j, Player.tileTargetY];
+                    if (tile.HasTile && tile.TileType == ModContent.TileType<JadeWaterfallTile>())
+                    {
+                        tile.TileColor = PaintID.None;
+                        tile.HasTile = false;
+                        item.stack--;
+                        SoundEngine.PlaySound(SoundID.SplashWeak, player.Center);
+                        player.PutItemInInventoryFromItemUsage(ModContent.ItemType<JadeWaterfallBucket>(), player.selectedItem);
+
+                        return true;
+                    }
+                }
+            }
+            return base.UseItem(item, player);
         }
     }
 
@@ -262,30 +280,6 @@ namespace JadeFables.Tiles.JadeWaterfall
 
             if (originLeft.HasTile && originLeft.TileType == ModContent.TileType<JadeWaterfallTile>())
                 Projectile.timeLeft = 2;
-        }
-    }
-
-    public class BucketObtainability : GlobalItem
-    {
-        public override bool? UseItem(Item item, Player player)
-        {
-            if (player.itemAnimation == item.useAnimation - 1 && item.type == ItemID.EmptyBucket && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
-            {
-                for (int j = 0; j < 2; j++)
-                {
-                    Tile tile = Main.tile[Player.tileTargetX - j, Player.tileTargetY];
-                    if (tile.HasTile && tile.TileType == ModContent.TileType<JadeWaterfallTile>())
-                    {
-                        tile.HasTile = false;
-                        item.stack--;
-                        Item.NewItem(item.GetSource_ItemUse(item), player.Center, ModContent.ItemType<JadeWaterfallItem>());
-                        SoundEngine.PlaySound(SoundID.SplashWeak, player.Center);
-
-                        return true;
-                    }
-                }
-            }
-            return base.UseItem(item, player);
         }
     }
 

@@ -17,6 +17,7 @@ using static JadeFables.Tiles.JadeWaterfall.JadeWaterfallProj;
 using System.Security.Cryptography.X509Certificates;
 using JadeFables.Biomes.JadeLake;
 using System.Diagnostics;
+using JadeFables.Helpers;
 
 namespace JadeFables.Tiles.JadeWaterfall
 {
@@ -143,6 +144,11 @@ namespace JadeFables.Tiles.JadeWaterfall
         int yFrames = 6;
 
         public bool foundWater = false;
+
+        int soundTimer = 0;
+
+        private Microsoft.Xna.Framework.Audio.SoundEffectInstance sound;
+        private ActiveSound soundInstance;
 
         public override void Load()
         {
@@ -277,9 +283,28 @@ namespace JadeFables.Tiles.JadeWaterfall
                     }
                 }
             }
+            else if (sound == null || !soundInstance.IsPlaying)
+            {
+                Vector2 soundPos = Projectile.Center + new Vector2(16, i* 16);
+                ReLogic.Utilities.SlotId slot = SoundEngine.PlaySound(new SoundStyle($"{nameof(JadeFables)}/Sounds/Waterfall")
+                {
+                    Volume = 0.1f,
+                    Pitch = 0,
+                    MaxInstances = 0,
+                    Type = SoundType.Ambient
+                }, soundPos);
+                SoundEngine.TryGetActiveSound(slot, out Terraria.Audio.ActiveSound soundInstanceLocal);
+                soundInstance = soundInstanceLocal;
+                sound = soundInstance?.Sound;
+            }
 
             if (originLeft.HasTile && originLeft.TileType == ModContent.TileType<JadeWaterfallTile>())
                 Projectile.timeLeft = 2;
+        }
+
+        public override void Kill(int timeLeft)
+        {
+            sound?.Stop(true);
         }
     }
 

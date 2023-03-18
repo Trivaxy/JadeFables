@@ -31,6 +31,7 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
     public static RenderTarget2D waterSlopeTarget;
 
     public static Texture2D waterTex;
+    public static Texture2D waterSlopeTex;
 
     public override void OnModLoad() 
     {
@@ -38,6 +39,7 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
             return;
 
         waterTex = ModContent.Request<Texture2D>("JadeFables/Biomes/JadeLake/JadeLakeWaterStyle_Block", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+        waterSlopeTex = ModContent.Request<Texture2D>("JadeFables/Biomes/JadeLake/JadeLakeWaterStyle_Slope", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         DrawTile_LiquidBehindTile_Info = typeof(TileDrawing).GetMethod("DrawTile_LiquidBehindTile", BindingFlags.NonPublic | BindingFlags.Instance);
         //Here we cache this method for performance
         DrawTile_LiquidBehindTile = (Action<TileDrawing, bool, int, Vector2, Vector2, int, int, TileDrawInfo>)Delegate.CreateDelegate(
@@ -59,12 +61,17 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
         else
         {
             int num = (int)tileCache.BlockType;
+            if (tileCache.IsHalfBlock)
+            {
+                position.Y += 8;
+            }
+
             if (!TileID.Sets.BlocksWaterDrawingBehindSelf[tileCache.TileType] || num == 0)
             {
                 Main.spriteBatch.Draw(waterTex, position, liquidSize, aColor * 0.7f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
                 return;
             }
-            liquidSize.X += 18 * (num - 1);
+            //liquidSize.X += 18 * (num - 1);
             Main.spriteBatch.Draw(waterTex, position, liquidSize, aColor * 0.7f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }
     }

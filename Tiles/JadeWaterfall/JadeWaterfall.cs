@@ -73,8 +73,6 @@ namespace JadeFables.Tiles.JadeWaterfall
             Item.useAnimation = 15;
             Item.useTime = 15;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            //Item.createTile = TileType<JadeWaterfallTile>();
             Item.rare = ItemRarityID.White;
             Item.value = 5;
         }
@@ -88,9 +86,12 @@ namespace JadeFables.Tiles.JadeWaterfall
         }
         public override bool? UseItem(Player player)
         {
+            if (!player.ItemTimeIsZero || player.itemAnimation != player.itemAnimationMax) return base.UseItem(player);
+
             SoundEngine.PlaySound(SoundID.SplashWeak);
-            player.PutItemInInventoryFromItemUsage(ItemID.EmptyBucket, player.selectedItem);
             WorldGen.PlaceTile(Player.tileTargetX, Player.tileTargetY, TileType<JadeWaterfallTile>(), true);
+            Item.stack--;
+            player.PutItemInInventoryFromItemUsage(ItemID.EmptyBucket, player.selectedItem);
             return true;
         }
     }
@@ -108,10 +109,9 @@ namespace JadeFables.Tiles.JadeWaterfall
                     {
                         tile.TileColor = PaintID.None;
                         tile.HasTile = false;
-                        item.stack--;
                         SoundEngine.PlaySound(SoundID.SplashWeak, player.Center);
+                        item.stack--;
                         player.PutItemInInventoryFromItemUsage(ModContent.ItemType<JadeWaterfallBucket>(), player.selectedItem);
-
                         return true;
                     }
                 }

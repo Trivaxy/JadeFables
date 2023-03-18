@@ -142,6 +142,14 @@ namespace JadeFables.Items.Jade.JadeKunai
         {
             directionToMouse = reader.ReadVector2();
         }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient<JadeChunk.JadeChunk>(12);
+            recipe.AddTile(TileID.Anvils);
+            recipe.Register();
+        }
     }
 
     public class JadeKunaiProjectile : ModProjectile

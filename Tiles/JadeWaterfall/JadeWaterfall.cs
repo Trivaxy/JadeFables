@@ -290,7 +290,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                 {
                     Volume = 0.1f,
                     Pitch = 0,
-                    MaxInstances = 0,
+                    MaxInstances = 5,
                     Type = SoundType.Ambient
                 }, soundPos);
                 SoundEngine.TryGetActiveSound(slot, out Terraria.Audio.ActiveSound soundInstanceLocal);

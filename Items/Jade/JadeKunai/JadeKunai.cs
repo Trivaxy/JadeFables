@@ -22,13 +22,11 @@ namespace JadeFables.Items.Jade.JadeKunai
             for (int j = 1; j <= 3; j++)
                 GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, Texture + "_Gore" + j);
         }
+
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Throws a flurry of magical kunai" +
-                "\nStrike enemies to inflict them with stacks of weakening jade" +
-                "\nFirst stack causes non-kunai to always crit" +
-                "\nFurther stacks increase non-kunai damage up to 60%" +
-                "\nKunai deal 10% increased damage to enemies with maximum weakness");
+            DisplayName.SetDefault("Jade Kunais");
+            Tooltip.SetDefault("Repeated strikes increases damage from other weapons");
         }
         public override void SetDefaults()
         {

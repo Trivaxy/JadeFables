@@ -52,7 +52,15 @@ namespace JadeFables.Tiles.JasmineFlower
 				WorldGen.KillTile(i, j);
 			return true;
 		}
-	}
+
+        public override bool CanPlace(int i, int j)
+        {
+			Tile baseTile = Framing.GetTileSafely(i, j + 1);
+			if (baseTile.HasTile && baseTile.BlockType == BlockType.Solid && (baseTile.TileType == ModContent.TileType<JadeSand.JadeSandTile>() || baseTile.TileType == ModContent.TileType<OvergrownJadeSand.OvergrownJadeSandTile>()))
+				return true;
+			return false;
+        }
+    }
 
 	public class JasmineFlower : ModItem
 	{

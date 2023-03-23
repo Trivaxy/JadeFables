@@ -88,6 +88,10 @@ namespace JadeFables.Items.Jade.JadeStaff
         private bool released = false;
         private bool thrownDragon = false;
         private int pulsesCompleted = 0;
+        private int portalFrame = 0;
+        private bool portalOpened = false; //When the portal has finished opening 
+        private int previousQuadrant = 3; //1, 2, 3 or 4 (don't change initail value to 1 or 2)
+        private int timeAfterDragonSpawned = 0;
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Jade Staff");
@@ -104,9 +108,10 @@ namespace JadeFables.Items.Jade.JadeStaff
 
         public override void AI()
         {
+            //Main.NewText(Projectile.rotation.ToRotationVector2().ToRotation());
             if (!thrownDragon)
             {
-                
+                /*
                 if (dragon == null)
                 {
                     dragon = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center + rotation.ToRotationVector2() * 80, Vector2.Zero, ModContent.ProjectileType<JadeStaffDragon>(), Projectile.damage * 2, Projectile.knockBack, owner.whoAmI);
@@ -117,7 +122,7 @@ namespace JadeFables.Items.Jade.JadeStaff
                     dragon.Center = owner.Center + rotation.ToRotationVector2() * 80;
                     (dragon.ModProjectile as JadeStaffDragon).flip = owner.direction == -1;
                 }
-                
+                */
 
                 if (soundTimer++ % 18 == 0)
                 {
@@ -128,10 +133,15 @@ namespace JadeFables.Items.Jade.JadeStaff
                 if (timer % 60 == 0 && timer != 0)
                 {
 
-                    SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_0") with { Pitch = -.53f, MaxInstances = -1, Volume = 0.8f };
+                    SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_0") with { Pitch = -.23f, MaxInstances = -1, Volume = 0.6f };
                     SoundEngine.PlaySound(style, Projectile.Center);
 
-                    Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<JadeStaffFirePulse>(), Projectile.damage, 0, owner.whoAmI);
+                    Projectile a = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center, Vector2.Zero, ModContent.ProjectileType<JadeStaffFirePulse>(), Projectile.damage, 0, owner.whoAmI);
+
+                    if (a.ModProjectile is JadeStaffFirePulse fire)
+                        fire.rotDir = owner.direction == 1;
+
+
                     pulsesCompleted++;
                 }
 
@@ -148,7 +158,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             {
                 released = true;
                 float rotDifference = (((((rotation + (1.57f * owner.direction)) - owner.DirectionTo(Main.MouseWorld).ToRotation()) % 6.28f) + 9.42f) % 6.28f) - 3.14f;
-                if (!thrownDragon && Math.Abs(rotDifference) < 0.2f)
+                if (!thrownDragon && Math.Abs(rotDifference) < 0.2f && timeAfterDragonSpawned > 20)
                 {
                     thrownDragon = true;
                     if (dragon != null)
@@ -160,7 +170,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             }
             Projectile.timeLeft = 2;
 
-            rotation += 0.15f * owner.direction; //0.15
+            rotation += 0.12f * owner.direction; //0.12
             owner.itemAnimation = owner.itemTime = 2;
             Projectile.rotation = rotation;
             Projectile.velocity = Vector2.Zero;
@@ -173,6 +183,86 @@ namespace JadeFables.Items.Jade.JadeStaff
             owner.heldProj = Projectile.whoAmI;
             owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f);
             Projectile.Center = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f);
+
+            //Portal Stuff
+            if (timer > 150) 
+            {
+                if (timer % 6 == 0)
+                {
+                    if (portalFrame == 3)
+                        portalFrame = 0;
+                    else
+                        portalFrame++;
+                }
+
+                drawPortal = true;
+
+                if (timeAfterDragonSpawned >= 20)
+                    portalScale = Math.Clamp(MathHelper.Lerp(portalScale, -0.1f, 0.1f), 0, 1);
+                else
+                    portalScale = Math.Clamp(MathHelper.Lerp(portalScale, 1.2f, 0.1f), 0, 1);
+
+
+                if (portalScale == 1)
+                    portalOpened = true;
+
+                if (portalOpened)
+                {
+                    //Looks dumb as fuck but is very important
+                    //Contains the rotation values within +- Pi
+                    //float containedRotation = Projectile.rotation.ToRotationVector2().ToRotation();
+
+                    int currentQuadrant = getQuadrant(owner, Projectile.rotation.ToRotationVector2());
+                    //Main.NewText(currentQuadrant);
+                    //Quadrant 1-> 2 and 2 <- 1 
+                    bool OneToTwo = (owner.direction == 1 && (currentQuadrant == 1 && previousQuadrant == 2));
+                    bool TwoToOne = (owner.direction == -1 && (currentQuadrant == 2 && previousQuadrant == 1));
+
+                    if (OneToTwo || TwoToOne)
+                    {
+                        
+                        if (dragon == null)
+                        {
+                            SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_flame_breath") with { Pitch = .28f, Volume = 0.2f}; 
+                            SoundEngine.PlaySound(style, Projectile.Center);
+
+                            SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_summon_1") with { Pitch = .44f, }; 
+                            SoundEngine.PlaySound(style2, Projectile.Center);
+
+                            for (int i = 0; i < 10; i++) //4 //2,2
+                            {
+
+                                Dust d = Dust.NewDustPerfect(owner.Center + rotation.ToRotationVector2() * 80, ModContent.DustType<Glow>(), 
+                                    new Vector2(1 * owner.direction, 0f).RotatedBy(Main.rand.NextFloat(-0.4f, 0.4f)) * Main.rand.Next(2, 8), 
+                                    newColor: Color.OrangeRed, Scale: Main.rand.NextFloat(0.4f, .9f));
+                            }
+
+                            for (int i = 0; i < 4; i++) //4 //2,2
+                            {
+
+                                Dust d = Dust.NewDustPerfect(owner.Center + rotation.ToRotationVector2() * 80, ModContent.DustType<Glow>(),
+                                    new Vector2(1 * owner.direction, 0f).RotatedBy(Main.rand.NextFloat(-1.2f, 1.2f)) * Main.rand.Next(2, 8),
+                                    newColor: Color.OrangeRed, Scale: Main.rand.NextFloat(0.2f, .6f));
+                            }
+
+
+                            dragon = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center + rotation.ToRotationVector2() * 80, Vector2.Zero, ModContent.ProjectileType<JadeStaffDragon>(), Projectile.damage * 2, Projectile.knockBack, owner.whoAmI);
+                        }
+                        
+                    }
+
+                    if (dragon != null && dragon.active && !thrownDragon)
+                    {
+                        timeAfterDragonSpawned++;
+                        dragon.timeLeft = 130;
+                        dragon.Center = owner.Center + rotation.ToRotationVector2() * 80;
+                        (dragon.ModProjectile as JadeStaffDragon).flip = owner.direction == -1;
+                    }
+
+                    previousQuadrant = getQuadrant(owner, Projectile.rotation.ToRotationVector2());
+                }
+            }
+
             timer++;
             if (!Main.dedServ)
             {
@@ -181,6 +271,8 @@ namespace JadeFables.Items.Jade.JadeStaff
             }
         }
 
+        bool drawPortal = false;
+        float portalScale = 0f;
         public override bool PreDraw(ref Color lightColor)
         {
             DrawPrimitives();
@@ -196,8 +288,26 @@ namespace JadeFables.Items.Jade.JadeStaff
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
             Main.spriteBatch.Draw(tex, Projectile.Center + new Vector2(0, owner.gfxOffY) - Main.screenPosition, null, lightColor, (Projectile.rotation + 0.78f) + (owner.direction == -1 ? 0f : 1.57f), new Vector2(owner.direction == -1 ? 0 : tex.Width, tex.Height), Projectile.scale, owner.direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
 
-            //Portal
-            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Ranged/Bows/TheSaharaNoString").Value;
+            if (!drawPortal)
+                return false;
+
+            //Portal Drawing
+            Texture2D Portal = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/JadeFirePortal").Value;
+            Texture2D White = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/JadeFirePortalWhite").Value;
+            Texture2D Glorb = Mod.Assets.Request<Texture2D>("Assets/Projectile_540").Value;
+
+            Vector2 spawnPos = (owner.Center - Main.screenPosition + new Vector2(-2, -88f));
+
+            Vector2 scaleVec2 = new Vector2(portalScale * 0.5f, portalScale * 1.2f) * 0.8f;
+            Color glorbCol = Color.OrangeRed;
+            glorbCol.A = 0;
+            Main.spriteBatch.Draw(Glorb, spawnPos + new Vector2(0.5f, 7f), null, glorbCol * 0.2f, 0f, Glorb.Size() / 2, scaleVec2 * 1.1f, SpriteEffects.None, 0f);
+
+            Vector2 scalePortalVec2 = new Vector2(portalScale, 1f) * 0.8f;
+            Rectangle sFrame = new Rectangle(0, Portal.Height / 4 * portalFrame, Portal.Width, (Portal.Height / 4));
+            Main.spriteBatch.Draw(Portal, new Vector2((int)spawnPos.X, (int)spawnPos.Y), sFrame, Color.White * 0.9f, 0f, sFrame.Size() / 2, scalePortalVec2 * 0.7f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(White, new Vector2((int)spawnPos.X, (int)spawnPos.Y), sFrame, Color.White * (1 - portalScale), 0f, sFrame.Size() / 2, scalePortalVec2 * 0.7f, SpriteEffects.None, 0f);
+
 
 
             return false;
@@ -251,6 +361,23 @@ namespace JadeFables.Items.Jade.JadeStaff
 
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
         }
+
+        public override bool? CanDamage() { return false; }
+        public override bool? CanCutTiles() { return false; }
+
+        //Returns the mathematical quadrant of the vec2, with the player as the origin
+        public int getQuadrant(Player myPlayer, Vector2 input)
+        {
+            bool LesserX = (input + myPlayer.Center).X < myPlayer.Center.X;
+            bool LesserY = (input + myPlayer.Center).Y < myPlayer.Center.Y;
+
+            if (!LesserX && LesserY) return 1;
+            if (LesserX && LesserY) return 2;
+            if (LesserX && !LesserY) return 3;
+            if (!LesserX && !LesserY) return 4;
+
+            return -1;
+        }
     }
 
     internal class JadeStaffDragon : ModProjectile
@@ -285,6 +412,11 @@ namespace JadeFables.Items.Jade.JadeStaff
             Projectile.timeLeft = 400; 
         }
 
+        public override bool? CanDamage()
+        {
+            return timeAfterLaunch >= 55;
+        }
+
         int timeAfterLaunch = 0;
         float velValue = 8.5f;
         float eyeRot = MathHelper.PiOver4;
@@ -299,7 +431,7 @@ namespace JadeFables.Items.Jade.JadeStaff
 
             if (timeAfterLaunch < 45 && timeAfterLaunch > 1) // < 25
             {
-                Projectile.velocity = (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX) * 8;
+                Projectile.velocity = Projectile.velocity.MoveTowards((Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX) * 8, 1f); //(Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX) * 8;
             }
 
             if (launched)
@@ -518,6 +650,40 @@ namespace JadeFables.Items.Jade.JadeStaff
 
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
         }
+
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            
+            if (timeAfterLaunch >= 55)
+            {
+                SoundStyle style = new SoundStyle("JadeFables/Sounds/BurnBurst") with { Pitch = .56f, PitchVariance = .14f, Volume = 0.7f, MaxInstances = 1 };
+                SoundEngine.PlaySound(style, target.Center);
+
+                SoundStyle style2 = new SoundStyle("JadeFables/Sounds/FireAttack_Med") with { Pitch = .13f, PitchVariance = .24f, MaxInstances = 1, Volume = 0.7f };
+                SoundEngine.PlaySound(style2, target.Center);
+
+                int directUpward = Projectile.velocity.X > 0 ? -1 : 1;
+                for (int i = 0; i < 14; i++)
+                {
+                    Dust d = Dust.NewDustPerfect(target.Center, DustType<Glow>(),
+                        (Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Math.PI / 2 * directUpward)).RotatedByRandom(0.25f) * Main.rand.NextFloat(1f, 5f),
+                        newColor: Main.rand.NextBool() ? Color.OrangeRed : Color.DarkOrange, Scale: 0.5f);
+                    d.position += d.velocity * 2;
+                }
+
+                for (int i = 0; i < 11; i++)
+                {
+                    int dust = Dust.NewDust(target.position, target.width, target.height, DustType<GlowFastDecelerate>(), newColor: Color.OrangeRed, Scale: Main.rand.NextFloat(0.5f, 0.8f));
+                    Main.dust[dust].velocity = Vector2.Normalize(target.Center - Main.dust[dust].position) * -1 * Main.rand.NextFloat(1f, 2f);
+
+                }
+
+                target.AddBuff(BuffID.OnFire, 120);
+            }
+            
+
+            //base.OnHitNPC(target, damage, knockback, crit);
+        }
     }
 
     internal class JadeStaffFirePulse : ModProjectile
@@ -635,7 +801,7 @@ namespace JadeFables.Items.Jade.JadeStaff
 
             }
 
-            SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.35f };
+            SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.35f, Volume = 0.5f };
             SoundEngine.PlaySound(style, target.Center);
 
 
@@ -643,5 +809,80 @@ namespace JadeFables.Items.Jade.JadeStaff
         }
     }
 
-    
+    internal class JadeStaffPortal : ModProjectile
+    {
+        public override string Texture => "Terraria/Images/Projectile_0";
+
+        public override void SetStaticDefaults()
+        {
+            DisplayName.SetDefault("Fire Portal");
+        }
+
+
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 10;
+            Projectile.height = 10;
+
+            Projectile.hostile = false;
+            Projectile.friendly = true;
+
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+
+            Projectile.DamageType = DamageClass.Magic;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 450;
+        }
+
+        private int timer = 0;
+        private bool maxSizeRunOnce = false;
+        
+
+        public override void AI()
+        {
+
+            scale = Math.Clamp(MathHelper.Lerp(scale, 1.2f, 0.1f), 0, 1);
+
+            if (scale == 1 && !maxSizeRunOnce)
+            {
+                maxSizeRunOnce = true;
+
+                //Fart Dust heheh
+            }
+
+            if (timer % 6 == 0)
+            {
+                if (portalFrame == 3)
+                    portalFrame = 0;
+                else
+                    portalFrame++;
+            }
+            timer++;
+        }
+
+        float scale = 0f;
+        float alpha = 1f;
+        int portalFrame = 0;
+        public override bool PreDraw(ref Color lightColor)
+        { 
+            Texture2D Portal = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/JadeFirePortal").Value;
+            Texture2D White = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/JadeFirePortalWhite").Value;
+            Texture2D Glorb = Mod.Assets.Request<Texture2D>("Assets/Projectile_540").Value;
+
+            Vector2 scaleVec2 = new Vector2(scale * 0.5f, scale * 1.2f);
+            Color glorbCol = Color.OrangeRed;
+            glorbCol.A = 0;
+            Main.spriteBatch.Draw(Glorb, Projectile.Center - Main.screenPosition + new Vector2(1f, 10), null, glorbCol * 0.4f, 0f, Glorb.Size() / 2, scaleVec2 * 1.1f, SpriteEffects.None, 0f);
+
+            Vector2 scalePortalVec2 = new Vector2(scale, 1f);
+            Rectangle sFrame = new Rectangle(0, Portal.Height / 4 * portalFrame, Portal.Width, (Portal.Height / 4));
+            Vector2 spawnPos = (Projectile.Center - Main.screenPosition);
+            Main.spriteBatch.Draw(Portal, new Vector2((int)spawnPos.X, (int)spawnPos.Y), sFrame, Color.White, 0f, sFrame.Size() / 2, scalePortalVec2 * 0.7f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(White, new Vector2((int)spawnPos.X, (int)spawnPos.Y), sFrame, Color.White * (1 - scale), 0f, sFrame.Size() / 2, scalePortalVec2 * 0.7f, SpriteEffects.None, 0f);
+
+            return false;
+        }
+    } 
 }

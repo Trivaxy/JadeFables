@@ -339,18 +339,4 @@ namespace JadeFables.Tiles.JadeWaterfall
             }
         }
     }
-    public static class PaintHelper
-    {
-        public static void DrawWithPaint(byte paintType, string texturePath, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
-        {
-            color = color.MultiplyRGBA(WorldGen.paintColor(paintType));
-
-            if (paintType == PaintID.None || paintType == PaintID.IlluminantPaint) ;
-            else if (paintType == PaintID.NegativePaint) texturePath += "_Negative";
-            else texturePath += "_Grayscale";
-
-            Texture2D texture = ModContent.Request<Texture2D>(texturePath).Value;
-            Main.spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
-        }
-    }
 }

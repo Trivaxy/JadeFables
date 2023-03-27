@@ -12,6 +12,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.OvergrownJadeSand;
+using JadeFables.Helpers;
 
 namespace JadeFables.Tiles.JadeSeaweed
 {
@@ -105,10 +106,12 @@ namespace JadeFables.Tiles.JadeSeaweed
 
             public Vector2 offset;
 
+            public Tile origin;
+
             public void Draw(SpriteBatch spriteBatch, Color lightColor, Vector2 position)
             {
-                Texture2D tex = ModContent.Request<Texture2D>(texturePath).Value;
-                spriteBatch.Draw(tex, position + offset, null, lightColor, rotation + 1.57f, new Vector2(tex.Width / 2, tex.Height), scale, SpriteEffects.None, 0f);
+                Texture2D texRef = ModContent.Request<Texture2D>(texturePath).Value;
+                PaintHelper.DrawWithPaint(origin.TileColor, texturePath, position + offset, null, lightColor, rotation + 1.57f, new Vector2(texRef.Width / 2, texRef.Height), scale, SpriteEffects.None, 0f);
             }
 
             public void Update(Vector2 startPoint)
@@ -127,7 +130,7 @@ namespace JadeFables.Tiles.JadeSeaweed
                 rotation = MathHelper.Lerp(rotation, originalRotation + (0.15f * (float)Math.Sin(sway)), springiness);
             }
 
-            public JadeSeaweedBlade() { }
+            public JadeSeaweedBlade(Tile tile) { origin = tile; }
         }
 
         public List<JadeSeaweedBlade> blades = new List<JadeSeaweedBlade>();
@@ -152,7 +155,7 @@ namespace JadeFables.Tiles.JadeSeaweed
             for (int i = 0; i < 3; i++)
             {
                 int texNum = Main.rand.Next(1, 9);
-                JadeSeaweedBlade blade = new JadeSeaweedBlade();
+                JadeSeaweedBlade blade = new JadeSeaweedBlade(Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)]);
                 blade.originalRotation = Main.rand.NextFloat(-0.2f, 0.2f) - 1.57f;
                 blade.texturePath = Texture + texNum.ToString();
                 switch (texNum)

@@ -146,4 +146,84 @@ namespace JadeFables.Helpers
             }
         }
     }
+    public static class PaintHelper
+    {
+        public static void DrawWithPaint(byte paintType, string texturePath, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
+        {
+            color = color.MultiplyRGBA(WorldGen.paintColor(paintType).MaxAlpha());
+
+            Texture2D texture = GetVariantTexture(texturePath, GetEffectForPaint(paintType));
+            Main.spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+        }
+        public static void DrawWithPaint(byte paintType, string texturePath, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth)
+        {
+            color = color.MultiplyRGBA(WorldGen.paintColor(paintType).MaxAlpha());
+
+            Texture2D texture = GetVariantTexture(texturePath, GetEffectForPaint(paintType));
+            Main.spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+        }
+
+        public static Color MaxAlpha(this Color color)
+        {
+            return new Color(color.R, color.G, color.B, 255);
+        }
+
+        public static VariantEffect? GetEffectForPaint(byte paintType)
+        {
+            if (paintType == PaintID.None || paintType == PaintID.IlluminantPaint) return None;
+            else if (paintType == PaintID.NegativePaint) return MakeNegative;
+            else return MakeGrayscale;
+        }
+
+        public static Dictionary<string, Texture2D> textureVariants = new Dictionary<string, Texture2D>();
+
+        public static Texture2D GetVariantTexture(string texturePath, VariantEffect effect)
+        {
+            string key = texturePath + effect.Method.Name;
+            if (!textureVariants.ContainsKey(key)) textureVariants[key] = InitializeVariantTexture(texturePath, effect);
+            return textureVariants[key];
+        }
+
+        private static Texture2D InitializeVariantTexture(string texturePath, VariantEffect effect)
+        {
+            Texture2D baseTexture = Request<Texture2D>(texturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            if (effect == None) return baseTexture;
+
+            Texture2D variantTexture = new Texture2D(Main.graphics.GraphicsDevice, baseTexture.Width, baseTexture.Height);
+            Main.QueueMainThreadAction(() =>
+            {
+                Color[] pixels = new Color[baseTexture.Width * baseTexture.Height];
+                baseTexture.GetData(pixels);
+
+                effect(pixels);
+
+                variantTexture.SetData(pixels);
+            });
+            return variantTexture;
+        }
+
+        public delegate Color[] VariantEffect(Color[] pixels);
+        public static Color[] MakeGrayscale(Color[] pixels)
+        {
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                byte grayscaleValue = (byte)(pixels[i].R * 0.299f + pixels[i].G * 0.587f + pixels[i].B * 0.114f);
+                pixels[i] = new Color(grayscaleValue, grayscaleValue, grayscaleValue, pixels[i].A);
+            }
+            return pixels;
+        }
+        public static Color[] MakeNegative(Color[] pixels)
+        {
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                if (pixels[i].A == 0) continue;
+                pixels[i] = new Color((byte)(255 - pixels[i].R), (byte)(255 - pixels[i].G), (byte)(255 - pixels[i].B), pixels[i].A);
+            }
+            return pixels;
+        }
+        public static Color[] None(Color[] pixels)
+        {
+            return pixels;
+        }
+    }
 }

@@ -22,7 +22,8 @@ namespace JadeFables.Tiles.JadeTorch
 	public class JadeTorch : ModItem
 	{
 		public override void SetStaticDefaults() {
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 100;
+            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 100;
+            ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.ShimmerTorch;
 		}
 
 		public override void SetDefaults() {

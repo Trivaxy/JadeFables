@@ -1,5 +1,6 @@
 ﻿using JadeFables.Biomes.JadeLake;
 using JadeFables.Dusts;
+using JadeFables.Tiles.BlossomWall;
 using JadeFables.Tiles.JadeGrassShort;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeSandstone;
@@ -31,7 +32,7 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
             //Main.tileSand[Type] = true;
-            TileID.Sets.TouchDamageSands/* tModPorter Suggestion: Suffocate */[Type] = 15;
+            TileID.Sets.Suffocate[Type] = true;
             TileID.Sets.CanBeDugByShovel[Type] = true;
             TileID.Sets.ForAdvancedCollision.ForSandshark[Type] = true;
             //TileID.Sets.Falling[Type] = true;
@@ -362,12 +363,12 @@ namespace JadeFables.Tiles.OvergrownJadeSand
     }
     public class DryadSpringSeedsShop : GlobalNPC
     {
-        public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
+        public override void ModifyShop(NPCShop shop)
         {
-            if (type == NPCID.Dryad && Main.LocalPlayer.InModBiome<JadeLakeBiome>())
+            Condition cond = new Condition("Local Player In Springs", () => Main.LocalPlayer.InModBiome<JadeLakeBiome>());
+            if (shop.NpcType == NPCID.Dryad)
             {
-                shop.item[nextSlot].SetDefaults(ItemType<JadeGrassSeeds>());
-                nextSlot++;
+                shop.Add(new NPCShop.Entry(ModContent.ItemType<JadeGrassSeeds>(), cond));
             }
         }
     }

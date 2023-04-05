@@ -266,7 +266,7 @@ namespace JadeFables.NPCs.Bullfrog
                 if (Projectile.timeLeft == 2)
                 {
                     dragonfly.immortal = false;
-                    dragonfly.StrikeNPC(Main.rand.Next(500, 1000), 0, 0, true);
+                    dragonfly.SimpleStrikeNPC(Main.rand.Next(500, 1000), 0);
                 }
             }
 
@@ -315,7 +315,7 @@ namespace JadeFables.NPCs.Bullfrog
         {
             if (Projectile.timeLeft > 40)
                 Projectile.timeLeft = 41;
-            damage = 1;
+            modifiers.FinalDamage -= int.MaxValue;
             target.immortal = true;
             dragonfly = target;
         }

@@ -32,7 +32,7 @@ namespace JadeFables.Tiles.SpringChest
 
 
 			// Names
-			ContainerName/* tModPorter Note: Removed. Override DefaultContainerName instead */.SetDefault("Spring Chest");
+			//ContainerName/* tModPorter Note: Removed. Override DefaultContainerName instead */.SetDefault("Spring Chest");
 
 			LocalizedText name = CreateMapEntryName();
 			// name.SetDefault("Spring Chest");

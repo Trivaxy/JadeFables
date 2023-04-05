@@ -65,13 +65,13 @@ namespace JadeFables.Tiles.BlossomWall
 
     class DryadSellsBlossom : GlobalNPC
     {
-        public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
-        {
-            if (type == NPCID.Dryad && Main.LocalPlayer.InModBiome<JadeLakeBiome>())
-            {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<BlossomWallItem>());
-                nextSlot++;
-            }
-        }
+        public override void ModifyShop(NPCShop shop)
+		{
+            Condition cond = new Condition("Local Player In Springs", () => Main.LocalPlayer.InModBiome<JadeLakeBiome>());
+			if (shop.NpcType == NPCID.Dryad)
+			{
+				shop.Add(new NPCShop.Entry(ModContent.ItemType<BlossomWallItem>(), cond));
+			}
+		}
     }
 }

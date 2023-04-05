@@ -55,17 +55,17 @@ namespace JadeFables
 
 		public void LoadDetours()
 		{
-			Terraria.On_Main.DrawWater += WaterAlphaMod;
+			//Terraria.On_Main.DrawWater += WaterAlphaMod;
 		}
 
 		public void UnloadDetours()
 		{
-			Terraria.On_Main.DrawWater -= WaterAlphaMod;
+			//Terraria.On_Main.DrawWater -= WaterAlphaMod;
 		}
 
-		private void WaterAlphaMod(Terraria.On_Main.orig_DrawWater orig, Main self, bool bg, int Style, float Alpha)
+		/*private void WaterAlphaMod(Terraria.On_Main.orig_DrawWater orig, Main self, bool bg, int Style, float Alpha)
 		{
 		    orig(self, bg, Style, Main.LocalPlayer.InModBiome<JadeLakeBiome>() ? Alpha * 0.3f : Alpha);
-		}
+		}*/
 	}
 }

@@ -105,6 +105,8 @@ namespace JadeFables.Items.Potions.Spine
             const int maxTargets = 3;
             int targets = 0;
 
+            int damageTaken = info.Damage;
+
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC npc = Main.npc[i];

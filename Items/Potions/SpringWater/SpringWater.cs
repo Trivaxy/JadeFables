@@ -59,7 +59,7 @@ namespace JadeFables.Items.Potions.SpringWater
 
         public override void AddRecipes()
         {
-            Condition nearJadeWater = new Condition(NetworkText.FromKey("RecipeConditions.NearWater"), n => Main.LocalPlayer.adjWater && Main.LocalPlayer.InModBiome<JadeLakeBiome>());
+            Condition nearJadeWater = new Condition("Near Jade Water", () => Main.LocalPlayer.adjWater && Main.LocalPlayer.InModBiome<JadeLakeBiome>());
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Bottle);
             recipe.AddCondition(nearJadeWater);

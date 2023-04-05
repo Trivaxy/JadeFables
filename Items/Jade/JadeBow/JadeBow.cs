@@ -203,6 +203,7 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
         {
+            Player owner = Main.player[projectile.owner];
             if (!shotFromBow)
                 return;
             if (target.CountsAsACritter)
@@ -215,17 +216,17 @@ namespace JadeFables.Items.Jade.JadeBow
                 if (target.type != NPCID.ExplosiveBunny)
                     target.immortal = true;
                 if (target.GetGlobalNPC<JadeBowGNPC>().timer <= 0)
-                    Projectile.NewProjectile(projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeBowHitbox>(), damage, knockback, projectile.owner, target.whoAmI);
+                    Projectile.NewProjectile(projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeBowHitbox>(), (int)(12 * owner.GetDamage(DamageClass.Ranged).Multiplicative), 0, projectile.owner, target.whoAmI);
 
                 target.GetGlobalNPC<JadeBowGNPC>().timer = (int)(900 * mult);
                 target.GetGlobalNPC<JadeBowGNPC>().owner = Main.player[projectile.owner];
-                damage = 0;
+                modifiers.SetMaxDamage(1);
             }
             else if (target.townNPC)
             {
                 target.immortal = true;
                 target.GetGlobalNPC<JadeBowGNPC>().timer = 3000;
-                damage = 0;
+                modifiers.SetMaxDamage(1);
             }
             else
             {

@@ -324,7 +324,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if (launching && !spinning)
-                damage = (int)MathHelper.Lerp(damage, damage * 2, owner.velocity.Length() / 20f);
+                modifiers.ScalingBonusDamage += owner.velocity.Length() / 20f;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)

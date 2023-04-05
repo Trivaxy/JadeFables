@@ -43,7 +43,7 @@ public abstract class ErrorCollectingModSystem : ModSystem
 internal sealed class ErrorReportingPlayer : ModPlayer
 {
     public override void OnEnterWorld() {
-        base.OnEnterWorld(Player);
+        base.OnEnterWorld();
 
         foreach (var system in Mod.GetContent<ErrorCollectingModSystem>()) {
             if (system.PrintOnWorldEnter) continue;

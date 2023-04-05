@@ -12,6 +12,7 @@ using static Terraria.ModLoader.ModContent;
 using JadeFables.Helpers;
 using Terraria.Audio;
 using JadeFables.Core.Systems;
+using Terraria.WorldBuilding;
 
 namespace JadeFables.Items.Jade.JadeKunai
 {
@@ -587,16 +588,16 @@ namespace JadeFables.Items.Jade.JadeKunai
             if (projectile.type == ModContent.ProjectileType<JadeKunaiProjectile>())
             {
                 if (damageIncrease >= 0.6f)
-                    damage = (int)(damage * 1.1f);
+                    modifiers.ScalingBonusDamage += 0.1f;
             }
             else
             {
                 if (getCrit)
                 {
                     Player player = Main.player[projectile.owner];
-                    crit = true;
+                    modifiers.SetCrit();
 
-                    damage = (int)(damage * (1f + damageIncrease));
+                    modifiers.ScalingBonusDamage += damageIncrease;
 
                     getCrit = false;
 

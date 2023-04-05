@@ -248,7 +248,8 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             NPCLoader.OnHitByItem(target, Owner, item, hit, damageDone);
             PlayerLoader.OnHitNPC(Owner, target, hit, damageDone);
             Owner.StatusToNPC(item.type, target.whoAmI);
-            Chopsticks.ApplyNPCOnHitEffects(Owner, item, itemRect_, Projectile.damage, knockback, target.whoAmI, Main.DamageVar(damage, Owner.luck), damage);
+            float knockback = hit.Knockback;
+            Chopsticks.ApplyNPCOnHitEffects(Owner, item, itemRect_, Projectile.damage, knockback, target.whoAmI, Main.DamageVar(damageDone, Owner.luck), damageDone);
             //Owner.ApplyNPCOnHitEffects(sItem, itemRectangle, num, knockBack, i, num6, dmgDone);
             alreadyHit.Add(target);
         }
@@ -262,7 +263,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            hitDirection = Math.Sign(target.Center.X - Owner.Center.X);
+            modifiers.HitDirectionOverride = Math.Sign(target.Center.X - Owner.Center.X);
         }
 
         public override bool? CanCutTiles()

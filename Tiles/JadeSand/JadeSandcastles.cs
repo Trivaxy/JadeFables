@@ -3,6 +3,7 @@ using CsvHelper.TypeConversion;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
@@ -142,7 +143,7 @@ namespace JadeFables.Tiles.JadeSand
 
             int x = (int)Main.MouseWorld.X / 16;
             int y = (int)Main.MouseWorld.Y / 16;
-            if (player.InInteractionRange(x, y) && Main.tile[x, y + 1].HasTile && Main.tile[x, y + 1].TileType == ModContent.TileType<JadeSandTile>())
+            if (player.InInteractionRange(x, y, TileReachCheckSettings.Simple) && Main.tile[x, y + 1].HasTile && Main.tile[x, y + 1].TileType == ModContent.TileType<JadeSandTile>())
             {
                 item.tileWand = ModContent.ItemType<JadeSandItem>();
                 if (x % 2 == 0)

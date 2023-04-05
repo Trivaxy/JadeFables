@@ -1,6 +1,8 @@
-﻿using JadeFables.Dusts;
+﻿using JadeFables.Core;
+using JadeFables.Dusts;
 using JadeFables.Tiles.JadeSandstone;
 using JadeFables.Tiles.JadeSand;
+using Terraria.Localization;
 
 namespace JadeFables.Tiles.JadeOre
 {
@@ -20,7 +22,7 @@ namespace JadeFables.Tiles.JadeOre
             TileID.Sets.ForAdvancedCollision.ForSandshark[Type] = true;
             //TileID.Sets.Falling[Type] = true;
 
-            ModTranslation name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
             name.SetDefault("Jade Ore");
             AddMapEntry(new Color(50, 160, 65), name);
         }

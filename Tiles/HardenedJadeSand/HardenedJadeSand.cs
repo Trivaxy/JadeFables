@@ -1,6 +1,9 @@
 ﻿//TODO:
 //Better map color
+
+using JadeFables.Core;
 using JadeFables.Tiles.JadeSand;
+using Terraria.Localization;
 
 namespace JadeFables.Tiles.HardenedJadeSand
 {
@@ -18,7 +21,7 @@ namespace JadeFables.Tiles.HardenedJadeSand
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
 
-            ModTranslation name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
             name.SetDefault("Hardened Spring Sand");
             AddMapEntry(jadeSandMid, name);
         }

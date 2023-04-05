@@ -1,18 +1,18 @@
-﻿Mods.JadeFables: {
 
-	ItemName: {
-		PufferfishBannerItem: "Pufferfish Banner"
-		MediumKoiBannerItem: "Medium Koi Banner"
-		BullfrogBannerItem: "Bullfrog Banner"
-		GiantSnailBannerItem : "Giant Snail Banner"
+Mods: {
+	JadeFables: {
+		ItemName: {
+			PufferfishBannerItem: Pufferfish Banner
+			MediumKoiBannerItem: Medium Koi Banner
+			BullfrogBannerItem: Bullfrog Banner
+			GiantSnailBannerItem: Giant Snail Banner
+		}
+
+		ItemTooltip: {
+			PufferfishBannerItem: "{$CommonItemTooltip.BannerBonus}Pufferfish"
+			MediumKoiBannerItem: "{$CommonItemTooltip.BannerBonus}Medium Koi"
+			GiantSnailBannerItem: "{$CommonItemTooltip.BannerBonus}Giant Snail"
+			BullfrogBannerItem: "{$CommonItemTooltip.BannerBonus}Bullfrog"
+		}
 	}
-
-	ItemTooltip: {
-		PufferfishBannerItem: "{$CommonItemTooltip.BannerBonus}Pufferfish"
-		MediumKoiBannerItem: "{$CommonItemTooltip.BannerBonus}Medium Koi"
-		GiantSnailBannerItem: "{$CommonItemTooltip.BannerBonus}Giant Snail"
-		BullfrogBannerItem: "{$CommonItemTooltip.BannerBonus}Bullfrog"
-
-	}
-
 }

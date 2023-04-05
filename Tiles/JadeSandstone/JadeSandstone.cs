@@ -1,4 +1,6 @@
-﻿using JadeFables.Tiles.JadeSand;
+﻿using JadeFables.Core;
+using JadeFables.Tiles.JadeSand;
+using Terraria.Localization;
 
 namespace JadeFables.Tiles.JadeSandstone
 {
@@ -16,7 +18,7 @@ namespace JadeFables.Tiles.JadeSandstone
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
 
-            ModTranslation name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
             name.SetDefault("Spring Sandstone");
             AddMapEntry(jadeSandDark, name);
         }

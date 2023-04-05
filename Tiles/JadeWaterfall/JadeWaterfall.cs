@@ -39,7 +39,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             TileObjectData.addTile(Type);
             MinPick = 999;
 
-            /*ModTranslation name = CreateMapEntryName();
+            /*LocalizedText name = CreateMapEntryName();
             name.SetDefault("Spring Waterfall");
             AddMapEntry(new Color(9, 61, 191), name);*/ //Don't display since it'd be weird to have it only take up one tile
         }
@@ -100,7 +100,7 @@ namespace JadeFables.Tiles.JadeWaterfall
     {
         public override bool? UseItem(Item item, Player player)
         {
-            if (player.itemAnimation == item.useAnimation - 1 && item.type == ItemID.EmptyBucket && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
+            if (player.itemAnimation == item.useAnimation - 1 && item.type == ItemID.EmptyBucket && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY, TileReachCheckSettings.Simple))
             {
                 for (int j = 0; j < 2; j++)
                 {

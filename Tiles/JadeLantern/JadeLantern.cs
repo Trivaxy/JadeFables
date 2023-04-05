@@ -145,7 +145,7 @@ namespace JadeFables.Tiles.JadeLantern
 
         public override bool? UseItem(Player player)
         {
-            if (player.whoAmI == Main.myPlayer && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
+            if (player.whoAmI == Main.myPlayer && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY, TileReachCheckSettings.Simple))
             {
                 bool ret = JadeLantern.Spawn(Player.tileTargetX, Player.tileTargetY);
 
@@ -182,7 +182,7 @@ namespace JadeFables.Tiles.JadeLantern
         }
          public override bool? UseItem(Player player)
         {
-            if (player.whoAmI == Main.myPlayer && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY))
+            if (player.whoAmI == Main.myPlayer && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY, TileReachCheckSettings.Simple))
             {
                 bool ret = !JadeLanternFurniture.Spawn(Player.tileTargetX, Player.tileTargetY);
 

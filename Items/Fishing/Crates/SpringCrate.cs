@@ -7,9 +7,11 @@ using Terraria.Enums;
 using Terraria.ObjectData;
 using Terraria.GameContent.ItemDropRules;
 using JadeFables.Biomes.JadeLake;
+using JadeFables.Core;
 using static JadeFables.Items.Fishing.Crates.CrateDropRules;
 using JadeFables.Items.SpringChestLoot.Hwacha;
 using JadeFables.Tiles.JadeFountain;
+using Terraria.Localization;
 
 namespace JadeFables.Items.Fishing.Crates
 {
@@ -127,7 +129,7 @@ namespace JadeFables.Items.Fishing.Crates
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide | AnchorType.Table, TileObjectData.newTile.Width, 0);
             TileObjectData.addTile(Type);
-            ModTranslation name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
             name.SetDefault("Spring Crate");
             AddMapEntry(new Color(35, 175, 95), name);
         }
@@ -179,7 +181,7 @@ namespace JadeFables.Items.Fishing.Crates
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide | AnchorType.Table, TileObjectData.newTile.Width, 0);
             TileObjectData.addTile(Type);
-            ModTranslation name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
             name.SetDefault("Dragon Crate");
             AddMapEntry(new Color(200, 65, 140), name);
         }

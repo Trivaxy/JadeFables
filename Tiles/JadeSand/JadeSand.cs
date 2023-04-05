@@ -1,7 +1,9 @@
-﻿using JadeFables.Dusts;
+﻿using JadeFables.Core;
+using JadeFables.Dusts;
 using JadeFables.Tiles.JadeGrassShort;
 using JadeFables.Tiles.JadeSandstone;
 using JadeFables.Tiles.JasmineFlower;
+using Terraria.Localization;
 
 namespace JadeFables.Tiles.JadeSand
 {
@@ -27,7 +29,7 @@ namespace JadeFables.Tiles.JadeSand
 
             TileSets.CanGrowBamboo[Type] = true;
 
-            ModTranslation name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
             name.SetDefault("Spring Sand");
             AddMapEntry(jadeSandLight, name);
         }

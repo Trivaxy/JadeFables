@@ -13,6 +13,7 @@ namespace JadeFables.Items.Potions.Heartbeat
         {
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 5));
             ItemID.Sets.AnimatesAsSoul[Item.type] = true;
+            ItemID.Sets.IgnoresEncumberingStone[Type] = true;
         }
 
         public override void SetDefaults()

@@ -13,11 +13,6 @@ namespace JadeFables.Items.Lotus.LotusFiber
 {
     public class LotusFiber : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Lotus Fiber");
-        }
-
         public override void SetDefaults()
         {
             Item.width = 24;

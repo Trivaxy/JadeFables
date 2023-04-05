@@ -32,11 +32,8 @@ namespace JadeFables.Tiles.SpringChest
 
 
 			// Names
-			//ContainerName/* tModPorter Note: Removed. Override DefaultContainerName instead */.SetDefault("Spring Chest");
-
-			LocalizedText name = CreateMapEntryName();
-			// name.SetDefault("Spring Chest");
-			AddMapEntry(new Color(155, 50, 50), name, MapChestName);
+            LocalizedText name = CreateMapEntryName();
+            AddMapEntry(new Color(155, 50, 50), name, MapChestName);
 
 			// Placement
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
@@ -181,11 +178,6 @@ namespace JadeFables.Tiles.SpringChest
 
     internal class SpringChestItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spring Chest");
-        }
-
         public override void SetDefaults()
         {
             Item.useStyle = ItemUseStyleID.Swing;
@@ -198,7 +190,6 @@ namespace JadeFables.Tiles.SpringChest
             Item.createTile = ModContent.TileType<SpringChest>();
             Item.width = 10;
             Item.height = 24;
-
 
 			Item.value = Item.sellPrice(silver: 10);
 			Item.rare = ItemRarityID.White;

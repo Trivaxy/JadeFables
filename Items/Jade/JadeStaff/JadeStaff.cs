@@ -26,11 +26,6 @@ namespace JadeFables.Items.Jade.JadeStaff
 {
     class JadeStaff : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Staff");
-            // Tooltip.SetDefault("update later");
-        }
 
         public override void SetDefaults()
         {
@@ -92,10 +87,6 @@ namespace JadeFables.Items.Jade.JadeStaff
         private bool portalOpened = false; //When the portal has finished opening 
         private int previousQuadrant = 3; //1, 2, 3 or 4 (don't change initail value to 1 or 2)
         private int timeAfterDragonSpawned = 0;
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Staff");
-        }
 
         public override void SetDefaults()
         {
@@ -397,11 +388,6 @@ namespace JadeFables.Items.Jade.JadeStaff
 
         private float burnProgress => EaseFunction.EaseCircularIn.Ease(1 - (Projectile.timeLeft / 130f));
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Staff");
-        }
-
         public override void SetDefaults()
         {
             Projectile.width = 32;
@@ -690,11 +676,6 @@ namespace JadeFables.Items.Jade.JadeStaff
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Fire Pulse");
-        }
-
         public bool oval = false;
         public Vector2 dim = new Vector2(1f, 1f);
         public bool canDamage = true;
@@ -812,13 +793,6 @@ namespace JadeFables.Items.Jade.JadeStaff
     internal class JadeStaffPortal : ModProjectile
     {
         public override string Texture => "Terraria/Images/Projectile_0";
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Fire Portal");
-        }
-
-
 
         public override void SetDefaults()
         {

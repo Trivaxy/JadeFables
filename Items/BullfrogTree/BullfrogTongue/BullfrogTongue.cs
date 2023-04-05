@@ -9,8 +9,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogTongue
 	{
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Bullfrog Tongue");
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 		}
 
 		public override void SetDefaults()

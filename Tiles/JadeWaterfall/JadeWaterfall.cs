@@ -40,7 +40,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             MinPick = 999;
 
             /*LocalizedText name = CreateMapEntryName();
-            name.SetDefault("Spring Waterfall");
+
             AddMapEntry(new Color(9, 61, 191), name);*/ //Don't display since it'd be weird to have it only take up one tile
         }
 
@@ -58,8 +58,6 @@ namespace JadeFables.Tiles.JadeWaterfall
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Waterfall Bucket");
-            // Tooltip.SetDefault("Contains a small amount of waterfall\nCan be poured out");
             ItemID.Sets.AlsoABuildingItem[Type] = true;
         }
 
@@ -164,11 +162,6 @@ namespace JadeFables.Tiles.JadeWaterfall
                 toDraw.ForEach(n => (n.ModProjectile as JadeWaterfallProj).Draw());
                 Main.spriteBatch.End();
             }
-        }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Waterfall");
         }
 
         public override void SetDefaults()

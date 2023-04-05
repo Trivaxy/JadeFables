@@ -38,7 +38,6 @@ namespace JadeFables.Tiles.JadeLantern
             TileObjectData.addTile(Type);
 
             LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Spring Lantern");
             AddMapEntry(jadeLanternYellow, name);
         }
 
@@ -81,8 +80,8 @@ namespace JadeFables.Tiles.JadeLantern
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
             ItemDrop = ModContent.ItemType<JadeLanternItem>();
+
             LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Spring Lantern");
             AddMapEntry(jadeLanternYellow, name);
         }
 
@@ -123,11 +122,6 @@ namespace JadeFables.Tiles.JadeLantern
     public class JadeLanternItemDebug : ModItem
     {
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spring Lantern DEBUG");
-        }
-
         public override void SetDefaults()
         {
             Item.width = 16;
@@ -159,12 +153,6 @@ namespace JadeFables.Tiles.JadeLantern
 
     public class JadeLanternItem : ModItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spring Lantern");
-            // Tooltip.SetDefault("Place on top of an existing lantern to make it longer \nThis does not comsune the lantern");
-        }
 
         public override void SetDefaults()
         {
@@ -241,11 +229,6 @@ namespace JadeFables.Tiles.JadeLantern
                     GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Tiles/JadeLantern/Gores/lantern" + i + "gore" + j);
                 }
             }
-        }
-
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Jade Lantern");
         }
 
         public override void SetDefaults()

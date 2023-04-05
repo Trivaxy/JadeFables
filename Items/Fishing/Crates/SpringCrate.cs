@@ -84,8 +84,6 @@ namespace JadeFables.Items.Fishing.Crates
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Spring Crate");
-            // Tooltip.SetDefault("Right click to open\n");
             ItemID.Sets.IsFishingCrate[Type] = true;
             ItemID.Sets.IsFishingCrateHardmode[Type] = true;
         }
@@ -129,8 +127,8 @@ namespace JadeFables.Items.Fishing.Crates
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide | AnchorType.Table, TileObjectData.newTile.Width, 0);
             TileObjectData.addTile(Type);
+
             LocalizedText name = CreateMapEntryName();
-            name.SetDefault("Spring Crate");
             AddMapEntry(new Color(35, 175, 95), name);
         }
         public override void NumDust(int i, int j, bool fail, ref int num)
@@ -147,16 +145,16 @@ namespace JadeFables.Items.Fishing.Crates
 	{
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Dragon Crate");
-			// Tooltip.SetDefault("Right click to open\n");
             ItemID.Sets.IsFishingCrate[Type] = true;
             ItemID.Sets.IsFishingCrateHardmode[Type] = true;
         }
+
         public override void SetDefaults()
         {
             Item.CloneDefaults(ModContent.ItemType<SpringCrate>());
             Item.createTile = ModContent.TileType<DragonCrateTile>();
         }
+
 		public override bool CanRightClick() => true;
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
@@ -181,8 +179,8 @@ namespace JadeFables.Items.Fishing.Crates
             TileObjectData.newTile.CopyFrom(TileObjectData.Style2x2);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide | AnchorType.Table, TileObjectData.newTile.Width, 0);
             TileObjectData.addTile(Type);
+
             LocalizedText name = CreateMapEntryName();
-            name.SetDefault("Dragon Crate");
             AddMapEntry(new Color(200, 65, 140), name);
         }
         public override void NumDust(int i, int j, bool fail, ref int num)

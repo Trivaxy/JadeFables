@@ -21,12 +21,6 @@ namespace JadeFables.Items.Fishing.Arowana
     {
         public bool popping;
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Flying Arowana");
-            // Tooltip.SetDefault("Flies around your cursor, distracting nearby enemies");
-        }
-
         public override void SetDefaults()
         {
             Item.width = 32;
@@ -60,7 +54,6 @@ namespace JadeFables.Items.Fishing.Arowana
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Arowana");
             Main.projFrames[Projectile.type] = 1;
         }
 

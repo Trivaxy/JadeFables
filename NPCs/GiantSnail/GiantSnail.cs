@@ -77,11 +77,6 @@ namespace JadeFables.NPCs.GiantSnail
             return true;
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Giant Snail");
-        }
-
         public override void SetDefaults()
         {
             NPC.width = size;
@@ -416,10 +411,6 @@ namespace JadeFables.NPCs.GiantSnail
     internal class GiantSnailDamager : ModProjectile
     {
         public NPC parent;
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Giant Snail");
-        }
 
         public override void SetDefaults()
         {

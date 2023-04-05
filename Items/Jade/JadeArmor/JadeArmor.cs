@@ -15,11 +15,6 @@ namespace JadeFables.Items.Jade.JadeArmor
     [AutoloadEquip(EquipType.Head)]
     public class JadeHat : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Hat");
-            // Tooltip.SetDefault("10% increased damage and critical strike chance");
-        }
 
         public override void SetDefaults()
         {
@@ -57,11 +52,6 @@ namespace JadeFables.Items.Jade.JadeArmor
     [AutoloadEquip(EquipType.Body)]
     public class JadeRobe : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Robe");
-            // Tooltip.SetDefault("7% increased movement speed and run acceleration");
-        }
 
         public override void SetDefaults()
         {

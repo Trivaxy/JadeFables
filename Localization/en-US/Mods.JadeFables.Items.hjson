@@ -1,0 +1,341 @@
+
+Bulfrauble: {
+	DisplayName: Bulfrauble
+	Tooltip:
+		'''
+		Jumping while moving boosts you further forward
+		Increases movement speed and acceleration
+		Provides light when worn
+		'''
+}
+
+BullfrogBaubleBelt: {
+	DisplayName: Bullfrog Bauble Belt
+	Tooltip:
+		'''
+		Jumping while moving boosts you further forward
+		Adds horizontal movement to double jumps
+		Increases movement speed and acceleration
+		Provides light when worn
+		'''
+}
+
+BullfrogLegs: {
+	DisplayName: Bullfrog Legs
+	Tooltip: Jumping while moving boosts you forward
+}
+
+BullfrogTongue: {
+	DisplayName: Bullfrog Tongue
+	Tooltip: ""
+}
+
+FrogInFroggle: {
+	DisplayName: Frog In A Froggle
+	Tooltip:
+		'''
+		Jumping while moving boosts you forward 
+		Adds horizontal movement to double jumps
+		'''
+}
+
+KoiItem: {
+	DisplayName: Koi
+	Tooltip: "'Don't you play koi with me'"
+}
+
+Arowana: {
+	DisplayName: Flying Arowana
+	Tooltip: Flies around your cursor, distracting nearby enemies
+}
+
+DragonCrate: {
+	DisplayName: Dragon Crate
+	Tooltip: Right click to open
+}
+
+SpringCrate: {
+	DisplayName: Spring Crate
+	Tooltip: Right click to open
+}
+
+KoiPopper: {
+	DisplayName: Koi Popper
+	Tooltip:
+		'''
+		Shoot bubles out in a spread 
+		Right click to pop all bubbles, dealing damage to nearby enemies
+		'''
+}
+
+FestivalLantern: {
+	DisplayName: Festival Lantern
+	Tooltip: Starts a lantern night
+}
+
+JadeHat: {
+	DisplayName: Jade Hat
+	Tooltip: 10% increased damage and critical strike chance
+}
+
+JadeRobe: {
+	DisplayName: Jade Robe
+	Tooltip: 7% increased movement speed and run acceleration
+}
+
+JadeAxe: {
+	DisplayName: Jade Axe
+	Tooltip: Trees drop more fruit
+}
+
+JadeBow: {
+	DisplayName: Jade Bow
+	Tooltip:
+		'''
+		Shoot critters to make them fight for you
+		Shoot town NPCs to give them a shield
+		'''
+}
+
+JadeChunk: {
+	DisplayName: Jade Chunk
+	Tooltip: ""
+}
+
+JadeHarpoon: {
+	DisplayName: Jade Harpoon
+	Tooltip: Hook yourself onto enemies and bounce off of them
+}
+
+JadeHookItem: {
+	DisplayName: Jade Hook
+	Tooltip: Creates an explosion when you hook onto a tile
+}
+
+JadeKunai: {
+	DisplayName: Jade Kunais
+	Tooltip: Repeated strikes increases damage from other weapons
+}
+
+JadePickaxe: {
+	DisplayName: Jade Pickaxe
+	Tooltip: Rocks drop more critters
+}
+
+JadeStaff: {
+	DisplayName: Jade Staff
+	Tooltip: update later
+}
+
+LotusChestplate: {
+	DisplayName: Lotus Chestplate
+	Tooltip: Increased fishing power
+}
+
+LotusHelmet: {
+	DisplayName: Lotus Helmet
+	Tooltip: Increased fishing power
+}
+
+LotusLeggings: {
+	DisplayName: Lotus Greaves
+	Tooltip: Increased fishing power
+}
+
+LotusFiber: {
+	DisplayName: Lotus Fiber
+	Tooltip: ""
+}
+
+LotusHammer: {
+	DisplayName: Lotus Hammer
+	Tooltip: Can pickup walls that other hammers can't
+}
+
+Dumpling: {
+	DisplayName: Dumpling
+	Tooltip:
+		'''
+		Medium improvements to all stats
+		'Almost unrecognizable'
+		'''
+}
+
+BigHeartItem: {
+	DisplayName: Big Heart
+	Tooltip: You shouldn't see this
+}
+
+HeartbeatPotion: {
+	DisplayName: Heartbeat Potion
+	Tooltip: Heart pickups turn into larger hearts, which heal more
+}
+
+JasmineTea: {
+	DisplayName: Jasmine Tea
+	Tooltip: "'Do you know why they call me The Dragon of The West?'"
+}
+
+SpineItem: {
+	DisplayName: Spine
+	Tooltip: ""
+}
+
+SpinePotion: {
+	DisplayName: Spine Potion
+	Tooltip: Taking any damage fires spines at nearby enemies
+}
+
+SpringWater: {
+	DisplayName: Spring Water
+	Tooltip:
+		'''
+		Clears almost all debuffs
+		Causes Potion Sickness for 15 seconds
+		'''
+}
+
+Chopsticks: {
+	DisplayName: Chopsticks
+	Tooltip: Swords have more range and become omnidirectional
+}
+
+FireworkPack: {
+	DisplayName: Firework Pack
+	Tooltip:
+		'''
+		15 damage 
+		Enemies launch damaging fireworks when they die
+		'''
+}
+
+GongItem: {
+	DisplayName: Gong and Ringer
+	Tooltip:
+		'''
+		Left click to throw out a gong 
+		Right click to ring it, increasing its damage
+		'''
+}
+
+Hwacha: {
+	DisplayName: Hwacha
+	Tooltip:
+		'''
+		Summons a Hwacha to fight for you 
+		Whip the hwacha to fire it with arrows from your inventory
+		Right click to push and pull the hwacha
+		'''
+}
+
+TanookiLeaf: {
+	DisplayName: Tanooki Leaf
+	Tooltip:
+		'''
+		Jump higher while running faster 
+		Press jump in the air to slow your fall
+		'''
+}
+
+BlossomWallItem: {
+	DisplayName: Cherry Blossom Wall
+	Tooltip: ""
+}
+
+HardenedJadeSandItem: {
+	DisplayName: Hardened Spring Sand
+	Tooltip: ""
+}
+
+JadeFountainItem: {
+	DisplayName: Spring Fountain
+	Tooltip: Makes nearby water sparkly
+}
+
+JadeLanternItem: {
+	DisplayName: Spring Lantern
+	Tooltip:
+		'''
+		Place on top of an existing lantern to make it longer 
+		This does not comsune the lantern
+		'''
+}
+
+JadeLanternItemDebug: {
+	DisplayName: Spring Lantern DEBUG
+	Tooltip: ""
+}
+
+JadeSandItem: {
+	DisplayName: Spring Sand
+	Tooltip: ""
+}
+
+JadeSandstoneItem: {
+	DisplayName: Spring Sandstone
+	Tooltip: ""
+}
+
+JadeSandWallItem: {
+	DisplayName: Springstone Wall
+	Tooltip: ""
+}
+
+JadeSeaweedItem: {
+	DisplayName: Spring Seaweed
+	Tooltip: ""
+}
+
+JadeWaterfallBucket: {
+	DisplayName: Waterfall Bucket
+	Tooltip:
+		'''
+		Contains a small amount of waterfall
+		Can be poured out
+		'''
+}
+
+JasmineFlower: {
+	DisplayName: Jasmine Flower
+	Tooltip: "'Potent with indescribable flavor'"
+}
+
+JadeGrassSeeds: {
+	DisplayName: Spring Grass Seeds
+	Tooltip: Can be placed
+}
+
+SpringChestItem: {
+	DisplayName: Spring Chest
+	Tooltip: ""
+}
+
+WarriorStatueItem: {
+	DisplayName: Warrior Statue
+	Tooltip: ""
+}
+
+JadeTorch: {
+	DisplayName: Jade Torch
+	Tooltip: ""
+}
+# Banners
+BullfrogBannerItem: {
+	DisplayName: Bullfrog Banner
+	Tooltip: "{$CommonItemTooltip.BannerBonus}Bullfrog"
+}
+
+GiantSnailBannerItem: {
+	DisplayName: Giant Snail Banner
+	Tooltip: "{$CommonItemTooltip.BannerBonus}Giant Snail"
+}
+
+MediumKoiBannerItem: {
+	DisplayName: Medium Koi Banner
+	Tooltip: "{$CommonItemTooltip.BannerBonus}Medium Koi"
+}
+
+PufferfishBannerItem: {
+	DisplayName: Pufferfish Banner
+	Tooltip: "{$CommonItemTooltip.BannerBonus}Pufferfish"
+}

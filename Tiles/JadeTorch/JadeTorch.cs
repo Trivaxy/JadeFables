@@ -116,9 +116,6 @@ namespace JadeFables.Tiles.JadeTorch
 
             // Etc
             LocalizedText name = CreateMapEntryName();
-
-            // name.SetDefault("Torch");
-
             AddMapEntry(new Color(0, 170, 140), name);
 
             // Assets

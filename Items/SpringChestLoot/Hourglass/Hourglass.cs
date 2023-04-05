@@ -18,10 +18,6 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
 {
     public class Hourglass : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Hourglass");
-        }
         public override void SetDefaults()
         {
             Item.useStyle = ItemUseStyleID.Swing;
@@ -53,10 +49,6 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
     {
 
         public bool activated = false;
-        public override void SetStaticDefaults()
-        {
-            DisplayName.SetDefault("Hourglass");
-        }
 
         public override void SetDefaults()
         {

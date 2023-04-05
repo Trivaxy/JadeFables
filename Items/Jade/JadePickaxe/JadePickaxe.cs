@@ -13,11 +13,6 @@ namespace JadeFables.Items.Jade.JadePickaxe
 {
     public class JadePickaxe : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Pickaxe");
-            // Tooltip.SetDefault("Rocks drop more critters");
-        }
 
         public override void SetDefaults()
         {

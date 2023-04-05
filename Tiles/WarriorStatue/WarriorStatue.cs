@@ -33,8 +33,7 @@ namespace JadeFables.Tiles.WarriorStatue
 			DustType = DustID.Stone;
 
 			LocalizedText name = CreateMapEntryName();
-			// name.SetDefault("Warrior Statue");
-			AddMapEntry(jadeStoneGray, name);
+            AddMapEntry(jadeStoneGray, name);
 		}
 
         public override void MouseOver(int i, int j)
@@ -153,11 +152,6 @@ namespace JadeFables.Tiles.WarriorStatue
 
     internal class WarriorStatueItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Warrior Statue");
-        }
-
         public override void SetDefaults()
         {
             Item.useStyle = ItemUseStyleID.Swing;

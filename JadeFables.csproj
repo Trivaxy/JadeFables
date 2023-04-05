@@ -10,6 +10,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Localization\en-US\Buffs.hjson" />
+    <None Remove="Localization\en-US\Items.hjson" />
+    <None Remove="Localization\en-US\NPCs.hjson" />
+    <None Remove="Localization\en-US\Projectiles.hjson" />
+    <None Remove="Localization\en-US\Tiles.hjson" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
   </ItemGroup>
   <ItemGroup>

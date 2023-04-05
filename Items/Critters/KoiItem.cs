@@ -4,11 +4,6 @@ namespace JadeFables.Items.Critters
 {
     public class KoiItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Koi");
-            // Tooltip.SetDefault("'Don't you play koi with me'");
-        }
 
         public override void SetDefaults()
         {

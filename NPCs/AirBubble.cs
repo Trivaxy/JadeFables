@@ -18,10 +18,6 @@ namespace JadeFables.NPCs
 {
     internal class AirBubble : ModProjectile
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Air Bubble");
-        }
 
         public override void SetDefaults()
         {

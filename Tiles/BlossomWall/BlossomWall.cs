@@ -43,7 +43,6 @@ namespace JadeFables.Tiles.BlossomWall
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Cherry Blossom Wall");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 400;
         }
 

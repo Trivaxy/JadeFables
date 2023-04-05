@@ -16,11 +16,6 @@ namespace JadeFables.Items.Jade.JadeBow
 {
     class JadeBow : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Bow");
-            // Tooltip.SetDefault("Shoot critters to make them fight for you\nShoot town NPCs to give them a shield");
-        }
 
         public override void SetDefaults()
         {
@@ -77,7 +72,6 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Jade Bow");
             Main.projFrames[Projectile.type] = 6;
         }
 
@@ -162,10 +156,6 @@ namespace JadeFables.Items.Jade.JadeBow
         private Player owner => Main.player[Projectile.owner];
 
         NPC parent => Main.npc[(int)Projectile.ai[0]];
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Bow");
-        }
 
         public override void SetDefaults()
         {

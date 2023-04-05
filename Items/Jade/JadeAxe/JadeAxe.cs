@@ -13,11 +13,6 @@ namespace JadeFables.Items.Jade.JadeAxe
 {
     public class JadeAxe : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Axe");
-            // Tooltip.SetDefault("Trees drop more fruit");
-        }
 
         public override void SetDefaults()
         {

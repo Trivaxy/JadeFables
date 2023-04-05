@@ -1,0 +1,20 @@
+
+HeartbeatBuff: {
+	DisplayName: Heartbeat
+	Description: Heart pickups are replaced by big hearts
+}
+
+JasmineTeaBuff: {
+	DisplayName: Jasmine Tea
+	Description: You need a mint!
+}
+
+SpineBuff: {
+	DisplayName: Spine
+	Description: Taking any damage fires spines at nearby enemies
+}
+
+SpringWaterBuff: {
+	DisplayName: Spring Water
+	Description: Debuffs are cured
+}

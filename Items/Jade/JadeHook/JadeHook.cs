@@ -17,10 +17,7 @@ namespace JadeFables.Items.Jade.JadeHook
 	internal class JadeHookItem : ModItem
 	{
 		public override void SetStaticDefaults() {
-			// DisplayName.SetDefault("Jade Hook");
-			// Tooltip.SetDefault("Creates an explosion when you hook onto a tile");
-
-			CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1; 
+            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1; 
 		}
 
 		public override void SetDefaults() {
@@ -60,11 +57,7 @@ namespace JadeFables.Items.Jade.JadeHook
 			chainTexture = null;
 		}
 
-		public override void SetStaticDefaults() {
-			// DisplayName.SetDefault("Jade Hook");
-		}
-
-		public override void SetDefaults() {
+        public override void SetDefaults() {
 			Projectile.CloneDefaults(ProjectileID.GemHookAmethyst); 
 		}
 

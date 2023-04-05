@@ -56,13 +56,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 
         }
 
-        public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Chopsticks");
-			// Tooltip.SetDefault("Swords have more range and become omnidirectional");
-		}
-
-		public override void SetDefaults()
+        public override void SetDefaults()
 		{
 			Item.width = 24;
 			Item.height = 28;

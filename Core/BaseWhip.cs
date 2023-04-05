@@ -42,8 +42,7 @@ namespace JadeFables.Core
 
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault(name);
-			ProjectileID.Sets.IsAWhip[Type] = true;
+            ProjectileID.Sets.IsAWhip[Type] = true;
 		}
 
 		public override void SetDefaults()

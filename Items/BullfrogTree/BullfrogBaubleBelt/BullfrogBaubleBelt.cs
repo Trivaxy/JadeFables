@@ -33,11 +33,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogBaubleBelt
         private bool santankJump = true;
         private bool unicornJump = true;
         private bool fleshJump = true;
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Bullfrog Bauble Belt");
-            // Tooltip.SetDefault("Jumping while moving boosts you further forward\nAdds horizontal movement to double jumps\nIncreases movement speed and acceleration\nProvides light when worn");
-        }
+
         public override void SetDefaults()
         {
             Item.width = 24;

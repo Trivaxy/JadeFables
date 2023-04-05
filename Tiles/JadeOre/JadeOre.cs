@@ -23,7 +23,6 @@ namespace JadeFables.Tiles.JadeOre
             //TileID.Sets.Falling[Type] = true;
 
             LocalizedText name = CreateMapEntryName();
-            name.SetDefault("Jade Ore");
             AddMapEntry(new Color(50, 160, 65), name);
         }
 

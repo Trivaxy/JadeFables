@@ -22,11 +22,6 @@ namespace JadeFables.Items.Jade.FestivalLantern
 {
     public class FestivalLantern : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Festival Lantern");
-            // Tooltip.SetDefault("Starts a lantern night");
-        }
 
         public override void SetDefaults()
         {
@@ -83,12 +78,6 @@ namespace JadeFables.Items.Jade.FestivalLantern
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Lantern");
-        }
-
         public override void AI()
         {
             timer++;

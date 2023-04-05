@@ -39,7 +39,6 @@ namespace JadeFables.Tiles.JadeSeaweed
             TileObjectData.addTile(Type);
 
             LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Spring Seaweed");
             AddMapEntry(jadeGrassLime, name);
         }
 
@@ -63,10 +62,6 @@ namespace JadeFables.Tiles.JadeSeaweed
 
     public class JadeSeaweedItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spring Seaweed");
-        }
 
         public override void SetDefaults()
         {
@@ -135,11 +130,6 @@ namespace JadeFables.Tiles.JadeSeaweed
         }
 
         public List<JadeSeaweedBlade> blades = new List<JadeSeaweedBlade>();
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spring Seaweed");
-        }
 
         public override void SetDefaults()
         {

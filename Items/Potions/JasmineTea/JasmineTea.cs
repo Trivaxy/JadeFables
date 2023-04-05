@@ -23,8 +23,6 @@ namespace JadeFables.Items.Potions.JasmineTea
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Jasmine Tea");
-            // Tooltip.SetDefault("'Do you know why they call me The Dragon of The West?'");
             ItemID.Sets.DrinkParticleColors[Item.type] = new Color[1] { Color.Green };
         }
 
@@ -81,8 +79,6 @@ namespace JadeFables.Items.Potions.JasmineTea
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Jasmine Tea");
-            // Description.SetDefault("You need a mint!");
             Main.buffNoSave[Type] = true;
         }
 
@@ -123,11 +119,6 @@ namespace JadeFables.Items.Potions.JasmineTea
                 }
             }
             Main.spriteBatch.End();
-        }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jasmine Fire");
         }
 
         public override void SetDefaults()

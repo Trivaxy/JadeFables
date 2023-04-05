@@ -26,8 +26,7 @@ namespace JadeFables.Tiles.JasmineFlower
 			HitSound = SoundID.Grass;
 
 			LocalizedText name = CreateMapEntryName();
-			// name.SetDefault("Jasmine Flower");
-			AddMapEntry(new Color(175, 190, 135), name);
+            AddMapEntry(new Color(175, 190, 135), name);
 		}
 
 		public override void NumDust(int i, int j, bool fail, ref int num)
@@ -65,13 +64,8 @@ namespace JadeFables.Tiles.JasmineFlower
 
 	public class JasmineFlower : ModItem
 	{
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Jasmine Flower");
-			// Tooltip.SetDefault("'Potent with indescribable flavor'");
-		}
 
-		public override void SetDefaults()
+        public override void SetDefaults()
 		{
 			Item.width = 24;
 			Item.height = 24;

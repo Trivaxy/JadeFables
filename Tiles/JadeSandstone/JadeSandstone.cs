@@ -19,17 +19,12 @@ namespace JadeFables.Tiles.JadeSandstone
             Main.tileBlockLight[Type] = true;
 
             LocalizedText name = CreateMapEntryName();
-            name.SetDefault("Spring Sandstone");
             AddMapEntry(jadeSandDark, name);
         }
     }
 
     public class JadeSandstoneItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spring Sandstone");
-        }
 
         public override void SetDefaults()
         {

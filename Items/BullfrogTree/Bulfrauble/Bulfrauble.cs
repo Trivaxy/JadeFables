@@ -26,11 +26,7 @@ namespace JadeFables.Items.BullfrogTree.Bulfrauble
         public bool jumping = false;
 
         public int cooldown = 0;
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Bulfrauble");
-            // Tooltip.SetDefault("Jumping while moving boosts you further forward\nIncreases movement speed and acceleration\nProvides light when worn");
-        }
+
         public override void SetDefaults()
         {
             Item.width = 24;

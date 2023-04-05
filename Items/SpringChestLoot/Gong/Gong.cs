@@ -25,11 +25,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
     public class GongItem : ModItem
     {
         public int gongCooldown = 0;
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Gong and Ringer");
-            // Tooltip.SetDefault("Left click to throw out a gong \nRight click to ring it, increasing its damage");
-        }
+
         public override void SetDefaults()
         {
             Item.useStyle = ItemUseStyleID.Swing;
@@ -103,10 +99,6 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         private float rot = 0;
         private Player owner => Main.player[Projectile.owner];
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Gong");
-        }
 
         public override void SetDefaults()
         {
@@ -262,10 +254,6 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         private float endAngle = 0;
 
         private float progress = 0;
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Ringer");
-        }
 
         public override void SetDefaults()
         {

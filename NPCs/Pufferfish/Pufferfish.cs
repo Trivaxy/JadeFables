@@ -55,7 +55,6 @@ namespace JadeFables.NPCs.Pufferfish
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Pufferfish");
             Main.npcFrameCount[NPC.type] = 10;
         }
 
@@ -192,11 +191,6 @@ namespace JadeFables.NPCs.Pufferfish
             Projectile.timeLeft = 270;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
-        }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spike");
         }
 
         public override bool PreDraw(ref Color lightColor)

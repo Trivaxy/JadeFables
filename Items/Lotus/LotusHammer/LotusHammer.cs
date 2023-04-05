@@ -14,12 +14,6 @@ namespace JadeFables.Items.Lotus.LotusHammer
 {
     public class LotusHammer : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Lotus Hammer");
-            // Tooltip.SetDefault("Can pickup walls that other hammers can't");
-        }
-
         public override void SetDefaults()
         {
             Item.width = 32;

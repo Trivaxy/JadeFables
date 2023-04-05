@@ -30,7 +30,6 @@ namespace JadeFables.Tiles.JadeSand
             TileSets.CanGrowBamboo[Type] = true;
 
             LocalizedText name = CreateMapEntryName();
-            name.SetDefault("Spring Sand");
             AddMapEntry(jadeSandLight, name);
         }
 
@@ -162,10 +161,6 @@ namespace JadeFables.Tiles.JadeSand
 
     public class JadeSandItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spring Sand");
-        }
 
         public override void SetDefaults()
         {
@@ -192,7 +187,6 @@ namespace JadeFables.Tiles.JadeSand
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Example Sand Ball");
             ProjectileID.Sets.ForcePlateDetection[Projectile.type] = true;
         }
 

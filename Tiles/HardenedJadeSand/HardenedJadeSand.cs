@@ -22,17 +22,12 @@ namespace JadeFables.Tiles.HardenedJadeSand
             Main.tileBlockLight[Type] = true;
 
             LocalizedText name = CreateMapEntryName();
-            name.SetDefault("Hardened Spring Sand");
             AddMapEntry(jadeSandMid, name);
         }
     }
 
     public class HardenedJadeSandItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Hardened Spring Sand");
-        }
 
         public override void SetDefaults()
         {

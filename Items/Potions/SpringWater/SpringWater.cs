@@ -20,8 +20,6 @@ namespace JadeFables.Items.Potions.SpringWater
 	{
 		public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Spring Water");
-			// Tooltip.SetDefault("Clears almost all debuffs\nCauses Potion Sickness for 15 seconds");
             ItemID.Sets.DrinkParticleColors[Item.type] = new Color[1] { Color.Cyan};
 		}
 
@@ -71,8 +69,6 @@ namespace JadeFables.Items.Potions.SpringWater
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Spring Water");
-            // Description.SetDefault("Debuffs are cured");
             Main.buffNoSave[Type] = true;
         }
 

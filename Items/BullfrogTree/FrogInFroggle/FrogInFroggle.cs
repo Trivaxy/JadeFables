@@ -33,11 +33,7 @@ namespace JadeFables.Items.BullfrogTree.FrogInFroggle
         private bool santankJump = true;
         private bool unicornJump = true;
         private bool fleshJump = true;
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Frog In A Froggle");
-            // Tooltip.SetDefault("Jumping while moving boosts you forward \nAdds horizontal movement to double jumps");
-        }
+
         public override void SetDefaults()
         {
             Item.width = 24;

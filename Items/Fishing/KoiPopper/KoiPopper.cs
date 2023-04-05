@@ -19,12 +19,6 @@ namespace JadeFables.Items.Fishing.KoiPopper
     {
         public bool popping;
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Koi Popper");
-            // Tooltip.SetDefault("Shoot bubles out in a spread \nRight click to pop all bubbles, dealing damage to nearby enemies");
-        }
-
         public override void SetDefaults()
         {
             Item.damage = 20;
@@ -93,7 +87,6 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Bubble");
             Main.projFrames[Projectile.type] = 1;
         }
 
@@ -185,7 +178,6 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Bubble");
             Main.projFrames[Projectile.type] = 3;
         }
 

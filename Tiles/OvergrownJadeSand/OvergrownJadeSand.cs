@@ -40,7 +40,6 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             TileSets.CanGrowBamboo[Type] = true;
 
             LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Overgrown Spring Sand");
             AddMapEntry(jadeGrassLime, name);
         }
 
@@ -320,12 +319,6 @@ namespace JadeFables.Tiles.OvergrownJadeSand
 
     public class JadeGrassSeeds : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spring Grass Seeds");
-            // Tooltip.SetDefault("Can be placed");
-        }
-
         public override void SetDefaults()
         {
             Item.width = 14;

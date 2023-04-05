@@ -34,8 +34,8 @@ namespace JadeFables.Tiles.JadeFountain
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
             AnimationFrameHeight = 72;
+
             LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Spring Fountain");
             AddMapEntry(jadeStoneGray, name);
         }
 
@@ -104,11 +104,6 @@ namespace JadeFables.Tiles.JadeFountain
     }
     internal class JadeFountainItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spring Fountain");
-            // Tooltip.SetDefault("Makes nearby water sparkly");
-        }
 
         public override void SetDefaults()
         {

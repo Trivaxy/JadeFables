@@ -10,8 +10,6 @@ namespace JadeFables.Items.Potions.Spine
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Spine Potion");
-            // Tooltip.SetDefault("Taking any damage fires spines at nearby enemies");
             ItemID.Sets.DrinkParticleColors[Item.type] = new Color[3] { new Color(73, 130, 6), new Color(144, 169, 40), new Color(192, 212, 110) }; 
         }
 
@@ -49,12 +47,6 @@ namespace JadeFables.Items.Potions.Spine
     }
     public class SpineItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spine");
-            
-        }
-
         public override void SetDefaults()
         {
             Item.width = 18;
@@ -85,11 +77,10 @@ namespace JadeFables.Items.Potions.Spine
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Spine");
-            // Description.SetDefault("Taking any damage fires spines at nearby enemies");
             Main.buffNoSave[Type] = true;
         }
     }
+
     public class SpinePlayer : ModPlayer
     {
         public override void PostHurt(Player.HurtInfo info)
@@ -123,10 +114,6 @@ namespace JadeFables.Items.Potions.Spine
     }
     public class SpineProj : ModProjectile
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Spine");
-        }
         public override void SetDefaults()
         {
             Projectile.width = 12;

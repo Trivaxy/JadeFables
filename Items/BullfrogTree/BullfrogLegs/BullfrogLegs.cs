@@ -25,11 +25,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
     public class BullfrogLegs : ModItem
     {
         public bool jumping = false;
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Bullfrog Legs");
-            // Tooltip.SetDefault("Jumping while moving boosts you forward");
-        }
+
         public override void SetDefaults()
         {
             Item.width = 24;
@@ -93,11 +89,6 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = timeLeftStart;
-        }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Ring");
         }
 
         public override void AI()
@@ -180,7 +171,6 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Ring");
             Main.projFrames[Projectile.type] = 7;
         }
 

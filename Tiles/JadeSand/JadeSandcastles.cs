@@ -29,8 +29,8 @@ namespace JadeFables.Tiles.JadeSand
             };
             TileObjectData.addTile(Type);
             DustType = DustID.Sand;
+
             LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Jade Sandcastle");
             AddMapEntry(jadeSandLight, name);
         }
         public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
@@ -68,8 +68,8 @@ namespace JadeFables.Tiles.JadeSand
             };
             TileObjectData.addTile(Type);
             DustType = DustID.Sand;
+
             LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Jade Sandcastle");
             AddMapEntry(jadeSandLight, name);
         }
     }
@@ -90,8 +90,8 @@ namespace JadeFables.Tiles.JadeSand
             };
             TileObjectData.addTile(Type);
             DustType = DustID.Sand;
+
             LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Jade Sandcastle");
             AddMapEntry(jadeSandLight, name);
         }
 
@@ -122,8 +122,8 @@ namespace JadeFables.Tiles.JadeSand
             };
             TileObjectData.addTile(Type);
             DustType = DustID.Sand;
+
             LocalizedText name = CreateMapEntryName();
-            // name.SetDefault("Jade Sandcastle");
             AddMapEntry(jadeSandLight, name);
         }
     }

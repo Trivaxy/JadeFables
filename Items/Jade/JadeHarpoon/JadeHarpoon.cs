@@ -29,11 +29,6 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 {
     class JadeHarpoon : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Harpoon");
-            // Tooltip.SetDefault("Hook yourself onto enemies and bounce off of them");
-        }
 
         public override void SetDefaults()
         {
@@ -112,11 +107,6 @@ namespace JadeFables.Items.Jade.JadeHarpoon
         public override void Unload()
         {
             Terraria.On_Main.DrawDust -= DrawCone;
-        }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Harpoon");
         }
 
         public override void SetDefaults()
@@ -374,7 +364,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
     class JadeHarpoonShockwave : ModProjectile
     { 
 
-        public override void SetStaticDefaults() => DisplayName.SetDefault("Shockwave");
+
         private int TileType => (int)Projectile.ai[0];
         private int ShockwavesLeft => (int)Projectile.ai[1];//Positive and Negitive
 
@@ -487,11 +477,6 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = timeLeftStart;
-        }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Ring");
         }
 
         public override void AI()

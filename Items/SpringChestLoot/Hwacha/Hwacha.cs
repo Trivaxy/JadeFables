@@ -16,13 +16,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 {
 	public class Hwacha : ModItem
 	{
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Hwacha");
-			// Tooltip.SetDefault("Summons a Hwacha to fight for you \nWhip the hwacha to fire it with arrows from your inventory\nRight click to push and pull the hwacha");
-		}
-
-		public override void SetDefaults()
+        public override void SetDefaults()
 		{
 			Item.CloneDefaults(ItemID.QueenSpiderStaff);
 			Item.damage = 13;
@@ -96,8 +90,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
         public override void SetStaticDefaults()
 		{
-			// DisplayName.SetDefault("Hwacha");
-			Main.projFrames[Projectile.type] = 6;
+            Main.projFrames[Projectile.type] = 6;
 		}
 
 		public override void SetDefaults()
@@ -306,10 +299,6 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
     public class HwachaArrow : ModProjectile
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Hwacha");
-        }
 
         public override void SetDefaults()
         {

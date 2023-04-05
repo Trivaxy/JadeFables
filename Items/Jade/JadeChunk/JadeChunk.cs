@@ -17,10 +17,6 @@ namespace JadeFables.Items.Jade.JadeChunk
 {
     public class JadeChunk : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Chunk");
-        }
 
         public override void SetDefaults()
         {

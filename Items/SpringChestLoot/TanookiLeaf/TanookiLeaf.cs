@@ -16,12 +16,7 @@ namespace JadeFables.Items.SpringChestLoot.TanookiLeaf
 {
 	public class TanookiLeaf : ModItem
 	{
-		public override void SetStaticDefaults() {
-            // DisplayName.SetDefault("Tanooki Leaf");
-			// Tooltip.SetDefault("Jump higher while running faster \nPress jump in the air to slow your fall");
-		}
-
-		int cooldown = 0;
+        int cooldown = 0;
 		bool pressedJump = false;
 		public override void SetDefaults() {
 			Item.width = 24;

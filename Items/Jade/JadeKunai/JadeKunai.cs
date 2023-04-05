@@ -24,11 +24,6 @@ namespace JadeFables.Items.Jade.JadeKunai
                 GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, Texture + "_Gore" + j);
         }
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Jade Kunais");
-            // Tooltip.SetDefault("Repeated strikes increases damage from other weapons");
-        }
         public override void SetDefaults()
         {
             Item.width = 32;

@@ -27,11 +27,6 @@ namespace JadeFables.NPCs
 
         public int deathCounter = 500;
 
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Glistening Pool");
-        }
-
         public override void SetDefaults()
         {
             NPC.width = 128;

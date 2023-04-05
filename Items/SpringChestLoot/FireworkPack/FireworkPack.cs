@@ -20,13 +20,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 {
 	public class FireworkPack : ModItem
 	{
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Firework Pack");
-			// Tooltip.SetDefault("15 damage \nEnemies launch damaging fireworks when they die");
-		}
-
-		public override void SetDefaults()
+        public override void SetDefaults()
 		{
 			Item.width = 24;
 			Item.height = 28;
@@ -97,12 +91,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         private float progress => 1 - ((Projectile.timeLeft - 60) / 60f);
 
-        public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Firework");
-		}
-
-		public override void SetDefaults()
+        public override void SetDefaults()
 		{
 			Projectile.width = 18;
 			Projectile.height = 18;
@@ -254,11 +243,6 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 10;
-        }
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Fireworks");
         }
 
         public override void AI()

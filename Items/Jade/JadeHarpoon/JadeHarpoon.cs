@@ -23,6 +23,7 @@ using JadeFables.Core;
 using JadeFables.Core.Systems;
 using JadeFables.Helpers.FastNoise;
 using JadeFables.Helpers;
+using Terraria.WorldBuilding;
 
 namespace JadeFables.Items.Jade.JadeHarpoon
 {
@@ -583,13 +584,14 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             iframes--;
 
         }
-        public override void ModifyHurt(ref Player.HurtModifiers modifiers)
+
+        public override bool ImmuneTo(PlayerDeathReason damageSource, int cooldownCounter, bool dodgeable)
         {
             if (flipping)
-                return false;
+                return true;
             if (iframes > 0)
-                return false;
-            return base.ModifyHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource, ref cooldownCounter);
+                return true;
+            return base.ImmuneTo(damageSource, cooldownCounter, dodgeable);
         }
 
         public override void PostUpdate()

@@ -244,9 +244,9 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Projectile.penetrate++;
-            ItemLoader.OnHitNPC(item, Owner, target, damage, knockback, crit);
-            NPCLoader.OnHitByItem(target, Owner, item, damage, knockback, crit);
-            PlayerLoader.OnHitNPC(Owner, item, target, damage, knockback, crit);
+            ItemLoader.OnHitNPC(item, Owner, target, hit, damageDone);
+            NPCLoader.OnHitByItem(target, Owner, item, hit, damageDone);
+            PlayerLoader.OnHitNPC(Owner, target, hit, damageDone);
             Owner.StatusToNPC(item.type, target.whoAmI);
             Chopsticks.ApplyNPCOnHitEffects(Owner, item, itemRect_, Projectile.damage, knockback, target.whoAmI, Main.DamageVar(damage, Owner.luck), damage);
             //Owner.ApplyNPCOnHitEffects(sItem, itemRectangle, num, knockBack, i, num6, dmgDone);

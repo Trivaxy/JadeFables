@@ -560,9 +560,9 @@ namespace JadeFables.Items.Jade.JadeKunai
         {
             if (getCrit)
             {
-                crit = true;
+                modifiers.SetCrit();
 
-                damage = (int)(damage * (1f + damageIncrease));
+                modifiers.ScalingBonusDamage += damageIncrease;
 
                 getCrit = false;
 

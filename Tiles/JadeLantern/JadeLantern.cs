@@ -505,12 +505,11 @@ namespace JadeFables.Tiles.JadeLantern
 
     class SkeletonMerchantSellsLanterns : GlobalNPC
     {
-        public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
+        public override void ModifyShop(NPCShop shop)
         {
-            if (type == NPCID.SkeletonMerchant && Main.moonPhase > 2 && Main.moonPhase < 5)
+            if (shop.NpcType == NPCID.SkeletonMerchant)
             {
-                shop.item[nextSlot].SetDefaults(ModContent.ItemType<JadeLanternItem>());
-                nextSlot++;
+                shop.Add(new NPCShop.Entry(ModContent.ItemType<JadeLanternItem>(), Condition.MoonPhaseFirstQuarter));
             }
         }
     }

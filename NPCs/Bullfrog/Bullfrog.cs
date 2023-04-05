@@ -66,7 +66,7 @@ namespace JadeFables.NPCs.Bullfrog
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Bullfrog");
+            DisplayName.SetDefault("Bullfrog");
             Main.npcFrameCount[NPC.type] = 8;
         }
 
@@ -242,7 +242,7 @@ namespace JadeFables.NPCs.Bullfrog
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Bullfrog");
+            DisplayName.SetDefault("Bullfrog");
         }
 
         public override void AI()

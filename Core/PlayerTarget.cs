@@ -172,7 +172,7 @@ namespace JadeFables.Core
 			Main.graphics.GraphicsDevice.SetRenderTarget(Target);
 			Main.graphics.GraphicsDevice.Clear(Color.Transparent);
 
-			Main.spriteBatch.Begin();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
 
 			for (int i = 0; i < Main.maxPlayers; i++)
 			{

@@ -55,7 +55,7 @@ namespace JadeFables.NPCs.Pufferfish
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Pufferfish");
+            // DisplayName.SetDefault("Pufferfish");
             Main.npcFrameCount[NPC.type] = 10;
         }
 
@@ -117,7 +117,7 @@ namespace JadeFables.NPCs.Pufferfish
             //NPC.TargetClosest(true);
         }
 
-        public override void OnHitByProjectile(Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             if (xFrame == 0)
             {
@@ -127,7 +127,7 @@ namespace JadeFables.NPCs.Pufferfish
             }
         }
 
-        public override void OnHitByItem(Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             if (xFrame == 0)
             {
@@ -163,7 +163,7 @@ namespace JadeFables.NPCs.Pufferfish
             return (xFrame == 1);
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.Poisoned, 200);
         }
@@ -196,7 +196,7 @@ namespace JadeFables.NPCs.Pufferfish
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spike");
+            // DisplayName.SetDefault("Spike");
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -231,7 +231,7 @@ namespace JadeFables.NPCs.Pufferfish
                 Projectile.velocity *= 1.08f;
         }
 
-        public override void OnHitPlayer(Player target, int damage, bool crit)
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Poisoned, 200);
         }

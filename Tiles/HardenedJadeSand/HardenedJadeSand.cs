@@ -28,7 +28,7 @@ namespace JadeFables.Tiles.HardenedJadeSand
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hardened Spring Sand");
+            // DisplayName.SetDefault("Hardened Spring Sand");
         }
 
         public override void SetDefaults()

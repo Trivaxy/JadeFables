@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Metadata;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace JadeFables.Tiles.JasmineFlower
@@ -24,8 +25,8 @@ namespace JadeFables.Tiles.JasmineFlower
 			DustType = DustID.Plantera_Green;
 			HitSound = SoundID.Grass;
 
-			ModTranslation name = CreateMapEntryName();
-			name.SetDefault("Jasmine Flower");
+			LocalizedText name = CreateMapEntryName();
+			// name.SetDefault("Jasmine Flower");
 			AddMapEntry(new Color(175, 190, 135), name);
 		}
 
@@ -66,8 +67,8 @@ namespace JadeFables.Tiles.JasmineFlower
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Jasmine Flower");
-			Tooltip.SetDefault("'Potent with indescribable flavor'");
+			// DisplayName.SetDefault("Jasmine Flower");
+			// Tooltip.SetDefault("'Potent with indescribable flavor'");
 		}
 
 		public override void SetDefaults()

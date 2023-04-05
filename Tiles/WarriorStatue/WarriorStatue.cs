@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -31,8 +32,8 @@ namespace JadeFables.Tiles.WarriorStatue
 			TileObjectData.addTile(Type); 
 			DustType = DustID.Stone;
 
-			ModTranslation name = CreateMapEntryName();
-			name.SetDefault("Warrior Statue");
+			LocalizedText name = CreateMapEntryName();
+			// name.SetDefault("Warrior Statue");
 			AddMapEntry(jadeStoneGray, name);
 		}
 
@@ -154,7 +155,7 @@ namespace JadeFables.Tiles.WarriorStatue
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Warrior Statue");
+            // DisplayName.SetDefault("Warrior Statue");
         }
 
         public override void SetDefaults()

@@ -10,8 +10,8 @@ namespace JadeFables.Items.Lotus.LotusArmor
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lotus Chestplate");
-            Tooltip.SetDefault("Increased fishing power");
+            // DisplayName.SetDefault("Lotus Chestplate");
+            // Tooltip.SetDefault("Increased fishing power");
 
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
@@ -44,8 +44,8 @@ namespace JadeFables.Items.Lotus.LotusArmor
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lotus Helmet");
-            Tooltip.SetDefault("Increased fishing power");
+            // DisplayName.SetDefault("Lotus Helmet");
+            // Tooltip.SetDefault("Increased fishing power");
 
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }
@@ -89,8 +89,8 @@ namespace JadeFables.Items.Lotus.LotusArmor
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lotus Greaves");
-            Tooltip.SetDefault("Increased fishing power");
+            // DisplayName.SetDefault("Lotus Greaves");
+            // Tooltip.SetDefault("Increased fishing power");
 
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
         }

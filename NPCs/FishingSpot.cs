@@ -29,7 +29,7 @@ namespace JadeFables.NPCs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Glistening Pool");
+            // DisplayName.SetDefault("Glistening Pool");
         }
 
         public override void SetDefaults()

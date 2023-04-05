@@ -53,7 +53,7 @@ namespace JadeFables.NPCs.Eel
         private Vector2 posToBe = Vector2.Zero;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Eel");
+            // DisplayName.SetDefault("Eel");
         }
 
         public override void SetDefaults()

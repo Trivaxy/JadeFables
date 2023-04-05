@@ -8,7 +8,6 @@ using ReLogic.Content;
 using JadeFables.Helpers;
 using Terraria.Graphics.Effects;
 using SteelSeries.GameSense;
-using IL.Terraria.Audio;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -59,8 +58,8 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
 
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Chopsticks");
-			Tooltip.SetDefault("Swords have more range and become omnidirectional");
+			// DisplayName.SetDefault("Chopsticks");
+			// Tooltip.SetDefault("Swords have more range and become omnidirectional");
 		}
 
 		public override void SetDefaults()
@@ -242,7 +241,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             return false;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Projectile.penetrate++;
             ItemLoader.OnHitNPC(item, Owner, target, damage, knockback, crit);
@@ -261,7 +260,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             return base.CanHitNPC(target);
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             hitDirection = Math.Sign(target.Center.X - Owner.Center.X);
         }

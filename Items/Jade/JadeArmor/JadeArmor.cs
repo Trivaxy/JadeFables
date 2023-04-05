@@ -17,8 +17,8 @@ namespace JadeFables.Items.Jade.JadeArmor
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Hat");
-            Tooltip.SetDefault("10% increased damage and critical strike chance");
+            // DisplayName.SetDefault("Jade Hat");
+            // Tooltip.SetDefault("10% increased damage and critical strike chance");
         }
 
         public override void SetDefaults()
@@ -59,8 +59,8 @@ namespace JadeFables.Items.Jade.JadeArmor
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Robe");
-            Tooltip.SetDefault("7% increased movement speed and run acceleration");
+            // DisplayName.SetDefault("Jade Robe");
+            // Tooltip.SetDefault("7% increased movement speed and run acceleration");
         }
 
         public override void SetDefaults()
@@ -108,10 +108,10 @@ namespace JadeFables.Items.Jade.JadeArmor
 
         public override void Load()
         {
-            On.Terraria.Main.DrawPlayers_AfterProjectiles += Main_DrawPlayers_AfterProjectiles;
+            Terraria.On_Main.DrawPlayers_AfterProjectiles += Main_DrawPlayers_AfterProjectiles;
         }
 
-        private void Main_DrawPlayers_AfterProjectiles(On.Terraria.Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
+        private void Main_DrawPlayers_AfterProjectiles(Terraria.On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
         {
             if (PlayerTarget.canUseTarget)
             {

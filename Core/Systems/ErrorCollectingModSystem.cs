@@ -42,8 +42,8 @@ public abstract class ErrorCollectingModSystem : ModSystem
 // ReSharper disable once UnusedType.Global
 internal sealed class ErrorReportingPlayer : ModPlayer
 {
-    public override void OnEnterWorld(Player player) {
-        base.OnEnterWorld(player);
+    public override void OnEnterWorld() {
+        base.OnEnterWorld(Player);
 
         foreach (var system in Mod.GetContent<ErrorCollectingModSystem>()) {
             if (system.PrintOnWorldEnter) continue;

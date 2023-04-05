@@ -19,7 +19,7 @@ namespace JadeFables.Items.Jade.JadeChunk
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Chunk");
+            // DisplayName.SetDefault("Jade Chunk");
         }
 
         public override void SetDefaults()

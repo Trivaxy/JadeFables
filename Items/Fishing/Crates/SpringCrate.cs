@@ -82,8 +82,8 @@ namespace JadeFables.Items.Fishing.Crates
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Crate");
-            Tooltip.SetDefault("Right click to open\n");
+            // DisplayName.SetDefault("Spring Crate");
+            // Tooltip.SetDefault("Right click to open\n");
             ItemID.Sets.IsFishingCrate[Type] = true;
             ItemID.Sets.IsFishingCrateHardmode[Type] = true;
         }
@@ -145,8 +145,8 @@ namespace JadeFables.Items.Fishing.Crates
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Dragon Crate");
-			Tooltip.SetDefault("Right click to open\n");
+			// DisplayName.SetDefault("Dragon Crate");
+			// Tooltip.SetDefault("Right click to open\n");
             ItemID.Sets.IsFishingCrate[Type] = true;
             ItemID.Sets.IsFishingCrateHardmode[Type] = true;
         }

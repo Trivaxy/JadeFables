@@ -20,7 +20,7 @@ namespace JadeFables.Tiles.JadeSand
             Main.tileBlockLight[Type] = true;
             TileID.Sets.CanBeDugByShovel[Type] = true;
             //Main.tileSand[Type] = true;
-            TileID.Sets.TouchDamageSands[Type] = 15;
+            TileID.Sets.TouchDamageSands/* tModPorter Suggestion: Suffocate */[Type] = 15;
             TileID.Sets.Conversion.Sand[Type] = true;
             TileID.Sets.ForAdvancedCollision.ForSandshark[Type] = true;
             //TileID.Sets.Falling[Type] = true;
@@ -162,7 +162,7 @@ namespace JadeFables.Tiles.JadeSand
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Sand");
+            // DisplayName.SetDefault("Spring Sand");
         }
 
         public override void SetDefaults()
@@ -190,7 +190,7 @@ namespace JadeFables.Tiles.JadeSand
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Example Sand Ball");
+            // DisplayName.SetDefault("Example Sand Ball");
             ProjectileID.Sets.ForcePlateDetection[Projectile.type] = true;
         }
 

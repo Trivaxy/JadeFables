@@ -26,7 +26,7 @@ namespace JadeFables.Tiles.JadeSandstone
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Sandstone");
+            // DisplayName.SetDefault("Spring Sandstone");
         }
 
         public override void SetDefaults()

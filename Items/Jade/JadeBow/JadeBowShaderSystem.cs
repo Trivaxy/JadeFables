@@ -27,11 +27,11 @@ namespace JadeFables.Items.Jade.JadeBow
             if (Main.dedServ)
                 return;
 
-            On.Terraria.Main.CheckMonoliths += JadeBowTarget;
-            On.Terraria.Main.DrawNPCs += DrawTarget;
+            Terraria.On_Main.CheckMonoliths += JadeBowTarget;
+            Terraria.On_Main.DrawNPCs += DrawTarget;
         }
 
-        private void DrawTarget(On.Terraria.Main.orig_DrawNPCs orig, Main self, bool behindTiles)
+        private void DrawTarget(Terraria.On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
         {
             orig(self, behindTiles);
 
@@ -68,7 +68,7 @@ namespace JadeFables.Items.Jade.JadeBow
             jadeBowRT = null;
         }
 
-        private void JadeBowTarget(On.Terraria.Main.orig_CheckMonoliths orig)
+        private void JadeBowTarget(Terraria.On_Main.orig_CheckMonoliths orig)
         {
             orig();
 

@@ -27,8 +27,8 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         public int gongCooldown = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gong and Ringer");
-            Tooltip.SetDefault("Left click to throw out a gong \nRight click to ring it, increasing its damage");
+            // DisplayName.SetDefault("Gong and Ringer");
+            // Tooltip.SetDefault("Left click to throw out a gong \nRight click to ring it, increasing its damage");
         }
         public override void SetDefaults()
         {
@@ -105,7 +105,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         private Player owner => Main.player[Projectile.owner];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Gong");
+            // DisplayName.SetDefault("Gong");
         }
 
         public override void SetDefaults()
@@ -187,7 +187,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             }
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (onLastHit)
             {
@@ -201,7 +201,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             Projectile.timeLeft = 390;
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             
         }
@@ -264,7 +264,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
         private float progress = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ringer");
+            // DisplayName.SetDefault("Ringer");
         }
 
         public override void SetDefaults()

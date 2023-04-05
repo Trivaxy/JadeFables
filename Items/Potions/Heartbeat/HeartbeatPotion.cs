@@ -7,8 +7,8 @@ namespace JadeFables.Items.Potions.Heartbeat
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heartbeat Potion");
-            Tooltip.SetDefault("Heart pickups turn into larger hearts, which heal more");
+            // DisplayName.SetDefault("Heartbeat Potion");
+            // Tooltip.SetDefault("Heart pickups turn into larger hearts, which heal more");
             ItemID.Sets.DrinkParticleColors[Item.type] = new Color[3] { new Color(179, 20, 20), new Color(232, 33, 33), new Color(255, 135, 182) };
         }
 

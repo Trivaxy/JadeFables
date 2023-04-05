@@ -30,8 +30,8 @@ namespace JadeFables.Items.Jade.JadeHarpoon
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Harpoon");
-            Tooltip.SetDefault("Hook yourself onto enemies and bounce off of them");
+            // DisplayName.SetDefault("Jade Harpoon");
+            // Tooltip.SetDefault("Hook yourself onto enemies and bounce off of them");
         }
 
         public override void SetDefaults()
@@ -105,17 +105,17 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
         public override void Load()
         {
-            On.Terraria.Main.DrawDust += DrawCone;
+            Terraria.On_Main.DrawDust += DrawCone;
         }
 
         public override void Unload()
         {
-            On.Terraria.Main.DrawDust -= DrawCone;
+            Terraria.On_Main.DrawDust -= DrawCone;
         }
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Harpoon");
+            // DisplayName.SetDefault("Jade Harpoon");
         }
 
         public override void SetDefaults()
@@ -259,7 +259,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             return false;
         }
 
-        private void DrawCone(On.Terraria.Main.orig_DrawDust orig, Main self) //putting this here so I dont have to load another detour to get it to load in front of the fist
+        private void DrawCone(Terraria.On_Main.orig_DrawDust orig, Main self) //putting this here so I dont have to load another detour to get it to load in front of the fist
         {
             orig(self);
 
@@ -320,7 +320,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             return base.CanHitNPC(target);
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if (launching && !spinning)
                 damage = (int)MathHelper.Lerp(damage, damage * 2, owner.velocity.Length() / 20f);
@@ -340,7 +340,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             return base.Colliding(projHitbox, targetHitbox);
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (launching && !spinning)
             {
@@ -490,7 +490,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ring");
+            // DisplayName.SetDefault("Ring");
         }
 
         public override void AI()
@@ -583,13 +583,13 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             iframes--;
 
         }
-        public override bool PreHurt(bool pvp, bool quiet, ref int damage, ref int hitDirection, ref bool crit, ref bool customDamage, ref bool playSound, ref bool genGore, ref PlayerDeathReason damageSource, ref int cooldownCounter)
+        public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
             if (flipping)
                 return false;
             if (iframes > 0)
                 return false;
-            return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource, ref cooldownCounter);
+            return base.ModifyHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource, ref cooldownCounter);
         }
 
         public override void PostUpdate()

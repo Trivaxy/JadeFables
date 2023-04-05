@@ -6,8 +6,8 @@ namespace JadeFables.Items.Critters
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Koi");
-            Tooltip.SetDefault("'Don't you play koi with me'");
+            // DisplayName.SetDefault("Koi");
+            // Tooltip.SetDefault("'Don't you play koi with me'");
         }
 
         public override void SetDefaults()

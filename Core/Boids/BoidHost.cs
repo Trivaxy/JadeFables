@@ -82,10 +82,10 @@ namespace JadeFables.Core.Boids
 
 			Flocks.Add(new Flock(textures, 1f, Main.rand.Next(50, 200)));
 
-			On.Terraria.Main.DrawWoF += Main_DrawWoF;
+			Terraria.On_Main.DrawWoF += Main_DrawWoF;
 		}
 
-		private void Main_DrawWoF(On.Terraria.Main.orig_DrawWoF orig, Main self)
+		private void Main_DrawWoF(Terraria.On_Main.orig_DrawWoF orig, Main self)
 		{
 			if (Flocks != null)
 			{
@@ -99,7 +99,7 @@ namespace JadeFables.Core.Boids
 			if (Flocks != null)
 				Flocks.Clear();
 
-			On.Terraria.Main.DrawWoF -= Main_DrawWoF;
+			Terraria.On_Main.DrawWoF -= Main_DrawWoF;
 		}
 	}
 }

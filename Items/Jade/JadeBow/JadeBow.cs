@@ -18,8 +18,8 @@ namespace JadeFables.Items.Jade.JadeBow
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Bow");
-            Tooltip.SetDefault("Shoot critters to make them fight for you\nShoot town NPCs to give them a shield");
+            // DisplayName.SetDefault("Jade Bow");
+            // Tooltip.SetDefault("Shoot critters to make them fight for you\nShoot town NPCs to give them a shield");
         }
 
         public override void SetDefaults()
@@ -77,7 +77,7 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Bow");
+            // DisplayName.SetDefault("Jade Bow");
             Main.projFrames[Projectile.type] = 6;
         }
 
@@ -164,7 +164,7 @@ namespace JadeFables.Items.Jade.JadeBow
         NPC parent => Main.npc[(int)Projectile.ai[0]];
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Bow");
+            // DisplayName.SetDefault("Jade Bow");
         }
 
         public override void SetDefaults()
@@ -201,7 +201,7 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public bool shotFromBow = false;
 
-        public override void ModifyHitNPC(Projectile projectile, NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
         {
             if (!shotFromBow)
                 return;

@@ -28,8 +28,8 @@ namespace JadeFables.Items.Jade.JadeStaff
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Staff");
-            Tooltip.SetDefault("update later");
+            // DisplayName.SetDefault("Jade Staff");
+            // Tooltip.SetDefault("update later");
         }
 
         public override void SetDefaults()
@@ -94,7 +94,7 @@ namespace JadeFables.Items.Jade.JadeStaff
         private int timeAfterDragonSpawned = 0;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Staff");
+            // DisplayName.SetDefault("Jade Staff");
         }
 
         public override void SetDefaults()
@@ -399,7 +399,7 @@ namespace JadeFables.Items.Jade.JadeStaff
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Staff");
+            // DisplayName.SetDefault("Jade Staff");
         }
 
         public override void SetDefaults()
@@ -651,7 +651,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             
             if (timeAfterLaunch >= 55)
@@ -692,7 +692,7 @@ namespace JadeFables.Items.Jade.JadeStaff
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Pulse");
+            // DisplayName.SetDefault("Fire Pulse");
         }
 
         public bool oval = false;
@@ -787,7 +787,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             return false;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (!target.HasBuff(BuffID.OnFire))
             {
@@ -815,7 +815,7 @@ namespace JadeFables.Items.Jade.JadeStaff
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fire Portal");
+            // DisplayName.SetDefault("Fire Portal");
         }
 
 

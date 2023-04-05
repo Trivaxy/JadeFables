@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -33,8 +34,8 @@ namespace JadeFables.Tiles.JadeFountain
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
             AnimationFrameHeight = 72;
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Spring Fountain");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Spring Fountain");
             AddMapEntry(jadeStoneGray, name);
         }
 
@@ -105,8 +106,8 @@ namespace JadeFables.Tiles.JadeFountain
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Fountain");
-            Tooltip.SetDefault("Makes nearby water sparkly");
+            // DisplayName.SetDefault("Spring Fountain");
+            // Tooltip.SetDefault("Makes nearby water sparkly");
         }
 
         public override void SetDefaults()

@@ -21,8 +21,8 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Koi Popper");
-            Tooltip.SetDefault("Shoot bubles out in a spread \nRight click to pop all bubbles, dealing damage to nearby enemies");
+            // DisplayName.SetDefault("Koi Popper");
+            // Tooltip.SetDefault("Shoot bubles out in a spread \nRight click to pop all bubbles, dealing damage to nearby enemies");
         }
 
         public override void SetDefaults()
@@ -93,7 +93,7 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bubble");
+            // DisplayName.SetDefault("Bubble");
             Main.projFrames[Projectile.type] = 1;
         }
 
@@ -185,7 +185,7 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bubble");
+            // DisplayName.SetDefault("Bubble");
             Main.projFrames[Projectile.type] = 3;
         }
 
@@ -223,7 +223,7 @@ namespace JadeFables.Items.Fishing.KoiPopper
             return false;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Projectile.penetrate++;
             alreadyHit.Add(target);

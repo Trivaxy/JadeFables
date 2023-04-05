@@ -7,9 +7,9 @@ namespace JadeFables.Core.Systems.Edits {
     /// </summary>
     public class BambooEdit : ILoadable {
         public void Load(Mod mod) {
-            IL.Terraria.WorldGen.CheckBamboo += WorldGen_CheckBamboo;
-            IL.Terraria.WorldGen.PlaceBamboo += WorldGen_PlaceBamboo;
-            IL.Terraria.WorldGen.UpdateWorld_OvergroundTile += WorldGen_UpdateWorld_OvergroundTile;
+            Terraria.IL_WorldGen.CheckBamboo += WorldGen_CheckBamboo;
+            Terraria.IL_WorldGen.PlaceBamboo += WorldGen_PlaceBamboo;
+            Terraria.IL_WorldGen.UpdateWorld_OvergroundTile += WorldGen_UpdateWorld_OvergroundTile;
         }
 
         public void Unload() { }

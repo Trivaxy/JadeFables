@@ -14,7 +14,6 @@ using ReLogic.Content;
 using JadeFables.Helpers;
 using Terraria.Graphics.Effects;
 using SteelSeries.GameSense;
-using IL.Terraria.Audio;
 using Terraria.Audio;
 
 namespace JadeFables.Items.SpringChestLoot.FireworkPack
@@ -23,8 +22,8 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Firework Pack");
-			Tooltip.SetDefault("15 damage \nEnemies launch damaging fireworks when they die");
+			// DisplayName.SetDefault("Firework Pack");
+			// Tooltip.SetDefault("15 damage \nEnemies launch damaging fireworks when they die");
 		}
 
 		public override void SetDefaults()
@@ -52,13 +51,13 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 			equipped = false;
 		}
 
-		public override void OnHitNPCWithProj(Projectile proj, NPC target, int damage, float knockback, bool crit)
+		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
 		{
 			if (target.life <= 0)
 				SummonFireworks(target, Main.player[proj.owner]);
 		}
 
-		public override void OnHitNPC(Item item, NPC target, int damage, float knockback, bool crit)
+		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
 		{
 			if (target.life <= 0)
 				SummonFireworks(target, Main.player[target.target]);
@@ -100,7 +99,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Firework");
+			// DisplayName.SetDefault("Firework");
 		}
 
 		public override void SetDefaults()
@@ -184,7 +183,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
             (proj.ModProjectile as FireworkPackExplosion).color = color;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             lastHit = target;
         }
@@ -259,7 +258,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Fireworks");
+            // DisplayName.SetDefault("Fireworks");
         }
 
         public override void AI()

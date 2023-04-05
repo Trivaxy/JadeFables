@@ -15,8 +15,8 @@ namespace JadeFables.Items.Jade.JadeAxe
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Axe");
-            Tooltip.SetDefault("Trees drop more fruit");
+            // DisplayName.SetDefault("Jade Axe");
+            // Tooltip.SetDefault("Trees drop more fruit");
         }
 
         public override void SetDefaults()

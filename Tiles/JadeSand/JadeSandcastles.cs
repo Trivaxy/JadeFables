@@ -1,12 +1,11 @@
 
 using CsvHelper.TypeConversion;
-using IL.Terraria.GameContent;
 using Microsoft.Xna.Framework;
-using On.Terraria.GameContent;
 using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -29,8 +28,8 @@ namespace JadeFables.Tiles.JadeSand
             };
             TileObjectData.addTile(Type);
             DustType = DustID.Sand;
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Jade Sandcastle");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Jade Sandcastle");
             AddMapEntry(jadeSandLight, name);
         }
         public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
@@ -68,8 +67,8 @@ namespace JadeFables.Tiles.JadeSand
             };
             TileObjectData.addTile(Type);
             DustType = DustID.Sand;
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Jade Sandcastle");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Jade Sandcastle");
             AddMapEntry(jadeSandLight, name);
         }
     }
@@ -90,8 +89,8 @@ namespace JadeFables.Tiles.JadeSand
             };
             TileObjectData.addTile(Type);
             DustType = DustID.Sand;
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Jade Sandcastle");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Jade Sandcastle");
             AddMapEntry(jadeSandLight, name);
         }
 
@@ -122,8 +121,8 @@ namespace JadeFables.Tiles.JadeSand
             };
             TileObjectData.addTile(Type);
             DustType = DustID.Sand;
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Jade Sandcastle");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Jade Sandcastle");
             AddMapEntry(jadeSandLight, name);
         }
     }

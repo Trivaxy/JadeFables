@@ -27,15 +27,15 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
         public bool jumping = false;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bullfrog Legs");
-            Tooltip.SetDefault("Jumping while moving boosts you forward");
+            // DisplayName.SetDefault("Bullfrog Legs");
+            // Tooltip.SetDefault("Jumping while moving boosts you forward");
         }
         public override void SetDefaults()
         {
             Item.width = 24;
             Item.height = 28;
             Item.accessory = true;
-            Item.canBePlacedInVanityRegardlessOfConditions = true;
+            Item.hasVanityEffects = true;
 
             Item.value = Item.sellPrice(gold: 1);
             Item.rare = ItemRarityID.Blue;
@@ -97,7 +97,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ring");
+            // DisplayName.SetDefault("Ring");
         }
 
         public override void AI()
@@ -180,7 +180,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Ring");
+            // DisplayName.SetDefault("Ring");
             Main.projFrames[Projectile.type] = 7;
         }
 

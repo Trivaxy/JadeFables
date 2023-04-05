@@ -10,10 +10,10 @@ namespace JadeFables.Core.Systems.Edits {
     /// </summary>
     internal class TorchGodEdit : ILoadable {
         public void Load(Mod mod) {
-            IL.Terraria.Player.TryRecalculatingTorchLuck += Player_TryRecalculatingTorchLuck;
-            IL.Terraria.Player.RelightTorches += Player_RelightTorches;
+            Terraria.IL_Player.TryRecalculatingTorchLuck += Player_TryRecalculatingTorchLuck;
+            Terraria.IL_Player.RelightTorches += Player_RelightTorches;
 
-            IL.Terraria.Player.TorchAttack += Player_TorchAttack;
+            Terraria.IL_Player.TorchAttack += Player_TorchAttack;
         }
 
         public void Unload() { }

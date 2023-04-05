@@ -8,18 +8,18 @@ namespace JadeFables.Core.Systems.Edits {
     /// </summary>
     public class WorldgenEdit : ILoadable {
         public void Load(Mod mod) {
-            On.Terraria.GameContent.Generation.TrackGenerator.IsLocationInvalid += TrackGenerator_IsLocationInvalid;
-            On.Terraria.GameContent.Biomes.MiningExplosivesBiome.Place += MiningExplosivesBiome_Place;
+            Terraria.GameContent.Generation.On_TrackGenerator.IsLocationInvalid += TrackGenerator_IsLocationInvalid;
+            Terraria.GameContent.Biomes.On_MiningExplosivesBiome.Place += MiningExplosivesBiome_Place;
         }
 
-        private bool MiningExplosivesBiome_Place(On.Terraria.GameContent.Biomes.MiningExplosivesBiome.orig_Place orig, Terraria.GameContent.Biomes.MiningExplosivesBiome self, Point origin, Terraria.WorldBuilding.StructureMap structures)
+        private bool MiningExplosivesBiome_Place(Terraria.GameContent.Biomes.On_MiningExplosivesBiome.orig_Place orig, Terraria.GameContent.Biomes.MiningExplosivesBiome self, Point origin, Terraria.WorldBuilding.StructureMap structures)
         {
             if (ValidPlacement_Explosives(origin.X,origin.Y))
                 return orig(self, origin, structures);
             return false;
         }
 
-        private bool TrackGenerator_IsLocationInvalid(On.Terraria.GameContent.Generation.TrackGenerator.orig_IsLocationInvalid orig, int x, int y)
+        private bool TrackGenerator_IsLocationInvalid(Terraria.GameContent.Generation.On_TrackGenerator.orig_IsLocationInvalid orig, int x, int y)
         {
             if (ValidPlacement_Minecarts(x, y))
                 return orig(x, y);
@@ -28,8 +28,8 @@ namespace JadeFables.Core.Systems.Edits {
 
         public void Unload() 
         {
-            On.Terraria.GameContent.Generation.TrackGenerator.IsLocationInvalid -= TrackGenerator_IsLocationInvalid;
-            On.Terraria.GameContent.Biomes.MiningExplosivesBiome.Place -= MiningExplosivesBiome_Place;
+            Terraria.GameContent.Generation.On_TrackGenerator.IsLocationInvalid -= TrackGenerator_IsLocationInvalid;
+            Terraria.GameContent.Biomes.On_MiningExplosivesBiome.Place -= MiningExplosivesBiome_Place;
         }
 
         public bool ValidPlacement_Minecarts(int x, int y)

@@ -1,4 +1,5 @@
-﻿using Terraria.ID;
+﻿using Terraria;
+using Terraria.ID;
 
 // TODO : homing behavior, better vfx, some sort of trail?
 
@@ -9,8 +10,8 @@ namespace JadeFables.Items.Potions.Spine
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spine Potion");
-            Tooltip.SetDefault("Taking any damage fires spines at nearby enemies");
+            // DisplayName.SetDefault("Spine Potion");
+            // Tooltip.SetDefault("Taking any damage fires spines at nearby enemies");
             ItemID.Sets.DrinkParticleColors[Item.type] = new Color[3] { new Color(73, 130, 6), new Color(144, 169, 40), new Color(192, 212, 110) }; 
         }
 
@@ -50,7 +51,7 @@ namespace JadeFables.Items.Potions.Spine
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spine");
+            // DisplayName.SetDefault("Spine");
             
         }
 
@@ -84,14 +85,14 @@ namespace JadeFables.Items.Potions.Spine
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spine");
-            Description.SetDefault("Taking any damage fires spines at nearby enemies");
+            // DisplayName.SetDefault("Spine");
+            // Description.SetDefault("Taking any damage fires spines at nearby enemies");
             Main.buffNoSave[Type] = true;
         }
     }
     public class SpinePlayer : ModPlayer
     {
-        public override void PostHurt(bool pvp, bool quiet, double damageTaken, int hitDirection, bool crit, int cooldownCounter)
+        public override void PostHurt(Player.HurtInfo info)
         {
             if (!Player.HasBuff<SpineBuff>()) return;
 
@@ -122,7 +123,7 @@ namespace JadeFables.Items.Potions.Spine
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spine");
+            // DisplayName.SetDefault("Spine");
         }
         public override void SetDefaults()
         {

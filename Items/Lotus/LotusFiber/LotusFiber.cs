@@ -15,7 +15,7 @@ namespace JadeFables.Items.Lotus.LotusFiber
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lotus Fiber");
+            // DisplayName.SetDefault("Lotus Fiber");
         }
 
         public override void SetDefaults()

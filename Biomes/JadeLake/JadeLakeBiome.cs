@@ -16,7 +16,7 @@
 
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Jade Lake");
+			// DisplayName.SetDefault("Jade Lake");
 		}
 
 		public override bool IsBiomeActive(Player player)

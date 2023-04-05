@@ -79,7 +79,7 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Giant Snail");
+            // DisplayName.SetDefault("Giant Snail");
         }
 
         public override void SetDefaults()
@@ -418,7 +418,7 @@ namespace JadeFables.NPCs.GiantSnail
         public NPC parent;
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Giant Snail");
+            // DisplayName.SetDefault("Giant Snail");
         }
 
         public override void SetDefaults()

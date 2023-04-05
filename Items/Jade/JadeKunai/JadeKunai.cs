@@ -25,8 +25,8 @@ namespace JadeFables.Items.Jade.JadeKunai
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Kunais");
-            Tooltip.SetDefault("Repeated strikes increases damage from other weapons");
+            // DisplayName.SetDefault("Jade Kunais");
+            // Tooltip.SetDefault("Repeated strikes increases damage from other weapons");
         }
         public override void SetDefaults()
         {
@@ -256,7 +256,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             }
             return base.CanHitNPC(target);
         }
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             var gNPC = target.GetGlobalNPC<JadeKunaiStackNPC>();
             gNPC.KunaiStack++;
@@ -556,7 +556,7 @@ namespace JadeFables.Items.Jade.JadeKunai
 
         public float damageIncrease;
 
-        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (getCrit)
             {
@@ -582,7 +582,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             }
         }
 
-        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (projectile.type == ModContent.ProjectileType<JadeKunaiProjectile>())
             {

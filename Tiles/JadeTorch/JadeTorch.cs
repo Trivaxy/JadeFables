@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.GameContent.Creative;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using JadeFables.Items.Jade.JadeChunk;
 using ReLogic.Content;
@@ -114,9 +115,9 @@ namespace JadeFables.Tiles.JadeTorch
             TileObjectData.addTile(Type);
 
             // Etc
-            ModTranslation name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
 
-            name.SetDefault("Torch");
+            // name.SetDefault("Torch");
 
             AddMapEntry(new Color(0, 170, 140), name);
 

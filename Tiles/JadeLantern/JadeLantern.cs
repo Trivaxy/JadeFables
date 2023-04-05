@@ -8,6 +8,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using JadeFables.Tiles.JadeSand;
@@ -36,8 +37,8 @@ namespace JadeFables.Tiles.JadeLantern
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
 
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Spring Lantern");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Spring Lantern");
             AddMapEntry(jadeLanternYellow, name);
         }
 
@@ -80,8 +81,8 @@ namespace JadeFables.Tiles.JadeLantern
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
             ItemDrop = ModContent.ItemType<JadeLanternItem>();
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Spring Lantern");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Spring Lantern");
             AddMapEntry(jadeLanternYellow, name);
         }
 
@@ -124,7 +125,7 @@ namespace JadeFables.Tiles.JadeLantern
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Lantern DEBUG");
+            // DisplayName.SetDefault("Spring Lantern DEBUG");
         }
 
         public override void SetDefaults()
@@ -161,8 +162,8 @@ namespace JadeFables.Tiles.JadeLantern
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Lantern");
-            Tooltip.SetDefault("Place on top of an existing lantern to make it longer \nThis does not comsune the lantern");
+            // DisplayName.SetDefault("Spring Lantern");
+            // Tooltip.SetDefault("Place on top of an existing lantern to make it longer \nThis does not comsune the lantern");
         }
 
         public override void SetDefaults()
@@ -504,7 +505,7 @@ namespace JadeFables.Tiles.JadeLantern
 
     class SkeletonMerchantSellsLanterns : GlobalNPC
     {
-        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
         {
             if (type == NPCID.SkeletonMerchant && Main.moonPhase > 2 && Main.moonPhase < 5)
             {

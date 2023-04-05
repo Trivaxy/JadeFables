@@ -27,14 +27,14 @@ namespace JadeFables.Core
 			if (Main.dedServ)
 				return;
 
-			On.Terraria.Main.DrawNPCs += DrawTargets;
-			On.Terraria.Main.CheckMonoliths += BuildTargets;
+			Terraria.On_Main.DrawNPCs += DrawTargets;
+			Terraria.On_Main.CheckMonoliths += BuildTargets;
 		}
 
 		public void Unload()
 		{
-			On.Terraria.Main.DrawNPCs -= DrawTargets;
-			On.Terraria.Main.CheckMonoliths -= BuildTargets;
+			Terraria.On_Main.DrawNPCs -= DrawTargets;
+			Terraria.On_Main.CheckMonoliths -= BuildTargets;
 
 			Actors = null;
 		}
@@ -50,7 +50,7 @@ namespace JadeFables.Core
 			oldScreenHeight = height;
 		}
 
-		private void DrawTargets(On.Terraria.Main.orig_DrawNPCs orig, Main self, bool behindTiles = false)
+		private void DrawTargets(Terraria.On_Main.orig_DrawNPCs orig, Main self, bool behindTiles = false)
 		{
 			
 			if (behindTiles && !Main.gameMenu)
@@ -59,7 +59,7 @@ namespace JadeFables.Core
 			orig(self, behindTiles);
 		}
 
-		private void BuildTargets(On.Terraria.Main.orig_CheckMonoliths orig)
+		private void BuildTargets(Terraria.On_Main.orig_CheckMonoliths orig)
 		{
 			if (!Main.gameMenu)
 			{

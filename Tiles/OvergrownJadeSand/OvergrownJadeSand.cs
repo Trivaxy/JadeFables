@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace JadeFables.Tiles.OvergrownJadeSand
@@ -30,15 +31,15 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
             //Main.tileSand[Type] = true;
-            TileID.Sets.TouchDamageSands[Type] = 15;
+            TileID.Sets.TouchDamageSands/* tModPorter Suggestion: Suffocate */[Type] = 15;
             TileID.Sets.CanBeDugByShovel[Type] = true;
             TileID.Sets.ForAdvancedCollision.ForSandshark[Type] = true;
             //TileID.Sets.Falling[Type] = true;
 
             TileSets.CanGrowBamboo[Type] = true;
 
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Overgrown Spring Sand");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Overgrown Spring Sand");
             AddMapEntry(jadeGrassLime, name);
         }
 
@@ -320,8 +321,8 @@ namespace JadeFables.Tiles.OvergrownJadeSand
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Grass Seeds");
-            Tooltip.SetDefault("Can be placed");
+            // DisplayName.SetDefault("Spring Grass Seeds");
+            // Tooltip.SetDefault("Can be placed");
         }
 
         public override void SetDefaults()
@@ -361,7 +362,7 @@ namespace JadeFables.Tiles.OvergrownJadeSand
     }
     public class DryadSpringSeedsShop : GlobalNPC
     {
-        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
         {
             if (type == NPCID.Dryad && Main.LocalPlayer.InModBiome<JadeLakeBiome>())
             {

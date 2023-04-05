@@ -12,15 +12,15 @@ namespace JadeFables.NPCs
     {
         public void Load(Mod mod)
         {
-            On.Terraria.GameContent.ShopHelper.GetShoppingSettings += ShopHelper_GetShoppingSettings;
+            Terraria.GameContent.On_ShopHelper.GetShoppingSettings += ShopHelper_GetShoppingSettings;
         }
 
         public void Unload()
         {
-            On.Terraria.GameContent.ShopHelper.GetShoppingSettings -= ShopHelper_GetShoppingSettings;
+            Terraria.GameContent.On_ShopHelper.GetShoppingSettings -= ShopHelper_GetShoppingSettings;
         }
 
-        private static ShoppingSettings ShopHelper_GetShoppingSettings(On.Terraria.GameContent.ShopHelper.orig_GetShoppingSettings orig, ShopHelper self, Player player, NPC npc)
+        private static ShoppingSettings ShopHelper_GetShoppingSettings(Terraria.GameContent.On_ShopHelper.orig_GetShoppingSettings orig, ShopHelper self, Player player, NPC npc)
         {
             var val = orig(self, player, npc);
             if (player.InModBiome<JadeLakeBiome>())

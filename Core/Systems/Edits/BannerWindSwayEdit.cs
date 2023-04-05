@@ -1,7 +1,7 @@
-﻿using IL.Terraria.GameContent.Drawing;
-using JadeFables.Tiles.Banners;
+﻿using JadeFables.Tiles.Banners;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using Terraria.GameContent.Drawing;
 
 namespace JadeFables.Core.Systems.Edits {
     /// <summary>
@@ -15,7 +15,7 @@ namespace JadeFables.Core.Systems.Edits {
         public delegate void RefSizeModification(int x, int y, ref int sizeX, ref int sizeY);
 
         public void Load(Mod mod) {
-            TileDrawing.DrawMultiTileVines += CheckForModdedBanners;
+            IL_TileDrawing.DrawMultiTileVines += CheckForModdedBanners;
         }
 
         public void Unload() { }

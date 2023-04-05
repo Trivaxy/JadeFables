@@ -11,12 +11,12 @@ namespace JadeFables.Tiles.Pearls
 	{
 		public override void Load()
 		{
-			On.Terraria.Main.DoDraw_DrawNPCsBehindTiles += DrawPearls;
+			Terraria.On_Main.DoDraw_DrawNPCsBehindTiles += DrawPearls;
 		}
 
 		public override void Unload()
 		{
-			On.Terraria.Main.DoDraw_DrawNPCsBehindTiles -= DrawPearls;
+			Terraria.On_Main.DoDraw_DrawNPCsBehindTiles -= DrawPearls;
 		}
 
 		public override void PreUpdateDusts()
@@ -28,7 +28,7 @@ namespace JadeFables.Tiles.Pearls
 			}
 		}
 
-		public void DrawPearls(On.Terraria.Main.orig_DoDraw_DrawNPCsBehindTiles orig, Main self)
+		public void DrawPearls(Terraria.On_Main.orig_DoDraw_DrawNPCsBehindTiles orig, Main self)
 		{
 			Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
 			foreach (KeyValuePair<int, TileEntity> item in TileEntity.ByID)

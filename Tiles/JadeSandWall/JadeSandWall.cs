@@ -24,7 +24,7 @@ namespace JadeFables.Tiles.JadeSandWall
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Springstone Wall");
+            // DisplayName.SetDefault("Springstone Wall");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 400;
         }
 

@@ -18,8 +18,8 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 	{
 		public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Hwacha");
-			Tooltip.SetDefault("Summons a Hwacha to fight for you \nWhip the hwacha to fire it with arrows from your inventory\nRight click to push and pull the hwacha");
+			// DisplayName.SetDefault("Hwacha");
+			// Tooltip.SetDefault("Summons a Hwacha to fight for you \nWhip the hwacha to fire it with arrows from your inventory\nRight click to push and pull the hwacha");
 		}
 
 		public override void SetDefaults()
@@ -82,10 +82,10 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
         {
             for (int j = 1; j <= 5; j++)
                 GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Items/SpringChestLoot/Hwacha/HwachaProj_Gore" + j);
-            On.Terraria.Main.DrawPlayers_AfterProjectiles += DrawFrontWheels;
+            Terraria.On_Main.DrawPlayers_AfterProjectiles += DrawFrontWheels;
         }
 
-        private void DrawFrontWheels(On.Terraria.Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
+        private void DrawFrontWheels(Terraria.On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
         {
             orig(self);
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
@@ -96,7 +96,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
         public override void SetStaticDefaults()
 		{
-			DisplayName.SetDefault("Hwacha");
+			// DisplayName.SetDefault("Hwacha");
 			Main.projFrames[Projectile.type] = 6;
 		}
 
@@ -308,7 +308,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Hwacha");
+            // DisplayName.SetDefault("Hwacha");
         }
 
         public override void SetDefaults()

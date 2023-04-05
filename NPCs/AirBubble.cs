@@ -20,7 +20,7 @@ namespace JadeFables.NPCs
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Air Bubble");
+            // DisplayName.SetDefault("Air Bubble");
         }
 
         public override void SetDefaults()

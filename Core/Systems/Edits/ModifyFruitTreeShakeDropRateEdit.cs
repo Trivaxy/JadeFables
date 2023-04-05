@@ -11,7 +11,7 @@ public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
     public override void OnModLoad() {
         base.OnModLoad();
 
-        IL.Terraria.WorldGen.ShakeTree += il =>
+        Terraria.IL_WorldGen.ShakeTree += il =>
         {
             int[] fruits =
             {

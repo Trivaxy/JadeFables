@@ -58,8 +58,8 @@ namespace JadeFables.Tiles.JadeWaterfall
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Waterfall Bucket");
-            Tooltip.SetDefault("Contains a small amount of waterfall\nCan be poured out");
+            // DisplayName.SetDefault("Waterfall Bucket");
+            // Tooltip.SetDefault("Contains a small amount of waterfall\nCan be poured out");
             ItemID.Sets.AlsoABuildingItem[Type] = true;
         }
 
@@ -152,10 +152,10 @@ namespace JadeFables.Tiles.JadeWaterfall
 
         public override void Load()
         {
-            On.Terraria.Main.DrawPlayers_AfterProjectiles += Main_DrawPlayers_AfterProjectiles;
+            Terraria.On_Main.DrawPlayers_AfterProjectiles += Main_DrawPlayers_AfterProjectiles;
         }
 
-        private void Main_DrawPlayers_AfterProjectiles(On.Terraria.Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
+        private void Main_DrawPlayers_AfterProjectiles(Terraria.On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
         {
             orig(self);
             {
@@ -168,7 +168,7 @@ namespace JadeFables.Tiles.JadeWaterfall
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jade Waterfall");
+            // DisplayName.SetDefault("Jade Waterfall");
         }
 
         public override void SetDefaults()

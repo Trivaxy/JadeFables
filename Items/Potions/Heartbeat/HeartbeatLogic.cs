@@ -10,8 +10,8 @@ namespace JadeFables.Items.Potions.Heartbeat
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Heartbeat");
-            Description.SetDefault("Heart pickups are replaced by big hearts");
+            // DisplayName.SetDefault("Heartbeat");
+            // Description.SetDefault("Heart pickups are replaced by big hearts");
             Main.buffNoSave[Type] = true;
         }
     }
@@ -22,12 +22,12 @@ namespace JadeFables.Items.Potions.Heartbeat
 
         public Player hurter = null;
 
-        public override void OnHitByItem(NPC npc, Player player, Item item, int damage, float knockback, bool crit)
+        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             hurter = player;
         }
 
-        public override void OnHitByProjectile(NPC npc, Projectile projectile, int damage, float knockback, bool crit)
+        public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
             hurter = Main.player[projectile.owner];
         }

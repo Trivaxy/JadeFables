@@ -104,10 +104,10 @@ namespace JadeFables.Tiles.JadeLantern
                     GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Tiles/JadeLantern/Gores/lantern" + i + "gore" + j);
                 }
             }
-            On.Terraria.Main.DrawProjectiles += Main_DrawProjectiles;
+            Terraria.On_Main.DrawProjectiles += Main_DrawProjectiles;
         }
 
-        private void Main_DrawProjectiles(On.Terraria.Main.orig_DrawProjectiles orig, Main self)
+        private void Main_DrawProjectiles(Terraria.On_Main.orig_DrawProjectiles orig, Main self)
         {
             orig(self);
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);

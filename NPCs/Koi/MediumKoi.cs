@@ -57,7 +57,7 @@ namespace JadeFables.NPCs.Koi
         }
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Medium Koi");
+            // DisplayName.SetDefault("Medium Koi");
             Main.npcFrameCount[NPC.type] = 8;
         }
 

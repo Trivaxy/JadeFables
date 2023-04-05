@@ -2,6 +2,7 @@
 using JadeFables.Tiles.HardenedJadeSand;
 using JadeFables.Tiles.JadeSand;
 using JadeFables.Tiles.JadeSandstone;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Generation;
 using Terraria.WorldBuilding;
@@ -39,7 +40,7 @@ namespace JadeFables.Biomes.JadeLake
             JadeSandstoneTileCount = tileCounts[TileType<JadeSandstoneTile>()];
         }
 
-        public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
+        public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
         {
             //int CleanupIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Gems In Ice Biome"));
             int CleanupIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Tile Cleanup"));
@@ -54,10 +55,10 @@ namespace JadeFables.Biomes.JadeLake
         bool pressed = false;
         public override void Load()
         {
-            On.Terraria.Main.DoDraw += AddLighting;
+            Terraria.On_Main.DoDraw += AddLighting;
         }
 
-        private void AddLighting(On.Terraria.Main.orig_DoDraw orig, Main self, GameTime gameTime) {
+        private void AddLighting(Terraria.On_Main.orig_DoDraw orig, Main self, GameTime gameTime) {
             orig(self, gameTime);
 
             float progress = MathHelper.Min(TotalBiomeCount, 3000) / 3000f;

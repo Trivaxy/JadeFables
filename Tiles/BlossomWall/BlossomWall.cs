@@ -1,4 +1,5 @@
 ﻿using System;
+using Terraria;
 using Terraria.ID;
 using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
@@ -42,7 +43,7 @@ namespace JadeFables.Tiles.BlossomWall
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Cherry Blossom Wall");
+            // DisplayName.SetDefault("Cherry Blossom Wall");
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 400;
         }
 
@@ -64,7 +65,7 @@ namespace JadeFables.Tiles.BlossomWall
 
     class DryadSellsBlossom : GlobalNPC
     {
-        public override void SetupShop(int type, Chest shop, ref int nextSlot)
+        public override void ModifyActiveShop(NPC npc, string shopName, Item[] items)
         {
             if (type == NPCID.Dryad && Main.LocalPlayer.InModBiome<JadeLakeBiome>())
             {

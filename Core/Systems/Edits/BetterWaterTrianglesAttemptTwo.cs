@@ -46,13 +46,13 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
             typeof(Action<TileDrawing, bool, int, Vector2, Vector2, int, int, TileDrawInfo>), DrawTile_LiquidBehindTile_Info);
 
         //On.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += LiquidRenderer_InternalDraw;
-        On.Terraria.Main.CheckMonoliths += DrawToRT;
-        On.Terraria.GameContent.Drawing.TileDrawing.DrawTile_LiquidBehindTile += TileDrawing_DrawTile_LiquidBehindTile;
-        On.Terraria.GameContent.Drawing.TileDrawing.DrawPartialLiquid += TileDrawing_DrawPartialLiquid;
-        On.Terraria.Main.DoDraw_Tiles_Solid += Main_DoDraw_Tiles_Solid;
+        Terraria.On_Main.CheckMonoliths += DrawToRT;
+        Terraria.GameContent.Drawing.On_TileDrawing.DrawTile_LiquidBehindTile += TileDrawing_DrawTile_LiquidBehindTile;
+        Terraria.GameContent.Drawing.On_TileDrawing.DrawPartialLiquid += TileDrawing_DrawPartialLiquid;
+        Terraria.On_Main.DoDraw_Tiles_Solid += Main_DoDraw_Tiles_Solid;
     }
 
-    private void TileDrawing_DrawPartialLiquid(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawPartialLiquid orig, TileDrawing self, Tile tileCache, Vector2 position, Rectangle liquidSize, int liquidType, Color aColor)
+    private void TileDrawing_DrawPartialLiquid(Terraria.GameContent.Drawing.On_TileDrawing.orig_DrawPartialLiquid orig, TileDrawing self, Tile tileCache, Vector2 position, Rectangle liquidSize, int liquidType, Color aColor)
     {
         if (!Main.LocalPlayer.InModBiome<JadeLakeBiome>() || liquidType != LiquidID.Water)
         {
@@ -76,7 +76,7 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
         }
     }
 
-    private void Main_DoDraw_Tiles_Solid(On.Terraria.Main.orig_DoDraw_Tiles_Solid orig, Main self)
+    private void Main_DoDraw_Tiles_Solid(Terraria.On_Main.orig_DoDraw_Tiles_Solid orig, Main self)
     {
         if (Main.LocalPlayer.InModBiome<JadeLakeBiome>())
         {
@@ -91,7 +91,7 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
         orig(self);
     }
 
-    private void TileDrawing_DrawTile_LiquidBehindTile(On.Terraria.GameContent.Drawing.TileDrawing.orig_DrawTile_LiquidBehindTile orig, TileDrawing self, bool solidLayer, int waterStyleOverride, Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, TileDrawInfo drawData)
+    private void TileDrawing_DrawTile_LiquidBehindTile(Terraria.GameContent.Drawing.On_TileDrawing.orig_DrawTile_LiquidBehindTile orig, TileDrawing self, bool solidLayer, int waterStyleOverride, Vector2 screenPosition, Vector2 screenOffset, int tileX, int tileY, TileDrawInfo drawData)
     {
         if (drawWater)
         {
@@ -99,7 +99,7 @@ public sealed class BetterWaterTrianglesAttmptTwo : RuntimeDetourModSystem
         }
     }
 
-    private void DrawToRT(On.Terraria.Main.orig_CheckMonoliths orig)
+    private void DrawToRT(Terraria.On_Main.orig_CheckMonoliths orig)
     {
         orig();
         var graphics = Main.graphics.GraphicsDevice;

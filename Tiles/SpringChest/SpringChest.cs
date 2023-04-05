@@ -28,14 +28,14 @@ namespace JadeFables.Tiles.SpringChest
 
 			DustType = DustID.WoodFurniture;
 			AdjTiles = new int[] { TileID.Containers };
-			ChestDrop = ModContent.ItemType<SpringChestItem>();
+			ItemDrop = ModContent.ItemType<SpringChestItem>();
 
 
 			// Names
-			ContainerName.SetDefault("Spring Chest");
+			ContainerName/* tModPorter Note: Removed. Override DefaultContainerName instead */.SetDefault("Spring Chest");
 
-			ModTranslation name = CreateMapEntryName();
-			name.SetDefault("Spring Chest");
+			LocalizedText name = CreateMapEntryName();
+			// name.SetDefault("Spring Chest");
 			AddMapEntry(new Color(155, 50, 50), name, MapChestName);
 
 			// Placement
@@ -84,7 +84,7 @@ namespace JadeFables.Tiles.SpringChest
 		}
 
 		public override void KillMultiTile(int i, int j, int frameX, int frameY) {
-			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ChestDrop);
+			Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ItemDrop);
 			Chest.DestroyChest(i, j);
 		}
 
@@ -183,7 +183,7 @@ namespace JadeFables.Tiles.SpringChest
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Chest");
+            // DisplayName.SetDefault("Spring Chest");
         }
 
         public override void SetDefaults()

@@ -72,7 +72,7 @@ namespace JadeFables.Biomes.JadeLake
             if (Main.dedServ)
                 return;
 
-            On.Terraria.Main.CheckMonoliths += HotspringTarget;
+            Terraria.On_Main.CheckMonoliths += HotspringTarget;
         }
 
         public void Unload()
@@ -80,7 +80,7 @@ namespace JadeFables.Biomes.JadeLake
             jadelakeMapTarget = null;
         }
 
-        private void HotspringTarget(On.Terraria.Main.orig_CheckMonoliths orig)
+        private void HotspringTarget(Terraria.On_Main.orig_CheckMonoliths orig)
         {
             orig();
 

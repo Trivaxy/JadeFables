@@ -11,8 +11,8 @@ namespace JadeFables.Items.Potions.Heartbeat
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Big Heart");
-            Tooltip.SetDefault("You shouldn't see this");
+            // DisplayName.SetDefault("Big Heart");
+            // Tooltip.SetDefault("You shouldn't see this");
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 5));
             ItemID.Sets.AnimatesAsSoul[Item.type] = true;
         }

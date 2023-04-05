@@ -49,7 +49,7 @@ namespace JadeFables.Core
 
 		public override void Load()
 		{
-			IL.Terraria.Main.DoDraw += AddWaterShader;
+			Terraria.IL_Main.DoDraw += AddWaterShader;
 			//IL.Terraria.Main.DrawTiles += SwapBlockTexture;//TODO: Figure out where this logic moved in vanilla
 		}
 

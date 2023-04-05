@@ -23,8 +23,8 @@ namespace JadeFables.Items.Potions.JasmineTea
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jasmine Tea");
-            Tooltip.SetDefault("'Do you know why they call me The Dragon of The West?'");
+            // DisplayName.SetDefault("Jasmine Tea");
+            // Tooltip.SetDefault("'Do you know why they call me The Dragon of The West?'");
             ItemID.Sets.DrinkParticleColors[Item.type] = new Color[1] { Color.Green };
         }
 
@@ -81,8 +81,8 @@ namespace JadeFables.Items.Potions.JasmineTea
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jasmine Tea");
-            Description.SetDefault("You need a mint!");
+            // DisplayName.SetDefault("Jasmine Tea");
+            // Description.SetDefault("You need a mint!");
             Main.buffNoSave[Type] = true;
         }
 
@@ -108,10 +108,10 @@ namespace JadeFables.Items.Potions.JasmineTea
 
         public override void Load()
         {
-            On.Terraria.Main.DrawPlayers_AfterProjectiles += Main_DrawPlayers_AfterProjectiles;
+            Terraria.On_Main.DrawPlayers_AfterProjectiles += Main_DrawPlayers_AfterProjectiles;
         }
 
-        private void Main_DrawPlayers_AfterProjectiles(On.Terraria.Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
+        private void Main_DrawPlayers_AfterProjectiles(Terraria.On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self)
         {
             orig(self);
             Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
@@ -127,7 +127,7 @@ namespace JadeFables.Items.Potions.JasmineTea
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Jasmine Fire");
+            // DisplayName.SetDefault("Jasmine Fire");
         }
 
         public override void SetDefaults()
@@ -178,7 +178,7 @@ namespace JadeFables.Items.Potions.JasmineTea
             return false;
         }
 
-        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 180);
         }

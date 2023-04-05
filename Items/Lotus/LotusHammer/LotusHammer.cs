@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 using JadeFables.Dusts;
-using IL.Terraria.DataStructures;
 
 namespace JadeFables.Items.Lotus.LotusHammer
 {
@@ -16,8 +16,8 @@ namespace JadeFables.Items.Lotus.LotusHammer
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Lotus Hammer");
-            Tooltip.SetDefault("Can pickup walls that other hammers can't");
+            // DisplayName.SetDefault("Lotus Hammer");
+            // Tooltip.SetDefault("Can pickup walls that other hammers can't");
         }
 
         public override void SetDefaults()

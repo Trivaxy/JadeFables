@@ -66,7 +66,7 @@ namespace JadeFables.NPCs.Bullfrog
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bullfrog");
+            // DisplayName.SetDefault("Bullfrog");
             Main.npcFrameCount[NPC.type] = 8;
         }
 
@@ -242,7 +242,7 @@ namespace JadeFables.NPCs.Bullfrog
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Bullfrog");
+            // DisplayName.SetDefault("Bullfrog");
         }
 
         public override void AI()
@@ -311,7 +311,7 @@ namespace JadeFables.NPCs.Bullfrog
             return false;
         }
 
-        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             if (Projectile.timeLeft > 40)
                 Projectile.timeLeft = 41;

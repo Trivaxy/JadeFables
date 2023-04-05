@@ -8,6 +8,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using JadeFables.Tiles.JadeSand;
@@ -37,8 +38,8 @@ namespace JadeFables.Tiles.JadeSeaweed
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
 
-            ModTranslation name = CreateMapEntryName();
-            name.SetDefault("Spring Seaweed");
+            LocalizedText name = CreateMapEntryName();
+            // name.SetDefault("Spring Seaweed");
             AddMapEntry(jadeGrassLime, name);
         }
 
@@ -64,7 +65,7 @@ namespace JadeFables.Tiles.JadeSeaweed
     {
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Seaweed");
+            // DisplayName.SetDefault("Spring Seaweed");
         }
 
         public override void SetDefaults()
@@ -137,7 +138,7 @@ namespace JadeFables.Tiles.JadeSeaweed
 
         public override void SetStaticDefaults()
         {
-            DisplayName.SetDefault("Spring Seaweed");
+            // DisplayName.SetDefault("Spring Seaweed");
         }
 
         public override void SetDefaults()

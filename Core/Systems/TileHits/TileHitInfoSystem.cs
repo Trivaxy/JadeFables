@@ -11,12 +11,12 @@ public sealed class TileHitInfoSystem : ErrorCollectingModSystem
         base.OnModLoad();
 
         // We should ensure this is updated for 1.4.4.
-        IL.Terraria.Player.PlaceThing_TryReplacingTiles += RewriteHitObjectInvocations;
-        IL.Terraria.Player.ItemCheck_UseMiningTools_ActuallyUseMiningTool += RewriteHitObjectInvocations;
-        IL.Terraria.Player.ItemCheck_UseMiningTools_TryHittingWall += RewriteHitObjectInvocations;
-        IL.Terraria.Player.GetOtherPlayersPickTile += RewriteHitObjectInvocations;
-        IL.Terraria.Player.PickTile += RewriteHitObjectInvocations;
-        IL.Terraria.Player.HasEnoughPickPowerToHurtTile += RewriteHitObjectInvocations;
+        Terraria.IL_Player.PlaceThing_TryReplacingTiles += RewriteHitObjectInvocations;
+        Terraria.IL_Player.ItemCheck_UseMiningTools_ActuallyUseMiningTool += RewriteHitObjectInvocations;
+        Terraria.IL_Player.ItemCheck_UseMiningTools_TryHittingWall += RewriteHitObjectInvocations;
+        Terraria.IL_Player.GetOtherPlayersPickTile += RewriteHitObjectInvocations;
+        Terraria.IL_Player.PickTile += RewriteHitObjectInvocations;
+        Terraria.IL_Player.HasEnoughPickPowerToHurtTile += RewriteHitObjectInvocations;
     }
 
     private void RewriteHitObjectInvocations(ILContext il) {

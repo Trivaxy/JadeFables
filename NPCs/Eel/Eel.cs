@@ -7,6 +7,7 @@
 //Gores
 //Banner
 //Passive AI
+//Better pathfinding
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

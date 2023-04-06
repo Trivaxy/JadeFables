@@ -1,7 +1,9 @@
 ﻿//TODO on eel:
 //Balance
-//Sound effects
-//Sprite stretching
+//Hitsound
+//Killsound
+//Drops
+//Reduce lag
 //Sprite implementation
 //Bestiary
 //Gore
@@ -39,6 +41,11 @@ namespace JadeFables.NPCs.Eel
 {
     internal class Eel : ModNPC
     {
+        private readonly int NUMPOINTS = 40;
+
+        private List<Vector2> cache;
+        private float velStack = 0;
+        private Trail trail;
 
         private Player target => Main.player[NPC.target];
 
@@ -108,6 +115,22 @@ namespace JadeFables.NPCs.Eel
             NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.position.DirectionTo(posToBe) * 10, 0.05f);
         }
 
+        public override void PostAI()
+        {
+            velStack += NPC.velocity.Length();
+            if (!Main.dedServ)
+            {
+                ManageCache();
+                ManageTrail();
+            }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            DrawPrimitives();
+            return false;
+        }
+
         private static List<List<Node>> GetGrid(Vector2 start, Vector2 corner)
         {
             int height = 50 * Node.NODE_SIZE;
@@ -148,6 +171,67 @@ namespace JadeFables.NPCs.Eel
                 }
             }
             return true;
+        }
+
+        private void ManageCache()
+        {
+            if (cache == null)
+            {
+                cache = new List<Vector2>();
+                for (int i = 0; i < NUMPOINTS; i++)
+                {
+                    cache.Add(NPC.Center);
+                }
+
+
+            }
+            if (velStack > 5)
+            {
+                cache.Add(NPC.Center);
+            }
+            while (velStack > 5)
+            {
+                velStack -= 5;
+
+            }
+            while (cache.Count > NUMPOINTS)
+            {
+                cache.RemoveAt(0);
+            }
+        }
+
+        private void ManageTrail()
+        {
+            Color goldEnd = Color.Gold;
+            goldEnd.A = 0;
+            trail = trail ?? new Trail(Main.instance.GraphicsDevice, NUMPOINTS, new TriangularTip(2), factor => 24, factor =>
+            {
+                return Lighting.GetColor((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16);
+            });
+
+            trail.Positions = cache.ToArray();
+            trail.NextPosition = NPC.Center;
+        }
+
+        private void DrawPrimitives()
+        {
+            if (trail == null || trail == default)
+                return;
+
+            Main.spriteBatch.End();
+            Effect effect = Terraria.Graphics.Effects.Filters.Scene["SnailBody"].GetShader().Shader;
+
+            Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
+            Matrix view = Main.GameViewMatrix.ZoomMatrix;
+            Matrix projection = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+
+            effect.Parameters["transformMatrix"].SetValue(world * view * projection);
+            effect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>(Texture).Value);
+            effect.Parameters["flip"].SetValue(Math.Sign(NPC.velocity.X) == -1);
+
+            trail.Render(effect);
+
+            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
         }
     }
 }

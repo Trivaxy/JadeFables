@@ -4,10 +4,7 @@
 //Sprite stretching
 //Sprite implementation
 //Bestiary
-//Gores
-//Banner
-//Passive AI
-//Better pathfinding
+//Gore
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -65,6 +62,7 @@ namespace JadeFables.NPCs.Eel
             NPC.DeathSound = SoundID.NPCDeath26;
             NPC.noGravity = true;
             NPC.noTileCollide = false;
+            AIType = NPCID.Goldfish;
         }
 
         public override void AI()
@@ -85,7 +83,13 @@ namespace JadeFables.NPCs.Eel
                 targetPos.Y = MathHelper.Clamp(targetPos.Y, 0, height - 1);
                 Stack<Node> path = astar.FindPath((NPC.position / 16) - corner, targetPos);
                 if (path == null)
+                {
+                    NPC.aiStyle = 16;
+                    AIType = NPCID.Goldfish;
                     return;
+                }
+                AIType = 0;
+                NPC.aiStyle = -1;
                 if (path.Count <= 3)
                 {
                     posToBe = target.position;
@@ -98,6 +102,9 @@ namespace JadeFables.NPCs.Eel
                 posToBe = (path.First<Node>().Center * 16) + (corner * 16);
             }
 
+
+            if (NPC.aiStyle == 16)
+                return;
             NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.position.DirectionTo(posToBe) * 10, 0.05f);
         }
 

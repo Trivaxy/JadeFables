@@ -124,7 +124,12 @@ JadePickaxe: {
 
 JadeStaff: {
 	DisplayName: Jade Staff
-	Tooltip: update later
+	Tooltip:
+		'''
+		Hold to release bursts of fire
+		Summons a dragon after some time
+		Release to throw the dragon
+		'''
 }
 
 LotusChestplate: {

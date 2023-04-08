@@ -45,6 +45,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.channel = true;
+            Item.mana = 12;
 
             Item.value = Item.sellPrice(silver: 45);
             Item.rare = ItemRarityID.Blue;
@@ -66,6 +67,7 @@ namespace JadeFables.Items.Jade.JadeStaff
 
     internal class JadeStaffProj : ModProjectile
     {
+        private float dragonDamageMultiplier = 2.5f;
 
         private readonly int NUMPOINTS = 20;
         private List<Vector2> cache;
@@ -108,8 +110,9 @@ namespace JadeFables.Items.Jade.JadeStaff
                 }
 
                 //Fire Pulse
-                if (timer % 60 == 0 && timer != 0)
+                if (timer % 60 == 0 && timer != 0 && owner.CheckMana(owner.inventory[owner.selectedItem], pay: true))
                 {
+                    
 
                     SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_flameburst_tower_shot_" + (Main.rand.NextBool() ? 0 : 1)) with { Pitch = -.48f, PitchVariance = 0.3f, Volume = 0.6f };
                     SoundEngine.PlaySound(style, Projectile.Center);
@@ -222,7 +225,7 @@ namespace JadeFables.Items.Jade.JadeStaff
                                     newColor: Color.OrangeRed, Scale: Main.rand.NextFloat(0.2f, .6f));
                             }
 
-                            dragon = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center + rotation.ToRotationVector2() * 80, Vector2.Zero, ModContent.ProjectileType<JadeStaffDragon>(), Projectile.damage * 2, Projectile.knockBack, owner.whoAmI);
+                            dragon = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), owner.Center + rotation.ToRotationVector2() * 80, Vector2.Zero, ModContent.ProjectileType<JadeStaffDragon>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
                         }
                         
                     }
@@ -381,7 +384,8 @@ namespace JadeFables.Items.Jade.JadeStaff
             Projectile.tileCollide = false;
             Projectile.friendly = true;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 400; 
+            Projectile.timeLeft = 400;
+            Projectile.DamageType = DamageClass.Magic;
         }
 
         public override bool? CanDamage()
@@ -548,6 +552,7 @@ namespace JadeFables.Items.Jade.JadeStaff
 
         public void Launch()
         {
+            Projectile.damage *= 2;
             launched = true;
             List<Vector2> newCache = new List<Vector2>();
             foreach (Vector2 point in cache)
@@ -677,11 +682,11 @@ namespace JadeFables.Items.Jade.JadeStaff
             {
                 Vector2 toTarget = (target.Center - owner.Center).SafeNormalize(Vector2.UnitX);
 
-                for (int i = 0; i < 14; i++)
+                for (int i = 0; i < 10; i++)
                 {
-                    Dust d = Dust.NewDustPerfect(Projectile.Center, DustType<Glow>(),
-                        toTarget.RotatedByRandom(0.25f) * Main.rand.NextFloat(1f, 3f),
-                        newColor: Main.rand.NextBool() ? Color.OrangeRed : Color.DarkOrange, Scale: 0.9f);
+                    Dust d = Dust.NewDustPerfect(target.Center, DustType<Glow>(),
+                        toTarget.RotatedByRandom(0.75f) * Main.rand.NextFloat(1f, 4f),
+                        newColor: Main.rand.NextBool() ? Color.OrangeRed : Color.DarkOrange, Scale: 0.5f);
                     d.position += d.velocity * 2;
                 }
             }

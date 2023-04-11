@@ -338,7 +338,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             fireEffect.Parameters["repeats"].SetValue(2);
             trail.Render(fireEffect);
 
-            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
         }
 
         public override bool? CanDamage() { return false; }

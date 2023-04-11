@@ -1,6 +1,8 @@
 ﻿//TODO on lilypads:
 //Make them naturally spawn
 //Implement non placeholder sprite
+//Make them bob
+//Make them tilt
 using JadeFables.Biomes.JadeLake;
 using JadeFables.Core;
 using JadeFables.Dusts;

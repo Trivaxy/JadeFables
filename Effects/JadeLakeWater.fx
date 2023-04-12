@@ -1,6 +1,7 @@
 float time;
 float2 screenSize;
 float2 offset;
+float alpha;
 
 texture sampleTexture;
 sampler2D samplerTex = sampler_state { texture = <sampleTexture>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = wrap; AddressV = wrap; };
@@ -44,7 +45,7 @@ float4 PixelShaderFunction(float4 screenSpace : TEXCOORD0) : COLOR0
 
     //return float4(offset.x * -1.0, offset.y * -1.0, 0, 1);
 
-    return color2 * ((1.0 - power * 0.8));
+    return color2 * ((1.0 - power * 0.8)) * alpha;
 }
 
 technique Technique1

@@ -1,6 +1,7 @@
 ﻿//TODO on lilypads:
 //Make them naturally spawn
 //smooth out movement
+//Make it save in the world
 using JadeFables.Biomes.JadeLake;
 using JadeFables.Core;
 using JadeFables.Dusts;

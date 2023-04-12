@@ -104,6 +104,7 @@ namespace JadeFables.Biomes.JadeLake
             effect.Parameters["time"].SetValue(Main.GameUpdateCount / 20f);
             effect.Parameters["bubbleTex"].SetValue(JadeLakeMapTarget.jadelakeBubbleTarget);
             effect.Parameters["sampleTexture3"].SetValue(JadeLakeMapTarget.jadelakeShineTarget);
+            effect.Parameters["alpha"].SetValue(0.57f);
             if (Main.renderCount != 1)
             {
                 framesSinceDraw++;

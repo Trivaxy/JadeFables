@@ -12,6 +12,7 @@ using Mono.Cecil.Cil;
 using Terraria.GameContent.UI;
 using static Terraria.ModLoader.ModContent;
 using Terraria.ID;
+using JadeFables.Biomes.JadeLake;
 
 namespace JadeFables.Core
 {
@@ -131,7 +132,7 @@ namespace JadeFables.Core
 			}
 
 
-			Main.spriteBatch.Draw(Main.instance.backWaterTarget, Main.sceneBackgroundPos - Main.screenPosition, Color.White);
+			Main.spriteBatch.Draw(Main.instance.backWaterTarget, Main.sceneBackgroundPos - Main.screenPosition, Color.White * 0.3f);
 
 			if (activeAddon != null)
 			{
@@ -150,8 +151,7 @@ namespace JadeFables.Core
 				activeAddon.SpritebatchChange();
 			}
 
-
-			Main.spriteBatch.Draw(Main.waterTarget, Main.sceneWaterPos - Main.screenPosition, Color.White);
+			Main.spriteBatch.Draw(Main.waterTarget, Main.sceneWaterPos - Main.screenPosition, Color.White * 0.3f);
 
 			if (activeAddon != null)
 			{

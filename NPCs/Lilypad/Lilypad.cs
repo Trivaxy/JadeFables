@@ -1,7 +1,6 @@
 ﻿//TODO on lilypads:
-//Make them naturally spawn
 //smooth out movement
-//Make it save in the world
+//Fix gen
 using JadeFables.Biomes.JadeLake;
 using JadeFables.Core;
 using JadeFables.Dusts;
@@ -18,6 +17,7 @@ using Terraria.GameContent.Bestiary;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using static Terraria.ModLoader.ModContent;
 using static Terraria.ModLoader.PlayerDrawLayer;
 
@@ -43,6 +43,23 @@ namespace JadeFables.NPCs.Lilypad
             NPC.gfxOffY = -6;
         }
 
+        public override bool NeedSaving()
+        {
+            return true;
+        }
+
+        public override void SaveData(TagCompound tag)
+        {
+            tag["xPos"] = NPC.position.X;
+            tag["yPos"] = NPC.position.Y;
+        }
+
+        public override void LoadData(TagCompound tag)
+        {
+            NPC.position.X = tag.GetFloat("xPos");
+            NPC.position.Y = tag.GetFloat("yPos");
+        }
+
         public override void SafeAI()
         {
             floatingPos = NPC.Center;
@@ -59,6 +76,9 @@ namespace JadeFables.NPCs.Lilypad
             }
 
             if (aboveTile.HasTile && Main.tileSolid[aboveTile.TileType])
+                NPC.active = false;
+
+            if (NPC.collideY && !NPC.wet)
                 NPC.active = false;
 
             Player nearest = Main.player.Where(n => n.active && !n.dead).OrderBy(n => n.Distance(NPC.Center)).FirstOrDefault();

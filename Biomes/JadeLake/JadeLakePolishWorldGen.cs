@@ -25,6 +25,7 @@ using Terraria.WorldBuilding;
 using static Terraria.ModLoader.PlayerDrawLayer;
 using Terraria.Utilities;
 using JadeFables.Tiles.HardenedJadeSand;
+using JadeFables.NPCs.Lilypad;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -79,8 +80,26 @@ namespace JadeFables.Biomes.JadeLake
 
             //Places pearls
             PlacePearls(worldRect, 80);
+
+            PlaceLilypads(worldRect, 40);
         }
 
+        public static void PlaceLilypads(Rectangle rect, int num)
+        {
+            for (int k = 0; k < num; k++)
+            {
+                int i = rect.Left + WorldGen.genRand.Next(rect.Width);
+                int j = rect.Top + WorldGen.genRand.Next(rect.Height);
+
+                Tile tile = Framing.GetTileSafely(i, j);
+                if (tile.HasTile)
+                {
+                    k--;
+                    continue;
+                }
+                NPC.NewNPC(new EntitySource_WorldGen(), i * 16, j * 16, ModContent.NPCType<Lilypad>());
+            }
+        }
         public static void PlacePearls(Rectangle rect, int chance)
         {
             int[] validTiles = new int[] { ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), ModContent.TileType<JadeSandTile>() };

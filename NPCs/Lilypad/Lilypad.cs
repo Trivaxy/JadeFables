@@ -1,8 +1,5 @@
 ﻿//TODO on lilypads:
 //Make them naturally spawn
-//Implement non placeholder sprite
-//Make them bob
-//Make them tilt
 using JadeFables.Biomes.JadeLake;
 using JadeFables.Core;
 using JadeFables.Dusts;
@@ -32,10 +29,13 @@ namespace JadeFables.NPCs.Lilypad
         public bool falling = false;
 
         private float fallSpeed = 0;
+
+        private float shakeTimer = 0;
         public override void SafeSetDefaults()
         {
-            NPC.width = 64;
-            NPC.height = 16;
+            NPC.width = 96;
+            NPC.height = 24;
+            NPC.gfxOffY = -6;
         }
 
         public override void SafeAI()
@@ -63,9 +63,31 @@ namespace JadeFables.NPCs.Lilypad
 
                 if (NPC.velocity.Y < 4)
                     NPC.velocity.Y += fallSpeed;
+
+                if (shakeTimer == -1)
+                {
+                    shakeTimer = 1;
+                }
+                if (shakeTimer > 0)
+                {
+                    shakeTimer -= 0.04f;
+                }
+                else
+                    shakeTimer= 0;
+                NPC.rotation = shakeTimer * 0.17f * MathF.Sin(shakeTimer * 6.28f);
             }    
             else
             {
+                if (shakeTimer != -1)
+                {
+                    Player nearest = Main.player.Where(n => n.active && !n.dead).OrderBy(n => n.Distance(NPC.Center)).FirstOrDefault();
+                    if (nearest != default)
+                    {
+                        NPC.rotation = Math.Sign(nearest.Center.X - NPC.Center.X) * 0.4f;
+                    }
+                    shakeTimer = -1;
+                }
+                NPC.rotation *= 0.93f;
                 fallSpeed = 0;
                 if (NPC.wet)
                 {

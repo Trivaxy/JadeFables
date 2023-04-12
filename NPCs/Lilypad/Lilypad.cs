@@ -31,6 +31,9 @@ namespace JadeFables.NPCs.Lilypad
         private float fallSpeed = 0;
 
         private float shakeTimer = 0;
+        private float bobTimer = 0;
+
+        private float rotationDir = 0;
         public override void SafeSetDefaults()
         {
             NPC.width = 96;
@@ -56,6 +59,7 @@ namespace JadeFables.NPCs.Lilypad
             if (aboveTile.HasTile && Main.tileSolid[aboveTile.TileType])
                 NPC.active = false;
 
+            Player nearest = Main.player.Where(n => n.active && !n.dead).OrderBy(n => n.Distance(NPC.Center)).FirstOrDefault();
             if (beingStoodOn)
             {
                 if (fallSpeed < 1)
@@ -67,20 +71,32 @@ namespace JadeFables.NPCs.Lilypad
                 if (shakeTimer == -1)
                 {
                     shakeTimer = 1;
+                    bobTimer = 1;
+                    if (nearest != default)
+                    {
+                        rotationDir = Math.Sign(nearest.Center.X - NPC.Center.X) * 0.4f;
+                    }
                 }
+
+                if (bobTimer > 0)
+                {
+                    bobTimer -= 0.1f;
+                }
+
                 if (shakeTimer > 0)
                 {
                     shakeTimer -= 0.04f;
                 }
                 else
                     shakeTimer= 0;
-                NPC.rotation = shakeTimer * 0.17f * MathF.Sin(shakeTimer * 6.28f);
+                NPC.gfxOffY = MathHelper.Lerp(-6, 2, MathF.Sin(bobTimer * 3.14f));
+                NPC.rotation = shakeTimer * 0.17f * (MathF.Sin(shakeTimer * 6.28f) + (rotationDir * 3));
             }    
             else
             {
+                NPC.gfxOffY = -6;
                 if (shakeTimer != -1)
                 {
-                    Player nearest = Main.player.Where(n => n.active && !n.dead).OrderBy(n => n.Distance(NPC.Center)).FirstOrDefault();
                     if (nearest != default)
                     {
                         NPC.rotation = Math.Sign(nearest.Center.X - NPC.Center.X) * 0.4f;

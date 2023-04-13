@@ -344,3 +344,8 @@ PufferfishBannerItem: {
 	DisplayName: Pufferfish Banner
 	Tooltip: "{$CommonItemTooltip.BannerBonus}Pufferfish"
 }
+
+DuelingSpirits: {
+	DisplayName: Dueling Spirits
+	Tooltip: ""
+}

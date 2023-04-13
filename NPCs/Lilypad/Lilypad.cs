@@ -36,6 +36,8 @@ namespace JadeFables.NPCs.Lilypad
         private float bobTimer = 0;
 
         private float rotationDir = 0;
+
+        private float recoilTimer = 0;
         public override void SafeSetDefaults()
         {
             NPC.width = 96;
@@ -121,11 +123,17 @@ namespace JadeFables.NPCs.Lilypad
                 {
                     if (nearest != default)
                     {
-                        NPC.rotation = Math.Sign(nearest.Center.X - NPC.Center.X) * 0.4f;
+                        recoilTimer = 1;
+                        rotationDir = Math.Sign(nearest.Center.X - NPC.Center.X) * 0.4f;
                     }
                     shakeTimer = -1;
                 }
-                NPC.rotation *= 0.93f;
+
+                if (recoilTimer > 0)
+                {
+                    recoilTimer -= 0.1f;
+                }
+                NPC.rotation = MathF.Sin(recoilTimer * 3.14f) * rotationDir;
                 fallSpeed = 0;
                 if (NPC.wet)
                 {

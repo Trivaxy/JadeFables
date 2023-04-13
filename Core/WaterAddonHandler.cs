@@ -132,7 +132,7 @@ namespace JadeFables.Core
 			}
 
 
-			Main.spriteBatch.Draw(Main.instance.backWaterTarget, Main.sceneBackgroundPos - Main.screenPosition, Color.White * 0.3f);
+			Main.spriteBatch.Draw(Main.instance.backWaterTarget, Main.sceneBackgroundPos - Main.screenPosition, Color.White);
 
 			if (activeAddon != null)
 			{
@@ -151,7 +151,7 @@ namespace JadeFables.Core
 				activeAddon.SpritebatchChange();
 			}
 
-			Main.spriteBatch.Draw(Main.waterTarget, Main.sceneWaterPos - Main.screenPosition, Color.White * 0.3f);
+			Main.spriteBatch.Draw(Main.waterTarget, Main.sceneWaterPos - Main.screenPosition, Color.White);
 
 			if (activeAddon != null)
 			{

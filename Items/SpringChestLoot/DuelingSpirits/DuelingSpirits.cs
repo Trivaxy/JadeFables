@@ -12,6 +12,7 @@
 //Some sort of synergy
 //Make it magic (and cost mana
 //Fix it sometimes siezing up
+//Make the player able to control distance
 
 using System;
 using System.Linq;

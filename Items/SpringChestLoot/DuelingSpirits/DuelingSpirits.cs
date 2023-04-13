@@ -7,6 +7,11 @@
 //Sound effects
 //Better using
 //Description
+//Remove artifacting
+//Make eyes static sprite
+//Some sort of synergy
+//Make it magic (and cost mana
+//Fix it sometimes siezing up
 
 using System;
 using System.Linq;
@@ -60,13 +65,18 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
         public override bool? UseItem(Player player)
         {
             int projType = player.altFunctionUse == 2 ? ModContent.ProjectileType<Ying>() : ModContent.ProjectileType<Yang>();
+            int altProjType = player.altFunctionUse != 2 ? ModContent.ProjectileType<Ying>() : ModContent.ProjectileType<Yang>();
             Projectile toThrow = Main.projectile.Where(n => n.active && n.owner == player.whoAmI && n.type == projType).FirstOrDefault();
-            if (toThrow != default)
+            Projectile toSpeedUp = Main.projectile.Where(n => n.active && n.owner == player.whoAmI && n.type == altProjType).FirstOrDefault();
+            if (toThrow != default && toSpeedUp != default)
             {
                 var mp = (toThrow.ModProjectile as Ying);
-                if (!mp.readyToStrike)
+                var mp2 = toSpeedUp.ModProjectile as Ying;
+                if (!mp.readyToStrike && !mp2.readyToStrike)
                 {
                     mp.readyToStrike = true;
+                    mp.rotSpeed = mp.GetStrikeSpeed();
+                    mp2.rotSpeed = mp.GetStrikeSpeed();
                 }
             }
             return base.UseItem(player);
@@ -155,11 +165,17 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 {
                     passive = false;
                     oldMousePos = owner.Center + (Vector2.Normalize(Main.MouseWorld - owner.Center) * 300);
+                    rotSpeed = 0.2f;
+                    var otherProj = Main.projectile.Where(n => n.active && n.owner == owner.whoAmI && n.ModProjectile is Ying && n.type != Projectile.type).FirstOrDefault();
+                    if (otherProj != default)
+                    {
+                        (otherProj.ModProjectile as Ying).rotSpeed = 0.2f;
+                        (otherProj.ModProjectile as Ying).rot = rot - 3.14f;
+                    }
                 }
 
                 posToCircle = owner.Center;
                 distance = 60;
-                rotSpeed = 0.2f;
             }
             else
             {
@@ -181,6 +197,16 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 ManageCache();
                 ManageTrail();
             }
+        }
+
+        public float GetStrikeSpeed()
+        {
+            float throwrot = owner.DirectionTo(Main.MouseWorld).ToRotation() - 1.57f;
+            float rotDifference = ((((throwrot - rot) % 6.28f) + 9.42f) % 6.28f) - 3.14f;
+            if (rotDifference < 0)
+                rotDifference += 6.28f;
+
+            return rotDifference / 10;
         }
 
         public override void Kill(int timeLeft)

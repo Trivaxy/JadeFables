@@ -51,7 +51,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 return;
             }
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null);
 
             Effect effect = Filters.Scene["YingOutline"].GetShader().Shader;
             effect.Parameters["uImageSize0"].SetValue(new Vector2(Main.screenWidth, Main.screenHeight));
@@ -62,7 +62,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             spriteBatch.Draw(yinTarget, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White);
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null);
 
             effect.Parameters["outlineColor"].SetValue(Color.White.ToVector4());
 

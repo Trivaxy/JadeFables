@@ -5,9 +5,7 @@
 //Localization
 //Sound effects
 //Description
-//Remove artifacting
 //Some sort of synergy
-//Fix zoom issues
 
 using System;
 using System.Linq;
@@ -99,7 +97,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
     internal class Ying : ModProjectile
     {
-        private readonly int NUMPOINTS = 15;
+        private readonly int NUMPOINTS = 30;
 
         public Player owner => Main.player[Projectile.owner];
         private List<Vector2> cache;
@@ -115,7 +113,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
         public bool passive = true;
 
-        public float rotSpeed = 0.2f;
+        public float rotSpeed = 0.1f;
 
         public Vector2 oldMousePos = Vector2.Zero;
 
@@ -138,6 +136,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             Projectile.friendly = true;
             Projectile.timeLeft = 300;
             Projectile.penetrate = -1;
+            Projectile.extraUpdates = 1;
         }
 
         public override bool? CanHitNPC(NPC target)
@@ -169,11 +168,11 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                     passive = false;
                     Vector2 dir = Main.MouseWorld - owner.Center;
                     oldMousePos = owner.Center + (Vector2.Normalize(dir) * MathHelper.Clamp(dir.Length() - distance, 1, 350));
-                    rotSpeed = 0.2f;
+                    rotSpeed = 0.1f;
                     var otherProj = Main.projectile.Where(n => n.active && n.owner == owner.whoAmI && n.ModProjectile is Ying && n.type != Projectile.type).FirstOrDefault();
                     if (otherProj != default)
                     {
-                        (otherProj.ModProjectile as Ying).rotSpeed = 0.2f;
+                        (otherProj.ModProjectile as Ying).rotSpeed = 0.1f;
                         (otherProj.ModProjectile as Ying).rot = rot - 3.14f;
                     }
                 }
@@ -212,7 +211,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             if (rotDifference < 0)
                 rotDifference += 6.28f;
 
-            return MathHelper.Max(rotDifference / 6, 0.1f);
+            return MathHelper.Max(rotDifference / 12, 0.1f);
         }
 
         public override void Kill(int timeLeft)
@@ -230,6 +229,11 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             return false;
         }
 
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.HitDirectionOverride = Math.Sign(target.Center.X - owner.Center.X);
+        }
+
         private void ManageCache()
         {
             if (cache == null)
@@ -237,11 +241,11 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 cache = new List<Vector2>();
                 for (int i = 0; i < NUMPOINTS; i++)
                 {
-                    cache.Add(Projectile.Center);
+                    cache.Add(Projectile.Center - owner.Center);
                 }
             }
 
-            cache.Add(Projectile.Center);
+            cache.Add(Projectile.Center - owner.Center);
             while (cache.Count > NUMPOINTS)
             {
                 cache.RemoveAt(0);
@@ -255,7 +259,12 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 return Color.White;
             });
 
-            trail.Positions = cache.ToArray();
+            List<Vector2> newCache = new List<Vector2>();
+            foreach (Vector2 item in cache)
+            {
+                newCache.Add(item + owner.Center);
+            }
+            trail.Positions = newCache.ToArray();
             trail.NextPosition = Projectile.Center;
         }
 

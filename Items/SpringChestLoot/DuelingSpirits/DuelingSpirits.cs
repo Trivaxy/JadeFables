@@ -13,6 +13,7 @@
 //Fix it sometimes siezing up
 //Make the player able to control distance
 //Fix zoom issues
+//Line up trajectory to mouse position better
 
 using System;
 using System.Linq;

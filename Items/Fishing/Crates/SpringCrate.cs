@@ -12,6 +12,7 @@ using static JadeFables.Items.Fishing.Crates.CrateDropRules;
 using JadeFables.Items.SpringChestLoot.Hwacha;
 using JadeFables.Tiles.JadeFountain;
 using Terraria.Localization;
+using JadeFables.Items.SpringChestLoot.DuelingSpirits;
 
 namespace JadeFables.Items.Fishing.Crates
 {
@@ -106,7 +107,7 @@ namespace JadeFables.Items.Fishing.Crates
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>()));
+            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>(), ItemType<DuelingSpirits>()));
             itemLoot.Add(ItemDropRule.Common(4, ItemType<JadeFountainItem>()));
             itemLoot.Add(ItemDropRule.Common(6, ItemType<Jade.FestivalLantern.FestivalLantern>()));
             itemLoot.Add(goldCoin);
@@ -159,7 +160,7 @@ namespace JadeFables.Items.Fishing.Crates
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>()));
+            itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>(), ItemType<DuelingSpirits>()));
             itemLoot.Add(ItemDropRule.Common(4, ItemType<JadeFountainItem>()));
             itemLoot.Add(ItemDropRule.Common(6, ItemType<Jade.FestivalLantern.FestivalLantern>()));
             itemLoot.Add(goldCoin);

@@ -1,13 +1,3 @@
-//TODO on dueling spirits:
-//Item sprite
-//Obtainment
-//Make it inherit weapon damage
-//Localization
-//Sound effects
-//Description
-//Some sort of synergy
-//Crits have reduced pull
-
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -28,18 +18,22 @@ using System.Reflection.Metadata;
 using Steamworks;
 using JadeFables.Dusts;
 using JadeFables.Helpers;
+using Terraria.Audio;
 
 namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 {
     public class DuelingSpirits : ModItem
     {
+        public override void SetStaticDefaults()
+        {
+            Tooltip.SetDefault("Left click to throw Yang, pulling enemies in \nLeft click to throw Ying, pushing enemies away \nAlternate strikes for garaunteed critical hits");
+        }
         public override void SetDefaults()
         {
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.width = 9;
             Item.height = 15;
             Item.noUseGraphic = true;
-            Item.UseSound = SoundID.Item1;
             Item.DamageType = DamageClass.Magic;
             Item.mana = 8;
             Item.noMelee = true;
@@ -82,12 +76,12 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
         {
             if (!Main.projectile.Any(n => n.active && n.owner == player.whoAmI && n.type == ModContent.ProjectileType<Yang>()))
             {
-                Projectile.NewProjectile(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Yang>(), Item.damage, Item.knockBack * 2f, player.whoAmI, 0, 60);
+                Projectile.NewProjectile(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Yang>(), (int)(Item.damage * player.GetDamage(DamageClass.Magic).Additive), Item.knockBack * 2f, player.whoAmI, 0, 60);
             }
 
             if (!Main.projectile.Any(n => n.active && n.owner == player.whoAmI && n.type == ModContent.ProjectileType<Ying>()))
             {
-                Projectile.NewProjectile(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Ying>(), Item.damage, Item.knockBack, player.whoAmI, 3.14f, 60);
+                Projectile.NewProjectile(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Ying>(), (int)(Item.damage * player.GetDamage(DamageClass.Magic).Additive), Item.knockBack, player.whoAmI, 3.14f, 60);
             }
         }
     }
@@ -105,6 +99,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             if (target.GetGlobalNPC<DuelingSpiritsGNPC>().yinged)
             {
                 SuperHit(target);
+                modifiers.Knockback *= 0.5f;
                 modifiers.SetCrit();
             }
             modifiers.HitDirectionOverride = -Math.Sign(target.Center.X - owner.Center.X);
@@ -181,6 +176,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 float throwrot = owner.DirectionTo(Main.MouseWorld).ToRotation() - 1.57f;
                 if (readyToStrike && MathF.Abs(MathHelper.WrapAngle(rot) - MathHelper.WrapAngle(throwrot)) < rotSpeed * 2)
                 {
+                    SoundEngine.PlaySound(SoundID.Item1, owner.Center);
                     passive = false;
                     Vector2 dir = Main.MouseWorld - owner.Center;
                     oldMousePos = owner.Center + (Vector2.Normalize(dir) * MathHelper.Clamp(dir.Length() - distance, 1, 350));

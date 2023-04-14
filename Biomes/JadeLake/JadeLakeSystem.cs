@@ -18,6 +18,7 @@ using JadeFables.Items.Potions.Spine;
 using JadeFables.Items.Potions.JasmineTea;
 using JadeFables.Items.SpringChestLoot.Hwacha;
 using JadeFables.Items.Jade.FestivalLantern;
+using JadeFables.Items.SpringChestLoot.DuelingSpirits;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -167,7 +168,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void PopulateChests()
         {
-            int[] primaryLoot = new int[] { ModContent.ItemType<FireworkPack>(), ModContent.ItemType<TanookiLeaf>(), ModContent.ItemType<GongItem>(), ModContent.ItemType<Items.SpringChestLoot.Chopsticks.Chopsticks>(),ModContent.ItemType<Hwacha>()};
+            int[] primaryLoot = new int[] { ModContent.ItemType<FireworkPack>(), ModContent.ItemType<TanookiLeaf>(), ModContent.ItemType<GongItem>(), ModContent.ItemType<Items.SpringChestLoot.Chopsticks.Chopsticks>(),ModContent.ItemType<Hwacha>(), ModContent.ItemType<DuelingSpirits>()};
             int[] secondaryLoot = new int[] { ModContent.ItemType<JadeFountainItem>(), ItemID.MagicConch, ItemID.SandcastleBucket, ModContent.ItemType<FestivalLantern>()};
 
             int[] ternaryLoot = new int[] {

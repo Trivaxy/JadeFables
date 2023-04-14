@@ -6,6 +6,7 @@
 //Sound effects
 //Description
 //Some sort of synergy
+//Crits have reduced pull
 
 using System;
 using System.Linq;

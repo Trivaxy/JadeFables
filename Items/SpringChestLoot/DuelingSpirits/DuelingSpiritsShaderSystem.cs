@@ -36,7 +36,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
         private void DrawTargets(On_Main.orig_DrawProjectiles orig, Main self)
         {
             var validProjs = Main.projectile.Where(n => n.active && n.ModProjectile is Ying);
-            if (Main.gameMenu || validProjs.Count() == 0)
+            var validMinis = Main.projectile.Where(n => n.active && n.ModProjectile is MiniYing);
+            if (Main.gameMenu || (validProjs.Count() == 0 && validMinis.Count() == 0))
             {
                 orig(self);
                 return;
@@ -84,7 +85,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             orig();
 
             var validProjs = Main.projectile.Where(n => n.active && n.ModProjectile is Ying);
-            if (Main.gameMenu || validProjs.Count() == 0)
+            var validMinis = Main.projectile.Where(n => n.active && n.ModProjectile is MiniYing);
+            if (Main.gameMenu || (validProjs.Count() == 0 && validMinis.Count() == 0))
                 return;
 
             var graphics = Main.graphics.GraphicsDevice;
@@ -101,23 +103,32 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             graphics.SetRenderTarget(yinTarget);
             graphics.Clear(Color.Transparent);
 
-            DrawTargets(validProjs.ToList(), false);
+            DrawTargets(validProjs.ToList(), ModContent.ProjectileType<Ying>());
+            DrawTargets(validMinis.ToList(), ModContent.ProjectileType<MiniYing>());
 
             graphics.SetRenderTarget(yangTarget);
             graphics.Clear(Color.Transparent);
 
-            DrawTargets(validProjs.ToList(), true);
+            DrawTargets(validProjs.ToList(), ModContent.ProjectileType<Yang>());
+            DrawTargets(validMinis.ToList(), ModContent.ProjectileType<MiniYang>());
 
             graphics.SetRenderTarget(null);
         }
 
-        private void DrawTargets(List<Projectile> validProjs, bool yang)
+        private void DrawTargets(List<Projectile> validProjs, int toDraw)
         {
             foreach (Projectile proj in validProjs)
             {
-                if (yang == (proj.type == ModContent.ProjectileType<Yang>()))
+                if (proj.type == toDraw)
                 {
-                    (proj.ModProjectile as Ying).DrawPrimitives();
+                    if (proj.ModProjectile is Ying ying)
+                    {
+                        ying.DrawPrimitives();
+                    }
+                    if (proj.ModProjectile is MiniYing miniYing)
+                    {
+                        miniYing.DrawPrimitives();
+                    }
                 }
             }
         }

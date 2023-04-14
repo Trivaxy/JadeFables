@@ -45,7 +45,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             Item.useAnimation = 10;
             Item.useTime = 10;
             Item.damage = 16;
-            Item.knockBack = 1.5f;
+            Item.knockBack = 5.5f;
             Item.crit = 8;
             Item.value = Item.sellPrice(gold: 1);
             Item.rare = ItemRarityID.Blue;
@@ -81,7 +81,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
         {
             if (!Main.projectile.Any(n => n.active && n.owner == player.whoAmI && n.type == ModContent.ProjectileType<Yang>()))
             {
-                Projectile.NewProjectile(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Yang>(), Item.damage, Item.knockBack, player.whoAmI, 0, 60);
+                Projectile.NewProjectile(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Yang>(), Item.damage, Item.knockBack * 2f, player.whoAmI, 0, 60);
             }
 
             if (!Main.projectile.Any(n => n.active && n.owner == player.whoAmI && n.type == ModContent.ProjectileType<Ying>()))
@@ -90,9 +90,24 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             }
         }
     }
+
     internal class Yang : Ying
     {
-        
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            if (!target.GetGlobalNPC<DuelingSpiritsGNPC>().yanged)
+            {
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<MiniYang>(), 0, 0, owner.whoAmI);
+                (proj.ModProjectile as MiniYing).target = target;
+                target.GetGlobalNPC<DuelingSpiritsGNPC>().yanged = true;
+            }
+            if (target.GetGlobalNPC<DuelingSpiritsGNPC>().yinged)
+            {
+                SuperHit(target);
+                modifiers.SetCrit();
+            }
+            modifiers.HitDirectionOverride = -Math.Sign(target.Center.X - owner.Center.X);
+        }
     }
 
     internal class Ying : ModProjectile
@@ -204,6 +219,17 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             }
         }
 
+        public void SuperHit(NPC target)
+        {
+            target.GetGlobalNPC<DuelingSpiritsGNPC>().yinged = false;
+            target.GetGlobalNPC<DuelingSpiritsGNPC>().yanged = false;
+            for (int i = 0; i < 8; i++)
+            {
+                Vector2 vel = Main.rand.NextVector2CircularEdge(6, 6);
+                Dust.NewDustPerfect(target.Center + (vel * 5), ModContent.DustType<GlowLineFast>(), vel, 0, Color.White, 1.2f);
+            }
+        }
+
         public float GetStrikeSpeed()
         {
             float throwrot = owner.DirectionTo(Main.MouseWorld).ToRotation() - 1.57f;
@@ -231,6 +257,17 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
+            if (!target.GetGlobalNPC<DuelingSpiritsGNPC>().yinged)
+            {
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<MiniYing>(), 0, 0, owner.whoAmI);
+                (proj.ModProjectile as MiniYing).target = target;
+                target.GetGlobalNPC<DuelingSpiritsGNPC>().yinged = true;
+            }
+            if (target.GetGlobalNPC<DuelingSpiritsGNPC>().yanged)
+            {
+                SuperHit(target);
+                modifiers.SetCrit();
+            }
             modifiers.HitDirectionOverride = Math.Sign(target.Center.X - owner.Center.X);
         }
 
@@ -288,5 +325,13 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
             //Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
         }
+    }
+
+    public class DuelingSpiritsGNPC : GlobalNPC
+    {
+        public override bool InstancePerEntity => true;
+
+        public bool yinged = false;
+        public bool yanged = false;
     }
 }

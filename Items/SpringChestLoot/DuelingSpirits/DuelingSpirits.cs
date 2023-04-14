@@ -8,11 +8,11 @@
 //Better using
 //Description
 //Remove artifacting
-//Make eyes static sprite
 //Some sort of synergy
 //Make it magic (and cost mana
 //Fix it sometimes siezing up
 //Make the player able to control distance
+//Fix zoom issues
 
 using System;
 using System.Linq;
@@ -127,6 +127,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
         public ref float distance => ref Projectile.ai[1];
 
+        private List<Vector2> oldPos = new List<Vector2>();
+
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 1;
@@ -153,7 +155,11 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
         public override void AI()
         {
-
+            oldPos.Add(Projectile.Center);
+            if (oldPos.Count > 2)
+            {
+                oldPos.RemoveAt(0);
+            }
             if (owner.HeldItem.type == ModContent.ItemType<DuelingSpirits>())
             {
                 Projectile.timeLeft = 2;
@@ -165,7 +171,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 if (readyToStrike && MathF.Abs(MathHelper.WrapAngle(rot) - MathHelper.WrapAngle(throwrot)) < rotSpeed * 2)
                 {
                     passive = false;
-                    oldMousePos = owner.Center + (Vector2.Normalize(Main.MouseWorld - owner.Center) * 300);
+                    Vector2 dir = Main.MouseWorld - owner.Center;
+                    oldMousePos = owner.Center + (Vector2.Normalize(dir) * MathHelper.Min(dir.Length(), 300));
                     rotSpeed = 0.2f;
                     var otherProj = Main.projectile.Where(n => n.active && n.owner == owner.whoAmI && n.ModProjectile is Ying && n.type != Projectile.type).FirstOrDefault();
                     if (otherProj != default)
@@ -182,7 +189,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             {
                 attackTimer += rotSpeed;
                 posToCircle = Vector2.Lerp(owner.Center, oldMousePos, MathF.Sin(attackTimer));
-                if (attackTimer >= 3.14f)
+                if (attackTimer >= 3f)
                 {
                     attackTimer = 0;
                     passive = true;
@@ -217,7 +224,11 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
         public override bool PreDraw(ref Color lightColor)
         {
-            DrawPrimitives();
+            if (oldPos.Count > 0)
+            {
+                Texture2D eyeTex = ModContent.Request<Texture2D>(Texture + "Eye").Value;
+                Main.spriteBatch.Draw(eyeTex, oldPos[0] - Main.screenPosition, null, Color.White, rot + 1.57f, new Vector2(eyeTex.Width / 2, eyeTex.Height / 2), Projectile.scale, SpriteEffects.None, 0f);
+            }
             return false;
         }
 
@@ -230,8 +241,6 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 {
                     cache.Add(Projectile.Center);
                 }
-
-
             }
 
             cache.Add(Projectile.Center);
@@ -252,12 +261,12 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             trail.NextPosition = Projectile.Center;
         }
 
-        private void DrawPrimitives()
+        public void DrawPrimitives()
         {
             if (trail == null || trail == default)
                 return;
 
-            Main.spriteBatch.End();
+            //Main.spriteBatch.End();
             Effect effect = Filters.Scene["SnailBody"].GetShader().Shader;
 
             Matrix world = Matrix.CreateTranslation(-Main.screenPosition.Vec3());
@@ -270,7 +279,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
             trail.Render(effect);
 
-            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+            //Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
         }
     }
 }

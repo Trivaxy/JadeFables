@@ -1,15 +1,12 @@
 //TODO on dueling spirits:
 //Item sprite
 //Obtainment
-//Better stretching
 //Make it inherit weapon damage
 //Localization
 //Sound effects
-//Better using
 //Description
 //Remove artifacting
 //Some sort of synergy
-//Make it magic (and cost mana
 //Fix zoom issues
 
 using System;
@@ -39,12 +36,13 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
     {
         public override void SetDefaults()
         {
-            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useStyle = ItemUseStyleID.Shoot;
             Item.width = 9;
             Item.height = 15;
             Item.noUseGraphic = true;
             Item.UseSound = SoundID.Item1;
-            Item.DamageType = DamageClass.Melee;
+            Item.DamageType = DamageClass.Magic;
+            Item.mana = 8;
             Item.noMelee = true;
             Item.useAnimation = 10;
             Item.useTime = 10;
@@ -170,7 +168,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 {
                     passive = false;
                     Vector2 dir = Main.MouseWorld - owner.Center;
-                    oldMousePos = owner.Center + (Vector2.Normalize(dir) * MathHelper.Clamp(dir.Length() - distance, 0, 350));
+                    oldMousePos = owner.Center + (Vector2.Normalize(dir) * MathHelper.Clamp(dir.Length() - distance, 1, 350));
                     rotSpeed = 0.2f;
                     var otherProj = Main.projectile.Where(n => n.active && n.owner == owner.whoAmI && n.ModProjectile is Ying && n.type != Projectile.type).FirstOrDefault();
                     if (otherProj != default)
@@ -185,6 +183,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             }
             else
             {
+                owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, owner.DirectionTo(oldMousePos).ToRotation() - 1.57f);
+                owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, owner.DirectionTo(oldMousePos).ToRotation() - 1.57f);
                 attackTimer += rotSpeed;
                 posToCircle = Vector2.Lerp(owner.Center, oldMousePos, MathF.Sin(attackTimer));
                 if (attackTimer >= 3f)
@@ -212,7 +212,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             if (rotDifference < 0)
                 rotDifference += 6.28f;
 
-            return MathHelper.Max(rotDifference / 10, 0.1f);
+            return MathHelper.Max(rotDifference / 6, 0.1f);
         }
 
         public override void Kill(int timeLeft)

@@ -26,7 +26,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Left click to throw Yang, pulling enemies in \nLeft click to throw Ying, pushing enemies away \nAlternate strikes for garaunteed critical hits");
+            Tooltip.SetDefault("Left click to throw Yang, pulling enemies in \nRight click to throw Ying, pushing enemies away \nAlternate strikes for garaunteed critical hits");
         }
         public override void SetDefaults()
         {
@@ -147,6 +147,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             Projectile.friendly = true;
             Projectile.timeLeft = 300;
             Projectile.penetrate = -1;
+            Projectile.DamageType = DamageClass.Magic;
             Projectile.extraUpdates = 1;
         }
 

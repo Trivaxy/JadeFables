@@ -10,10 +10,7 @@
 //Remove artifacting
 //Some sort of synergy
 //Make it magic (and cost mana
-//Fix it sometimes siezing up
-//Make the player able to control distance
 //Fix zoom issues
-//Line up trajectory to mouse position better
 
 using System;
 using System.Linq;
@@ -173,7 +170,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 {
                     passive = false;
                     Vector2 dir = Main.MouseWorld - owner.Center;
-                    oldMousePos = owner.Center + (Vector2.Normalize(dir) * MathHelper.Min(dir.Length(), 300));
+                    oldMousePos = owner.Center + (Vector2.Normalize(dir) * MathHelper.Clamp(dir.Length() - distance, 0, 350));
                     rotSpeed = 0.2f;
                     var otherProj = Main.projectile.Where(n => n.active && n.owner == owner.whoAmI && n.ModProjectile is Ying && n.type != Projectile.type).FirstOrDefault();
                     if (otherProj != default)
@@ -215,7 +212,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             if (rotDifference < 0)
                 rotDifference += 6.28f;
 
-            return rotDifference / 10;
+            return MathHelper.Max(rotDifference / 10, 0.1f);
         }
 
         public override void Kill(int timeLeft)

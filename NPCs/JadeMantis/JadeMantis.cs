@@ -5,12 +5,10 @@
 //Let him take knockback while swooping
 //Prevent it from clipping into blocks
 //Slight screenshake on spear landing
+//Squash and stretch when it pops up
+//Make it go straight to flying animation during pop up
 
 //SOUND EFFECTS:
-//Hitsound
-//Deathsound
-//Spear throwing sound
-//Spear landing sound
 //Pulse sound
 //Popout sound
 
@@ -104,8 +102,8 @@ namespace JadeFables.NPCs.JadeMantis
             NPC.lifeMax = 300;
             NPC.value = 10f;
             NPC.knockBackResist = 0.7f;
-            NPC.HitSound = SoundID.NPCHit21 with { Pitch = -0.45f };
-            NPC.DeathSound = SoundID.NPCDeath53 with { Pitch = -0.6f};
+            NPC.HitSound = SoundID.NPCHit32;
+            NPC.DeathSound = SoundID.NPCDeath35;
             NPC.noGravity = true;
             NPC.behindTiles = true;
         }
@@ -226,7 +224,7 @@ namespace JadeFables.NPCs.JadeMantis
                 if (attackTimer > 200)
                 {
                     attackTimer = 0;
-                    if (true)
+                    if (Main.rand.NextBool())
                         PrepareThrow();
                     else
                         PrepareSwoop();
@@ -301,6 +299,7 @@ namespace JadeFables.NPCs.JadeMantis
             NPC.velocity *= 0.97f;
             if (frameCounter == 0 && yFrame == 3)
             {
+                SoundEngine.PlaySound(SoundID.Item19, NPC.Center);
                 Vector2 pos = NPC.Center;
                 Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), pos, spearVel, ModContent.ProjectileType<JadeMantisSpear>(), NPC.damage, 3);
             }
@@ -465,6 +464,7 @@ namespace JadeFables.NPCs.JadeMantis
         {
             if (!stuck)
             {
+                SoundEngine.PlaySound(SoundID.Item89 with { Pitch = -0.1f }, Projectile.Center);
                 oldRot = Projectile.rotation;
                 Projectile.velocity = Vector2.Zero;
                 stuck = true;

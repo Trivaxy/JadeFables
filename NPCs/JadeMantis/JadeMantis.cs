@@ -19,6 +19,8 @@
 //Contact damage only when thrusting
 //Spear impact dust
 //Let him take knockback while swooping
+//Less abrupt stop after swooping if it doesn't hit a tile
+//Prevent it from clipping into blocks
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -79,6 +81,9 @@ namespace JadeFables.NPCs.JadeMantis
         private int swoopDirection = 0;
         private float swoopCounter = 0;
         private float swoopSpeed = 0;
+        private float swoopPulse = 1;
+        private int swoopPauseTimer = 20;
+        private bool swoopStopped = false;
 
         public override void SetStaticDefaults()
         {
@@ -166,9 +171,8 @@ namespace JadeFables.NPCs.JadeMantis
 
         private void IdleBehavior()
         {
-            attackTimer++;
             bobCounter += 0.2f;
-            if (GoToPos(movementTarget, oldPosition) || movementTarget == Vector2.Zero)
+            if (GoToPos(movementTarget, oldPosition) || movementTarget == Vector2.Zero || attackTimer == 0)
             {
                 oldPosition = NPC.Center;
                 movementTarget = Main.rand.NextVector2Circular(500, 400);
@@ -181,17 +185,36 @@ namespace JadeFables.NPCs.JadeMantis
                         PrepareThrow();
                     else
                         PrepareSwoop();
+                    return;
                 }
             }
+            attackTimer++;
         }
 
         private void SwoopingBehavior()
         {
             float yDiff = target.Center.Y - NPC.Center.Y;
             float yMult = 0.3f;
-            if (swoopCounter < 4.71f)
+
+            if (swoopPulse < 1)
+                swoopPulse += 0.06f;
+
+            if (swoopStopped)
+            {
+                swoopSpeed += 0.7f;
+                NPC.velocity *= 0.95f;
+                swoopPauseTimer--;
+                if (swoopPauseTimer <= 0)
+                    swoopStopped = false;
+            }
+            else if (swoopCounter < 4.71f)
             {
                 swoopCounter += 0.06f;
+                if (swoopPulse == 1 && swoopCounter > 3.14f)
+                {
+                    swoopStopped = true;
+                    swoopPulse = 0;
+                }
             }
             else
             {
@@ -200,14 +223,20 @@ namespace JadeFables.NPCs.JadeMantis
                 {
                     attackPhase = AttackPhase.Idle;
                 }
+                if (Math.Sign(target.Center.X - NPC.Center.X) != swoopDirection && Math.Abs(target.Center.X - NPC.Center.X) > 550)
+                {
+                    attackPhase = AttackPhase.Idle;
+                }
             }
 
-            if (swoopCounter > 3.14f && swoopSpeed < 20)
+            if ((swoopCounter > 3.14f || swoopStopped) && swoopSpeed < 20)
             {
                 swoopSpeed += 0.7f;
             }
             NPC.velocity.Y = Math.Sign(yDiff) * MathF.Sqrt(MathF.Abs(yDiff)) * yMult;
-            NPC.velocity.X = swoopDirection * -MathF.Sin(swoopCounter) * swoopSpeed;
+
+            if (!swoopStopped)
+                NPC.velocity.X = swoopDirection * -MathF.Sin(swoopCounter) * swoopSpeed;
         }
 
         private void ThrowingBehavior()
@@ -232,6 +261,9 @@ namespace JadeFables.NPCs.JadeMantis
 
         private void PrepareSwoop()
         {
+            swoopStopped = false;
+            swoopPauseTimer = 20;
+            swoopPulse = 1;
             xFrame = 0;
             yFrame = 0;
             frameCounter = 0;
@@ -282,6 +314,7 @@ namespace JadeFables.NPCs.JadeMantis
                 origin.X = frameWidth - origin.X;
             }
             Vector2 slopeOffset = new Vector2(0, NPC.gfxOffY);
+            Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor * (1 - swoopPulse), NPC.rotation, origin, NPC.scale + swoopPulse, effects, 0f);
             Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor, NPC.rotation, origin, NPC.scale, effects, 0f);
             return false;
         }

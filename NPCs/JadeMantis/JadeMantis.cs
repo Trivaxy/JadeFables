@@ -3,7 +3,7 @@
 //Bestiary
 //Balance
 //Gores
-//Thrust attack
+//Swoop animations
 //Hiding behavior
 //Hiding spot pick
 //Hitsound
@@ -18,6 +18,7 @@
 //Throwing animation and offset
 //Contact damage only when thrusting
 //Spear impact dust
+//Let him take knockback while swooping
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -75,6 +76,10 @@ namespace JadeFables.NPCs.JadeMantis
 
         private Vector2 spearVel = Vector2.Zero;
 
+        private int swoopDirection = 0;
+        private float swoopCounter = 0;
+        private float swoopSpeed = 0;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 4;
@@ -88,7 +93,7 @@ namespace JadeFables.NPCs.JadeMantis
             NPC.defense = 5;
             NPC.lifeMax = 300;
             NPC.value = 10f;
-            NPC.knockBackResist = 0.4f;
+            NPC.knockBackResist = 0.7f;
             NPC.HitSound = SoundID.NPCHit21 with { Pitch = -0.45f };
             NPC.DeathSound = SoundID.NPCDeath53 with { Pitch = -0.6f};
             NPC.noGravity = true;
@@ -172,29 +177,68 @@ namespace JadeFables.NPCs.JadeMantis
                 if (attackTimer > 200)
                 {
                     attackTimer = 0;
-                    xFrame = 0;
-                    yFrame = 0;
-                    frameCounter = 0;
-                    Vector2 pos = NPC.Center;
-                    spearVel = pos.DirectionTo(target.Center) * 40;
-                    attackPhase = AttackPhase.Throwing;
+                    if (Main.rand.NextBool())
+                        PrepareThrow();
+                    else
+                        PrepareSwoop();
                 }
             }
         }
 
         private void SwoopingBehavior()
         {
+            float yDiff = target.Center.Y - NPC.Center.Y;
+            float yMult = 0.3f;
+            if (swoopCounter < 4.71f)
+            {
+                swoopCounter += 0.06f;
+            }
+            else
+            {
+                yMult = 0.15f;
+                if (NPC.collideX)
+                {
+                    attackPhase = AttackPhase.Idle;
+                }
+            }
 
+            if (swoopCounter > 3.14f && swoopSpeed < 20)
+            {
+                swoopSpeed += 0.7f;
+            }
+            NPC.velocity.Y = Math.Sign(yDiff) * MathF.Sqrt(MathF.Abs(yDiff)) * yMult;
+            NPC.velocity.X = swoopDirection * -MathF.Sin(swoopCounter) * swoopSpeed;
         }
 
         private void ThrowingBehavior()
         {
-            NPC.velocity = Vector2.Zero;
+            NPC.velocity *= 0.97f;
             if (frameCounter == 0 && yFrame == 3)
             {
                 Vector2 pos = NPC.Center;
                 Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), pos, spearVel, ModContent.ProjectileType<JadeMantisSpear>(), NPC.damage, 3);
             }
+        }
+
+        private void PrepareThrow()
+        {
+            xFrame = 0;
+            yFrame = 0;
+            frameCounter = 0;
+            Vector2 pos = NPC.Center;
+            spearVel = pos.DirectionTo(target.Center) * 40;
+            attackPhase = AttackPhase.Throwing;
+        }
+
+        private void PrepareSwoop()
+        {
+            xFrame = 0;
+            yFrame = 0;
+            frameCounter = 0;
+            swoopDirection = Math.Sign(target.Center.X - NPC.Center.X);
+            attackPhase = AttackPhase.Swooping;
+            swoopCounter = 0;
+            swoopSpeed = 5;
         }
 
         /// <summary>

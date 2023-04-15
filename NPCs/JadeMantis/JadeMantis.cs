@@ -3,6 +3,7 @@
 //Balance
 //Prevent it from clipping into blocks
 //Make it go straight to flying animation during pop up
+//Make them drop dumplings and icecream
 
 //SOUND EFFECTS:
 //Pulse sound

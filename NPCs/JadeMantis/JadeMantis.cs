@@ -1,15 +1,17 @@
 ﻿//TODO:
 //Bestiary
 //Balance
+//Adjust damage for expert and master
+//Let him take knockback while swooping
+//Prevent it from clipping into blocks
+//Money dropping
+
+//SOUND EFFECTS:
 //Hitsound
 //Deathsound
 //Spear throwing sound
 //Spear landing sound
-//Money dropping
-//Popout dust
-//Adjust damage for expert and master
-//Let him take knockback while swooping
-//Prevent it from clipping into blocks
+//Popout sound
 
 //SPRITE DEPENDANT:
 //Gores
@@ -181,6 +183,13 @@ namespace JadeFables.NPCs.JadeMantis
         {
             if (popoutTimer == 0)
             {
+                for (int i = 0; i < 30; i++)
+                {
+                    Vector2 dustPos = NPC.Center - new Vector2(0, NPC.height / 2);
+                    Vector2 dustVel = Main.rand.NextVector2Circular(4, 8);
+                    dustVel.Y *= -Math.Sign(dustVel.Y);
+                    Dust.NewDustPerfect(dustPos, ModContent.DustType<JadeMantisPopupDust>(), dustVel);
+                }
                 NPC.velocity.Y = -20;
             }
             NPC.velocity.Y *= 0.85f;

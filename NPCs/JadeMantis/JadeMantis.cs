@@ -1,16 +1,16 @@
 ﻿//TODO:
 //Bestiary
 //Balance
-//Adjust damage for expert and master
+//Adjust projectile damage for expert and master
 //Let him take knockback while swooping
 //Prevent it from clipping into blocks
-//Money dropping
 
 //SOUND EFFECTS:
 //Hitsound
 //Deathsound
 //Spear throwing sound
 //Spear landing sound
+//Pulse sound
 //Popout sound
 
 //SPRITE DEPENDANT:

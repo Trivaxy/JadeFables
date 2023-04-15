@@ -16,7 +16,6 @@
 //Adjust damage for expert and master
 //Spear sprite
 //Throwing animation and offset
-//Contact damage only when thrusting
 //Let him take knockback while swooping
 //Less abrupt stop after swooping if it doesn't hit a tile
 //Prevent it from clipping into blocks
@@ -295,6 +294,13 @@ namespace JadeFables.NPCs.JadeMantis
 
             NPC.velocity.Y = (float)Math.Cos(bobCounter) * 0.45f;
             return true;
+        }
+
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
+            if (attackPhase == AttackPhase.Swooping && swoopCounter > 4.71f)
+                return base.CanHitPlayer(target, ref cooldownSlot);
+            return false;
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

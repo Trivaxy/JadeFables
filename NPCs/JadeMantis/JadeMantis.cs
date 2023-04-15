@@ -1,9 +1,7 @@
 ﻿//TODO:
-//Bestiary
 //Balance
 //Prevent it from clipping into blocks
 //Make it go straight to flying animation during pop up
-//Make them drop dumplings and icecream
 
 //SOUND EFFECTS:
 //Pulse sound
@@ -404,6 +402,9 @@ namespace JadeFables.NPCs.JadeMantis
                 scaleVec = new Vector2(squash, stretch);
             }
             Vector2 slopeOffset = new Vector2(0, NPC.gfxOffY);
+
+            if (NPC.IsABestiaryIconDummy)
+                drawColor = Color.White;
             Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor * (1 - swoopPulse), NPC.rotation, origin, NPC.scale + swoopPulse, effects, 0f);
             Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor, NPC.rotation, origin, NPC.scale * scaleVec, effects, 0f);
             return false;
@@ -440,6 +441,13 @@ namespace JadeFables.NPCs.JadeMantis
                 }
             }
         }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
+            npcLoot.Add(ItemDropRule.Common(ItemID.IceCream, 40));
+        }
+
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) => !spawnInfo.Water && !spawnInfo.PlayerSafe && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 4f : 0f;
     }

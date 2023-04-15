@@ -4,9 +4,9 @@
 //Adjust projectile damage for expert and master
 //Let him take knockback while swooping
 //Prevent it from clipping into blocks
-//Slight screenshake on spear landing
-//Squash and stretch when it pops up
 //Make it go straight to flying animation during pop up
+//Make the spear glow
+//Make foliage cover the mantis when its hiding
 
 //SOUND EFFECTS:
 //Pulse sound
@@ -377,9 +377,17 @@ namespace JadeFables.NPCs.JadeMantis
                 effects = SpriteEffects.FlipHorizontally;
                 origin.X = frameWidth - origin.X;
             }
+
+            Vector2 scaleVec = Vector2.One; 
+            if (attackPhase == AttackPhase.PoppingOut)
+            {
+                float squash = MathHelper.Max(1 - (NPC.velocity.Length() / 80f), 0.25f);
+                float stretch = 1 + NPC.velocity.Length() / 30f;
+                scaleVec = new Vector2(squash, stretch);
+            }
             Vector2 slopeOffset = new Vector2(0, NPC.gfxOffY);
             Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor * (1 - swoopPulse), NPC.rotation, origin, NPC.scale + swoopPulse, effects, 0f);
-            Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor, NPC.rotation, origin, NPC.scale, effects, 0f);
+            Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor, NPC.rotation, origin, NPC.scale * scaleVec, effects, 0f);
             return false;
         }
 
@@ -470,7 +478,7 @@ namespace JadeFables.NPCs.JadeMantis
                 stuck = true;
                 Projectile.hostile = false;
                 Projectile.position += oldVelocity;
-
+                Core.Systems.CameraSystem.Shake += 6;
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 dir = Main.rand.NextVector2Circular(3, 3);

@@ -89,6 +89,7 @@ namespace JadeFables.NPCs.JadeMantis
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 4;
+            DisplayName.SetDefault("Artisan Mantis");
         }
 
         public override void SetDefaults()
@@ -111,7 +112,7 @@ namespace JadeFables.NPCs.JadeMantis
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]
             {
                 JadeSpawnConditions.JadeSprings,
-                new FlavorTextBestiaryInfoElement("Mantis. I am gamer")
+                new FlavorTextBestiaryInfoElement("Flight has its perks, and has allowed the Jade Mantis tribe to erect large monuments efficiently. But beware; the Mantises are very protective of their designs, and will pluck away anyone who dares to enter the Jade Pagodas.")
             });
         }
 

@@ -4,6 +4,7 @@
 //Adjust projectile damage for expert and master
 //Let him take knockback while swooping
 //Prevent it from clipping into blocks
+//Slight screenshake on spear landing
 
 //SOUND EFFECTS:
 //Hitsound

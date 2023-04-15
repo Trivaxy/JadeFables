@@ -17,7 +17,6 @@
 //Spear sprite
 //Throwing animation and offset
 //Contact damage only when thrusting
-//Spear impact dust
 //Let him take knockback while swooping
 //Less abrupt stop after swooping if it doesn't hit a tile
 //Prevent it from clipping into blocks
@@ -47,6 +46,7 @@ using Humanizer;
 using System.Reflection;
 using JadeFables.Tiles.Banners;
 using static Humanizer.In;
+using JadeFables.Dusts;
 
 namespace JadeFables.NPCs.JadeMantis
 {
@@ -398,11 +398,20 @@ namespace JadeFables.NPCs.JadeMantis
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            oldRot = Projectile.rotation;
-            Projectile.velocity = Vector2.Zero;
-            stuck = true;
-            Projectile.hostile = false;
-            Projectile.position += oldVelocity;
+            if (!stuck)
+            {
+                oldRot = Projectile.rotation;
+                Projectile.velocity = Vector2.Zero;
+                stuck = true;
+                Projectile.hostile = false;
+                Projectile.position += oldVelocity;
+
+                for (int i = 0; i < 8; i++)
+                {
+                    Vector2 dir = Main.rand.NextVector2Circular(3, 3);
+                    Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<JadeSparkle>(), dir);
+                }
+            }
             return false;
         }
 

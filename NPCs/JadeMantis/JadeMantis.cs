@@ -1,7 +1,6 @@
 ﻿//TODO:
 //Bestiary
 //Balance
-//Adjust projectile damage for expert and master
 //Prevent it from clipping into blocks
 //Make it go straight to flying animation during pop up
 
@@ -311,7 +310,7 @@ namespace JadeFables.NPCs.JadeMantis
             {
                 SoundEngine.PlaySound(SoundID.Item19, NPC.Center);
                 Vector2 pos = NPC.Center;
-                Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), pos, spearVel, ModContent.ProjectileType<JadeMantisSpear>(), NPC.damage, 3);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), pos, spearVel, ModContent.ProjectileType<JadeMantisSpear>(), (int)(NPC.damage * (Main.expertMode ? 0.5f : 1f)), 3);
             }
         }
 

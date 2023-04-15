@@ -226,7 +226,7 @@ namespace JadeFables.NPCs.JadeMantis
                 if (attackTimer > 200)
                 {
                     attackTimer = 0;
-                    if (Main.rand.NextBool())
+                    if (true)
                         PrepareThrow();
                     else
                         PrepareSwoop();
@@ -452,8 +452,8 @@ namespace JadeFables.NPCs.JadeMantis
                     Projectile.active = false;
 
                 if (shakeTimer > 0)
-                    shakeTimer -= 0.1f;
-                Projectile.rotation = oldRot + (0.3f * MathF.Sin(shakeTimer * 6.28f) * shakeTimer);
+                    shakeTimer -= 0.05f;
+                Projectile.rotation = oldRot + (0.5f * MathF.Sin(shakeTimer * 6.28f * 2) * shakeTimer);
             }
             else
             {

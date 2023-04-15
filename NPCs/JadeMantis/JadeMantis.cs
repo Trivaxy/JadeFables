@@ -2,20 +2,18 @@
 //Bestiary
 //Balance
 //Adjust projectile damage for expert and master
-//Let him take knockback while swooping
+//Let him take knockback while idle
 //Prevent it from clipping into blocks
 //Make it go straight to flying animation during pop up
-//Make the spear glow
-//Make foliage cover the mantis when its hiding
 
 //SOUND EFFECTS:
 //Pulse sound
 
 //SPRITE DEPENDANT:
+//Make foliage cover the mantis when its hiding
 //Gores
 //Banner
 //Swoop animations
-//Spear sprite
 //Throwing animation and offset
 
 using Microsoft.Xna.Framework;
@@ -246,7 +244,7 @@ namespace JadeFables.NPCs.JadeMantis
                 }
                 return;
             }
-            float yDiff = target.Center.Y - NPC.Center.Y;
+            float yDiff = (target.Center.Y - 32) - NPC.Center.Y;
             float yMult = 0.3f;
 
             if (swoopPulse < 1)
@@ -470,6 +468,7 @@ namespace JadeFables.NPCs.JadeMantis
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
+            Lighting.AddLight(Projectile.Center, Color.LimeGreen.ToVector3() * opacity);
             if (!stuck)
             {
                 SoundEngine.PlaySound(SoundID.Item89 with { Pitch = -0.1f }, Projectile.Center);
@@ -491,8 +490,11 @@ namespace JadeFables.NPCs.JadeMantis
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D glowTex = ModContent.Request<Texture2D>(Texture + "_Glow").Value;
             Vector2 origin = new Vector2(tex.Width / 2, 0);
+            Vector2 glowOrigin = new Vector2(glowTex.Width / 2, 6);
             Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowTex, Projectile.Center - Main.screenPosition, null, new Color(255,255,255,0) * opacity * 0.3f, Projectile.rotation, glowOrigin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

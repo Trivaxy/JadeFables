@@ -2,7 +2,6 @@
 //Bestiary
 //Balance
 //Adjust projectile damage for expert and master
-//Let him take knockback while idle
 //Prevent it from clipping into blocks
 //Make it go straight to flying animation during pop up
 
@@ -85,6 +84,9 @@ namespace JadeFables.NPCs.JadeMantis
 
         private int popoutTimer = 0;
 
+        private Vector2 knockBackPos = Vector2.Zero;
+        private int knockBackTimer = 0;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 4;
@@ -98,7 +100,7 @@ namespace JadeFables.NPCs.JadeMantis
             NPC.defense = 5;
             NPC.lifeMax = 300;
             NPC.value = 10f;
-            NPC.knockBackResist = 0.7f;
+            NPC.knockBackResist = 1.2f;
             NPC.HitSound = SoundID.NPCHit32;
             NPC.DeathSound = SoundID.NPCDeath35;
             NPC.noGravity = true;
@@ -120,6 +122,11 @@ namespace JadeFables.NPCs.JadeMantis
             {
                 attackPhase = AttackPhase.PoppingOut;
             }
+            if (attackPhase == AttackPhase.Idle && hit.Knockback > 0)
+            {
+                knockBackPos = NPC.Center;
+                knockBackTimer = 30;
+            }
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -127,6 +134,11 @@ namespace JadeFables.NPCs.JadeMantis
             if (attackPhase == AttackPhase.Hiding)
             {
                 attackPhase = AttackPhase.PoppingOut;
+                if (attackPhase == AttackPhase.Idle && hit.Knockback > 0)
+                {
+                    knockBackPos = NPC.Center;
+                    knockBackTimer = 30;
+                }
             }
         }
 
@@ -343,8 +355,15 @@ namespace JadeFables.NPCs.JadeMantis
 
             if (NPC.Distance(pos) > 7 && !NPC.collideY && !NPC.collideX)
             {
-                NPC.velocity = dir * ((float)Math.Sin(progress * 3.14f) + 0.1f) * 5;
-                NPC.velocity.Y += (float)Math.Cos(bobCounter) * 0.45f;
+                if (knockBackTimer-- <= 0)
+                {
+                    NPC.velocity = dir * ((float)Math.Sin(progress * 3.14f) + 0.1f) * 5;
+                    NPC.velocity.Y += (float)Math.Cos(bobCounter) * 0.45f;
+                }
+                else
+                {
+                    NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.DirectionTo(pos) * 6, 0.05f);
+                }
                 return false;
             }
 

@@ -483,7 +483,7 @@ namespace JadeFables.NPCs.JadeMantis
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
-            Vector2 origin = new Vector2(tex.Width / 2, 24);
+            Vector2 origin = new Vector2(tex.Width / 2, 0);
             Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }

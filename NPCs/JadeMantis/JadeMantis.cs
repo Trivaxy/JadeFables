@@ -10,7 +10,6 @@
 
 //SOUND EFFECTS:
 //Pulse sound
-//Popout sound
 
 //SPRITE DEPENDANT:
 //Gores
@@ -182,6 +181,7 @@ namespace JadeFables.NPCs.JadeMantis
         {
             if (popoutTimer == 0)
             {
+                SoundEngine.PlaySound(SoundID.WormDig, NPC.Center);
                 for (int i = 0; i < 30; i++)
                 {
                     Vector2 dustPos = NPC.Center - new Vector2(0, NPC.height / 2);

@@ -1,24 +1,23 @@
 ﻿//TODO:
-//Banners
 //Bestiary
 //Balance
-//Gores
-//Swoop animations
-//Hiding behavior
-//Hiding spot pick
 //Hitsound
 //Deathsound
 //Spear throwing sound
 //Spear landing sound
 //Money dropping
-//Better pop out
-//Make it draw behind tiles
+//Popout dust
 //Adjust damage for expert and master
+//Let him take knockback while swooping
+//Prevent it from clipping into blocks
+
+//SPRITE DEPENDANT:
+//Gores
+//Banner
+//Swoop animations
 //Spear sprite
 //Throwing animation and offset
-//Let him take knockback while swooping
-//Less abrupt stop after swooping if it doesn't hit a tile
-//Prevent it from clipping into blocks
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -54,10 +53,11 @@ namespace JadeFables.NPCs.JadeMantis
         private enum AttackPhase
         {
             JustSpawned = 0,
-            Hiding = 1,
-            Idle = 2,
-            Swooping = 3,
-            Throwing = 4,
+            PoppingOut = 1,
+            Hiding = 2,
+            Idle = 3,
+            Swooping = 4,
+            Throwing = 5,
         }
 
         private AttackPhase attackPhase = AttackPhase.JustSpawned;
@@ -83,6 +83,9 @@ namespace JadeFables.NPCs.JadeMantis
         private float swoopPulse = 1;
         private int swoopPauseTimer = 20;
         private bool swoopStopped = false;
+        private bool swoopEnded = false;
+
+        private int popoutTimer = 0;
 
         public override void SetStaticDefaults()
         {
@@ -101,6 +104,7 @@ namespace JadeFables.NPCs.JadeMantis
             NPC.HitSound = SoundID.NPCHit21 with { Pitch = -0.45f };
             NPC.DeathSound = SoundID.NPCDeath53 with { Pitch = -0.6f};
             NPC.noGravity = true;
+            NPC.behindTiles = true;
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -116,7 +120,7 @@ namespace JadeFables.NPCs.JadeMantis
         {
             if (attackPhase == AttackPhase.Hiding)
             {
-                attackPhase = AttackPhase.Idle;
+                attackPhase = AttackPhase.PoppingOut;
             }
         }
 
@@ -124,7 +128,7 @@ namespace JadeFables.NPCs.JadeMantis
         {
             if (attackPhase == AttackPhase.Hiding)
             {
-                attackPhase = AttackPhase.Idle;
+                attackPhase = AttackPhase.PoppingOut;
             }
         }
 
@@ -137,6 +141,9 @@ namespace JadeFables.NPCs.JadeMantis
                 case AttackPhase.JustSpawned:
                     NPC.Center = FindSpot();
                     attackPhase = AttackPhase.Hiding;
+                    break;
+                case AttackPhase.PoppingOut:
+                    PoppingOutBehavior();
                     break;
                 case AttackPhase.Hiding:
                     HidingBehavior();
@@ -155,7 +162,36 @@ namespace JadeFables.NPCs.JadeMantis
 
         private Vector2 FindSpot()
         {
-            return NPC.Center;
+            Tile tile = Framing.GetTileSafely((int)NPC.Center.X / 16, (int)NPC.Center.Y / 16);
+            int j = 0;
+            for (; j < 100; j++)
+            {
+                tile = Framing.GetTileSafely((int)NPC.Center.X / 16, (int)(NPC.Center.Y / 16) + j);
+                if (tile.HasTile && Main.tileSolid[tile.TileType])
+                {
+                    break;
+                }
+            }
+            Vector2 ret = NPC.Center + new Vector2(0, j * 16);
+            ret += new Vector2(0, 10);
+            return ret;
+        }
+
+        private void PoppingOutBehavior()
+        {
+            if (popoutTimer == 0)
+            {
+                NPC.velocity.Y = -20;
+            }
+            NPC.velocity.Y *= 0.85f;
+            NPC.noTileCollide = true;
+            popoutTimer++;
+
+            if (popoutTimer > 30)
+            {
+                NPC.noTileCollide = false;
+                attackPhase = AttackPhase.Idle;
+            }
         }
 
         private void HidingBehavior()
@@ -164,7 +200,7 @@ namespace JadeFables.NPCs.JadeMantis
 
             if (NPC.Distance(target.Center) < 200)
             {
-                attackPhase = AttackPhase.Idle;
+                attackPhase = AttackPhase.PoppingOut;
             }
         }
 
@@ -192,6 +228,16 @@ namespace JadeFables.NPCs.JadeMantis
 
         private void SwoopingBehavior()
         {
+            NPC.spriteDirection = swoopDirection;
+            if (swoopEnded)
+            {
+                NPC.velocity *= 0.9f;
+                if (NPC.velocity.Length() < 2)
+                {
+                    attackPhase = AttackPhase.Idle;
+                }
+                return;
+            }
             float yDiff = target.Center.Y - NPC.Center.Y;
             float yMult = 0.3f;
 
@@ -224,7 +270,7 @@ namespace JadeFables.NPCs.JadeMantis
                 }
                 if (Math.Sign(target.Center.X - NPC.Center.X) != swoopDirection && Math.Abs(target.Center.X - NPC.Center.X) > 550)
                 {
-                    attackPhase = AttackPhase.Idle;
+                    swoopEnded = true;
                 }
             }
 
@@ -236,6 +282,8 @@ namespace JadeFables.NPCs.JadeMantis
 
             if (!swoopStopped)
                 NPC.velocity.X = swoopDirection * -MathF.Sin(swoopCounter) * swoopSpeed;
+
+
         }
 
         private void ThrowingBehavior()
@@ -260,6 +308,7 @@ namespace JadeFables.NPCs.JadeMantis
 
         private void PrepareSwoop()
         {
+            swoopEnded = false;
             swoopStopped = false;
             swoopPauseTimer = 20;
             swoopPulse = 1;

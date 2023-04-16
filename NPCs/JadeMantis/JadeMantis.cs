@@ -1,7 +1,6 @@
 ﻿//TODO:
 //Balance
 //Prevent it from clipping into blocks
-//Maybe add afterimage
 
 //SOUND EFFECTS:
 //Pulse sound for swoop
@@ -79,6 +78,8 @@ namespace JadeFables.NPCs.JadeMantis
         private int swoopPauseTimer = 20;
         private bool swoopStopped = false;
         private bool swoopEnded = false;
+
+        private List<Vector2> oldPos = new List<Vector2>();
 
         private int popoutTimer = 0;
 
@@ -233,7 +234,7 @@ namespace JadeFables.NPCs.JadeMantis
                 if (attackTimer > 200)
                 {
                     attackTimer = 0;
-                    if (Main.rand.NextBool())
+                    if (false)
                         PrepareThrow();
                     else
                         PrepareSwoop();
@@ -246,6 +247,14 @@ namespace JadeFables.NPCs.JadeMantis
         private void SwoopingBehavior()
         {
             NPC.spriteDirection = swoopDirection;
+
+            if (swoopPauseTimer <= 0)
+            {
+                oldPos.Add(NPC.Center);
+                if (oldPos.Count() > 6)
+                    oldPos.RemoveAt(0);
+            }
+
             if (swoopEnded)
             {
                 NPC.velocity *= 0.9f;
@@ -267,7 +276,10 @@ namespace JadeFables.NPCs.JadeMantis
                 NPC.velocity *= 0.95f;
                 swoopPauseTimer--;
                 if (swoopPauseTimer <= 0)
+                {
+                    oldPos = new List<Vector2>();
                     swoopStopped = false;
+                }
             }
             else if (swoopCounter < 4.71f)
             {
@@ -326,6 +338,7 @@ namespace JadeFables.NPCs.JadeMantis
 
         private void PrepareSwoop()
         {
+            oldPos = new List<Vector2>();
             swoopEnded = false;
             swoopStopped = false;
             swoopPauseTimer = 20;
@@ -406,6 +419,14 @@ namespace JadeFables.NPCs.JadeMantis
             if (NPC.IsABestiaryIconDummy)
                 drawColor = Color.White;
             Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor * (1 - swoopPulse), NPC.rotation, origin, NPC.scale + swoopPulse, effects, 0f);
+            if (oldPos.Count() > 0 && attackPhase == AttackPhase.Swooping)
+            {
+                for (int i = oldPos.Count() - 1; i >= 0; i--)
+                {
+                    float lerper = i / (float)oldPos.Count();
+                    Main.spriteBatch.Draw(mainTex, slopeOffset + oldPos[i] - screenPos, frameBox, drawColor * lerper, NPC.rotation, origin, NPC.scale * scaleVec, effects, 0f);
+                }
+            }
             Main.spriteBatch.Draw(mainTex, slopeOffset + NPC.Center - screenPos, frameBox, drawColor, NPC.rotation, origin, NPC.scale * scaleVec, effects, 0f);
             return false;
         }

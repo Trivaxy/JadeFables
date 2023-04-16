@@ -15,6 +15,7 @@ using JadeFables.Core;
 using Steamworks;
 using JadeFables.Tiles.JadeTorch;
 using Terraria.ModLoader.IO;
+using JadeFables.Helpers;
 
 namespace JadeFables.Tiles.JadeLantern
 {
@@ -327,6 +328,7 @@ namespace JadeFables.Tiles.JadeLantern
             lanternFrame = new Rectangle(0, 34 * lanternFrameY, 32, 32);
         }
 
+        public static Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> _paintRenders = new();
         public void Draw()
         {
             if (chain == null)
@@ -344,6 +346,8 @@ namespace JadeFables.Tiles.JadeLantern
             RopeSegment seg = chain.ropeSegments[chain.segmentCount - 2];
             RopeSegment nextSeg = chain.ropeSegments[chain.segmentCount - 1];
 
+            Tile originTile = Main.tile[(int)(WorldPosition.X / 16), (int)(WorldPosition.Y / 16)];
+
             if (!burning)
             {
                 Main.spriteBatch.Draw(backTex, nextSeg.posNow - Main.screenPosition, null, glowColor * 0.4f, 0, backTex.Size() / 2, 0.7f, SpriteEffects.None, 0f);
@@ -353,15 +357,17 @@ namespace JadeFables.Tiles.JadeLantern
             {
                 RopeSegment segInner = chain.ropeSegments[i];
                 RopeSegment nextSegInner = chain.ropeSegments[i + 1];
-                Main.spriteBatch.Draw(chainTex, segInner.posNow - Main.screenPosition, chainFrame, Lighting.GetColor((int)(segInner.posNow.X / 16), (int)(segInner.posNow.Y / 16)), segInner.posNow.DirectionTo(nextSegInner.posNow).ToRotation() + 1.57f, chainFrame.Size() / 2, 1, SpriteEffects.None, 0f);
+                Texture2D paintedChainTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(0, originTile.TileColor, texPath + "_Chain", -1);
+                if (paintedChainTexture is not null) PaintHelper.DrawWithCoating(originTile.IsTileFullbright, originTile.IsTileInvisible, paintedChainTexture, segInner.posNow - Main.screenPosition, chainFrame, Lighting.GetColor((int)(segInner.posNow.X / 16), (int)(segInner.posNow.Y / 16)), segInner.posNow.DirectionTo(nextSegInner.posNow).ToRotation() + 1.57f, chainFrame.Size() / 2, 1, SpriteEffects.None, 0f);
             }
-
-            Main.spriteBatch.Draw(pivotTex, (WorldPosition - new Vector2(-8, 6)) - Main.screenPosition, pivotFrame, Lighting.GetColor((int)(WorldPosition.X / 16), (int)(WorldPosition.Y / 16)), 0, pivotFrame.Size() / 2, 1, SpriteEffects.None, 0f);
+            Texture2D paintedPivotTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(1, originTile.TileColor, texPath + "_Pivot", -1);
+            if (paintedPivotTexture is not null) PaintHelper.DrawWithCoating(originTile.IsTileFullbright, originTile.IsTileInvisible, paintedPivotTexture, (WorldPosition - new Vector2(-8, 6)) - Main.screenPosition, pivotFrame, Lighting.GetColor((int)(WorldPosition.X / 16), (int)(WorldPosition.Y / 16)), 0, pivotFrame.Size() / 2, 1, SpriteEffects.None, 0f);
 
             if (!burning)
             {
-                Main.spriteBatch.Draw(lanternTex, nextSeg.posNow - Main.screenPosition, lanternFrame, Lighting.GetColor((int)(nextSeg.posNow.X / 16), (int)(nextSeg.posNow.Y / 16)), seg.posNow.DirectionTo(nextSeg.posNow).ToRotation() - 1.57f, lanternFrame.Size() / 2, 1, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(glowTex, nextSeg.posNow - Main.screenPosition, lanternFrame, glowColor * 0.6f, seg.posNow.DirectionTo(nextSeg.posNow).ToRotation() - 1.57f, lanternFrame.Size() / 2, 1, SpriteEffects.None, 0f);
+                Texture2D paintedTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(2, originTile.TileColor, texPath, -1);
+                if (paintedTexture is not null) PaintHelper.DrawWithCoating(originTile.IsTileFullbright, originTile.IsTileInvisible, paintedTexture, nextSeg.posNow - Main.screenPosition, lanternFrame, Lighting.GetColor((int)(nextSeg.posNow.X / 16), (int)(nextSeg.posNow.Y / 16)), seg.posNow.DirectionTo(nextSeg.posNow).ToRotation() - 1.57f, lanternFrame.Size() / 2, 1, SpriteEffects.None, 0f);
+                PaintHelper.DrawWithCoating(false, originTile.IsTileInvisible, glowTex, nextSeg.posNow - Main.screenPosition, lanternFrame, glowColor * (originTile.TileColor == PaintID.None ? 0.6f : 0.9f), seg.posNow.DirectionTo(nextSeg.posNow).ToRotation() - 1.57f, lanternFrame.Size() / 2, 1, SpriteEffects.None, 0f);
             }
         }
 

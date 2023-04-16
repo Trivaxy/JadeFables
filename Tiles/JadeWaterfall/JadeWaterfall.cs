@@ -176,7 +176,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             Projectile.hide = true;
         }
 
-
+        public static Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> _paintRenders = new();
         public void Draw()
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
@@ -186,7 +186,11 @@ namespace JadeFables.Tiles.JadeWaterfall
             Rectangle topFrameBox = new Rectangle(0, (frame % yFrames) * topFrameHeight, topTex.Width, topFrameHeight);
             Color topColor = Lighting.GetColor((int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16));
 
-            PaintHelper.DrawWithPaint(originLeft.TileColor, Texture + "_Top", Projectile.Center - Main.screenPosition, topFrameBox, topColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+            Texture2D? paintedTopTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(Projectile.type, originLeft.TileColor, Texture + "_Top", -1);
+            if (paintedTopTexture is not null) PaintHelper.DrawWithCoating(originLeft.IsTileFullbright, originLeft.IsTileInvisible, paintedTopTexture, Projectile.Center - Main.screenPosition, topFrameBox, topColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+
+
+            //PaintHelper.DrawWithPaint(originLeft.TileColor, Texture + "_Top", Projectile.Center - Main.screenPosition, topFrameBox, topColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             int i;
             for (i = 1; i < length; i++)
             {
@@ -196,7 +200,9 @@ namespace JadeFables.Tiles.JadeWaterfall
                 Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * ((((i - 1) / tileHeight) + frame) % yFrames)) + (frameHeight * ((i - 1) % tileHeight)), tex.Width, frameHeight);
                 Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16));
 
-                PaintHelper.DrawWithPaint(originLeft.TileColor, Texture, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+                Texture2D? paintedTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(Projectile.type + 1, originLeft.TileColor, Texture, -1);
+                if (paintedTexture is not null) PaintHelper.DrawWithCoating(originLeft.IsTileFullbright, originLeft.IsTileInvisible, paintedTexture, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+                //PaintHelper.DrawWithPaint(originLeft.TileColor, Texture, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             }
 
             if (length == MAXLENGTH)
@@ -209,7 +215,9 @@ namespace JadeFables.Tiles.JadeWaterfall
                     Rectangle frameBox = new Rectangle(0, (tileHeight * frameHeight * ((((i - 1) / tileHeight) + frame) % yFrames)) + (frameHeight * ((i - 1) % tileHeight)), tex.Width, frameHeight);
                     Color color = Lighting.GetColor((int)(pos.X / 16), (int)(pos.Y / 16)) * (1 - ((i - length) / (float)FADEOUTLENGTH));
 
-                    PaintHelper.DrawWithPaint(originLeft.TileColor, Texture, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+                    Texture2D paintedTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(Projectile.type + 1, originLeft.TileColor, Texture, -1);
+                    if (paintedTexture is not null) PaintHelper.DrawWithCoating(originLeft.IsTileFullbright, originLeft.IsTileInvisible, paintedTexture, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+                    //PaintHelper.DrawWithPaint(originLeft.TileColor, Texture, pos - Main.screenPosition, frameBox, color, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
                 }
             }
 
@@ -220,7 +228,9 @@ namespace JadeFables.Tiles.JadeWaterfall
             Vector2 bottomPos = Projectile.Center + (Vector2.UnitY * 16 * i) - new Vector2(16, 16);
             Color bottomColor = Lighting.GetColor((int)(bottomPos.X / 16), (int)(bottomPos.Y / 16));
 
-            PaintHelper.DrawWithPaint(originLeft.TileColor, Texture + "_Bottom", bottomPos - Main.screenPosition, bottomFrameBox, bottomColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+            Texture2D paintedBottomTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(Projectile.type + 2, originLeft.TileColor, Texture + "_Bottom", -1);
+            if (paintedBottomTexture is not null) PaintHelper.DrawWithCoating(originLeft.IsTileFullbright, originLeft.IsTileInvisible, paintedBottomTexture, bottomPos - Main.screenPosition, bottomFrameBox, bottomColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
+            //PaintHelper.DrawWithPaint(originLeft.TileColor, Texture + "_Bottom", bottomPos - Main.screenPosition, bottomFrameBox, bottomColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             
             return;
         }

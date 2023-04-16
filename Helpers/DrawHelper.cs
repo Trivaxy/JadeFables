@@ -1,8 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
+using System.Reflection;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
+using static Terraria.GameContent.TilePaintSystemV2;
 
 namespace JadeFables.Helpers
 {
@@ -148,7 +152,7 @@ namespace JadeFables.Helpers
     }
     public static class PaintHelper
     {
-        public static void DrawWithPaint(byte paintType, string texturePath, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
+        /*public static void DrawWithPaint(byte paintType, string texturePath, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
         {
             color = color.MultiplyRGBA(WorldGen.paintColor(paintType).MaxAlpha());
 
@@ -161,9 +165,22 @@ namespace JadeFables.Helpers
 
             Texture2D texture = GetVariantTexture(texturePath, GetEffectForPaint(paintType));
             Main.spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+        }*/
+
+        public static void DrawWithCoating(bool fullbright, bool invisible, Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth)
+        {
+            if (invisible && !Main.ShouldShowInvisibleWalls()) return;
+            if (fullbright) color = Color.White;
+            Main.spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+        }
+        public static void DrawWithCoating(bool fullbright, bool invisible, Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth)
+        {
+            if (invisible && !Main.ShouldShowInvisibleWalls()) return;
+            if (fullbright) color = Color.White;
+            Main.spriteBatch.Draw(texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
         }
 
-        public static Color MaxAlpha(this Color color)
+        /*public static Color MaxAlpha(this Color color)
         {
             return new Color(color.R, color.G, color.B, 255);
         }
@@ -224,6 +241,137 @@ namespace JadeFables.Helpers
         public static Color[] None(Color[] pixels)
         {
             return pixels;
+        }*/
+    }
+    public class PaintAnythingSystem : ModSystem
+    {
+
+        //public static Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> _paintRenders = new();
+
+        private static IList<ARenderTargetHolder> paintSystemRequests;
+
+        public override void Load()
+        {
+            var tilePaintSystemRequests = typeof(TilePaintSystemV2).GetField("_requests", BindingFlags.NonPublic | BindingFlags.Instance);
+            paintSystemRequests = tilePaintSystemRequests.GetValue(Main.instance.TilePaintSystem) as IList<ARenderTargetHolder>; // grab the requests through reflection
+        }
+
+        public static event Action ClearRenderTargets;
+        public override void Unload() => ClearRenderTargets?.Invoke();
+
+        private static void RequestPaintTexture(Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> textureDict, ref UniversalVariationKey lookupKey, string texturePath, int copySettingsFrom = -1, TreePaintingSettings customSettings = null)
+        {
+            if (!textureDict.TryGetValue(lookupKey, out WhateverPaintRenderTargetHolder target))
+            {
+                target = new WhateverPaintRenderTargetHolder(lookupKey, texturePath, copySettingsFrom, customSettings);
+                textureDict.Add(lookupKey, target);
+            }
+
+            //We don't need to process the requests ourselves, just let the paint system do it, gg ez
+            if (!target.IsReady)
+                paintSystemRequests.Add(target);
+        }
+
+        public static Texture2D TryGetTexturePaintAndRequestIfNotReady(Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> textureDict, int type, int paintColor, string texturePath, int copySettingsFrom = -1, TreePaintingSettings customSettings = null)
+        {
+            UniversalVariationKey variationKey = new UniversalVariationKey(type, paintColor);
+            if (textureDict.TryGetValue(variationKey, out WhateverPaintRenderTargetHolder value) && value.IsReady)
+                return value.Target;
+
+            RequestPaintTexture(textureDict, ref variationKey, texturePath, copySettingsFrom, customSettings);
+            return null;
+        }
+
+
+    }
+
+    public static class PaintAnythingExtensions
+    {
+        public static Texture2D TryGetTexturePaintAndRequestIfNotReady(this Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> textureDict, int type, int paintColor, string texturePath, int copySettingsFrom = -1, TreePaintingSettings customSettings = null)
+        {
+            return PaintAnythingSystem.TryGetTexturePaintAndRequestIfNotReady(textureDict, type, paintColor, texturePath, copySettingsFrom, customSettings);
+        }
+        public static TreePaintingSettings moreColorful = new TreePaintingSettings
+        {
+            UseSpecialGroups = true,
+            SpecialGroupMinimalHueValue = 0.5f,
+            SpecialGroupMaximumHueValue = 0.9f,
+            SpecialGroupMinimumSaturationValue = 0.5f,
+            SpecialGroupMaximumSaturationValue = 0.9f,
+            InvertSpecialGroupResult = true,
+        };
+    }
+
+    public class WhateverPaintRenderTargetHolder : ARenderTargetHolder
+    {
+        public UniversalVariationKey Key;
+        public int tileTypeToCopySettingsFrom;
+        public TreePaintingSettings paintSettings;
+        public string texturePath;
+
+        public WhateverPaintRenderTargetHolder(UniversalVariationKey key, string texture, int copySettingsFrom = -1, TreePaintingSettings customSettings = null)
+        {
+            Key = key;
+            texturePath = texture;
+
+            //Lets us use custom parameters for the paint settings 
+            if (customSettings != null)
+            {
+                Main.NewText(customSettings.SpecialGroupMaximumHueValue);
+                paintSettings = customSettings;
+            }
+            //Else copy vanilla settings (by default -1, so not anything fancy)
+            else
+                paintSettings = TreePaintSystemData.GetTileSettings(copySettingsFrom, 0);
+        }
+
+        public override void Prepare()
+        {
+            Asset<Texture2D> asset = ModContent.Request<Texture2D>(texturePath);
+            asset.Wait?.Invoke();
+            PrepareTextureIfNecessary(asset.Value);
+        }
+
+        public override void PrepareShader() => PrepareShader(Key.PaintColor, paintSettings);
+    }
+
+    public struct UniversalVariationKey
+    {
+        public int ThingType;
+        public int PaintColor;
+
+        public UniversalVariationKey(int type, int color)
+        {
+            ThingType = type;
+            PaintColor = color;
+        }
+
+        public bool Equals(UniversalVariationKey other)
+        {
+            if (ThingType == other.ThingType)
+                return PaintColor == other.PaintColor;
+
+            return false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is UniversalVariationKey)
+                return Equals((UniversalVariationKey)obj);
+
+            return false;
+        }
+
+        public override int GetHashCode() => (7302013 ^ ThingType.GetHashCode()) * (7302013 ^ PaintColor.GetHashCode());
+
+        public static bool operator ==(UniversalVariationKey left, UniversalVariationKey right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(UniversalVariationKey left, UniversalVariationKey right)
+        {
+            return !left.Equals(right);
         }
     }
 }

@@ -90,6 +90,8 @@ namespace JadeFables.Tiles.JadeSeaweed
 
             public string texturePath;
 
+            public int texNum;
+
             public float swaySpeed = 0.01f;
 
             public float sway;
@@ -104,10 +106,13 @@ namespace JadeFables.Tiles.JadeSeaweed
 
             public Tile origin;
 
+            public static Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> _paintRenders = new();
             public void Draw(SpriteBatch spriteBatch, Color lightColor, Vector2 position)
             {
                 Texture2D texRef = ModContent.Request<Texture2D>(texturePath).Value;
-                PaintHelper.DrawWithPaint(origin.TileColor, texturePath, position + offset, null, lightColor, rotation + 1.57f, new Vector2(texRef.Width / 2, texRef.Height), scale, SpriteEffects.None, 0f);
+                //PaintHelper.DrawWithPaint(origin.TileColor, texturePath, position + offset, null, lightColor, rotation + 1.57f, new Vector2(texRef.Width / 2, texRef.Height), scale, SpriteEffects.None, 0f);
+                Texture2D paintedTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(TileType<JadeSeaweedTile>() + texNum, origin.TileColor, texturePath, -1);
+                if (paintedTexture is not null) PaintHelper.DrawWithCoating(origin.IsTileFullbright, origin.IsTileInvisible, paintedTexture, position + offset, null, lightColor, rotation + 1.57f, new Vector2(texRef.Width / 2, texRef.Height), scale, SpriteEffects.None, 0f);
             }
 
             public void Update(Vector2 startPoint)
@@ -149,6 +154,7 @@ namespace JadeFables.Tiles.JadeSeaweed
                 JadeSeaweedBlade blade = new JadeSeaweedBlade(Main.tile[(int)(Projectile.Center.X / 16), (int)(Projectile.Center.Y / 16)]);
                 blade.originalRotation = Main.rand.NextFloat(-0.2f, 0.2f) - 1.57f;
                 blade.texturePath = Texture + texNum.ToString();
+                blade.texNum = texNum;
                 switch (texNum)
                 {
                     case 1:

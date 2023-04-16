@@ -234,7 +234,7 @@ namespace JadeFables.NPCs.JadeMantis
                 if (attackTimer > 200)
                 {
                     attackTimer = 0;
-                    if (false)
+                    if (Main.rand.NextBool())
                         PrepareThrow();
                     else
                         PrepareSwoop();

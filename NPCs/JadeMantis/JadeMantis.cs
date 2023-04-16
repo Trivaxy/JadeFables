@@ -1,10 +1,10 @@
 ﻿//TODO:
 //Balance
 //Prevent it from clipping into blocks
-//Make it go straight to flying animation during pop up
+//Maybe add afterimage
 
 //SOUND EFFECTS:
-//Pulse sound
+//Pulse sound for swoop
 
 //SPRITE DEPENDANT:
 //Make foliage cover the mantis when its hiding

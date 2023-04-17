@@ -26,7 +26,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Left click to throw Yang, pulling enemies in \nRight click to throw Ying, pushing enemies away \nAlternate strikes for guaranteed critical hits");
+            Tooltip.SetDefault("Left click to throw Ying, pushing enemies away \nRight click to throw Yang, pulling enemies in\nAlternate strikes for guaranteed critical hits");
         }
         public override void SetDefaults()
         {
@@ -39,8 +39,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             Item.noMelee = true;
             Item.useAnimation = 10;
             Item.useTime = 10;
-            Item.damage = 16;
-            Item.knockBack = 5.5f;
+            Item.damage = 21;
+            Item.knockBack = 0f;
             Item.crit = 8;
             Item.value = Item.sellPrice(gold: 1);
             Item.rare = ItemRarityID.Blue;
@@ -54,8 +54,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
         public override bool? UseItem(Player player)
         {
-            int projType = player.altFunctionUse == 2 ? ModContent.ProjectileType<Ying>() : ModContent.ProjectileType<Yang>();
-            int altProjType = player.altFunctionUse != 2 ? ModContent.ProjectileType<Ying>() : ModContent.ProjectileType<Yang>();
+            int projType = player.altFunctionUse != 2 ? ModContent.ProjectileType<Ying>() : ModContent.ProjectileType<Yang>();
+            int altProjType = player.altFunctionUse == 2 ? ModContent.ProjectileType<Ying>() : ModContent.ProjectileType<Yang>();
             Projectile toThrow = Main.projectile.Where(n => n.active && n.owner == player.whoAmI && n.type == projType).FirstOrDefault();
             Projectile toSpeedUp = Main.projectile.Where(n => n.active && n.owner == player.whoAmI && n.type == altProjType).FirstOrDefault();
             if (toThrow != default && toSpeedUp != default)
@@ -103,7 +103,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 modifiers.SetCrit();
             }
             else modifiers.DisableCrit();
-            modifiers.Knockback *= 0.85f;
+            target.velocity = target.DirectionTo(owner.Center) * 5 * target.knockBackResist;
+            modifiers.Knockback *= 0;
             modifiers.HitDirectionOverride = -Math.Sign(target.Center.X - owner.Center.X);
         }
     }
@@ -164,6 +165,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
         public override void AI()
         {
+            if (owner.dead)
+                Projectile.active = false;
             oldPos.Add(Projectile.Center);
             if (oldPos.Count > 2)
             {
@@ -245,6 +248,11 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
         }
 
+        public override bool? CanCutTiles()
+        {
+            return !passive;
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
             if (oldPos.Count > 0)
@@ -268,7 +276,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 SuperHit(target);
                 modifiers.SetCrit();
             }
-            modifiers.HitDirectionOverride = Math.Sign(target.Center.X - owner.Center.X);
+            modifiers.Knockback *= 0;
+            target.velocity = target.DirectionTo(owner.Center) * -5 * target.knockBackResist;
         }
 
         private void ManageCache()

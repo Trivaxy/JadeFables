@@ -26,7 +26,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Left click to throw Yang, pulling enemies in \nRight click to throw Ying, pushing enemies away \nAlternate strikes for garaunteed critical hits");
+            Tooltip.SetDefault("Left click to throw Yang, pulling enemies in \nRight click to throw Ying, pushing enemies away \nAlternate strikes for guaranteed critical hits");
         }
         public override void SetDefaults()
         {
@@ -99,9 +99,11 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             if (target.GetGlobalNPC<DuelingSpiritsGNPC>().yinged)
             {
                 SuperHit(target);
-                modifiers.Knockback *= 0.5f;
+                modifiers.Knockback /= 1.4f;
                 modifiers.SetCrit();
             }
+            else modifiers.DisableCrit();
+            modifiers.Knockback *= 0.85f;
             modifiers.HitDirectionOverride = -Math.Sign(target.Center.X - owner.Center.X);
         }
     }

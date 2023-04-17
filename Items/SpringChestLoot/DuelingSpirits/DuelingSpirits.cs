@@ -103,9 +103,9 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 modifiers.SetCrit();
             }
             else modifiers.DisableCrit();
-            target.velocity = target.DirectionTo(owner.Center) * 5 * target.knockBackResist;
+            if (!target.boss && target.knockBackResist > 0)
+                target.velocity += target.DirectionTo(owner.Center) * -5 * target.knockBackResist;
             modifiers.Knockback *= 0;
-            modifiers.HitDirectionOverride = -Math.Sign(target.Center.X - owner.Center.X);
         }
     }
 
@@ -277,7 +277,8 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 modifiers.SetCrit();
             }
             modifiers.Knockback *= 0;
-            target.velocity = target.DirectionTo(owner.Center) * -5 * target.knockBackResist;
+            if (!target.boss && target.knockBackResist > 0)
+                target.velocity += target.DirectionTo(owner.Center) * -5 * target.knockBackResist;
         }
 
         private void ManageCache()

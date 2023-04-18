@@ -96,7 +96,7 @@ namespace JadeFables.NPCs.JadeMantis
         {
             NPC.width = 64;
             NPC.height = 64;
-            NPC.damage = 0;
+            NPC.damage = 30;
             NPC.defense = 5;
             NPC.lifeMax = 300;
             NPC.value = 10f;

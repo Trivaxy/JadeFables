@@ -103,8 +103,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 modifiers.SetCrit();
             }
             else modifiers.DisableCrit();
-            if (!target.boss && target.knockBackResist > 0)
-                target.velocity += target.DirectionTo(owner.Center) * -5 * target.knockBackResist;
+            ApplySpecialKnockback(target, -20);
             modifiers.Knockback *= 0;
         }
     }
@@ -232,6 +231,15 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 Dust.NewDustPerfect(target.Center + (vel * 5), ModContent.DustType<GlowLineFast>(), vel, 0, Color.White, 1.2f);
             }
         }
+        public void ApplySpecialKnockback(NPC target, float strength)
+        {
+            if (!target.boss && target.knockBackResist > 0)
+            {
+                strength *= target.knockBackResist;
+                if (!target.collideY && strength < 0) strength *= 0.2f;
+                target.velocity += owner.DirectionTo(target.Center) * strength;
+            }
+        }
 
         public float GetStrikeSpeed()
         {
@@ -277,8 +285,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                 modifiers.SetCrit();
             }
             modifiers.Knockback *= 0;
-            if (!target.boss && target.knockBackResist > 0)
-                target.velocity += target.DirectionTo(owner.Center) * -5 * target.knockBackResist;
+            ApplySpecialKnockback(target, 5);
         }
 
         private void ManageCache()

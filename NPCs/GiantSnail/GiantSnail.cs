@@ -77,6 +77,13 @@ namespace JadeFables.NPCs.GiantSnail
             return true;
         }
 
+        public override void Load()
+        {
+            for (int j = 1; j <= 4; j++)
+                GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/NPCs/GiantSnail/GiantSnailGore" + j);
+
+        }
+
         public override void SetDefaults()
         {
             NPC.width = size;
@@ -296,6 +303,12 @@ namespace JadeFables.NPCs.GiantSnail
             npcLoot.Add(ItemDropRule.Common(ItemID.IceCream, 40));
             npcLoot.Add(ItemDropRule.Common(ItemID.Compass, 60));
             npcLoot.Add(ItemDropRule.Common(ItemID.DepthMeter, 60));
+        }
+
+        public override void OnKill()
+        {
+            for (int i = 1; i <= 4; i++)
+                Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("GiantSnailGore" + i).Type);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)

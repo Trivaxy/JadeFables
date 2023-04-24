@@ -64,6 +64,13 @@ namespace JadeFables.NPCs.Bullfrog
             return true;
         }
 
+        public override void Load()
+        {
+            for (int j = 1; j <= 4; j++)
+                GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/NPCs/Bullfrog/BullfrogGore" + j);
+
+        }
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
@@ -213,6 +220,12 @@ namespace JadeFables.NPCs.Bullfrog
             npcLoot.Add(ItemDropRule.Common(ItemID.IceCream, 40));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BullfrogTree.BullfrogLegs.BullfrogLegs>(), 13));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BullfrogTree.BullfrogTongue.BullfrogTongue> (), 20));
+        }
+
+        public override void OnKill()
+        {
+            for (int i = 1; i <= 4; i++)
+                Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("BullfrogGore" + i).Type);
         }
     }
     internal class Bullfrog_Tongue : ModProjectile

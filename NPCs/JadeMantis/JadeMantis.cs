@@ -7,7 +7,6 @@
 
 //SPRITE DEPENDANT:
 //Make foliage cover the mantis when its hiding
-//Gores
 //Banner
 //Swoop animations
 //Throwing animation and offset
@@ -90,6 +89,13 @@ namespace JadeFables.NPCs.JadeMantis
         {
             Main.npcFrameCount[NPC.type] = 4;
             DisplayName.SetDefault("Artisan Mantis");
+        }
+
+        public override void Load()
+        {
+            for (int j = 1; j <= 5; j++)
+                GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/NPCs/JadeMantis/JadeMantisGore" + j);
+
         }
 
         public override void SetDefaults()
@@ -469,6 +475,11 @@ namespace JadeFables.NPCs.JadeMantis
             npcLoot.Add(ItemDropRule.Common(ItemID.IceCream, 40));
         }
 
+        public override void OnKill()
+        {
+            for (int i = 1; i <= 5; i++)
+                Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("JadeMantisGore" + i).Type);
+        }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) => !spawnInfo.Water && !spawnInfo.PlayerSafe && spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) ? 4f : 0f;
     }

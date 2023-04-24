@@ -53,7 +53,7 @@ namespace JadeFables.Tiles.WarriorStatue
             int gillsCost = Item.gold;
             Player player = Main.LocalPlayer;
 
-            if (!player.CanBuyItem(gillsCost)) {
+            if (!player.CanAfford(gillsCost)) {
                 return false;
             }
 

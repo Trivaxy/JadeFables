@@ -93,7 +93,7 @@ namespace JadeFables.NPCs.GiantSnail
             NPC.lifeMax = 150;
             NPC.value = 10f;
             NPC.knockBackResist = 2.6f;
-            NPC.HitSound = SoundID.NPCHit33 with { Pitch = -0.6f};
+            NPC.HitSound = SoundID.NPCHit33 with { Pitch = -0.6f };
             NPC.DeathSound = SoundID.NPCDeath16 with { Pitch = -0.6f };
             NPC.noGravity = false;
             NPC.noTileCollide = false;
@@ -355,7 +355,7 @@ namespace JadeFables.NPCs.GiantSnail
             return false;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) && !spawnInfo.PlayerSafe &&Main.npc.Count(n => n.active && n.type == ModContent.NPCType<GiantSnail>()) < 3 ? 25f : 0f;
+        public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()) && !spawnInfo.PlayerSafe && Main.npc.Count(n => n.active && n.type == ModContent.NPCType<GiantSnail>()) < 3 ? 25f : 0f;
 
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {

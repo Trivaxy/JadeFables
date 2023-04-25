@@ -10,8 +10,8 @@ using Terraria.ModLoader;
 
 namespace JadeFables.Core.Systems
 {
-	internal class PanModifier : ICameraModifier
-	{
+    internal class PanModifier : ICameraModifier
+    {
         public Func<Vector2, Vector2, float, Vector2> EaseInFunction = Vector2.SmoothStep;
         public Func<Vector2, Vector2, float, Vector2> EaseOutFunction = Vector2.SmoothStep;
         public Func<Vector2, Vector2, float, Vector2> PanFunction = Vector2.Lerp;
@@ -23,10 +23,10 @@ namespace JadeFables.Core.Systems
 
         public string UniqueIdentity => "Starlight River Pan";
 
-		public bool Finished => false;
+        public bool Finished => false;
 
         public void PassiveUpdate()
-		{
+        {
             if (TotalDuration > 0 && PrimaryTarget != Vector2.Zero)
             {
                 //cutscene timers
@@ -43,8 +43,8 @@ namespace JadeFables.Core.Systems
             }
         }
 
-		public void Update(ref CameraInfo cameraPosition)
-		{
+        public void Update(ref CameraInfo cameraPosition)
+        {
             var maxTime = TotalDuration;
             var target = PrimaryTarget;
             var timer = Timer;
@@ -71,10 +71,10 @@ namespace JadeFables.Core.Systems
         }
 
         public void Reset()
-		{
+        {
             TotalDuration = 0;
             PrimaryTarget = Vector2.Zero;
             SecondaryTarget = Vector2.Zero;
         }
-	}
+    }
 }

@@ -4,13 +4,15 @@ using Terraria.GameContent.Drawing;
 using Terraria.Localization;
 using Terraria.ObjectData;
 
-namespace JadeFables.Tiles.Banners {
+namespace JadeFables.Tiles.Banners
+{
     /// <summary>
     /// Default ModTile that acts as the basis for any ModTile in the mod that acts
     /// like an NPC banner from vanilla.
     /// </summary>
     [Autoload(false)]
-    public class DefaultNPCBanner : ModTile {
+    public class DefaultNPCBanner : ModTile
+    {
         private static readonly Delegate AddSpecialPoint;
 
         public override string Texture => tileTexturePath;
@@ -38,19 +40,22 @@ namespace JadeFables.Tiles.Banners {
         /// </summary>
         public readonly string tileName;
 
-        static DefaultNPCBanner() {
+        static DefaultNPCBanner()
+        {
             //Committing cardinal sins in order to call a one line private method
             AddSpecialPoint = typeof(TileDrawing).GetMethod("AddSpecialPoint", BindingFlags.Instance | BindingFlags.NonPublic)!.CreateDelegate<Action<int, int, int>>(Main.instance.TilesRenderer);
         }
 
-        public DefaultNPCBanner(int npcType, int itemType, string tileTexturePath, string tileName) {
+        public DefaultNPCBanner(int npcType, int itemType, string tileTexturePath, string tileName)
+        {
             this.npcType = npcType;
             this.itemType = itemType;
             this.tileTexturePath = tileTexturePath;
             this.tileName = tileName;
         }
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileLavaDeath[Type] = true;
@@ -63,13 +68,16 @@ namespace JadeFables.Tiles.Banners {
             AddMapEntry(new Color(13, 88, 130), Language.GetText("MapObject.Banner"));
         }
 
-        public override void KillMultiTile(int i, int j, int frameX, int frameY) {
+        public override void KillMultiTile(int i, int j, int frameX, int frameY)
+        {
             //This is what we need the itemType for
             Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 48, itemType);
         }
 
-        public override void NearbyEffects(int i, int j, bool closer) {
-            if (!closer) {
+        public override void NearbyEffects(int i, int j, bool closer)
+        {
+            if (!closer)
+            {
                 return;
             }
 
@@ -77,9 +85,11 @@ namespace JadeFables.Tiles.Banners {
             Main.SceneMetrics.hasBanner = true;
         }
 
-        public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) {
+        public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
+        {
             Tile tile = Main.tile[i, j];
-            if (tile.TileFrameX == 0 && tile.TileFrameY == 0) {
+            if (tile.TileFrameX == 0 && tile.TileFrameY == 0)
+            {
                 AddSpecialPoint.DynamicInvoke(i, j, 5 /* MultiTileVine */);
             }
 
@@ -104,7 +114,8 @@ namespace JadeFables.Tiles.Banners {
         /// should be "PufferfishBannerTile" and "PufferfishBannerItem" respectively.
         /// </param>
         /// <param name="bannerType"> The item type of the banner item (that places the banner tile) created by this method. </param>
-        public static void AddBannerAndItemForNPC(Mod mod, int npcType, string npcName, out int bannerType) {
+        public static void AddBannerAndItemForNPC(Mod mod, int npcType, string npcName, out int bannerType)
+        {
             int bannerTileType = TileLoader.TileCount;
             int bannerItemType = ItemLoader.ItemCount;
 
@@ -120,7 +131,8 @@ namespace JadeFables.Tiles.Banners {
     /// Default ModItem that places its corresponding <seealso cref="DefaultNPCBanner"/> ModTile.
     /// </summary>
     [Autoload(false)]
-    public class DefaultNPCBannerItem : ModItem {
+    public class DefaultNPCBannerItem : ModItem
+    {
         public override string Texture => itemTexturePath;
 
         public override string Name => itemName;
@@ -145,13 +157,15 @@ namespace JadeFables.Tiles.Banners {
         [CloneByReference]
         public readonly string itemName;
 
-        public DefaultNPCBannerItem(int tileType, string itemTexturePath, string itemName) {
+        public DefaultNPCBannerItem(int tileType, string itemTexturePath, string itemName)
+        {
             this.tileType = tileType;
             this.itemTexturePath = itemTexturePath;
             this.itemName = itemName;
         }
 
-        public override void SetDefaults() {
+        public override void SetDefaults()
+        {
             Item.CloneDefaults(ItemID.SlimeBanner);
             Item.createTile = tileType;
             Item.placeStyle = 0;

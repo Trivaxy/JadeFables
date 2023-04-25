@@ -6,7 +6,7 @@ using DECIMAL = System.Single;//using FN_DECIMAL = System.Double;
 
 namespace JadeFables.Helpers.FastNoise
 {
-	public partial class FastNoise
+    public partial class FastNoise
     {
         private const DECIMAL Cubic2DBounding = 1 / (DECIMAL)(1.5 * 1.5);
         private const DECIMAL Cubic3DBounding = 1 / (DECIMAL)(1.5 * 1.5 * 1.5);

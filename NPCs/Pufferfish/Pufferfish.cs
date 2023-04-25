@@ -42,10 +42,11 @@ namespace JadeFables.NPCs.Pufferfish
         private int yFrame = 0;
         private int frameCounter = 0;
 
-        public override bool IsLoadingEnabled(Mod mod) {
+        public override bool IsLoadingEnabled(Mod mod)
+        {
             //Since this NPC is just about to be loaded and assigned its type, the current count BEFORE the load will be its type, which is why we can do this
             int npcType = NPCLoader.NPCCount;
-           
+
             DefaultNPCBanner.AddBannerAndItemForNPC(mod, npcType, "Pufferfish", out int bannerType);
             Banner = npcType;
             BannerItem = bannerType;
@@ -67,7 +68,7 @@ namespace JadeFables.NPCs.Pufferfish
             NPC.lifeMax = 100;
             NPC.value = 10f;
             NPC.knockBackResist = 2.6f;
-            NPC.HitSound = SoundID.Item111 with { PitchVariance = 0.2f, Pitch = 0.4f};
+            NPC.HitSound = SoundID.Item111 with { PitchVariance = 0.2f, Pitch = 0.4f };
             NPC.DeathSound = SoundID.NPCDeath26;
             NPC.noGravity = true;
             NPC.aiStyle = 16;
@@ -200,7 +201,7 @@ namespace JadeFables.NPCs.Pufferfish
 
             if (Projectile.velocity.Length() > 5)
                 Main.spriteBatch.Draw(glowTex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, tex.Size() / 2, Projectile.scale * ((3 + (float)Math.Sin(Main.timeForVisualEffects * 0.1f)) * 0.5f), SpriteEffects.None, 0f);
-            
+
             Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, tex.Size() / 2, Projectile.scale, SpriteEffects.None, 0f);
 
             if (Projectile.velocity.Length() > 5)
@@ -210,7 +211,7 @@ namespace JadeFables.NPCs.Pufferfish
 
         public override void Kill(int timeLeft)
         {
-            
+
         }
 
         public override bool CanHitPlayer(Player target)

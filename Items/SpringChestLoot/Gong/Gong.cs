@@ -141,7 +141,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
             }
 
             rot++;
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(owner.Center + new Vector2(1,1)) * 15, 0.06f);
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(owner.Center + new Vector2(1, 1)) * 15, 0.06f);
             Projectile.rotation = Projectile.velocity.ToRotation();
             if (Projectile.timeLeft < 430)
             {
@@ -160,7 +160,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
                 for (int i = 0; i < 13; i++)
                 {
                     Vector2 dustDir = Projectile.DirectionTo(owner.Center).RotatedByRandom(0.7f) * Main.rand.NextFloat(0.8f, 1.2f);
-                    Dust.NewDustPerfect(Projectile.Center + (dustDir * 25) + Main.rand.NextVector2Circular(16,16), ModContent.DustType<Dusts.GlowLineFast>(), dustDir *8, 0, Color.Gold, 0.5f);
+                    Dust.NewDustPerfect(Projectile.Center + (dustDir * 25) + Main.rand.NextVector2Circular(16, 16), ModContent.DustType<Dusts.GlowLineFast>(), dustDir * 8, 0, Color.Gold, 0.5f);
                 }
                 behindScale = 1;
                 elasticity = 1;
@@ -195,7 +195,7 @@ namespace JadeFables.Items.SpringChestLoot.Gong
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            
+
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

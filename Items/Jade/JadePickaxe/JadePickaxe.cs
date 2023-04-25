@@ -60,16 +60,18 @@ namespace JadeFables.Items.Jade.JadePickaxe
 
     public class CritterDroprateIncreaseTile : GlobalTile
     {
-        public override void DropCritterChance(int i, int j, int type, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance) {
+        public override void DropCritterChance(int i, int j, int type, ref int wormChance, ref int grassHopperChance, ref int jungleGrubChance)
+        {
             base.DropCritterChance(i, j, type, ref wormChance, ref grassHopperChance, ref jungleGrubChance);
 
             if (!ModContent.GetInstance<TileHitInfoSystem>().TryGetHitTileContext(new Point(i, j), out var context)) return;
 
             // TODO: Use an ID set?
-            if (context.Player.HeldItem.type == ModContent.ItemType<JadePickaxe>()) {
-                wormChance = (int) (wormChance * 1.4);
-                grassHopperChance = (int) (grassHopperChance * 1.4);
-                jungleGrubChance = (int) (jungleGrubChance * 1.4);
+            if (context.Player.HeldItem.type == ModContent.ItemType<JadePickaxe>())
+            {
+                wormChance = (int)(wormChance * 1.4);
+                grassHopperChance = (int)(grassHopperChance * 1.4);
+                jungleGrubChance = (int)(jungleGrubChance * 1.4);
             }
         }
     }

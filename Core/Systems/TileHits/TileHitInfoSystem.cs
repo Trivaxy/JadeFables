@@ -7,7 +7,8 @@ public sealed class TileHitInfoSystem : ErrorCollectingModSystem
 {
     public Dictionary<Point, HitTileContext> Contexts { get; } = new();
 
-    public override void OnModLoad() {
+    public override void OnModLoad()
+    {
         base.OnModLoad();
 
         // We should ensure this is updated for 1.4.4.
@@ -19,13 +20,15 @@ public sealed class TileHitInfoSystem : ErrorCollectingModSystem
         Terraria.IL_Player.HasEnoughPickPowerToHurtTile += RewriteHitObjectInvocations;
     }
 
-    private void RewriteHitObjectInvocations(ILContext il) {
+    private void RewriteHitObjectInvocations(ILContext il)
+    {
         var c = new ILCursor(il);
 
         c.Index = c.Instrs.Count - 1;
 
         // Jump to every HitTile::HitObject invocation, push Player instance (`this`, ldarg.0), and call our method instead of HitTile::HitObject (jump to label after).
-        while (c.TryGotoPrev(MoveType.After, x => x.MatchCallvirt<HitTile>(nameof(HitTile.HitObject)))) {
+        while (c.TryGotoPrev(MoveType.After, x => x.MatchCallvirt<HitTile>(nameof(HitTile.HitObject))))
+        {
             // Mark label to jump to later.
             var label = c.MarkLabel();
 
@@ -41,23 +44,27 @@ public sealed class TileHitInfoSystem : ErrorCollectingModSystem
         }
     }
 
-    public override void Unload() {
+    public override void Unload()
+    {
         base.Unload();
 
         Contexts.Clear();
     }
 
-    public override void PostUpdateEverything() {
+    public override void PostUpdateEverything()
+    {
         base.PostUpdateEverything();
 
         Contexts.Clear();
     }
 
-    public bool TryGetHitTileContext(Point point, out HitTileContext context) {
+    public bool TryGetHitTileContext(Point point, out HitTileContext context)
+    {
         return Contexts.TryGetValue(point, out context);
     }
 
-    private static int HitObjectWithPlayerContext(HitTile hitTile, int x, int y, int hitType, Player player) {
+    private static int HitObjectWithPlayerContext(HitTile hitTile, int x, int y, int hitType, Player player)
+    {
         GetInstance<TileHitInfoSystem>().Contexts[new Point(x, y)] = new HitTileContext(hitTile, x, y, hitType, player);
         return hitTile.HitObject(x, y, hitType);
     }

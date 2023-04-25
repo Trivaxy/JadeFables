@@ -95,7 +95,7 @@ namespace JadeFables.Items.Fishing.Arowana
 
         public override void Kill(int timeLeft)
         {
-            
+
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -123,7 +123,7 @@ namespace JadeFables.Items.Fishing.Arowana
             while (velStack > 5)
             {
                 velStack -= 5;
-                
+
             }
             while (cache.Count > NUMPOINTS)
             {
@@ -171,7 +171,7 @@ namespace JadeFables.Items.Fishing.Arowana
     {
         public override void PostUpdateNPCs()
         {
-            foreach(NPC npc in Main.npc)
+            foreach (NPC npc in Main.npc)
             {
                 npc.TryGetGlobalNPC<ArowanaGNPC>(out ArowanaGNPC gnpc);
                 if (gnpc != null)

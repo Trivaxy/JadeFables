@@ -67,7 +67,7 @@ namespace JadeFables.Items.BullfrogTree.Bulfrauble
 
         public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
         {
-            int[] incompadible = new int[] { ModContent.ItemType<BullfrogLegs.BullfrogLegs>(), ModContent.ItemType<FrogInFroggle.FrogInFroggle>(), ItemID.Magiluminescence};
+            int[] incompadible = new int[] { ModContent.ItemType<BullfrogLegs.BullfrogLegs>(), ModContent.ItemType<FrogInFroggle.FrogInFroggle>(), ItemID.Magiluminescence };
             if (equippedItem.type == ModContent.ItemType<Bulfrauble>() && incompadible.Contains(incomingItem.type))
             {
                 return false;

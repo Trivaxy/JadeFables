@@ -6,7 +6,7 @@ using DECIMAL = System.Single;//using FN_DECIMAL = System.Double;
 
 namespace JadeFables.Helpers.FastNoise
 {
-	public partial class FastNoise
+    public partial class FastNoise
     {
         private const short Inline = (short)MethodImplOptions.AggressiveInlining;
         private const int CellularMaxIndex = 3;

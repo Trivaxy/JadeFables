@@ -21,7 +21,7 @@ namespace JadeFables.NPCs
     {
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
-            if (spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>())) 
+            if (spawnInfo.Player.InModBiome(ModContent.GetInstance<JadeLakeBiome>()))
             {
                 if (!spawnInfo.Water)
                 {

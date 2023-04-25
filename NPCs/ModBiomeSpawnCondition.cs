@@ -86,13 +86,13 @@ namespace JadeFables.NPCs
             }
 
             uIElement.Append(element);
-            uIElement.OnUpdate += delegate (UIElement e) 
+            uIElement.OnUpdate += delegate (UIElement e)
             {
                 if (e.IsMouseHovering)
                 {
                     string textValue = GetDisplayNameKey();
                     Main.instance.MouseText(textValue, 0, 0);
-                }; 
+                };
             };
             return uIElement;
         }

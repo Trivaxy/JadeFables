@@ -11,22 +11,22 @@ namespace JadeFables.Core.Boids
         public int FishCount => Objects.Count;
 
         public float FlockScale;
-		public int MaxFish;
+        public int MaxFish;
 
-		private const int SimulationDistance = 2500;
+        private const int SimulationDistance = 2500;
 
         public Flock(Texture2D[] texs, float Scale = 1, int MaxFlockSize = 60)
         {
-			if (texs != null) FlockTextures = texs;
-			else FlockTextures = new Texture2D[] { TextureAssets.MagicPixel.Value };
+            if (texs != null) FlockTextures = texs;
+            else FlockTextures = new Texture2D[] { TextureAssets.MagicPixel.Value };
 
             FlockScale = Scale;
-			MaxFish = MaxFlockSize;
-		}
+            MaxFish = MaxFlockSize;
+        }
 
         internal void Populate(Vector2 position, int amount, float spread)
         {
-            for(int i = 0; i<amount; i++)
+            for (int i = 0; i < amount; i++)
             {
                 if (Objects.Count < MaxFish)
                 {

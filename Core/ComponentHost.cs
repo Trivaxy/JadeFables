@@ -24,8 +24,8 @@ namespace JadeFables.Core.Boids
         {
             foreach (T TV in Objects.ToArray())
             {
-                if(TV != null)
-                TV.Draw(spriteBatch);
+                if (TV != null)
+                    TV.Draw(spriteBatch);
             }
         }
 
@@ -33,7 +33,7 @@ namespace JadeFables.Core.Boids
 
         public void AddElement(T TV)
         {
-			//Load logic maybe
+            //Load logic maybe
 
             /*foreach (T TOV in Objects)
             {

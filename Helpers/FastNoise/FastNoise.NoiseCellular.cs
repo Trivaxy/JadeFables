@@ -6,7 +6,7 @@ using DECIMAL = System.Single;
 
 namespace JadeFables.Helpers.FastNoise
 {
-	public partial class FastNoise
+    public partial class FastNoise
     {
         private int cellularDistanceIndex0 = 0;
         private int cellularDistanceIndex1 = 1;

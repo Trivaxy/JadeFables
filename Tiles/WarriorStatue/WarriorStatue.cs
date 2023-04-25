@@ -12,29 +12,29 @@ using Terraria.ObjectData;
 
 namespace JadeFables.Tiles.WarriorStatue
 {
-	public class WarriorStatue : ModTile
-	{
-		public override void SetStaticDefaults()
-		{
-			Main.tileFrameImportant[Type] = true;
-			Main.tileSolid[Type] = false;
-			Main.tileMergeDirt[Type] = true;
+    public class WarriorStatue : ModTile
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.tileFrameImportant[Type] = true;
+            Main.tileSolid[Type] = false;
+            Main.tileMergeDirt[Type] = true;
 
-			TileObjectData.newTile.Width = 5;
-			TileObjectData.newTile.Height = 7;
-			TileObjectData.newTile.Origin = new Point16(0, 6);
-			TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
-			TileObjectData.newTile.UsesCustomCanPlace = true;
-			TileObjectData.newTile.LavaDeath = false;
-			TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 16, 16, 16, 16, 16};
-			TileObjectData.newTile.CoordinateWidth = 16;
-			TileObjectData.newTile.CoordinatePadding = 2;
-			TileObjectData.addTile(Type); 
-			DustType = DustID.Stone;
+            TileObjectData.newTile.Width = 5;
+            TileObjectData.newTile.Height = 7;
+            TileObjectData.newTile.Origin = new Point16(0, 6);
+            TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
+            TileObjectData.newTile.UsesCustomCanPlace = true;
+            TileObjectData.newTile.LavaDeath = false;
+            TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 16, 16, 16, 16, 16 };
+            TileObjectData.newTile.CoordinateWidth = 16;
+            TileObjectData.newTile.CoordinatePadding = 2;
+            TileObjectData.addTile(Type);
+            DustType = DustID.Stone;
 
-			LocalizedText name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
             AddMapEntry(jadeStoneGray, name);
-		}
+        }
 
         public override void MouseOver(int i, int j)
         {
@@ -45,15 +45,17 @@ namespace JadeFables.Tiles.WarriorStatue
         }
 
         public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
-		public override void KillMultiTile(int i, int j, int frameX, int frameY) => Item.NewItem(new EntitySource_TileBreak(i, j), (i + 3) * 16, (j + 5) * 16, 16, 32, ModContent.ItemType<WarriorStatueItem>());
+        public override void KillMultiTile(int i, int j, int frameX, int frameY) => Item.NewItem(new EntitySource_TileBreak(i, j), (i + 3) * 16, (j + 5) * 16, 16, 32, ModContent.ItemType<WarriorStatueItem>());
 
-        public override bool RightClick(int i, int j) {
+        public override bool RightClick(int i, int j)
+        {
             if (Main.tile[i, j].TileFrameY >= 126)
                 return false;
             int gillsCost = Item.gold;
             Player player = Main.LocalPlayer;
 
-            if (!player.CanAfford(gillsCost)) {
+            if (!player.CanAfford(gillsCost))
+            {
                 return false;
             }
 
@@ -91,7 +93,7 @@ namespace JadeFables.Tiles.WarriorStatue
             for (int k = 0; k < 5; k++)
             {
                 for (int l = 0; l < 7; ++l)
-                    Main.tile[newX + k, newY + l].TileFrameY += 126; 
+                    Main.tile[newX + k, newY + l].TileFrameY += 126;
             }
             return true;
         }
@@ -99,12 +101,12 @@ namespace JadeFables.Tiles.WarriorStatue
         public override void NearbyEffects(int i, int j, bool closer)
         {
             Tile tile = Main.tile[i, j];
-            if (tile.TileFrameX == 0 && tile.TileFrameY == 126 && !Main.projectile.Any(n => n.active && n.type == ModContent.ProjectileType<WarriorStatueProj>() && n.Center == new Vector2(i,j) * 16))
+            if (tile.TileFrameX == 0 && tile.TileFrameY == 126 && !Main.projectile.Any(n => n.active && n.type == ModContent.ProjectileType<WarriorStatueProj>() && n.Center == new Vector2(i, j) * 16))
             {
                 for (int k = 0; k < 5; k++)
                 {
                     for (int l = 0; l < 7; ++l)
-                        Main.tile[i + k, j+ l].TileFrameY -= 126;
+                        Main.tile[i + k, j + l].TileFrameY -= 126;
                 }
             }
         }

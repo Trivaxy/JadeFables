@@ -8,15 +8,15 @@ using JadeFables.Helpers;
 
 namespace JadeFables.Core
 {
-	public class VerletChainSystem : ILoadable
-	{
+    public class VerletChainSystem : ILoadable
+    {
         public static RenderTarget2D target;
         public static List<VerletChain> toDraw = new List<VerletChain>();
 
         public float Priority => 1;
 
-		public void Load(Mod mod)
-		{
+        public void Load(Mod mod)
+        {
             if (!Main.dedServ)
             {
                 Main.QueueMainThreadAction(() =>
@@ -24,10 +24,10 @@ namespace JadeFables.Core
                     target = new RenderTarget2D(Main.instance.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
                 });
             }
-		}
+        }
 
-		public void Unload()
-		{
+        public void Unload()
+        {
             Main.QueueMainThreadAction(() =>
             {
                 target?.Dispose();
@@ -37,9 +37,9 @@ namespace JadeFables.Core
                 toDraw = null;
             });
         }
-	}
+    }
 
-	public class VerletChain 
+    public class VerletChain
     {
         //static
         private static readonly BasicEffect basicEffectColor = Main.dedServ ? null : new BasicEffect(Main.graphics.GraphicsDevice) { VertexColorEnabled = true };
@@ -103,7 +103,7 @@ namespace JadeFables.Core
         public int simStartOffset = 0;
         public int simEndOffset = 0;//if zero this gets set to the segment count on start
 
-		public VerletChain(int SegCount, bool specialDraw, Vector2 StartPoint, int SegDistance, bool CollideWithTiles = false)
+        public VerletChain(int SegCount, bool specialDraw, Vector2 StartPoint, int SegDistance, bool CollideWithTiles = false)
         {
             segmentCount = SegCount;
             segmentDistance = SegDistance;
@@ -240,7 +240,7 @@ namespace JadeFables.Core
                 if (useStartPoint)
                     ropeSegments[simStartOffset].posNow = startPoint;
                 if (useEndPoint)
-                   ropeSegments[simEndOffset - 1].posNow = endPoint;//if the end point clamp breaks, check this
+                    ropeSegments[simEndOffset - 1].posNow = endPoint;//if the end point clamp breaks, check this
                 ApplyConstraint();
             }
         }
@@ -298,7 +298,7 @@ namespace JadeFables.Core
         /// <param name="scale"> the scale factor this should draw with </param>
         public virtual void PrepareStrip(float scale)
         {
-            if(meshBuffer is null)
+            if (meshBuffer is null)
                 meshBuffer = new VertexBuffer(Main.graphics.GraphicsDevice, typeof(VertexPositionColor), segmentCount * 9 - 6, BufferUsage.WriteOnly);
 
             VertexPositionColor[] verticies = new VertexPositionColor[segmentCount * 9 - 6];
@@ -341,7 +341,7 @@ namespace JadeFables.Core
         /// <param name="offset"> the vector passed to prepareFunction as an offset </param>
         public void DrawStrip(Func<Vector2, VertexBuffer> prepareFunction, Effect effect = null, Vector2 offset = default)
         {
-            if (!Active || ropeSegments.Count < 1 || Main.dedServ) 
+            if (!Active || ropeSegments.Count < 1 || Main.dedServ)
                 return;
 
             GraphicsDevice graphics = Main.graphics.GraphicsDevice;
@@ -361,7 +361,7 @@ namespace JadeFables.Core
 
         public void DrawStrip(float scale)
         {
-            if (!Active || ropeSegments.Count < 1 || Main.dedServ) 
+            if (!Active || ropeSegments.Count < 1 || Main.dedServ)
                 return;
 
             GraphicsDevice graphics = Main.graphics.GraphicsDevice;
@@ -410,7 +410,7 @@ namespace JadeFables.Core
                 return vel;
 
             Vector2 newVel = Collision.noSlopeCollision(pos - (new Vector2(3, 3)), vel, 6, 6, true, true);
-            Vector2 ret = new Vector2(vel.X,vel.Y);
+            Vector2 ret = new Vector2(vel.X, vel.Y);
             if (Math.Abs(newVel.X) < Math.Abs(vel.X))
                 ret.X *= 0;
 

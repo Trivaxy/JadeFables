@@ -58,12 +58,12 @@ namespace JadeFables.Dusts
     }
 
     class GlowLineFast : GlowLine
-	{
-		public override bool Update(Dust dust)
-		{
+    {
+        public override bool Update(Dust dust)
+        {
             dust.color *= 0.95f;
             dust.fadeIn += 3;
             return base.Update(dust);
-		}
-	}
+        }
+    }
 }

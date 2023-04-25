@@ -8,16 +8,16 @@ using JadeFables.Biomes.JadeLake;
 
 namespace JadeFables.Tiles.JadeSandWall
 {
-	public class JadeSandWall : ModWall
-	{
+    public class JadeSandWall : ModWall
+    {
         public override void SetStaticDefaults()
-		{
-			Main.wallHouse[Type] = false;
-			DustType = DustID.Dirt;
+        {
+            Main.wallHouse[Type] = false;
+            DustType = DustID.Dirt;
             ItemDrop = ModContent.ItemType<JadeSandWallItem>();
             HitSound = SoundID.Dig;
-			AddMapEntry(jadeSandDarkWall);
-		}
+            AddMapEntry(jadeSandDarkWall);
+        }
     }
 
     public class JadeSandWallItem : ModItem

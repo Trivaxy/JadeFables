@@ -13,66 +13,66 @@ using Terraria.GameContent;
 
 namespace JadeFables.Core
 {
-	public class MetaballSystem : ILoadable
-	{
-		public static int oldScreenWidth = 0;
-		public static int oldScreenHeight = 0;
+    public class MetaballSystem : ILoadable
+    {
+        public static int oldScreenWidth = 0;
+        public static int oldScreenHeight = 0;
 
-		public static List<MetaballActor> Actors = new List<MetaballActor>();
+        public static List<MetaballActor> Actors = new List<MetaballActor>();
 
-		public float Priority => 1;
+        public float Priority => 1;
 
-		public void Load(Mod mod)
-		{
-			if (Main.dedServ)
-				return;
+        public void Load(Mod mod)
+        {
+            if (Main.dedServ)
+                return;
 
-			Terraria.On_Main.DrawNPCs += DrawTargets;
-			Terraria.On_Main.CheckMonoliths += BuildTargets;
-		}
+            Terraria.On_Main.DrawNPCs += DrawTargets;
+            Terraria.On_Main.CheckMonoliths += BuildTargets;
+        }
 
-		public void Unload()
-		{
-			Terraria.On_Main.DrawNPCs -= DrawTargets;
-			Terraria.On_Main.CheckMonoliths -= BuildTargets;
+        public void Unload()
+        {
+            Terraria.On_Main.DrawNPCs -= DrawTargets;
+            Terraria.On_Main.CheckMonoliths -= BuildTargets;
 
-			Actors = null;
-		}
+            Actors = null;
+        }
 
-		public void UpdateWindowSize(int width, int height)
-		{
-			Main.QueueMainThreadAction(() =>
-			{
-				Actors.ForEach(n => n.ResizeTarget(width, height));
-			});
+        public void UpdateWindowSize(int width, int height)
+        {
+            Main.QueueMainThreadAction(() =>
+            {
+                Actors.ForEach(n => n.ResizeTarget(width, height));
+            });
 
-			oldScreenWidth = width;
-			oldScreenHeight = height;
-		}
+            oldScreenWidth = width;
+            oldScreenHeight = height;
+        }
 
-		private void DrawTargets(Terraria.On_Main.orig_DrawNPCs orig, Main self, bool behindTiles = false)
-		{
-			
-			if (behindTiles && !Main.gameMenu)
-				Actors.ForEach(a => a.DrawTarget(Main.spriteBatch));
+        private void DrawTargets(Terraria.On_Main.orig_DrawNPCs orig, Main self, bool behindTiles = false)
+        {
 
-			orig(self, behindTiles);
-		}
+            if (behindTiles && !Main.gameMenu)
+                Actors.ForEach(a => a.DrawTarget(Main.spriteBatch));
 
-		private void BuildTargets(Terraria.On_Main.orig_CheckMonoliths orig)
-		{
-			if (!Main.gameMenu)
-			{
-				if (Main.graphics.GraphicsDevice != null)
-				{
-					if (Main.screenWidth != oldScreenWidth || Main.screenHeight != oldScreenHeight)
-						UpdateWindowSize(Main.screenWidth, Main.screenHeight);
-				}
+            orig(self, behindTiles);
+        }
 
-				if (Main.spriteBatch != null && Main.graphics.GraphicsDevice != null)
-					Actors.ForEach(a => a.DrawToTarget(Main.spriteBatch, Main.graphics.GraphicsDevice));
-			}
-			orig();
-		}
-	}
+        private void BuildTargets(Terraria.On_Main.orig_CheckMonoliths orig)
+        {
+            if (!Main.gameMenu)
+            {
+                if (Main.graphics.GraphicsDevice != null)
+                {
+                    if (Main.screenWidth != oldScreenWidth || Main.screenHeight != oldScreenHeight)
+                        UpdateWindowSize(Main.screenWidth, Main.screenHeight);
+                }
+
+                if (Main.spriteBatch != null && Main.graphics.GraphicsDevice != null)
+                    Actors.ForEach(a => a.DrawToTarget(Main.spriteBatch, Main.graphics.GraphicsDevice));
+            }
+            orig();
+        }
+    }
 }

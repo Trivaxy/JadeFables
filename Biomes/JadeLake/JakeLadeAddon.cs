@@ -16,17 +16,17 @@ using static tModPorter.ProgressUpdate;
 
 namespace JadeFables.Biomes.JadeLake
 {
-	class JadeLakeAddon : WaterAddon
-	{
-		public override bool Visible => Main.LocalPlayer.InModBiome<JadeLakeBiome>() || GetInstance<JadeLakeSystem>().forceLakeAesthetic;
+    class JadeLakeAddon : WaterAddon
+    {
+        public override bool Visible => Main.LocalPlayer.InModBiome<JadeLakeBiome>() || GetInstance<JadeLakeSystem>().forceLakeAesthetic;
 
-		public override Texture2D BlockTexture(Texture2D normal, int x, int y)
-		{
-			return normal;
-		}
+        public override Texture2D BlockTexture(Texture2D normal, int x, int y)
+        {
+            return normal;
+        }
 
-		public override void SpritebatchChange()
-		{
+        public override void SpritebatchChange()
+        {
             /*Main.spriteBatch.Begin();
 			Main.spriteBatch.Draw(HotspringMapTarget.hotspringShineTarget, Microsoft.Xna.Framework.Vector2.Zero, Microsoft.Xna.Framework.Color.White);
 			Main.spriteBatch.End();*/
@@ -39,8 +39,8 @@ namespace JadeFables.Biomes.JadeLake
             // Main.spriteBatch.Draw(Core.Systems.Edits.BetterWaterTrianglesAttmptTwo.waterSlopeTarget, -new Vector2(Main.offScreenRange, Main.offScreenRange), null, Color.White * 0.3f);
         }
 
-		public override void SpritebatchChangeBack()
-		{
+        public override void SpritebatchChangeBack()
+        {
             //JadeLakeMapTarget.oldScreenPos = Main.screenPosition;
             var effect = Filters.Scene["JadeLakeWater"].GetShader().Shader;
             //the multiply by 1.3 and 1.5 seem to fix the jittering when moving, seems to be tied to the 2 magic numbers in Visuals.HotspringMapTarget.cs
@@ -48,8 +48,8 @@ namespace JadeFables.Biomes.JadeLake
             Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
 
             //Main.spriteBatch.Draw(Core.Systems.Edits.BetterWaterTrianglesAttmptTwo.waterSlopeTarget, -new Vector2(Main.offScreenRange, Main.offScreenRange), null, Color.White);
-		}
-	}
+        }
+    }
 
     class JadeLakeMapTarget : ILoadable
     {

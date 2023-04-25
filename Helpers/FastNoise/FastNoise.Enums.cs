@@ -3,7 +3,7 @@
 
 namespace JadeFables.Helpers.FastNoise
 {
-	public partial class FastNoise
+    public partial class FastNoise
     {
         public enum NoiseTypes
         {

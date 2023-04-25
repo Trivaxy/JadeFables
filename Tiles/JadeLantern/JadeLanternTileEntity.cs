@@ -306,7 +306,7 @@ namespace JadeFables.Tiles.JadeLantern
         }
 
         public int Hook_AfterPlacement(int i, int j, int type, int style, int direction)
-        { 
+        {
             return Place(i, j);
         }
 

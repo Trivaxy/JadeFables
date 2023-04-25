@@ -13,10 +13,12 @@ using Terraria.ObjectData;
 
 namespace JadeFables.Tiles.JadeFountain
 {
-    public class JadeFountain : ModTile {
+    public class JadeFountain : ModTile
+    {
         public static Delegate SetActiveFountain;
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             //Mostly everything in SceneMetrics is public, EXCEPT the one thing I need to use :(
             SetActiveFountain = typeof(SceneMetrics).GetProperty(nameof(SceneMetrics.ActiveFountainColor), BindingFlags.Instance | BindingFlags.Public)!.GetSetMethod(true)!.CreateDelegate<Action<int>>(Main.SceneMetrics);
 
@@ -51,14 +53,17 @@ namespace JadeFables.Tiles.JadeFountain
             Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 3 * 16, 4 * 16, ItemType<JadeFountainItem>());
         }
 
-        public override bool RightClick(int i, int j) {
+        public override bool RightClick(int i, int j)
+        {
             short pixelWidthOfFullTile = 3 * 18;
             Tile tile = Main.tile[i, j];
             int frameXDisplacement = tile.TileFrameX >= pixelWidthOfFullTile ? (int)(tile.TileFrameX / (float)pixelWidthOfFullTile) * pixelWidthOfFullTile : 0;
             Point topLeft = new Point(i - (tile.TileFrameX - frameXDisplacement) / 18, j - tile.TileFrameY / 18);
 
-            for (int x = 0; x < 3; x++) {
-                for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 3; x++)
+            {
+                for (int y = 0; y < 4; y++)
+                {
                     Tile newTile = Main.tile[topLeft.X + x, topLeft.Y + y];
                     newTile.TileFrameX += (short)(newTile.TileFrameX < 18 * 3 ? pixelWidthOfFullTile : -pixelWidthOfFullTile);
                 }
@@ -69,23 +74,28 @@ namespace JadeFables.Tiles.JadeFountain
             return true;
         }
 
-        public override void AnimateIndividualTile(int type, int i, int j, ref int frameXOffset, ref int frameYOffset) {
+        public override void AnimateIndividualTile(int type, int i, int j, ref int frameXOffset, ref int frameYOffset)
+        {
             Tile tile = Main.tile[i, j];
 
             //Sparkle every now and then
-            if (tile.TileFrameX % 3 * 18 == 0 && tile.TileFrameY % 4 * 18 == 0 && (Lighting.NotRetro ? Main.rand.NextBool(200) : Main.rand.NextBool(200 * 4))) {
+            if (tile.TileFrameX % 3 * 18 == 0 && tile.TileFrameY % 4 * 18 == 0 && (Lighting.NotRetro ? Main.rand.NextBool(200) : Main.rand.NextBool(200 * 4)))
+            {
                 Dust.NewDust(new Vector2(i * 16, (j + 1) * 16), 3, 3, DustID.TreasureSparkle, Main.rand.NextFloat(-0.1f, 0.1f), Main.rand.NextFloat(-0.1f, 0.1f));
             }
 
             //Only animate when activated
-            if (tile.TileFrameX == 3 * 18 && tile.TileFrameY % 4 * 18 == 0) {
+            if (tile.TileFrameX == 3 * 18 && tile.TileFrameY % 4 * 18 == 0)
+            {
                 ref int frame = ref Main.tileFrame[type];
                 ref int frameCounter = ref Main.tileFrameCounter[Type];
 
                 frameCounter++;
-                if (frameCounter >= 9) {
+                if (frameCounter >= 9)
+                {
                     frameCounter = 0;
-                    if (++frame >= 3) {
+                    if (++frame >= 3)
+                    {
                         frame = 0;
                     }
                 }
@@ -93,8 +103,10 @@ namespace JadeFables.Tiles.JadeFountain
             }
         }
 
-        public override void NearbyEffects(int i, int j, bool closer) {
-            if (!closer || Main.tile[i, j].TileFrameX < 18 * 3) {
+        public override void NearbyEffects(int i, int j, bool closer)
+        {
+            if (!closer || Main.tile[i, j].TileFrameX < 18 * 3)
+            {
                 return;
             }
 

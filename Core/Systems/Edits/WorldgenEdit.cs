@@ -2,19 +2,22 @@
 using JadeFables.Tiles;
 using MonoMod.Cil;
 
-namespace JadeFables.Core.Systems.Edits {
+namespace JadeFables.Core.Systems.Edits
+{
     /// <summary>
     /// Detours that disallow certain structures from spawning in the biome
     /// </summary>
-    public class WorldgenEdit : ILoadable {
-        public void Load(Mod mod) {
+    public class WorldgenEdit : ILoadable
+    {
+        public void Load(Mod mod)
+        {
             Terraria.GameContent.Generation.On_TrackGenerator.IsLocationInvalid += TrackGenerator_IsLocationInvalid;
             Terraria.GameContent.Biomes.On_MiningExplosivesBiome.Place += MiningExplosivesBiome_Place;
         }
 
         private bool MiningExplosivesBiome_Place(Terraria.GameContent.Biomes.On_MiningExplosivesBiome.orig_Place orig, Terraria.GameContent.Biomes.MiningExplosivesBiome self, Point origin, Terraria.WorldBuilding.StructureMap structures)
         {
-            if (ValidPlacement_Explosives(origin.X,origin.Y))
+            if (ValidPlacement_Explosives(origin.X, origin.Y))
                 return orig(self, origin, structures);
             return false;
         }
@@ -26,7 +29,7 @@ namespace JadeFables.Core.Systems.Edits {
             return true;
         }
 
-        public void Unload() 
+        public void Unload()
         {
             Terraria.GameContent.Generation.On_TrackGenerator.IsLocationInvalid -= TrackGenerator_IsLocationInvalid;
             Terraria.GameContent.Biomes.On_MiningExplosivesBiome.Place -= MiningExplosivesBiome_Place;

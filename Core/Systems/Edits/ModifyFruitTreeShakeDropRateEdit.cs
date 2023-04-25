@@ -8,7 +8,8 @@ namespace JadeFables.Core.Systems.Edits;
 
 public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
 {
-    public override void OnModLoad() {
+    public override void OnModLoad()
+    {
         base.OnModLoad();
 
         Terraria.IL_WorldGen.ShakeTree += il =>
@@ -37,8 +38,9 @@ public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
                 ItemID.Dragonfruit
             };
 
-            var nextInt32 = typeof(UnifiedRandom).GetMethod("Next", new[] {typeof(int)});
-            if (nextInt32 is null) {
+            var nextInt32 = typeof(UnifiedRandom).GetMethod("Next", new[] { typeof(int) });
+            if (nextInt32 is null)
+            {
                 AddMissingMemberError(typeof(UnifiedRandom).FullName + "::Next(int32)");
                 return;
             }
@@ -46,17 +48,20 @@ public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
             var c = new ILCursor(il);
             int urIterations = 0;
 
-            foreach (int fruit in fruits) {
+            foreach (int fruit in fruits)
+            {
                 c.Index = 0;
 
-                if (!c.TryGotoNext(x => x.MatchLdcI4(fruit))) {
+                if (!c.TryGotoNext(x => x.MatchLdcI4(fruit)))
+                {
                     AddOpCodeError("Terraria.WorldGen", "ShakeTree", "ldc.i4", fruit);
                     return;
                 }
 
                 // Twice since fruits always have an extra rand call.
                 for (int i = 0; i < 2; i++)
-                    if (!c.TryGotoPrev(x => x.MatchCallvirt(nextInt32))) {
+                    if (!c.TryGotoPrev(x => x.MatchCallvirt(nextInt32)))
+                    {
                         AddOpCodeError("Terraria.WorldGen", "ShakeTree", "callvirt", nextInt32!.DeclaringType + "::" + nextInt32.Name, ++urIterations);
                         return;
                     }
@@ -75,7 +80,7 @@ public sealed class ModifyFruitTreeShakeDropRateEdit : RuntimeDetourModSystem
                     if (!ModContent.GetInstance<TileHitInfoSystem>().TryGetHitTileContext(new Point(x, y), out var hitContext)) return rate;
 
                     // TODO: Use an ID set?
-                    return hitContext.Player.HeldItem.type == ModContent.ItemType<JadeAxe>() ? (int) (rate * 0.7f) : rate;
+                    return hitContext.Player.HeldItem.type == ModContent.ItemType<JadeAxe>() ? (int)(rate * 0.7f) : rate;
                 });
             }
         };

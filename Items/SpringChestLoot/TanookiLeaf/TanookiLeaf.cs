@@ -14,14 +14,15 @@ using Terraria.DataStructures;
 
 namespace JadeFables.Items.SpringChestLoot.TanookiLeaf
 {
-	public class TanookiLeaf : ModItem
-	{
+    public class TanookiLeaf : ModItem
+    {
         int cooldown = 0;
-		bool pressedJump = false;
-		public override void SetDefaults() {
-			Item.width = 24;
-			Item.height = 28;
-			Item.accessory = true;
+        bool pressedJump = false;
+        public override void SetDefaults()
+        {
+            Item.width = 24;
+            Item.height = 28;
+            Item.accessory = true;
             Item.hasVanityEffects = true;
 
             Item.value = Item.sellPrice(gold: 1);
@@ -29,26 +30,26 @@ namespace JadeFables.Items.SpringChestLoot.TanookiLeaf
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
-		{
+        {
             player.noFallDmg = true;
             player.GetModPlayer<TanookiLeafPlayer>().equipped = true;
             player.jumpSpeedBoost += Math.Min(Math.Abs(player.velocity.X) * 0.4f, 5);
             player.GetModPlayer<TanookiLeafPlayer>().frameCounter--;
             if (cooldown-- < 0 && player.controlJump && player.velocity.Y > 0 && !pressedJump)
-			{
-				pressedJump = true;
+            {
+                pressedJump = true;
                 player.GetModPlayer<TanookiLeafPlayer>().frameCounter = 7;
 
                 Helpers.Helper.PlayPitched("TanookiSpin", 0.1f, 0, player.Center);
                 cooldown = 12;
                 cooldown = 12;
-				player.velocity.Y *= 0.1f;
-			}
+                player.velocity.Y *= 0.1f;
+            }
 
             if (cooldown > 3)
                 player.velocity.Y *= 0.75f;
-			if (!player.controlJump)
-				pressedJump = false;
+            if (!player.controlJump)
+                pressedJump = false;
 
         }
 

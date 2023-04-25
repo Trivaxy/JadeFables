@@ -22,7 +22,8 @@ public abstract class ErrorCollectingModSystem : ModSystem
     ///     Adds an error to the list of collected errors.
     /// </summary>
     /// <param name="error"></param>
-    protected virtual void AddError(ISystemLoadError error) {
+    protected virtual void AddError(ISystemLoadError error)
+    {
         Action<object> logAction = error.Severity switch
         {
             LoadErrorSeverity.Debug => Mod.Logger.Debug,
@@ -30,7 +31,7 @@ public abstract class ErrorCollectingModSystem : ModSystem
             LoadErrorSeverity.Warn => Mod.Logger.Warn,
             LoadErrorSeverity.Error => Mod.Logger.Error,
             LoadErrorSeverity.Fatal => Mod.Logger.Fatal,
-            _ => throw new ArgumentOutOfRangeException(nameof(error), "Invalid error severity: " + (int) error.Severity)
+            _ => throw new ArgumentOutOfRangeException(nameof(error), "Invalid error severity: " + (int)error.Severity)
         };
 
         logAction(error.AsLoggable());
@@ -42,10 +43,12 @@ public abstract class ErrorCollectingModSystem : ModSystem
 // ReSharper disable once UnusedType.Global
 internal sealed class ErrorReportingPlayer : ModPlayer
 {
-    public override void OnEnterWorld() {
+    public override void OnEnterWorld()
+    {
         base.OnEnterWorld();
 
-        foreach (var system in Mod.GetContent<ErrorCollectingModSystem>()) {
+        foreach (var system in Mod.GetContent<ErrorCollectingModSystem>())
+        {
             if (system.PrintOnWorldEnter) continue;
             if (system.LoadErrors.Count == 0) continue;
 
@@ -111,13 +114,15 @@ public abstract class SystemLoadError : ISystemLoadError
 {
     public virtual LoadErrorSeverity Severity { get; init; } = LoadErrorSeverity.Error;
 
-    string ISystemLoadError.AsLoggable() {
+    string ISystemLoadError.AsLoggable()
+    {
         return GetType().Name + ": " + AsLoggableImpl();
     }
 
     protected abstract string AsLoggableImpl();
 
-    string ISystemLoadError.AsReportable() {
+    string ISystemLoadError.AsReportable()
+    {
         return GetType().Name + ": " + AsReportableImpl();
     }
 

@@ -158,7 +158,7 @@ namespace JadeFables.NPCs.Eel
         private static bool WalkableTile(Vector2 pos)
         {
             for (int x = 0; x <= 1; x++)
-            { 
+            {
                 for (int y = 0; y <= 1; y++)
                 {
                     int i = (int)pos.X + x;

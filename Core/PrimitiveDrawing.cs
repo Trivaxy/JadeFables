@@ -390,7 +390,7 @@ namespace JadeFables.Core
                 float angle = MathHelper.PiOver2 - (rotationFactor * MathHelper.Pi);
 
 
-				        Vector2 circlePoint = trailTipPosition + (trailTipNormal.RotatedBy(angle) * (trailWidthFunction?.Invoke(1) ?? 1));
+                Vector2 circlePoint = trailTipPosition + (trailTipNormal.RotatedBy(angle) * (trailWidthFunction?.Invoke(1) ?? 1));
 
                 // Handily, the rotation factor can also be used as a texture coordinate because it is a measure of how far around the tip a point is.
                 Vector2 circleTexCoord = new Vector2(rotationFactor, 1);
@@ -413,8 +413,8 @@ namespace JadeFables.Core
                      */
 
                     //before the fix, I believe these being in the wrong order was what prevented it from drawing
-                    (short)startFromIndex, 
-                    (short)(startFromIndex + k + 2), 
+                    (short)startFromIndex,
+                    (short)(startFromIndex + k + 2),
                     (short)(startFromIndex + k + 1)
                 };
 

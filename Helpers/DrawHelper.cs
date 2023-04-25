@@ -10,8 +10,8 @@ using static Terraria.GameContent.TilePaintSystemV2;
 
 namespace JadeFables.Helpers
 {
-	public static class DrawHelper
-	{
+    public static class DrawHelper
+    {
         public static readonly BasicEffect basicEffect = Main.dedServ ? null : new BasicEffect(Main.graphics.GraphicsDevice);
 
         public static Vector2 PointAccur(this Vector2 input) => input.ToPoint().ToVector2();

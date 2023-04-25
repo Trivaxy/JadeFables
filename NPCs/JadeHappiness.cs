@@ -24,7 +24,7 @@ namespace JadeFables.NPCs
         {
             var val = orig(self, player, npc);
             if (player.InModBiome<JadeLakeBiome>())
-                 ModifyShoppingSettings(player, npc, ref val, self);
+                ModifyShoppingSettings(player, npc, ref val, self);
             return val;
         }
         public static void ModifyShoppingSettings(Player player, NPC npc, ref ShoppingSettings settings, ShopHelper shopHelper)

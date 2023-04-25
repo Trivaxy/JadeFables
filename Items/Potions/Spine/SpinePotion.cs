@@ -10,7 +10,7 @@ namespace JadeFables.Items.Potions.Spine
 
         public override void SetStaticDefaults()
         {
-            ItemID.Sets.DrinkParticleColors[Item.type] = new Color[3] { new Color(73, 130, 6), new Color(144, 169, 40), new Color(192, 212, 110) }; 
+            ItemID.Sets.DrinkParticleColors[Item.type] = new Color[3] { new Color(73, 130, 6), new Color(144, 169, 40), new Color(192, 212, 110) };
         }
 
         public override void SetDefaults()
@@ -125,7 +125,7 @@ namespace JadeFables.Items.Potions.Spine
         }
 
         float initialVel = 0f;
-        public override void AI() 
+        public override void AI()
         {
             if (initialVel == 0) initialVel = Projectile.velocity.Length();
 

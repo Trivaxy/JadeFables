@@ -33,7 +33,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             //TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidWithTop | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
             TileObjectData.newTile.UsesCustomCanPlace = true;
             TileObjectData.newTile.LavaDeath = false;
-            TileObjectData.newTile.CoordinateHeights = new int[] { 16};
+            TileObjectData.newTile.CoordinateHeights = new int[] { 16 };
             TileObjectData.newTile.CoordinateWidth = 16;
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
@@ -231,7 +231,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             Texture2D paintedBottomTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(Projectile.type + 2, originLeft.TileColor, Texture + "_Bottom", -1);
             if (paintedBottomTexture is not null) PaintHelper.DrawWithCoating(originLeft.IsTileFullbright, originLeft.IsTileInvisible, paintedBottomTexture, bottomPos - Main.screenPosition, bottomFrameBox, bottomColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
             //PaintHelper.DrawWithPaint(originLeft.TileColor, Texture + "_Bottom", bottomPos - Main.screenPosition, bottomFrameBox, bottomColor, 0, Vector2.Zero, 1, SpriteEffects.None, 0f);
-            
+
             return;
         }
 
@@ -260,7 +260,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                     if (tile.LiquidAmount == 255 && (!tile.HasTile || !Main.tileSolid[tile.TileType] || tile.IsActuated))
                     {
                         Vector2 velocity = Vector2.UnitY.RotatedByRandom(0.1f) * -Main.rand.NextFloat(1f, 1.5f);
-                        Vector2 pos = new Vector2(Projectile.Center.X + (j * 16), Projectile.Center.Y + (i * 16)) + new Vector2(8,8) + Main.rand.NextVector2Circular(4, 12);
+                        Vector2 pos = new Vector2(Projectile.Center.X + (j * 16), Projectile.Center.Y + (i * 16)) + new Vector2(8, 8) + Main.rand.NextVector2Circular(4, 12);
                         Dust.NewDustPerfect(pos, ModContent.DustType<WaterfallMist>(), velocity, 0, Color.White, Main.rand.NextFloat(0.025f, 0.225f));
                         foundWater = true;
                     }
@@ -288,7 +288,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             }
             else if (sound == null || !soundInstance.IsPlaying)
             {
-                Vector2 soundPos = Projectile.Center + new Vector2(16, i* 16);
+                Vector2 soundPos = Projectile.Center + new Vector2(16, i * 16);
                 ReLogic.Utilities.SlotId slot = SoundEngine.PlaySound(new SoundStyle($"{nameof(JadeFables)}/Sounds/Waterfall")
                 {
                     Volume = 0.1f,

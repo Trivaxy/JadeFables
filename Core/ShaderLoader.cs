@@ -6,9 +6,9 @@ using static Terraria.ModLoader.Core.TmodFile;
 
 namespace JadeFables.Core
 {
-	class ShaderLoader : ILoadable
+    class ShaderLoader : ILoadable
     {
-        public void Load(Mod mod) 
+        public void Load(Mod mod)
         {
             if (Main.dedServ)
                 return;
@@ -28,7 +28,7 @@ namespace JadeFables.Core
 
         public void Unload()
         {
-            
+
         }
 
         public static void LoadShader(string name, string path, Mod mod)

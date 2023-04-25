@@ -8,7 +8,7 @@ using DECIMAL = System.Single;//using FN_DECIMAL = System.Double;
 
 namespace JadeFables.Helpers.FastNoise
 {
-	public partial class FastNoise
+    public partial class FastNoise
     {
         private const int PrimeX = 1619;
         private const int PrimeY = 31337;

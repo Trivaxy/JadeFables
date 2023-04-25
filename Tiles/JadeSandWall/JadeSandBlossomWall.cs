@@ -9,16 +9,16 @@ using JadeFables.Helpers;
 
 namespace JadeFables.Tiles.JadeSandWall
 {
-	public class JadeSandBlossomWall : ModWall
-	{
+    public class JadeSandBlossomWall : ModWall
+    {
         public override void SetStaticDefaults()
-		{
-			Main.wallHouse[Type] = false;
-			DustType = DustID.Dirt;
-			HitSound = SoundID.Dig;
+        {
+            Main.wallHouse[Type] = false;
+            DustType = DustID.Dirt;
+            HitSound = SoundID.Dig;
             ItemDrop = ModContent.ItemType<JadeSandWallItem>();
-			AddMapEntry(jadeSandDarkWall);
-		}
+            AddMapEntry(jadeSandDarkWall);
+        }
 
         public static Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> _paintRenders = new();
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch)

@@ -51,7 +51,7 @@ namespace JadeFables.Biomes.JadeLake
                 int x = WorldGen.genRand.Next(300, Main.maxTilesX - 300);
                 int y = WorldGen.genRand.Next((int)Main.rockLayer + 100, Main.maxTilesY - 500);
                 int size = (int)(WorldGen.genRand.Next(160, 200) * (Main.maxTilesX / 6400f));
-                if (!SpawnBiome(x,y,size) && tries++ < 999)
+                if (!SpawnBiome(x, y, size) && tries++ < 999)
                 {
                     i--;
                 }
@@ -229,14 +229,14 @@ namespace JadeFables.Biomes.JadeLake
             public Point leftBottom;
             public Point rightBottom;
 
-            public Area() 
+            public Area()
             {
                 leftTop = new();
                 rightTop = new();
                 leftBottom = new();
-                rightBottom= new();
+                rightBottom = new();
             }
-            public Area(Point leftTop, Point rightTop, Point leftBottom, Point rightBottom) 
+            public Area(Point leftTop, Point rightTop, Point leftBottom, Point rightBottom)
             {
                 this.leftTop = leftTop;
                 this.rightTop = rightTop;
@@ -249,7 +249,7 @@ namespace JadeFables.Biomes.JadeLake
             {
                 return new Point(
                     Math.Min(
-                        Math.Min(leftTop.X, rightTop.X), 
+                        Math.Min(leftTop.X, rightTop.X),
                         Math.Min(leftBottom.X, rightBottom.X)
                         ),
                     Math.Min(
@@ -295,7 +295,7 @@ namespace JadeFables.Biomes.JadeLake
             int x = (int)pagodaBase.X;
             int y = (int)pagodaBase.Y;
 
-            while (!Main.tile[x,y].HasTile || !Main.tileSolid[Main.tile[x, y].TileType])
+            while (!Main.tile[x, y].HasTile || !Main.tileSolid[Main.tile[x, y].TileType])
             {
                 y++;
             }
@@ -322,7 +322,7 @@ namespace JadeFables.Biomes.JadeLake
             StructureHelper.Generator.GenerateStructure("Structures/" + pagodaPrefix + "Pagoda", new Point16(x, y), JadeFables.Instance, false);
 
             PagodaRects.Add(new Rectangle(x, y, dimensions.X, dimensions.Y));
-            
+
         }
 
         public static bool ContainsBlacklistBlock(Rectangle rect)
@@ -353,7 +353,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void GenerateWallPillars(List<(Rectangle pos, bool water)> islandList, int maxPillarDistance)
         {
-            foreach(var (islandBox, hasWater) in islandList)
+            foreach (var (islandBox, hasWater) in islandList)
             {
                 Point center = islandBox.Center;
 
@@ -503,7 +503,7 @@ namespace JadeFables.Biomes.JadeLake
                         int SubtractHeight = (int)((PillarAreaMax.Y - PillarAreaMin.Y)) + WorldGen.genRand.Next(15, 25);
 
                         int TopSubtractCenter = PillarArea.leftTop.X + (PillarArea.TopWidth() / 2);
-                        int BottomSubtractCenter = PillarArea.leftBottom.X + (PillarArea.BottomWidth() / 2) + 
+                        int BottomSubtractCenter = PillarArea.leftBottom.X + (PillarArea.BottomWidth() / 2) +
                             WorldGen.genRand.Next(-PillarArea.TopWidth() / 5, PillarArea.TopWidth() / 5);//defaults to aiming towards bottom of center, with a random angle offset
 
                         Area SubtractArea = new(
@@ -699,8 +699,9 @@ namespace JadeFables.Biomes.JadeLake
         {
             int lastPosX = posX;
             int lastPosY = posY;
-            Action<int, int> func = leaveSand ? 
-                (int i, int j) => {
+            Action<int, int> func = leaveSand ?
+                (int i, int j) =>
+                {
                     if (
                         Main.tile[i, j].TileType != ModContent.TileType<Tiles.JadeSand.JadeSandTile>() &&
                         Main.tile[i, j].TileType != ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>()/* &&
@@ -710,16 +711,18 @@ namespace JadeFables.Biomes.JadeLake
                         if (removeWalls)
                             WorldGen.KillWall(i, j, false);
                     }
-                } : 
-                (int i, int j) => { 
+                }
+            :
+                (int i, int j) =>
+                {
                     WorldGen.KillTile(i, j, false, false, true);
-                    if(removeWalls)
+                    if (removeWalls)
                         WorldGen.KillWall(i, j, false);
                 };
 
             for (int h = 0; h < steps; h++)
             {
-                float scale = size * (-((float)h / steps) + 1);                
+                float scale = size * (-((float)h / steps) + 1);
                 CircleGen(lastPosX, lastPosY, scale, func);
 
                 float mul = fastnoise.GetCubicFractal(h * freq, 0) * amp;
@@ -787,15 +790,15 @@ namespace JadeFables.Biomes.JadeLake
                                     }
                                     else if (collsionType == 2)//makes sure top 2 corners + center are empty
                                     {
-                                        validSpace = (Main.tile[size.X, size.Y].HasTile || Main.tile[size.X + size.Width, size.Y].HasTile) 
+                                        validSpace = (Main.tile[size.X, size.Y].HasTile || Main.tile[size.X + size.Width, size.Y].HasTile)
                                             && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile;
                                     }
                                     else if (collsionType == 0)//makes sure all 4 corners + center are empty
                                     {
                                         validSpace = ((
-                                            !Main.tile[size.X, size.Y].HasTile && 
-                                            !Main.tile[size.X, size.Y + size.Height].HasTile && 
-                                            !Main.tile[size.X + size.Width, size.Y].HasTile && 
+                                            !Main.tile[size.X, size.Y].HasTile &&
+                                            !Main.tile[size.X, size.Y + size.Height].HasTile &&
+                                            !Main.tile[size.X + size.Width, size.Y].HasTile &&
                                             !Main.tile[size.X + size.Width, size.Y + size.Height].HasTile))
                                            && !Main.tile[size.X + (size.Width / 2), size.Y + (size.Height / 2)].HasTile;
                                     }
@@ -882,7 +885,7 @@ namespace JadeFables.Biomes.JadeLake
                     }
                 }
                 //delete overlapping
-                if(deleteCollide)
+                if (deleteCollide)
                 {
                     //prev and cur
                     {
@@ -1036,7 +1039,7 @@ namespace JadeFables.Biomes.JadeLake
             for (int i = worldArea.X; i < worldArea.X + worldArea.Width; i++)
                 for (int j = worldArea.Y; j < worldArea.Y + worldArea.Height; j++)
                 {
-                    if((i + (j % 2) + offset) % 2 == 0)
+                    if ((i + (j % 2) + offset) % 2 == 0)
                         WorldGen.PlaceTile(i, j, tile, true, true);
                 }
         }
@@ -1048,12 +1051,12 @@ namespace JadeFables.Biomes.JadeLake
             for (int i = worldArea.X; i < worldArea.X + worldArea.Width; i++)
                 for (int j = worldArea.Y; j < worldArea.Y + worldArea.Height; j++)
                 {
-                    if (Main.tile[i, j].TileType == ModContent.TileType<Tiles.JadeSand.JadeSandTile>() && Main.tile[i, j].HasTile) 
+                    if (Main.tile[i, j].TileType == ModContent.TileType<Tiles.JadeSand.JadeSandTile>() && Main.tile[i, j].HasTile)
                     {
                         bool generateNew = WorldGen.genRand.NextFloat() < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, ((j - worldArea.Y) / worldArea.Height));
                         if (generateNew && offshootsLeft > 0)
                         {
-                           // WorldGen.PlaceTile(i, j, TileID.DiamondGemspark, true, true);
+                            // WorldGen.PlaceTile(i, j, TileID.DiamondGemspark, true, true);
                             var newWidth = worldArea.Width;
                             var newHeight = worldArea.Height;
                             var newAmp = amp;
@@ -1219,7 +1222,7 @@ namespace JadeFables.Biomes.JadeLake
                 {
                     //raycasts from the middle
                     float clearLen = ((dist.X * widthMult));
-                    for (float j = 0; j < clearLen; j+= 0.75f)
+                    for (float j = 0; j < clearLen; j += 0.75f)
                     {
                         float multDist = j / clearLen;
                         int posX = (int)(centerPoint.X + ((pos.X * multDist) * widthMult));

@@ -18,66 +18,66 @@ using Terraria.Audio;
 
 namespace JadeFables.Items.SpringChestLoot.FireworkPack
 {
-	public class FireworkPack : ModItem
-	{
+    public class FireworkPack : ModItem
+    {
         public override void SetDefaults()
-		{
-			Item.width = 24;
-			Item.height = 28;
-			Item.accessory = true;
+        {
+            Item.width = 24;
+            Item.height = 28;
+            Item.accessory = true;
 
             Item.value = Item.sellPrice(gold: 1);
             Item.rare = ItemRarityID.Blue;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
-		{
-			player.GetModPlayer<FireworkPackPlayer>().equipped = true;
-		}
-	}
+        {
+            player.GetModPlayer<FireworkPackPlayer>().equipped = true;
+        }
+    }
 
-	public class FireworkPackPlayer : ModPlayer
-	{
-		public bool equipped = false;
+    public class FireworkPackPlayer : ModPlayer
+    {
+        public bool equipped = false;
 
-		public override void ResetEffects()
-		{
-			equipped = false;
-		}
+        public override void ResetEffects()
+        {
+            equipped = false;
+        }
 
-		public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
-		{
-			if (target.life <= 0)
-				SummonFireworks(target, Main.player[proj.owner]);
-		}
+        public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
+        {
+            if (target.life <= 0)
+                SummonFireworks(target, Main.player[proj.owner]);
+        }
 
-		public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
-		{
-			if (target.life <= 0)
-				SummonFireworks(target, Main.player[target.target]);
-		}
+        public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Item, consider using OnHitNPC instead */
+        {
+            if (target.life <= 0)
+                SummonFireworks(target, Main.player[target.target]);
+        }
 
-		private void SummonFireworks(NPC target, Player owner)
-		{
-			if (!owner.GetModPlayer<FireworkPackPlayer>().equipped)
-				return;
+        private void SummonFireworks(NPC target, Player owner)
+        {
+            if (!owner.GetModPlayer<FireworkPackPlayer>().equipped)
+                return;
 
             if (target.SpawnedFromStatue)
                 return;
 
-			int amt = Main.rand.Next(1, 4);
-			for (int i = 0; i < amt; i++)
-			{
+            int amt = Main.rand.Next(1, 4);
+            for (int i = 0; i < amt; i++)
+            {
                 Vector2 vel = Main.rand.NextVector2CircularEdge(2, 2);
                 vel.Y *= -Math.Sign(vel.Y);
                 Projectile proj = Projectile.NewProjectileDirect(target.GetSource_Death(), target.Center, vel, ModContent.ProjectileType<FireworkPackProj>(), 15, 3, owner.whoAmI);
                 proj.timeLeft = Main.rand.Next(60, 80);
             }
-		}
-	}
+        }
+    }
 
-	internal class FireworkPackProj : ModProjectile
-	{
+    internal class FireworkPackProj : ModProjectile
+    {
         private Color color = Color.White;
 
         private bool loop = false;
@@ -92,19 +92,19 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
         private float progress => 1 - ((Projectile.timeLeft - 60) / 60f);
 
         public override void SetDefaults()
-		{
-			Projectile.width = 18;
-			Projectile.height = 18;
-			Projectile.tileCollide = true;
-			Projectile.friendly = true;
-			Projectile.timeLeft = 60;
-			Projectile.penetrate = 1;
+        {
+            Projectile.width = 18;
+            Projectile.height = 18;
+            Projectile.tileCollide = true;
+            Projectile.friendly = true;
+            Projectile.timeLeft = 60;
+            Projectile.penetrate = 1;
         }
 
         public override void AI()
         {
             if (color == Color.White)
-                color = Main.hslToRgb(Main.rand.NextFloat(), Main.rand.NextFloat(0.65f, 1f), Main.rand.NextFloat(0.5f,0.8f));
+                color = Main.hslToRgb(Main.rand.NextFloat(), Main.rand.NextFloat(0.65f, 1f), Main.rand.NextFloat(0.5f, 0.8f));
 
 
             if (Projectile.timeLeft < 40)
@@ -153,7 +153,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         public override void Kill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item40 with { Pitch = Main.rand.NextFloat(-0.6f, -0.2f)}, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item40 with { Pitch = Main.rand.NextFloat(-0.6f, -0.2f) }, Projectile.Center);
             for (int i = 0; i < 32; i++)
             {
                 Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<FireworkPackGlowDust>(), Main.rand.NextVector2Circular(12, 12), 0, AdjacentColor(), Main.rand.NextFloat(1.5f, 3f));
@@ -213,7 +213,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
 
         private Color AdjacentColor()
         {
-            int r = color.R + Main.rand.Next(-20,20);
+            int r = color.R + Main.rand.Next(-20, 20);
             int g = color.G + Main.rand.Next(-20, 20);
             int b = color.B + Main.rand.Next(-20, 20);
             return new Color(r, g, b);

@@ -10,8 +10,8 @@ using Terraria.ModLoader;
 
 namespace JadeFables.Core.Systems
 {
-	public class CameraSystem : ModSystem
-	{
+    public class CameraSystem : ModSystem
+    {
         public static int Shake = 0;
 
         private static PanModifier PanModifier = new PanModifier();
@@ -27,15 +27,15 @@ namespace JadeFables.Core.Systems
         /// <param name="easeOut"> Changes the easing function for the motion from the primary/secondary target back to the player. Default is Vector2.Smoothstep </param>
         /// <param name="easePan"> Changes the easing function for the motion from primary to secondary target if applicable. Default is Vector2.Lerp </param>
         public static void DoPanAnimation(int duration, Vector2 target, Vector2 secondaryTarget = default, Func<Vector2, Vector2, float, Vector2> easeIn = null, Func<Vector2, Vector2, float, Vector2> easeOut = null, Func<Vector2, Vector2, float, Vector2> easePan = null)
-		{
+        {
             PanModifier.TotalDuration = duration;
             PanModifier.PrimaryTarget = target;
             PanModifier.SecondaryTarget = secondaryTarget;
 
-            PanModifier.EaseInFunction = easeIn?? Vector2.SmoothStep;
-            PanModifier.EaseOutFunction = easeOut?? Vector2.SmoothStep;
-            PanModifier.PanFunction = easePan?? Vector2.Lerp;
-		}
+            PanModifier.EaseInFunction = easeIn ?? Vector2.SmoothStep;
+            PanModifier.EaseOutFunction = easeOut ?? Vector2.SmoothStep;
+            PanModifier.PanFunction = easePan ?? Vector2.Lerp;
+        }
 
         /// <summary>
         /// Moves the camera to a set point, with an animation of the specified duration, and stays there. Use ReturnCamera to retrieve it later.
@@ -44,13 +44,13 @@ namespace JadeFables.Core.Systems
         /// <param name="target"> Where the camera should end up </param>
         /// <param name="ease"> The easing function the camera should follow on it's journey. Default is Vector2.Smoothstep </param>
         public static void MoveCameraOut(int duration, Vector2 target, Func<Vector2, Vector2, float, Vector2> ease = null)
-		{
+        {
             MoveModifier.Timer = 0;
             MoveModifier.MovementDuration = duration;
             MoveModifier.Target = target;
 
-            MoveModifier.EaseFunction = ease?? Vector2.SmoothStep;
-		}
+            MoveModifier.EaseFunction = ease ?? Vector2.SmoothStep;
+        }
 
         /// <summary>
         /// Returns the camera to the player after it has been sent out by MoveCameraOut.
@@ -66,7 +66,7 @@ namespace JadeFables.Core.Systems
         }
 
         public override void PostUpdateEverything()
-		{
+        {
             if (Shake > 120) //clamp screenshake to (120 * config) to prevent utter chaos
                 Shake = (int)(120);
 
@@ -74,13 +74,13 @@ namespace JadeFables.Core.Systems
             MoveModifier.PassiveUpdate();
         }
 
-		public override void ModifyScreenPosition()
-		{
+        public override void ModifyScreenPosition()
+        {
             //float mult = ModContent.GetInstance<Configs.GraphicsConfig>().ScreenshakeMult;
             //mult *= Main.screenWidth / 2048f * 1.2f; //normalize for screen resolution
             Main.instance.CameraModifiers.Add(new PunchCameraModifier(Main.LocalPlayer.position, Main.rand.NextFloat(3.14f).ToRotationVector2(), Shake, 15f, 30, 2000, "Starlight Shake"));
 
-            if(PanModifier.TotalDuration > 0 && PanModifier.PrimaryTarget != Vector2.Zero)
+            if (PanModifier.TotalDuration > 0 && PanModifier.PrimaryTarget != Vector2.Zero)
                 Main.instance.CameraModifiers.Add(PanModifier);
 
             if (Shake > 0)
@@ -88,21 +88,21 @@ namespace JadeFables.Core.Systems
         }
 
         public static void Reset()
-		{
+        {
             Shake = 0;
 
             PanModifier.Reset();
             MoveModifier.Reset();
         }
 
-		public override void OnWorldLoad()
-		{
+        public override void OnWorldLoad()
+        {
             Reset();
         }
 
-		public override void Unload()
-		{
+        public override void Unload()
+        {
             PanModifier = null;
-		}
-	}
+        }
+    }
 }

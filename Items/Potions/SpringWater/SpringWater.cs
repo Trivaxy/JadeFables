@@ -16,15 +16,15 @@ using Terraria.Localization;
 
 namespace JadeFables.Items.Potions.SpringWater
 {
-	public class SpringWater : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
-            ItemID.Sets.DrinkParticleColors[Item.type] = new Color[1] { Color.Cyan};
-		}
+    public class SpringWater : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.DrinkParticleColors[Item.type] = new Color[1] { Color.Cyan };
+        }
 
-		public override void SetDefaults()
-		{
+        public override void SetDefaults()
+        {
             Item.width = 24;
             Item.height = 32;
             Item.maxStack = 30; //Change this when Labor of Love drops?
@@ -41,19 +41,19 @@ namespace JadeFables.Items.Potions.SpringWater
 
             Item.UseSound = SoundID.Item3;
         }
-		public override bool CanUseItem(Player player) => player.FindBuffIndex(BuffID.PotionSickness) < 0;
+        public override bool CanUseItem(Player player) => player.FindBuffIndex(BuffID.PotionSickness) < 0;
 
-		public override bool? UseItem(Player player)
-		{
-			Item.healLife = 0; //set item's heal life to 0 when actually used, so it doesnt heal player
-			if (!player.pStone)
-				player.AddBuff(BuffID.PotionSickness, 900);
-			else
-				player.AddBuff(BuffID.PotionSickness, 600);
+        public override bool? UseItem(Player player)
+        {
+            Item.healLife = 0; //set item's heal life to 0 when actually used, so it doesnt heal player
+            if (!player.pStone)
+                player.AddBuff(BuffID.PotionSickness, 900);
+            else
+                player.AddBuff(BuffID.PotionSickness, 600);
 
-			player.AddBuff(ModContent.BuffType<SpringWaterBuff>(), 600);
-			return true;
-		}
+            player.AddBuff(ModContent.BuffType<SpringWaterBuff>(), 600);
+            return true;
+        }
 
         public override void AddRecipes()
         {
@@ -72,8 +72,8 @@ namespace JadeFables.Items.Potions.SpringWater
             Main.buffNoSave[Type] = true;
         }
 
-		public override void Update(Player player, ref int buffIndex)
-		{
+        public override void Update(Player player, ref int buffIndex)
+        {
             for (int i = 0; i < Player.MaxBuffs; i++)
             {
                 int type = player.buffType[i];
@@ -81,6 +81,6 @@ namespace JadeFables.Items.Potions.SpringWater
                     player.DelBuff(i);
             }
             base.Update(player, ref buffIndex);
-		}
-	}
+        }
+    }
 }

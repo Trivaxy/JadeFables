@@ -413,7 +413,7 @@ namespace JadeFables.NPCs.JadeMantis
                 origin.X = frameWidth - origin.X;
             }
 
-            Vector2 scaleVec = Vector2.One; 
+            Vector2 scaleVec = Vector2.One;
             if (attackPhase == AttackPhase.PoppingOut)
             {
                 float squash = MathHelper.Max(1 - (NPC.velocity.Length() / 80f), 0.25f);
@@ -554,7 +554,7 @@ namespace JadeFables.NPCs.JadeMantis
             Vector2 origin = new Vector2(tex.Width / 2, 0);
             Vector2 glowOrigin = new Vector2(glowTex.Width / 2, 6);
             Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, lightColor * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(glowTex, Projectile.Center - Main.screenPosition, null, new Color(255,255,255,0) * opacity * 0.3f, Projectile.rotation, glowOrigin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(glowTex, Projectile.Center - Main.screenPosition, null, new Color(255, 255, 255, 0) * opacity * 0.3f, Projectile.rotation, glowOrigin, Projectile.scale, SpriteEffects.None, 0f);
             return false;
         }
     }

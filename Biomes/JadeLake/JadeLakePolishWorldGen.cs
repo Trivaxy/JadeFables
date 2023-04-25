@@ -48,7 +48,7 @@ namespace JadeFables.Biomes.JadeLake
                 PlaceJadeChests(rect, WorldGen.genRand.Next(4, 7));
 
             //Places blossom walls
-            foreach(Rectangle rect in UpperIslandRects)
+            foreach (Rectangle rect in UpperIslandRects)
                 BlossomWallPopulation(rect, 0.03f, 5f, 3, 5, 10, 10f, 3);
 
             BlossomWallPopulationInPillars(worldRect, 50);
@@ -119,7 +119,7 @@ namespace JadeFables.Biomes.JadeLake
                     {
                         WeightedRandom<Pearl> pool = new(WorldGen.genRand);
 
-                        foreach (Pearl pearl in JadeFables.Instance.GetContent<Pearl>()) 
+                        foreach (Pearl pearl in JadeFables.Instance.GetContent<Pearl>())
                         {
                             pool.Add(pearl, pearl.SpawnChance);
                         }

@@ -5,7 +5,7 @@ using DECIMAL = System.Single;
 
 namespace JadeFables.Helpers.FastNoise
 {
-	public partial class FastNoise
+    public partial class FastNoise
     {
         private struct Decimal3
         {

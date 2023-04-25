@@ -50,7 +50,7 @@ namespace JadeFables.Items.Lotus.LotusHammer
     {
         public override bool Drop(int i, int j, int type, ref int dropType)
         {
-            Player player = Main.player[Player.FindClosest(new Vector2(i, j) * 16, 16,16)];
+            Player player = Main.player[Player.FindClosest(new Vector2(i, j) * 16, 16, 16)];
             if (player.HeldItem.type != ModContent.ItemType<LotusHammer>())
                 return true;
             switch (type)

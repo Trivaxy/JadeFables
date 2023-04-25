@@ -34,7 +34,7 @@ namespace JadeFables.Dusts
             dust.rotation += rotVel;
             dust.position += currentCenter - nextCenter;
 
-            dust.fadeIn+= 3;
+            dust.fadeIn += 3;
 
             if (dust.fadeIn > 120)
                 dust.active = false;

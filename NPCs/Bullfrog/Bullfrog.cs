@@ -86,7 +86,7 @@ namespace JadeFables.NPCs.Bullfrog
             NPC.value = 10f;
             NPC.knockBackResist = 0.4f;
             NPC.HitSound = SoundID.NPCHit21 with { Pitch = -0.45f };
-            NPC.DeathSound = SoundID.NPCDeath53 with { Pitch = -0.6f};
+            NPC.DeathSound = SoundID.NPCDeath53 with { Pitch = -0.6f };
             NPC.noGravity = false;
         }
 
@@ -106,7 +106,7 @@ namespace JadeFables.NPCs.Bullfrog
             if (Main.rand.NextBool(900))
                 SoundEngine.PlaySound(SoundID.Zombie29 with { Pitch = -0.45f });
             if (Main.rand.NextBool(900))
-                SoundEngine.PlaySound(SoundID.Zombie13 with { Pitch = -0.8f});
+                SoundEngine.PlaySound(SoundID.Zombie13 with { Pitch = -0.8f });
             NPC.TargetClosest(true);
             int[] dragonflies = new int[] { NPCID.BlackDragonfly, NPCID.BlueDragonfly, NPCID.GoldDragonfly, NPCID.GreenDragonfly, NPCID.OrangeDragonfly, NPCID.RedDragonfly, NPCID.YellowDragonfly };
             var nearbyDragonfly = Main.npc.Where(n => n.active && dragonflies.Contains(n.type) && n.Distance(NPC.Center) < 300 && MathF.Abs(MathF.Sin((n.Center - NPC.Center).ToRotation())) < 0.35f).OrderBy(n => n.Distance(NPC.Center)).FirstOrDefault();
@@ -219,7 +219,7 @@ namespace JadeFables.NPCs.Bullfrog
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Potions.Dumpling.Dumpling>(), 40));
             npcLoot.Add(ItemDropRule.Common(ItemID.IceCream, 40));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BullfrogTree.BullfrogLegs.BullfrogLegs>(), 13));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BullfrogTree.BullfrogTongue.BullfrogTongue> (), 20));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.BullfrogTree.BullfrogTongue.BullfrogTongue>(), 20));
         }
 
         public override void OnKill()
@@ -300,7 +300,7 @@ namespace JadeFables.NPCs.Bullfrog
             float rot = (mouthPos - Projectile.Center).ToRotation() + 3.14f;
             Main.spriteBatch.Draw(startTex, mouthPos - Main.screenPosition, null, Lighting.GetColor((int)(mouthPos.X / 16), (int)(mouthPos.Y / 16)), rot, origin, Projectile.scale, SpriteEffects.None, 0f);
 
-            for (int i = startTex.Width; i < length; i+= middleTex.Width)
+            for (int i = startTex.Width; i < length; i += middleTex.Width)
             {
                 float lerper = i / length;
                 Vector2 posToDraw = Vector2.Lerp(mouthPos, Projectile.Center, lerper);

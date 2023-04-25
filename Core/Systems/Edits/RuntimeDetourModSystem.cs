@@ -13,7 +13,8 @@ public abstract class RuntimeDetourModSystem : ErrorCollectingModSystem
         private readonly object? Value;
         private readonly int? Iteration;
 
-        public OpCodeError(string typeName, string methodName, string opCode, object? value = null, int? iteration = null) {
+        public OpCodeError(string typeName, string methodName, string opCode, object? value = null, int? iteration = null)
+        {
             TypeName = typeName;
             MethodName = methodName;
             OpCode = opCode;
@@ -21,15 +22,18 @@ public abstract class RuntimeDetourModSystem : ErrorCollectingModSystem
             Iteration = iteration;
         }
 
-        protected override string AsLoggableImpl() {
+        protected override string AsLoggableImpl()
+        {
             return ToString();
         }
 
-        protected override string AsReportableImpl() {
+        protected override string AsReportableImpl()
+        {
             return ToString();
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             var sb = new StringBuilder();
 
             sb.Append(TypeName)
@@ -38,12 +42,14 @@ public abstract class RuntimeDetourModSystem : ErrorCollectingModSystem
               .Append(' ')
               .Append(OpCode);
 
-            if (Value is not null) {
+            if (Value is not null)
+            {
                 sb.Append(' ')
                   .Append(Value);
             }
 
-            if (Iteration is not null) {
+            if (Iteration is not null)
+            {
                 sb.Append(" (")
                   .Append(Iteration)
                   .Append(')');
@@ -57,28 +63,34 @@ public abstract class RuntimeDetourModSystem : ErrorCollectingModSystem
     {
         private readonly string Member;
 
-        public MissingMemberError(string member) {
+        public MissingMemberError(string member)
+        {
             Member = member;
         }
 
-        protected override string AsLoggableImpl() {
+        protected override string AsLoggableImpl()
+        {
             return ToString();
         }
 
-        protected override string AsReportableImpl() {
+        protected override string AsReportableImpl()
+        {
             return ToString();
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return "Failed to find missing member: " + Member;
         }
     }
 
-    protected void AddOpCodeError(string typeName, string methodName, string opCode, object? value = null, int? iteration = null) {
+    protected void AddOpCodeError(string typeName, string methodName, string opCode, object? value = null, int? iteration = null)
+    {
         AddError(new OpCodeError(typeName, methodName, opCode, value, iteration));
     }
-    
-    protected void AddMissingMemberError(string member) {
+
+    protected void AddMissingMemberError(string member)
+    {
         AddError(new MissingMemberError(member));
     }
 }

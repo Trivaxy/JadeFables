@@ -120,7 +120,7 @@ namespace JadeFables.Items.Jade.JadeArmor
                         }
                     }
                 }
-                
+
                 Main.spriteBatch.End();
             }
 

@@ -71,7 +71,7 @@ namespace JadeFables.Items.Fishing.Crates
         };
         public static IItemDropRule[] recoveryPotions = new IItemDropRule[]
         {
-            ItemDropRule.NotScalingWithLuck(ItemID.HealingPotion, 1, 5, 17), 
+            ItemDropRule.NotScalingWithLuck(ItemID.HealingPotion, 1, 5, 17),
             ItemDropRule.NotScalingWithLuck(ItemID.ManaPotion, 1, 5, 17),
         };
         public static IItemDropRule[] extraBait = new IItemDropRule[]
@@ -143,9 +143,9 @@ namespace JadeFables.Items.Fishing.Crates
     }
 
     public class DragonCrate : ModItem
-	{
-		public override void SetStaticDefaults()
-		{
+    {
+        public override void SetStaticDefaults()
+        {
             ItemID.Sets.IsFishingCrate[Type] = true;
             ItemID.Sets.IsFishingCrateHardmode[Type] = true;
         }
@@ -156,7 +156,7 @@ namespace JadeFables.Items.Fishing.Crates
             Item.createTile = ModContent.TileType<DragonCrateTile>();
         }
 
-		public override bool CanRightClick() => true;
+        public override bool CanRightClick() => true;
 
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {

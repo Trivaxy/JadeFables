@@ -4,8 +4,8 @@ using Terraria.ModLoader;
 
 namespace JadeFables.Biomes.JadeLake
 {
-	public class JadeLakeDebuffCleanse : ModPlayer
-	{
+    public class JadeLakeDebuffCleanse : ModPlayer
+    {
         public override void PostUpdate()
         {
             if (Player.InModBiome<JadeLakeBiome>() && Player.wet)

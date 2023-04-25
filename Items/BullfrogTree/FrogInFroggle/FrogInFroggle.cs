@@ -92,7 +92,7 @@ namespace JadeFables.Items.BullfrogTree.FrogInFroggle
             blizzardJump = player.canJumpAgain_Blizzard;
             sandstormJump = player.canJumpAgain_Sandstorm;
             cloudJump = player.canJumpAgain_Cloud;
-            fartJump= player.canJumpAgain_Fart;
+            fartJump = player.canJumpAgain_Fart;
             santankJump = player.canJumpAgain_Santank;
             unicornJump = player.canJumpAgain_Unicorn;
             fleshJump = player.canJumpAgain_WallOfFleshGoat;

@@ -85,7 +85,7 @@ namespace JadeFables.Items.Potions.JasmineTea
         private int timer = 0;
         public override void Update(Player player, ref int buffIndex)
         {
-            
+
             if (timer % 8 == 0)
             {
                 SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.5f, MaxInstances = -1, Volume = 0.2f };

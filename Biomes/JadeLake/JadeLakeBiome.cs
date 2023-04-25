@@ -13,8 +13,8 @@
         public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.Find<ModUndergroundBackgroundStyle>("JadeFables/JadeUndergroundBackgroundStyle");
 
         public override bool IsBiomeActive(Player player)
-		{
-			return GetInstance<JadeLakeSystem>().TotalBiomeCount >= 1000;
-		}
-	}
+        {
+            return GetInstance<JadeLakeSystem>().TotalBiomeCount >= 1000;
+        }
+    }
 }

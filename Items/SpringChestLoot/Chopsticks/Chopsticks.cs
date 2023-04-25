@@ -21,8 +21,8 @@ using System;
 
 namespace JadeFables.Items.SpringChestLoot.Chopsticks
 {
-	public class Chopsticks : ModItem
-	{
+    public class Chopsticks : ModItem
+    {
         public static MethodInfo? playerItemCheckShoot_Info;
         public static Action<Player, int, Item, int>? playerItemCheckShoot;
 
@@ -57,24 +57,24 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
         }
 
         public override void SetDefaults()
-		{
-			Item.width = 24;
-			Item.height = 28;
-			Item.accessory = true;
+        {
+            Item.width = 24;
+            Item.height = 28;
+            Item.accessory = true;
 
             Item.value = Item.sellPrice(gold: 1);
             Item.rare = ItemRarityID.Blue;
         }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
-		{
-			player.GetModPlayer<ChopstickPlayer>().equipped = true;
-		}
-	}
+        {
+            player.GetModPlayer<ChopstickPlayer>().equipped = true;
+        }
+    }
 
-	public class ChopstickPlayer : ModPlayer
-	{
-		public bool equipped = false;
+    public class ChopstickPlayer : ModPlayer
+    {
+        public bool equipped = false;
 
         public override void ResetEffects()
         {
@@ -151,15 +151,15 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
                         item.ModItem.Shoot(Player, (EntitySource_ItemUse_WithAmmo)Player.GetSource_ItemUse_WithPotentialAmmo(item, usedAmmoItemId), Player.Center, velocity, projToShoot, damage, knockBack);
                     }
                     else*/
-                        if (Player.ItemTimeIsZero) Chopsticks.playerItemCheckShoot(Player, Player.whoAmI, item, item.damage);
+                    if (Player.ItemTimeIsZero) Chopsticks.playerItemCheckShoot(Player, Player.whoAmI, item, item.damage);
 
                 }
 
                 return false;
             }
 
-			return true;
-		}
+            return true;
+        }
     }
 
     public class ChopstickProj : ModProjectile
@@ -272,7 +272,7 @@ namespace JadeFables.Items.SpringChestLoot.Chopsticks
             DelegateMethods.tilecut_0 = TileCuttingContext.AttackProjectile;
             Utils.PlotTileLine(start, end, 15, DelegateMethods.CutTiles);
         }
-        }
+    }
     /*public class ChopsticksNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;

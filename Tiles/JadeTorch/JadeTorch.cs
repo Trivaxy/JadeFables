@@ -19,61 +19,69 @@ using JadeFables.Biomes.JadeLake;
 
 namespace JadeFables.Tiles.JadeTorch
 {
-	public class JadeTorch : ModItem
-	{
-		public override void SetStaticDefaults() {
+    public class JadeTorch : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 100;
             ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.ShimmerTorch;
-		}
-
-		public override void SetDefaults() {
-			Item.flame = true;
-			Item.noWet = true;
-			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTurn = true;
-			Item.useAnimation = 15;
-			Item.useTime = 10;
-			Item.holdStyle = ItemHoldStyleID.HoldFront;
-			Item.autoReuse = true;
-			Item.maxStack = 999;
-			Item.consumable = true;
-			Item.createTile = ModContent.TileType<JadeTorchTile>();
-			Item.width = 10;
-			Item.height = 12;
-			Item.value = 50;
-		}
-
-		public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup) { // Overrides the default sorting method of this Item.
-			itemGroup = ContentSamples.CreativeHelper.ItemGroup.Torches; // Vanilla usually matches sorting methods with the right type of item, but sometimes, like with torches, it doesn't. Make sure to set whichever items manually if need be.
-		}
-
-		public override void HoldItem(Player player) {
-
-			// Create a white (1.0, 1.0, 1.0) light at the torch's approximate position, when the item is held.
-			Vector2 position = player.RotatedRelativePoint(new Vector2(player.itemLocation.X + 12f * player.direction + player.velocity.X, player.itemLocation.Y - 14f + player.velocity.Y), true);
-
-			Lighting.AddLight(position, new Color(255, 29, 80).ToVector3() * 0.6f);
-		}
-
-		public override void PostUpdate() {
-			// Create a white (1.0, 1.0, 1.0) light when the item is in world, and isn't underwater.
-			if (!Item.wet) {
-				Lighting.AddLight(Item.Center, 0f, 1f, 0.4f);
-			}
-		}
-
-		public override void AutoLightSelect(ref bool dryTorch, ref bool wetTorch, ref bool glowstick) {
-			dryTorch = true; // This makes our item eligible for being selected with smart select at a short distance when not underwater.
-		}
-
-		// Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
-		public override void AddRecipes() {
-			CreateRecipe(5)
-				.AddIngredient(ItemID.Torch, 5)
-				.AddIngredient<JadeChunk>(1)
-				.Register();
         }
-	}
+
+        public override void SetDefaults()
+        {
+            Item.flame = true;
+            Item.noWet = true;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.useTurn = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.holdStyle = ItemHoldStyleID.HoldFront;
+            Item.autoReuse = true;
+            Item.maxStack = 999;
+            Item.consumable = true;
+            Item.createTile = ModContent.TileType<JadeTorchTile>();
+            Item.width = 10;
+            Item.height = 12;
+            Item.value = 50;
+        }
+
+        public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)
+        { // Overrides the default sorting method of this Item.
+            itemGroup = ContentSamples.CreativeHelper.ItemGroup.Torches; // Vanilla usually matches sorting methods with the right type of item, but sometimes, like with torches, it doesn't. Make sure to set whichever items manually if need be.
+        }
+
+        public override void HoldItem(Player player)
+        {
+
+            // Create a white (1.0, 1.0, 1.0) light at the torch's approximate position, when the item is held.
+            Vector2 position = player.RotatedRelativePoint(new Vector2(player.itemLocation.X + 12f * player.direction + player.velocity.X, player.itemLocation.Y - 14f + player.velocity.Y), true);
+
+            Lighting.AddLight(position, new Color(255, 29, 80).ToVector3() * 0.6f);
+        }
+
+        public override void PostUpdate()
+        {
+            // Create a white (1.0, 1.0, 1.0) light when the item is in world, and isn't underwater.
+            if (!Item.wet)
+            {
+                Lighting.AddLight(Item.Center, 0f, 1f, 0.4f);
+            }
+        }
+
+        public override void AutoLightSelect(ref bool dryTorch, ref bool wetTorch, ref bool glowstick)
+        {
+            dryTorch = true; // This makes our item eligible for being selected with smart select at a short distance when not underwater.
+        }
+
+        // Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.
+        public override void AddRecipes()
+        {
+            CreateRecipe(5)
+                .AddIngredient(ItemID.Torch, 5)
+                .AddIngredient<JadeChunk>(1)
+                .Register();
+        }
+    }
 
     public class JadeTorchTile : ModTile
     {

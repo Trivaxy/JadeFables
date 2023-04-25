@@ -152,7 +152,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                 owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 0.78f);
                 Projectile.velocity = Vector2.Zero;
                 Vector2 posToBe = owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, Projectile.rotation - 0.78f);
-                    Projectile.Center = posToBe;
+                Projectile.Center = posToBe;
 
                 Projectile.timeLeft = 2;
 
@@ -201,19 +201,19 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                 return;
             }
 
-           if (Projectile.timeLeft == 40)
-           {
+            if (Projectile.timeLeft == 40)
+            {
                 startPos = Projectile.Center;
-           }
-           if (retracting)
-           {
+            }
+            if (retracting)
+            {
                 Projectile.extraUpdates = 1;
                 Projectile.Center = Vector2.Lerp(owner.Center, startPos, EaseFunction.EaseCircularOut.Ease(Projectile.timeLeft / 40f));
-           }
-           else
-           {
+            }
+            else
+            {
                 Projectile.velocity *= 0.935f;
-           }
+            }
         }
 
         public override void Kill(int timeLeft)
@@ -362,7 +362,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
     }
 
     class JadeHarpoonShockwave : ModProjectile
-    { 
+    {
 
 
         private int TileType => (int)Projectile.ai[0];

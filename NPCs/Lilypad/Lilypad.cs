@@ -112,10 +112,10 @@ namespace JadeFables.NPCs.Lilypad
                     shakeTimer -= 0.04f;
                 }
                 else
-                    shakeTimer= 0;
+                    shakeTimer = 0;
                 NPC.gfxOffY = MathHelper.Lerp(-6, 2, MathF.Sin(bobTimer * 3.14f));
                 NPC.rotation = shakeTimer * 0.17f * (MathF.Sin(shakeTimer * 6.28f) + (rotationDir * 3));
-            }    
+            }
             else
             {
                 NPC.gfxOffY = -6;

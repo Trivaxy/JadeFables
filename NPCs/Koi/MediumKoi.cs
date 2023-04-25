@@ -86,7 +86,7 @@ namespace JadeFables.NPCs.Koi
             frameCounter++;
 
             if (Main.rand.NextBool(900))
-                Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), NPC.Center + (Vector2.UnitX * NPC.direction * 20), -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(0.75f, 2f), ModContent.ProjectileType<AirBubble>(), 100, 0).scale = Main.rand.NextFloat(0.4f,0.6f);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), NPC.Center + (Vector2.UnitX * NPC.direction * 20), -Vector2.UnitY.RotatedByRandom(0.5f) * Main.rand.NextFloat(0.75f, 2f), ModContent.ProjectileType<AirBubble>(), 100, 0).scale = Main.rand.NextFloat(0.4f, 0.6f);
 
             int threshhold = 5;
 

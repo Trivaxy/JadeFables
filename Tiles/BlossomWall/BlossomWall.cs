@@ -10,38 +10,38 @@ using JadeFables.Helpers;
 
 namespace JadeFables.Tiles.BlossomWall
 {
-	public class BlossomWall : ModWall
-	{
+    public class BlossomWall : ModWall
+    {
         public static Vector2 TileAdj => (Lighting.Mode == Terraria.Graphics.Light.LightMode.Retro || Lighting.Mode == Terraria.Graphics.Light.LightMode.Trippy) ? Vector2.Zero : Vector2.One * 12;
 
 
         public override void SetStaticDefaults()
-		{
-			Main.wallHouse[Type] = false;
-			WallID.Sets.Conversion.Grass[Type] = true;
-			DustType = 282;
-			HitSound = SoundID.Grass;
-			AddMapEntry(new Color(255, 130, 185));
-		}
+        {
+            Main.wallHouse[Type] = false;
+            WallID.Sets.Conversion.Grass[Type] = true;
+            DustType = 282;
+            HitSound = SoundID.Grass;
+            AddMapEntry(new Color(255, 130, 185));
+        }
 
         public static Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> _paintRenders = new();
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
-		{
-			if (i > (Main.screenPosition.X / 16) - 2 && i < (Main.screenPosition.X / 16 + Main.screenWidth / 16) + 2 && j > (Main.screenPosition.Y / 16) - 2 && j < (Main.screenPosition.Y / 16 + Main.screenHeight / 16) + 2)
-			{
+        {
+            if (i > (Main.screenPosition.X / 16) - 2 && i < (Main.screenPosition.X / 16 + Main.screenWidth / 16) + 2 && j > (Main.screenPosition.Y / 16) - 2 && j < (Main.screenPosition.Y / 16 + Main.screenHeight / 16) + 2)
+            {
                 string texPath = "JadeFables/Tiles/BlossomWall/BlossomWallFlow";
 
                 var rand = new Random(i + (j * 100000));
 
-				float offset = i * j % 6.28f + (float)rand.NextDouble() / 8f;
-				float sin = (float)Math.Sin(Main.GameUpdateCount / 45f + offset);
+                float offset = i * j % 6.28f + (float)rand.NextDouble() / 8f;
+                float sin = (float)Math.Sin(Main.GameUpdateCount / 45f + offset);
 
                 Texture2D paintedTexture = _paintRenders.TryGetTexturePaintAndRequestIfNotReady(Type, Main.tile[i, j].WallColor, texPath, -1);
                 if (paintedTexture is not null) PaintHelper.DrawWithCoating(Main.tile[i, j].IsWallFullbright, Main.tile[i, j].IsWallInvisible, paintedTexture, (new Vector2(i + 0.5f, j + 0.5f) + TileAdj) * 16 + new Vector2(1, 0.5f) * sin * 2.2f - Main.screenPosition,
-				new Rectangle(rand.Next(4) * 26, 0, 24, 24), Lighting.GetColor(i, j), MathF.Sin(offset) + sin * 0.09f, new Vector2(12, 12), 1 + sin / 14f, 0, 0);
-			}
-		}
-	}
+                new Rectangle(rand.Next(4) * 26, 0, 24, 24), Lighting.GetColor(i, j), MathF.Sin(offset) + sin * 0.09f, new Vector2(12, 12), 1 + sin / 14f, 0, 0);
+            }
+        }
+    }
 
     public class BlossomWallItem : ModItem
     {
@@ -69,12 +69,12 @@ namespace JadeFables.Tiles.BlossomWall
     class DryadSellsBlossom : GlobalNPC
     {
         public override void ModifyShop(NPCShop shop)
-		{
+        {
             Condition cond = new Condition("Local Player In Springs", () => Main.LocalPlayer.InModBiome<JadeLakeBiome>());
-			if (shop.NpcType == NPCID.Dryad)
-			{
-				shop.Add(new NPCShop.Entry(ModContent.ItemType<BlossomWallItem>(), cond));
-			}
-		}
+            if (shop.NpcType == NPCID.Dryad)
+            {
+                shop.Add(new NPCShop.Entry(ModContent.ItemType<BlossomWallItem>(), cond));
+            }
+        }
     }
 }

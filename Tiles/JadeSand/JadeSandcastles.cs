@@ -153,7 +153,7 @@ namespace JadeFables.Tiles.JadeSand
             }
             else
             {
-                item.createTile = 552;
+                item.createTile = TileID.Sandcastles;
                 item.tileWand = 169;
             }
         }

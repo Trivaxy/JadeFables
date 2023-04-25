@@ -72,7 +72,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 lastShotKunai[i] = kunai;
             }
 
-            
+
 
             swingDirection = -swingDirection;
 
@@ -108,12 +108,12 @@ namespace JadeFables.Items.Jade.JadeKunai
                     float currRot = 0;
                     foreach (Projectile kunai in lastShotKunai)
                     {
-                        kunai.velocity = directionToMouse.RotatedBy(currRot - maxRot * 0.5f) * kunai.velocity.Length() * Main.rand.NextFloat(0.85f,1.2f);
+                        kunai.velocity = directionToMouse.RotatedBy(currRot - maxRot * 0.5f) * kunai.velocity.Length() * Main.rand.NextFloat(0.85f, 1.2f);
                         kunai.Center = shoulderPos + directionToMouse * armLen;
                         kunai.tileCollide = true;
                         currRot += maxRot / (KunaiCount - 1);
                     }
-                    
+
                     lastShotKunai = null;
                 }
                 else
@@ -284,7 +284,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                     }
                 }
 
-                SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact with {Pitch = 0.5f}, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact with { Pitch = 0.5f }, Projectile.Center);
                 SoundEngine.PlaySound(SoundID.Shatter with { Pitch = -0.35f }, Projectile.Center);
 
                 Projectile.NewProjectileDirect(Projectile.GetSource_OnHit(target), target.Center, Vector2.Zero, ModContent.ProjectileType<JadeKunaiHitEffect>(), 0, 0f, Projectile.owner).scale = 0.15f;
@@ -302,9 +302,9 @@ namespace JadeFables.Items.Jade.JadeKunai
             }
 
             Dust.NewDustPerfect(
-                Projectile.Center, 
-                DustType<JadeKunaiDust>(), 
-                Vector2.Zero, 
+                Projectile.Center,
+                DustType<JadeKunaiDust>(),
+                Vector2.Zero,
                 125,
                 Color.Green,
                 Main.rand.NextFloat(0.75f, 1.25f)
@@ -376,8 +376,8 @@ namespace JadeFables.Items.Jade.JadeKunai
         private Trail? trail;
         private void ManageTrail()
         {
-            trail ??= new Trail(Main.instance.GraphicsDevice, TrailCacheLenght, new TriangularTip(3), factor => (-MathF.Pow(factor * 2 - 1 , 2) + 1) * MathF.Sin(MathF.Pow(factor, 4) * MathHelper.Lerp(1.674f, 1.821f, 0.5f * (MathF.Sin(Main.GameUpdateCount * 0.5f) + 1))) * 12,// * (MathF.Sin(Main.GameUpdateCount * 0.1f + factor * 16f) + 1) / 2, 
-                factor => 
+            trail ??= new Trail(Main.instance.GraphicsDevice, TrailCacheLenght, new TriangularTip(3), factor => (-MathF.Pow(factor * 2 - 1, 2) + 1) * MathF.Sin(MathF.Pow(factor, 4) * MathHelper.Lerp(1.674f, 1.821f, 0.5f * (MathF.Sin(Main.GameUpdateCount * 0.5f) + 1))) * 12,// * (MathF.Sin(Main.GameUpdateCount * 0.1f + factor * 16f) + 1) / 2, 
+                factor =>
                 {
                     Color colorMain = Color.Lerp(Color.Orange, Color.YellowGreen, Main.GameUpdateCount * 0.3f);
                     return Color.Lerp(Color.HotPink * 0.35f, colorMain, factor.X) * 0.75f * ((100 - stabTimer) / 100f) * trailFadeIn * CollideProg;
@@ -426,7 +426,7 @@ namespace JadeFables.Items.Jade.JadeKunai
                 lightColor * CollideProg,
                 Projectile.rotation,
                 KunaiOrigin(kunaiTexture),
-                new Vector2(Projectile.scale + 0.33f * Projectile.velocity.LengthSquared() / 100, 
+                new Vector2(Projectile.scale + 0.33f * Projectile.velocity.LengthSquared() / 100,
                 Projectile.scale + MathF.Pow(stabImpactTimer, 4) * 0.75f),
                 SpriteEffects.None,
                 0

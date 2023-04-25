@@ -89,7 +89,7 @@ namespace JadeFables.Tiles.JadeLantern
         {
             if (Main.tile[i, j].HasTile)
             {
-                if (Main.tile[i,j].TileType == ModContent.TileType<JadeLanternFurniture>())
+                if (Main.tile[i, j].TileType == ModContent.TileType<JadeLanternFurniture>())
                 {
                     TileEntity.ByPosition.TryGetValue(new Point16(i, j), out TileEntity tileEntity);
 
@@ -168,7 +168,7 @@ namespace JadeFables.Tiles.JadeLantern
             Item.rare = ItemRarityID.White;
             Item.value = 5;
         }
-         public override bool? UseItem(Player player)
+        public override bool? UseItem(Player player)
         {
             if (player.whoAmI == Main.myPlayer && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY, TileReachCheckSettings.Simple))
             {
@@ -470,21 +470,21 @@ namespace JadeFables.Tiles.JadeLantern
     }*/
     #endregion
 
-     public class BreakJadeLanterns : GlobalItem
-     {
-         public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
-         {
-             if (item.damage > 0 && !noHitbox)
-             {
+    public class BreakJadeLanterns : GlobalItem
+    {
+        public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
+        {
+            if (item.damage > 0 && !noHitbox)
+            {
                 Rectangle hitboxLocal = hitbox;
                 foreach (KeyValuePair<int, TileEntity> TEitem in TileEntity.ByID)
                 {
                     if (TEitem.Value is JadeLanternTileEntity te && !te.burning && hitboxLocal.Intersects(te.hitbox))
                         te.Break();
                 }
-             }
-         }
-     }
+            }
+        }
+    }
 
     class SkeletonMerchantSellsLanterns : GlobalNPC
     {

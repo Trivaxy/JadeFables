@@ -26,7 +26,8 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
     {
         public bool jumping = false;
 
-        public override void SetStaticDefaults() {
+        public override void SetStaticDefaults()
+        {
             ItemID.Sets.ShimmerTransformToItem[ItemID.FrogLeg] = Type;
             ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.FrogLeg;
         }

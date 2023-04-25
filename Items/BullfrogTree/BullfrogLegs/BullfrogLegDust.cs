@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ModLoader;
 
 namespace JadeFables.Items.BullfrogTree.BullfrogLegs
-{ 
+{
     public class BullfrogLegDust : ModDust
     {
         public override Color? GetAlpha(Dust dust, Color lightColor)

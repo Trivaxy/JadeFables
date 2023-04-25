@@ -59,7 +59,8 @@ namespace JadeFables.Biomes.JadeLake
             Terraria.On_Main.DoDraw += AddLighting;
         }
 
-        private void AddLighting(Terraria.On_Main.orig_DoDraw orig, Main self, GameTime gameTime) {
+        private void AddLighting(Terraria.On_Main.orig_DoDraw orig, Main self, GameTime gameTime)
+        {
             orig(self, gameTime);
 
             float progress = MathHelper.Min(TotalBiomeCount, 3000) / 3000f;
@@ -78,7 +79,8 @@ namespace JadeFables.Biomes.JadeLake
                     for (int y = 0; y < Main.maxTilesY; y++)
                     {
                         Tile tile = Main.tile[x, y];
-                        if (tile.LiquidAmount > 0 && tile.LiquidType == LiquidID.Water) {
+                        if (tile.LiquidAmount > 0 && tile.LiquidType == LiquidID.Water)
+                        {
                             float modifiedProgress = MathHelper.Min(TotalBiomeCount, 3000);
                             modifiedProgress = forceLakeAesthetic ? 3000f : modifiedProgress;
 
@@ -92,7 +94,8 @@ namespace JadeFables.Biomes.JadeLake
             }
         }
 
-        public override void ResetNearbyTileEffects() {
+        public override void ResetNearbyTileEffects()
+        {
             forceLakeAesthetic = false;
         }
 
@@ -168,8 +171,8 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void PopulateChests()
         {
-            int[] primaryLoot = new int[] { ModContent.ItemType<FireworkPack>(), ModContent.ItemType<TanookiLeaf>(), ModContent.ItemType<GongItem>(), ModContent.ItemType<Items.SpringChestLoot.Chopsticks.Chopsticks>(),ModContent.ItemType<Hwacha>(), ModContent.ItemType<DuelingSpirits>()};
-            int[] secondaryLoot = new int[] { ModContent.ItemType<JadeFountainItem>(), ItemID.MagicConch, ItemID.SandcastleBucket, ModContent.ItemType<FestivalLantern>()};
+            int[] primaryLoot = new int[] { ModContent.ItemType<FireworkPack>(), ModContent.ItemType<TanookiLeaf>(), ModContent.ItemType<GongItem>(), ModContent.ItemType<Items.SpringChestLoot.Chopsticks.Chopsticks>(), ModContent.ItemType<Hwacha>(), ModContent.ItemType<DuelingSpirits>() };
+            int[] secondaryLoot = new int[] { ModContent.ItemType<JadeFountainItem>(), ItemID.MagicConch, ItemID.SandcastleBucket, ModContent.ItemType<FestivalLantern>() };
 
             int[] ternaryLoot = new int[] {
                 ModContent.ItemType<Tiles.JadeTorch.JadeTorch>(),
@@ -258,7 +261,7 @@ namespace JadeFables.Biomes.JadeLake
         {
             if (waterPoolTiles.Count <= 0) return;
 
-            if (waterPoolTiles.Contains((i, j)) || waterDepthTiles.Contains((i,j)))
+            if (waterPoolTiles.Contains((i, j)) || waterDepthTiles.Contains((i, j)))
             {
                 JadeLakeSystem jadeLakeSystem = GetInstance<JadeLakeSystem>();
 

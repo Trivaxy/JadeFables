@@ -21,24 +21,24 @@ namespace JadeFables
         }
     }
     public class JadeFables : Mod
-	{
-		public static JadeFables Instance;
+    {
+        public static JadeFables Instance;
 
         public JadeFables()
         {
             PreJITFilter = new TemporaryFix();
         }
-		public override void Load()
-		{
-			Instance = this;
-			Main.QueueMainThreadAction(() =>
-			{
-				LoadDetours();
-			});
+        public override void Load()
+        {
+            Instance = this;
+            Main.QueueMainThreadAction(() =>
+            {
+                LoadDetours();
+            });
 
-			if (Main.netMode != NetmodeID.Server)
-			{
-				EquipLoader.AddEquipTexture(Instance, "JadeFables/Items/Jade/JadeArmor/JadeRobe_Legs", EquipType.Legs, null, "JadeRobe_Legs");
+            if (Main.netMode != NetmodeID.Server)
+            {
+                EquipLoader.AddEquipTexture(Instance, "JadeFables/Items/Jade/JadeArmor/JadeRobe_Legs", EquipType.Legs, null, "JadeRobe_Legs");
 
                 BackgroundTextureLoader.AddBackgroundTexture(JadeFables.Instance, "JadeFables/Biomes/JadeLake/JadeBiomeUnderground0");
                 BackgroundTextureLoader.AddBackgroundTexture(JadeFables.Instance, "JadeFables/Biomes/JadeLake/JadeBiomeUnderground1");
@@ -47,24 +47,24 @@ namespace JadeFables
             }
         }
 
-		public override void Unload()
-		{
-			UnloadDetours();
-		}
+        public override void Unload()
+        {
+            UnloadDetours();
+        }
 
-		public void LoadDetours()
-		{
-			//Terraria.On_Main.DrawWater += WaterAlphaMod;
-		}
+        public void LoadDetours()
+        {
+            //Terraria.On_Main.DrawWater += WaterAlphaMod;
+        }
 
-		public void UnloadDetours()
-		{
-			//Terraria.On_Main.DrawWater -= WaterAlphaMod;
-		}
+        public void UnloadDetours()
+        {
+            //Terraria.On_Main.DrawWater -= WaterAlphaMod;
+        }
 
-		/*private void WaterAlphaMod(Terraria.On_Main.orig_DrawWater orig, Main self, bool bg, int Style, float Alpha)
+        /*private void WaterAlphaMod(Terraria.On_Main.orig_DrawWater orig, Main self, bool bg, int Style, float Alpha)
 		{
 		    orig(self, bg, Style, Main.LocalPlayer.InModBiome<JadeLakeBiome>() ? Alpha * 0.3f : Alpha);
 		}*/
-	}
+    }
 }

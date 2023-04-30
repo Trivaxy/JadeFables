@@ -79,6 +79,9 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override void Load()
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
+
             for (int j = 1; j <= 4; j++)
                 GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/NPCs/GiantSnail/GiantSnailGore" + j);
 
@@ -307,6 +310,8 @@ namespace JadeFables.NPCs.GiantSnail
 
         public override void OnKill()
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
             for (int i = 1; i <= 4; i++)
                 Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("GiantSnailGore" + i).Type);
         }

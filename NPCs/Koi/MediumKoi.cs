@@ -46,6 +46,8 @@ namespace JadeFables.NPCs.Koi
 
         public override void Load()
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
             for (int j = 1; j <= 4; j++)
                 GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/NPCs/Koi/MediumKoiGore" + j);
 

@@ -93,6 +93,8 @@ namespace JadeFables.NPCs.JadeMantis
 
         public override void Load()
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
             for (int j = 1; j <= 5; j++)
                 GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/NPCs/JadeMantis/JadeMantisGore" + j);
 

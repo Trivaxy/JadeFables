@@ -20,6 +20,8 @@ namespace JadeFables.Items.Jade.JadeKunai
     {
         public override void Load()
         {
+            if (Main.netMode == NetmodeID.Server)
+                return;
             for (int j = 1; j <= 3; j++)
                 GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, Texture + "_Gore" + j);
         }

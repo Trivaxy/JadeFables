@@ -36,7 +36,7 @@ namespace JadeFables.Tiles.JadeLantern
             TileObjectData.newTile.CoordinateWidth = 16;
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
-
+            RegisterItemDrop(ModContent.ItemType<JadeLanternItem>());
             LocalizedText name = CreateMapEntryName();
             AddMapEntry(jadeLanternYellow, name);
         }
@@ -79,7 +79,7 @@ namespace JadeFables.Tiles.JadeLantern
             TileObjectData.newTile.CoordinateWidth = 16;
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
-            ItemDrop = ModContent.ItemType<JadeLanternItem>();
+            //ItemDrop = ModContent.ItemType<JadeLanternItem>();
 
             LocalizedText name = CreateMapEntryName();
             AddMapEntry(jadeLanternYellow, name);

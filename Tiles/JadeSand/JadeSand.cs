@@ -14,7 +14,7 @@ namespace JadeFables.Tiles.JadeSand
             MinPick = 10;
             DustType = DustType<Dusts.JadeSandDust>();
             HitSound = SoundID.Dig;
-            ItemDrop = ItemType<JadeSandItem>();
+            //ItemDrop = ItemType<JadeSandItem>();
             Main.tileMerge[TileID.Stone][Type] = true;
             Main.tileBrick[Type] = true;
             Main.tileSolid[Type] = true;

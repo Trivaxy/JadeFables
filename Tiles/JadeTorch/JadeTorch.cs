@@ -101,7 +101,7 @@ namespace JadeFables.Tiles.JadeTorch
             TileID.Sets.Torch[Type] = true;
             TileSets.TorchThatTriggersTorchGod[Type] = true;
 
-            ItemDrop = ModContent.ItemType<JadeTorch>();
+            //ItemDrop = ModContent.ItemType<JadeTorch>();
             //DustType = ModContent.DustType<Sparkle>();
             AdjTiles = new int[] { TileID.Torches };
 

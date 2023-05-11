@@ -13,7 +13,7 @@ namespace JadeFables.Tiles.JadeOre
             MinPick = 65;
             DustType = DustType<Dusts.JadeSandDust>();
             HitSound = SoundID.Dig;
-            ItemDrop = ItemType<Items.Jade.JadeChunk.JadeChunk>();
+            //ItemDrop = ItemType<Items.Jade.JadeChunk.JadeChunk>();
             Main.tileMerge[Type][ModContent.TileType<JadeSandTile>()] = true;
             Main.tileBrick[Type] = true;
             Main.tileSolid[Type] = true;

@@ -45,6 +45,32 @@ namespace JadeFables.Items.BullfrogTree.BullfrogTongue
 
         }
 
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+
+            int item = target.catchItem;
+            if (target.CountsAsACritter && item > 0)
+            {
+
+                Player owner = Main.player[Projectile.owner];
+                target.immortal = true;
+                Item.NewItem(target.GetSource_CatchEntity(target), owner.Center, item);
+                target.active = false;
+            }
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(ModContent.BuffType<BullfrogTongueTag>(), 240);
+            Projectile.damage = (int)(Projectile.damage * .6f);
+            if (Projectile.damage < 1)
+            {
+                Projectile.damage = 1;
+            }
+
+            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
+        }
+
         public override Color? GetAlpha(Color lightColor)
         {
             Color minLight = lightColor;
@@ -60,6 +86,45 @@ namespace JadeFables.Items.BullfrogTree.BullfrogTongue
                 minLight.B = minColor.B;
 
             return minLight;
+        }
+    }
+
+    public class BullfrogTongueTag : ModBuff
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.debuff[Type] = true;
+            BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
+            Main.buffNoSave[Type] = true;
+        }
+
+        public override void Update(NPC NPC, ref int buffIndex)
+        {
+            NPC.GetGlobalNPC<BullfrogTongueGlobalNPC>().tagType = Type;
+        }
+    }
+
+    //Should be rolled into a larger GlobalNPC class later, realistically
+    public class BullfrogTongueGlobalNPC : GlobalNPC
+    {
+        public override bool InstancePerEntity => true;
+
+        public int tagType;
+
+        public override void ResetEffects(NPC npc)
+        {
+            tagType = -1;
+        }
+
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
+        {
+            if (!projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
+            {
+                if (tagType == BuffType<BullfrogTongueTag>())
+                {
+                    projectile.damage += 6;
+                }
+            }
         }
     }
 }

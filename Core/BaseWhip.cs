@@ -48,6 +48,7 @@ namespace JadeFables.Core
         public override void SetDefaults()
         {
             Projectile.DefaultToWhip();
+            Projectile.WhipSettings.RangeMultiplier = rangeMultiplier;
             SafeSetDefaults();
         }
 
@@ -58,7 +59,7 @@ namespace JadeFables.Core
 
             Projectile.ai[0]++;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            Projectile.Center = Main.GetPlayerArmPosition(Projectile) + Projectile.velocity * (Projectile.ai[0] - 1f);
+            Projectile.Center = Main.GetPlayerArmPosition(Projectile) + Projectile.velocity * rangeMultiplier * player.whipRangeMultiplier * (Projectile.ai[0] - 1f);
             Projectile.spriteDirection = (!(Vector2.Dot(Projectile.velocity, Vector2.UnitX) < 0f)) ? 1 : -1;
 
             if (Projectile.ai[0] >= flyTime || player.itemAnimation == 0)

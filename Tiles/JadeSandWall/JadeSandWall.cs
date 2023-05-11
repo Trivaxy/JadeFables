@@ -14,7 +14,7 @@ namespace JadeFables.Tiles.JadeSandWall
         {
             Main.wallHouse[Type] = false;
             DustType = DustID.Dirt;
-            ItemDrop = ModContent.ItemType<JadeSandWallItem>();
+            //ItemDrop = ModContent.ItemType<JadeSandWallItem>();
             HitSound = SoundID.Dig;
             AddMapEntry(jadeSandDarkWall);
         }

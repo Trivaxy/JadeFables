@@ -13,6 +13,7 @@ namespace JadeFables.Tiles.SpringChest
 {
     public class SpringChest : ModTile
     {
+        int ItemDrop;
         public override void SetStaticDefaults()
         {
             // Properties
@@ -89,6 +90,7 @@ namespace JadeFables.Tiles.SpringChest
 
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {
+
             Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 32, 32, ItemDrop);
             Chest.DestroyChest(i, j);
         }

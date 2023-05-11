@@ -25,7 +25,8 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             MineResist = 0f;
             DustType = DustID.JungleGrass;
             HitSound = SoundID.Dig;
-            ItemDrop = ItemType<JadeSandItem>();
+            RegisterItemDrop(ItemType<JadeSandItem>());
+            //ItemDrop = ItemType<JadeSandItem>();
             Main.tileMerge[TileID.Stone][Type] = true;
             Main.tileBrick[Type] = true;
             Main.tileSolid[Type] = true;

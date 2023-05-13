@@ -169,7 +169,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Bottom, Vector2.Zero, ModContent.ProjectileType<JadeHarpoonJumpRing>(), 0, 0, owner.whoAmI, Main.rand.Next(30, 40), owner.velocity.ToRotation());
                     return;
                 }
-                if (!owner.GetModPlayer<JadeHarpoonPlayer>().flipping)
+                if (!owner.GetModPlayer<JadeHarpoonPlayer>().flipping && Main.netMode != NetmodeID.Server)
                 {
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.UnitX, ModContent.ProjectileType<JadeHarpoonShockwave>(), (int)(Projectile.damage * 2f), 0, owner.whoAmI, 0, 10);
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.UnitX * -1, ModContent.ProjectileType<JadeHarpoonShockwave>(), (int)(Projectile.damage * 2f), 0, owner.whoAmI, 0, -10);
@@ -398,7 +398,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             {
                 Projectile.velocity.Y = Projectile.timeLeft <= 10 ? 1f : -1f;
 
-                if (Projectile.timeLeft == 19 && Math.Abs(ShockwavesLeft) > 0)
+                if (Projectile.timeLeft == 19 && Math.Abs(ShockwavesLeft) > 0 && Main.netMode != NetmodeID.Server)
                 {
                     Projectile proj = Projectile.NewProjectileDirect(Projectile.InheritSource(Projectile), new Vector2((int)Projectile.Center.X / 16 * 16 + 16 * Math.Sign(ShockwavesLeft)
                     , (int)Projectile.Center.Y / 16 * 16 - 32),

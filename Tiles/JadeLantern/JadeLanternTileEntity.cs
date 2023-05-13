@@ -95,16 +95,17 @@ namespace JadeFables.Tiles.JadeLantern
 
         public override void Load()
         {
-            for (int j = 1; j <= 3; j++)
+            if (Main.netMode != NetmodeID.Server)
+                for (int j = 1; j <= 3; j++)
                 GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Tiles/JadeLantern/JadeChainGore" + j);
-
-            for (int i = 1; i <= 4; i++)
-            {
-                for (int j = 1; j <= 4; j++)
+            if (Main.netMode != NetmodeID.Server)
+                for (int i = 1; i <= 4; i++)
                 {
-                    GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Tiles/JadeLantern/Gores/lantern" + i + "gore" + j);
+                    for (int j = 1; j <= 4; j++)
+                    {
+                        GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Tiles/JadeLantern/Gores/lantern" + i + "gore" + j);
+                    }
                 }
-            }
             Terraria.On_Main.DrawProjectiles += Main_DrawProjectiles;
         }
 

@@ -146,8 +146,12 @@ namespace JadeFables.Items.Jade.JadeBow
             }
 
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, Projectile.Center);
-            Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + (Projectile.rotation.ToRotationVector2() * 5), Projectile.rotation.ToRotationVector2() * (speed + 12), type, damage, knockBack, owner.whoAmI);
-            proj.GetGlobalProjectile<JadeBowGProj>().shotFromBow = true;
+            if (Main.netMode != NetmodeID.Server)
+            {
+                Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), Projectile.Center + (Projectile.rotation.ToRotationVector2() * 5), Projectile.rotation.ToRotationVector2() * (speed + 12), type, damage, knockBack, owner.whoAmI);
+                proj.GetGlobalProjectile<JadeBowGProj>().shotFromBow = true;
+            }
+
         }
     }
 

@@ -74,8 +74,9 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
         public override void Load()
         {
-            for (int j = 1; j <= 5; j++)
-                GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Items/SpringChestLoot/Hwacha/HwachaProj_Gore" + j);
+            if (Main.netMode != NetmodeID.Server)
+                for (int j = 1; j <= 5; j++)
+                    GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "JadeFables/Items/SpringChestLoot/Hwacha/HwachaProj_Gore" + j);
             Terraria.On_Main.DrawPlayers_AfterProjectiles += DrawFrontWheels;
         }
 

@@ -25,6 +25,8 @@ namespace JadeFables.Tiles.JadeTorch
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 100;
             ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.ShimmerTorch;
+
+            ItemID.Sets.Torches[Type] = true;
         }
 
         public override void SetDefaults()
@@ -66,11 +68,6 @@ namespace JadeFables.Tiles.JadeTorch
             {
                 Lighting.AddLight(Item.Center, 0f, 1f, 0.4f);
             }
-        }
-
-        public override void AutoLightSelect(ref bool dryTorch, ref bool wetTorch, ref bool glowstick)
-        {
-            dryTorch = true; // This makes our item eligible for being selected with smart select at a short distance when not underwater.
         }
 
         // Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.

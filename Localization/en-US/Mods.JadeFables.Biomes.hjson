@@ -1,1 +1,4 @@
-JadeLakeBiome.DisplayName: The Springs
+JadeLakeBiome: {
+	DisplayName: The Springs
+	TownNPCDialogueName: The Jade Lake Biome
+}

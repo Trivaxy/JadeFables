@@ -9,6 +9,8 @@ using Terraria.ModLoader;
 
 using JadeFables.Dusts;
 using JadeFables.Core;
+using Terraria.Audio;
+using Microsoft.CodeAnalysis;
 
 namespace JadeFables.Items.Jade.JadeArmor
 {
@@ -105,7 +107,6 @@ namespace JadeFables.Items.Jade.JadeArmor
         {
             if (PlayerTarget.canUseTarget)
             {
-
                 Main.spriteBatch.Begin(default, blendState: BlendState.Additive, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
 
                 for (int i = 0; i < Main.maxPlayers; i++)
@@ -115,8 +116,22 @@ namespace JadeFables.Items.Jade.JadeArmor
                     {
                         for (int x = player.GetModPlayer<JadeArmorPlayer>().oldPositions.Count - 1; x > 0; x--)
                         {
-                            Main.spriteBatch.Draw(PlayerTarget.Target, player.GetModPlayer<JadeArmorPlayer>().oldPositions[x] - Main.screenPosition,
-                                     PlayerTarget.getPlayerTargetSourceRectangle(player.whoAmI), Color.Green * ((x / 10f) * 2f), player.fullRotation, Vector2.Zero, 1f, 0f, 0f);
+                            
+                            //Drawing the after image would be messed up while zooming, so we have to do an absolute bullshit fucky wucky fix for it
+                            //This fix is slightly offset for some Zoom values (specifically scale I think), but it is perfect the for the two that matter the most: min and max
+                            //dm me (Linty) if you want to know what is happening (you dont) or if you have a similar zoom related problem
+
+                            float scale = 1f + ((1f - Main.GameZoomTarget) * 0.5f);
+
+                            float xZoomOffset = 40f * (Main.GameZoomTarget - 1);
+                            float yZoomOffset = -21f * (Main.GameZoomTarget - 1); 
+
+                            Vector2 offset = new Vector2(-110 + xZoomOffset, -171 + yZoomOffset) * (1f + (1f - Main.GameZoomTarget) * 0.5f);
+
+                            // If you're curious how I got the specific values above, it was by manually testing values until it was right very fun very happy :) :) :) :)
+
+                            Main.spriteBatch.Draw(PlayerTarget.Target, player.GetModPlayer<JadeArmorPlayer>().oldPositions[x] - Main.screenPosition + offset,
+                                PlayerTarget.getPlayerTargetSourceRectangle(player.whoAmI), Color.Green * ((x / 10f) * 2f), player.fullRotation, Vector2.Zero, scale, 0f, 0f);
                         }
                     }
                 }
@@ -130,6 +145,8 @@ namespace JadeFables.Items.Jade.JadeArmor
 
         public override void ResetEffects()
         {
+            equipped = false;
+
             if (Player.controlDown && Player.releaseDown && Player.doubleTapCardinalTimer[0] < 15)
                 dashDirection = new(0f, 1f);
             else if (Player.controlUp && Player.releaseUp && Player.doubleTapCardinalTimer[1] < 15)
@@ -140,6 +157,7 @@ namespace JadeFables.Items.Jade.JadeArmor
                 dashDirection = new(-1f, 0.01f);
             else
                 dashDirection = new();
+
         }
 
         public override void PreUpdateMovement()
@@ -156,11 +174,17 @@ namespace JadeFables.Items.Jade.JadeArmor
 
                 dashCooldown = 60;
                 dashTimer = 25;
+
+                SoundStyle style1 = new SoundStyle("JadeFables/Sounds/glaive_shot_01") with { Pitch = .53f, PitchVariance = .09f, Volume = 0.6f }; 
+                SoundEngine.PlaySound(style1, Player.Center);
+
+                SoundStyle style2 = new SoundStyle("JadeFables/Sounds/SwooshySwoosh") with { Pitch = .62f, PitchVariance = .1f, Volume = 0.2f }; 
+                SoundEngine.PlaySound(style2, Player.Center);
             }
 
             if (dashTimer > 0)
             {
-                oldPositions.Add(PlayerTarget.getPlayerTargetPosition(Player.whoAmI) + Main.screenPosition);
+                oldPositions.Add(Player.Center);
 
                 dashTimer--;
                 if (dashTimer == 1)

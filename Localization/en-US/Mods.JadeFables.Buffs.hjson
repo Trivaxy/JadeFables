@@ -17,3 +17,8 @@ SpringWaterBuff: {
 	DisplayName: Spring Water
 	Description: Debuffs are cured
 }
+
+BullfrogTongueTag: {
+	DisplayName: Bullfrog Tongue Tag
+	Description: Mods.JadeFables.Buffs.BullfrogTongueTag.Description
+}

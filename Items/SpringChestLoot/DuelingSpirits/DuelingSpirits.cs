@@ -184,7 +184,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
                     SoundEngine.PlaySound(SoundID.Item1, owner.Center);
                     passive = false;
                     Vector2 dir = Main.MouseWorld - owner.Center;
-                    oldMousePos = owner.Center + (Vector2.Normalize(dir) * MathHelper.Clamp(dir.Length() - distance, 1, 350));
+                    oldMousePos = owner.Center + (Vector2.Normalize(dir) * MathHelper.Clamp(dir.Length() - distance, -50, 350));
                     rotSpeed = 0.1f;
                     var otherProj = Main.projectile.Where(n => n.active && n.owner == owner.whoAmI && n.ModProjectile is Ying && n.type != Projectile.type).FirstOrDefault();
                     if (otherProj != default)

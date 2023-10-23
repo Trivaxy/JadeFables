@@ -16,24 +16,13 @@ using JadeFables.Core;
 using JadeFables.Helpers;
 using JadeFables.Helpers.FastNoise;
 using JadeFables.Items.BullfrogTree.BullfrogLegs;
+using JadeFables.Tiles.JadeLantern;
 
 namespace JadeFables.Items.BullfrogTree.FrogInFroggle
 {
     [AutoloadEquip(EquipType.Waist)]
     public class FrogInFroggle : ModItem
     {
-        public bool jumping = false;
-
-        private bool sailJump = true;
-        private bool basiliskJump = true;
-        private bool blizzardJump = true;
-        private bool sandstormJump = true;
-        private bool cloudJump = true;
-        private bool fartJump = true;
-        private bool santankJump = true;
-        private bool unicornJump = true;
-        private bool fleshJump = true;
-
         public override void SetDefaults()
         {
             Item.width = 24;
@@ -47,64 +36,8 @@ namespace JadeFables.Items.BullfrogTree.FrogInFroggle
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (player.controlJump && player.velocity.Y == 0 && !jumping)
-            {
-                if (!player.controlLeft && !player.controlRight)
-                    return;
-
-                SoundEngine.PlaySound(SoundID.Run, player.Center);
-                DoJump(player, 8);
-
-                Projectile.NewProjectileDirect(player.GetSource_Accessory(Item), player.Bottom, Vector2.Zero, ModContent.ProjectileType<BullfrogLegRingAlt>(), 0, 0, player.whoAmI).rotation = 1.57f - (0.78f * Math.Sign(player.velocity.X));
-            }
-
-            if (!player.canJumpAgain_Basilisk && basiliskJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Blizzard && blizzardJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Sail && sailJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Sandstorm && sandstormJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Cloud && cloudJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Fart && fartJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Santank && santankJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_Unicorn && unicornJump)
-                DoJump(player, 8);
-
-            if (!player.canJumpAgain_WallOfFleshGoat && fleshJump)
-                DoJump(player, 8);
-
-
-
-            basiliskJump = player.canJumpAgain_Basilisk;
-            sailJump = player.canJumpAgain_Sail;
-            blizzardJump = player.canJumpAgain_Blizzard;
-            sandstormJump = player.canJumpAgain_Sandstorm;
-            cloudJump = player.canJumpAgain_Cloud;
-            fartJump = player.canJumpAgain_Fart;
-            santankJump = player.canJumpAgain_Santank;
-            unicornJump = player.canJumpAgain_Unicorn;
-            fleshJump = player.canJumpAgain_WallOfFleshGoat;
-
-            if (player.controlJump)
-            {
-                jumping = true;
-            }
-            else
-            {
-                jumping = false;
-            }
+            player.GetModPlayer<BullfrogLegsPlayer>().Enable(Item);
+            player.GetModPlayer<FrogInFrogglePlayer>().Enable();
         }
 
         public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
@@ -131,16 +64,50 @@ namespace JadeFables.Items.BullfrogTree.FrogInFroggle
             recipe.AddTile(TileID.TinkerersWorkbench);
             recipe.Register();
         }
+    }
 
-        private static void DoJump(Player player, float speed)
+    public class FrogInFrogglePlayer : ModPlayer
+    {
+        private bool[]? lastFrameActiveJumps;
+        private bool active;
+
+        public void Enable()
         {
-            if (!player.controlLeft && !player.controlRight)
-                return;
-            if (player.controlLeft)
-                player.velocity.X = -speed;
-            else if (player.controlRight)
-                player.velocity.X = speed;
+            active = true;
         }
 
+        public override void PostUpdateEquips()
+        {
+            if (!active)
+            {
+                return;
+            }
+
+            lastFrameActiveJumps ??= new bool[Player.ExtraJumps.Length];
+            bool shouldAddSpeed = false;
+            for (int i = 0; i < Player.ExtraJumps.Length; i++)
+            {
+                if (Player.ExtraJumps[i].Active && !lastFrameActiveJumps[i])
+                {
+                    shouldAddSpeed = true;
+                }
+
+                lastFrameActiveJumps[i] = Player.ExtraJumps[i].Active;
+            }
+            
+            if (shouldAddSpeed)
+            {
+                if (Player.controlLeft)
+                    Player.velocity.X = -8;
+                else if (Player.controlRight)
+                    Player.velocity.X = 8;
+                return;
+            }
+        }
+
+        public override void ResetEffects()
+        {
+            active = false;
+        }
     }
 }

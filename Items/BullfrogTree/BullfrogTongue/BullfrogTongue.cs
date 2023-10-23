@@ -94,7 +94,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogTongue
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
-            BuffID.Sets.IsAnNPCWhipDebuff[Type] = true;
+            // BuffID.Sets.IsAnNPCWhipDebuff[Type] = true; IDK what the new thing for this is ?
             Main.buffNoSave[Type] = true;
         }
 

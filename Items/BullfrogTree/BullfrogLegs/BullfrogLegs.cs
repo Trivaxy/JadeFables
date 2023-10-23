@@ -18,6 +18,7 @@ using Terraria.Audio;
 using JadeFables.Core;
 using JadeFables.Helpers;
 using JadeFables.Helpers.FastNoise;
+using JadeFables.Items.Potions.Dumpling;
 
 namespace JadeFables.Items.BullfrogTree.BullfrogLegs
 {
@@ -45,32 +46,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            if (player.controlJump && player.velocity.Y == 0 && !jumping)
-            {
-                if (!player.controlLeft && !player.controlRight)
-                    return;
-
-                SoundEngine.PlaySound(SoundID.Run, player.Center);
-                if (player.controlLeft)
-                    player.velocity.X = -8;
-                else if (player.controlRight)
-                    player.velocity.X = 8;
-
-                Projectile.NewProjectileDirect(player.GetSource_Accessory(Item), player.Bottom, Vector2.Zero, ModContent.ProjectileType<BullfrogLegRingAlt>(), 0, 0, player.whoAmI).rotation = 1.57f - (0.78f * Math.Sign(player.velocity.X));
-                for (int i = 0; i < 6; i++)
-                {
-                    //Dust.NewDustPerfect(player.Bottom, ModContent.DustType<BullfrogLegDust>(), new Vector2(-Math.Sign(player.velocity.X), 1).RotatedByRandom(0.4f) * Main.rand.NextFloat(0.5f, 0.75f), 0, Color.White, Main.rand.NextFloat(0.4f, 0.7f));
-                }
-            }
-
-            if (player.controlJump)
-            {
-                jumping = true;
-            }
-            else
-            {
-                jumping = false;
-            }
+            player.GetModPlayer<BullfrogLegsPlayer>().Enable(Item);
         }
     }
     public class BullfrogLegRing : ModProjectile
@@ -99,7 +75,7 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
 
         public override void AI()
         {
-            noise = noise ?? new FastNoise(Main.rand.Next(0, 1000000));
+            noise ??= new FastNoise(Main.rand.Next(0, 1000000));
             noise.Frequency = 1f;
             Projectile.velocity *= 0.95f;
 
@@ -173,8 +149,6 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
 
     internal class BullfrogLegRingAlt : ModProjectile
     {
-        private Player owner => Main.player[Projectile.owner];
-
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 7;
@@ -210,6 +184,59 @@ namespace JadeFables.Items.BullfrogTree.BullfrogLegs
             SpriteEffects spriteEffects = Projectile.rotation > 1 ? SpriteEffects.FlipVertically : SpriteEffects.None;
             Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, frameBox, lightColor * 0.7f, Projectile.rotation, new Vector2(tex.Width / 2, frameHeight / 2), Projectile.scale, spriteEffects, 0f);
             return false;
+        }
+    }
+
+    public class BullfrogLegsPlayer : ModPlayer
+    {
+        private bool lastFrameJumping;
+        private bool active;
+        private int cooldown;
+        private Item? sourceItem;
+
+        public void Enable(Item? item = null)
+        {
+            active = true;
+            sourceItem = item;
+        }
+
+        public override void PostUpdateEquips()
+        {
+            if (!active)
+            {
+                return;
+            }
+
+            if (cooldown-- <= 0 && Player.controlJump && Player.velocity.Y == 0 && !lastFrameJumping)
+            {
+                if (!Player.controlLeft && !Player.controlRight)
+                    return;
+
+                SoundEngine.PlaySound(SoundID.Run, Player.Center);
+                if (Player.controlLeft)
+                    Player.velocity.X = -8;
+                else if (Player.controlRight)
+                    Player.velocity.X = 8;
+
+                Projectile.NewProjectileDirect(
+                    sourceItem is null ? null : Player.GetSource_Accessory(sourceItem),
+                    Player.Bottom,
+                    Vector2.Zero,
+                    ProjectileType<BullfrogLegRingAlt>(),
+                    0,
+                    0,
+                    Player.whoAmI
+                ).rotation = 1.57f - (0.78f * Math.Sign(Player.velocity.X));
+
+                cooldown = 40;
+            }
+
+            lastFrameJumping = Player.controlJump;
+        }
+
+        public override void ResetEffects()
+        {
+            active = false;
         }
     }
 }

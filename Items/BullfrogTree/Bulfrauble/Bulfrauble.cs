@@ -40,29 +40,9 @@ namespace JadeFables.Items.BullfrogTree.Bulfrauble
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
+            player.GetModPlayer<BullfrogLegsPlayer>().Enable(Item);
             Lighting.AddLight(player.Center, new Color(142, 196, 251).ToVector3() * 0.95f);
             player.hasMagiluminescence = true;
-
-            if (cooldown-- < 0 && player.controlJump && player.velocity.Y == 0 && !jumping)
-            {
-                cooldown = 40;
-                if (!player.controlLeft && !player.controlRight)
-                    return;
-
-                SoundEngine.PlaySound(SoundID.Run, player.Center);
-                DoJump(player, 10);
-
-                Projectile.NewProjectileDirect(player.GetSource_Accessory(Item), player.Bottom, Vector2.Zero, ModContent.ProjectileType<BullfrogLegRingAlt>(), 0, 0, player.whoAmI).rotation = 1.57f - (0.78f * Math.Sign(player.velocity.X));
-            }
-
-            if (player.controlJump)
-            {
-                jumping = true;
-            }
-            else
-            {
-                jumping = false;
-            }
         }
 
         public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
@@ -89,16 +69,10 @@ namespace JadeFables.Items.BullfrogTree.Bulfrauble
             recipe.AddTile(TileID.TinkerersWorkbench);
             recipe.Register();
         }
+    }
 
-        private static void DoJump(Player player, float speed)
-        {
-            if (!player.controlLeft && !player.controlRight)
-                return;
-            if (player.controlLeft)
-                player.velocity.X = -speed;
-            else if (player.controlRight)
-                player.velocity.X = speed;
-        }
-
+    public class BullfraublePlayer : ModPlayer
+    {
+        
     }
 }

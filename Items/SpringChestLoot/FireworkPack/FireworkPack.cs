@@ -151,7 +151,7 @@ namespace JadeFables.Items.SpringChestLoot.FireworkPack
             CreateDust();
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item40 with { Pitch = Main.rand.NextFloat(-0.6f, -0.2f) }, Projectile.Center);
             for (int i = 0; i < 32; i++)

@@ -251,7 +251,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             return MathHelper.Max(rotDifference / 12, 0.1f);
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
 
         }

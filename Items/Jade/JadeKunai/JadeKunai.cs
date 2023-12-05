@@ -342,7 +342,7 @@ namespace JadeFables.Items.Jade.JadeKunai
             return false;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (stabbedTarget is not null)
             {

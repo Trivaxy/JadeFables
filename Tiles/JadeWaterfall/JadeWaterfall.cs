@@ -305,7 +305,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                 Projectile.timeLeft = 2;
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             sound?.Stop(true);
         }

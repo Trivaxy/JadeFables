@@ -233,7 +233,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             Helpers.Helper.PlayPitched("HwachaBreak", 0.6f, Main.rand.NextFloat(-0.1f, 0.1f), Projectile.Center);
             for (int i = 1; i <= 5; i++)
@@ -319,7 +319,7 @@ namespace JadeFables.Items.SpringChestLoot.Hwacha
 
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
             for (int i = 0; i < 2; i++)

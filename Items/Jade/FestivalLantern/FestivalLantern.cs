@@ -121,7 +121,7 @@ namespace JadeFables.Items.Jade.FestivalLantern
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             if (Projectile.ai[0] == 95)
             {

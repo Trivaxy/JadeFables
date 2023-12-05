@@ -140,7 +140,7 @@ namespace JadeFables.Items.Potions.Spine
             if (npcToTarget == null) return false;
             return (target == npcToTarget);
         }
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             for (int i = 0; i < 5; i++)
             {

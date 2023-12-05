@@ -216,7 +216,7 @@ namespace JadeFables.Items.Jade.JadeHarpoon
             }
         }
 
-        public override void Kill(int timeLeft)
+        public override void OnKill(int timeLeft)
         {
             owner.fullRotation = 0;
             owner.fullRotationOrigin = owner.Size / 2;

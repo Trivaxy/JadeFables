@@ -66,7 +66,7 @@ namespace JadeFables.Tiles.JadeTorch
             // Create a white (1.0, 1.0, 1.0) light when the item is in world, and isn't underwater.
             if (!Item.wet)
             {
-                Lighting.AddLight(Item.Center, 0f, 1f, 0.4f);
+                Lighting.AddLight(Item.Center, 1f, 0.113f, 0.313f);
             }
         }
 

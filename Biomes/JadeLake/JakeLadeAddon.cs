@@ -34,7 +34,8 @@ namespace JadeFables.Biomes.JadeLake
 
             //var a = Vector2.Normalize(Helpers.Helper.ScreenSize);
             //effect.Parameters["offset"].SetValue(Main.screenPosition - HotspringMapTarget.oldScreenPos);
-            Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
+
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, effect, Main.GameViewMatrix.TransformationMatrix);
 
             // Main.spriteBatch.Draw(Core.Systems.Edits.BetterWaterTrianglesAttmptTwo.waterSlopeTarget, -new Vector2(Main.offScreenRange, Main.offScreenRange), null, Color.White * 0.3f);
         }
@@ -45,7 +46,7 @@ namespace JadeFables.Biomes.JadeLake
             var effect = Filters.Scene["JadeLakeWater"].GetShader().Shader;
             //the multiply by 1.3 and 1.5 seem to fix the jittering when moving, seems to be tied to the 2 magic numbers in Visuals.HotspringMapTarget.cs
             //effect.Parameters["offset"].SetValue(Main.screenPosition - HotspringMapTarget.oldScreenPos);
-            Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.ZoomMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, effect, Main.GameViewMatrix.TransformationMatrix);
 
             //Main.spriteBatch.Draw(Core.Systems.Edits.BetterWaterTrianglesAttmptTwo.waterSlopeTarget, -new Vector2(Main.offScreenRange, Main.offScreenRange), null, Color.White);
         }

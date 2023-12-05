@@ -45,7 +45,11 @@ namespace JadeFables.Tiles.WarriorStatue
         }
 
         public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
-        public override void KillMultiTile(int i, int j, int frameX, int frameY) => Item.NewItem(new EntitySource_TileBreak(i, j), (i + 3) * 16, (j + 5) * 16, 16, 32, ModContent.ItemType<WarriorStatueItem>());
+        public override void KillMultiTile(int i, int j, int frameX, int frameY)
+        {
+            //for some reason this drops the item twice, the multitile is dropping it somewhere else for some reason
+            //Item.NewItem(new EntitySource_TileBreak(i, j), (i + 3) * 16, (j + 5) * 16, 16, 32, ModContent.ItemType<WarriorStatueItem>());
+        }
 
         public override bool RightClick(int i, int j)
         {

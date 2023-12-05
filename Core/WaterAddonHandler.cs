@@ -137,7 +137,7 @@ namespace JadeFables.Core
             if (activeAddon != null)
             {
                 sb.End();
-                sb.Begin(default, default, default, default, default, default, Main.GameViewMatrix.ZoomMatrix);
+                sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
             }
         }
 
@@ -156,7 +156,7 @@ namespace JadeFables.Core
             if (activeAddon != null)
             {
                 sb.End();
-                sb.Begin(default, default, default, default, default, default, Main.GameViewMatrix.ZoomMatrix);
+                sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
             }
         }
     }

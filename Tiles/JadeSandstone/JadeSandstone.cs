@@ -17,6 +17,7 @@ namespace JadeFables.Tiles.JadeSandstone
             Main.tileSolid[Type] = true;
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
+            TileID.Sets.Conversion.Sandstone[Type] = true;
 
             LocalizedText name = CreateMapEntryName();
             AddMapEntry(jadeSandDark, name);

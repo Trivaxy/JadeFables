@@ -37,6 +37,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             TileObjectData.newTile.CoordinateWidth = 16;
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
+            DustType = -1;
             MinPick = 999;
 
             /*LocalizedText name = CreateMapEntryName();
@@ -51,6 +52,13 @@ namespace JadeFables.Tiles.JadeWaterfall
             {
                 Projectile.NewProjectile(new EntitySource_Misc("Jade Waterfall"), new Vector2(i, j) * 16, Vector2.Zero, ModContent.ProjectileType<JadeWaterfallProj>(), 0, 0);
             }
+        }
+
+        public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
+        {
+            fail = true;
+            effectOnly = true;
+            noItem = true;
         }
     }
 

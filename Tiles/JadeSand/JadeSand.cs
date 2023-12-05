@@ -22,7 +22,7 @@ namespace JadeFables.Tiles.JadeSand
             Main.tileBlockLight[Type] = true;
             TileID.Sets.CanBeDugByShovel[Type] = true;
             //Main.tileSand[Type] = true;
-            TileID.Sets.Suffocate[Type] = true;
+            //TileID.Sets.Suffocate[Type] = true;//does not fall so should not damage player
             TileID.Sets.Conversion.Sand[Type] = true;
             TileID.Sets.ForAdvancedCollision.ForSandshark[Type] = true;
             //TileID.Sets.Falling[Type] = true;
@@ -33,68 +33,68 @@ namespace JadeFables.Tiles.JadeSand
             AddMapEntry(jadeSandLight, name);
         }
 
-        public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
-        {
+        //public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
+        //{
 
-            return true;
+        //    return true;
 
-            if (WorldGen.noTileActions)
-                return true;
+        //    if (WorldGen.noTileActions)
+        //        return true;
 
-            Tile above = Main.tile[i, j - 1];
-            Tile below = Main.tile[i, j + 1];
-            bool canFall = true;
+        //    Tile above = Main.tile[i, j - 1];
+        //    Tile below = Main.tile[i, j + 1];
+        //    bool canFall = true;
 
-            if (below == null || below.HasTile)
-                canFall = false;
+        //    if (below == null || below.HasTile)
+        //        canFall = false;
 
-            if (above.HasTile && (TileID.Sets.BasicChest[above.TileType] || TileID.Sets.BasicChestFake[above.TileType] || above.TileType == TileID.PalmTree || TileID.Sets.BasicDresser[above.TileType]))
-                canFall = false;
+        //    if (above.HasTile && (TileID.Sets.BasicChest[above.TileType] || TileID.Sets.BasicChestFake[above.TileType] || above.TileType == TileID.PalmTree || TileID.Sets.BasicDresser[above.TileType]))
+        //        canFall = false;
 
-            if (canFall)
-            {
-                int projectileType = ProjectileType<JadeSandProjectile>();
-                float positionX = i * 16 + 8;
-                float positionY = j * 16 + 8;
+        //    if (canFall)
+        //    {
+        //        int projectileType = ProjectileType<JadeSandProjectile>();
+        //        float positionX = i * 16 + 8;
+        //        float positionY = j * 16 + 8;
 
-                if (Main.netMode == NetmodeID.SinglePlayer)
-                {
-                    Main.tile[i, j].ClearTile();
-                    int proj = Projectile.NewProjectile(null, positionX, positionY, 0f, 0.41f, projectileType, 10, 0f, Main.myPlayer);
-                    Main.projectile[proj].ai[0] = 1f;
-                    WorldGen.SquareTileFrame(i, j);
-                }
-                else if (Main.netMode == NetmodeID.Server)
-                {
-                    Main.tile[i, j].ClearTile();
-                    bool spawnProj = true;
+        //        if (Main.netMode == NetmodeID.SinglePlayer)
+        //        {
+        //            Main.tile[i, j].ClearTile();
+        //            int proj = Projectile.NewProjectile(null, positionX, positionY, 0f, 0.41f, projectileType, 10, 0f, Main.myPlayer);
+        //            Main.projectile[proj].ai[0] = 1f;
+        //            WorldGen.SquareTileFrame(i, j);
+        //        }
+        //        else if (Main.netMode == NetmodeID.Server)
+        //        {
+        //            Main.tile[i, j].ClearTile();
+        //            bool spawnProj = true;
 
-                    for (int k = 0; k < 1000; k++)
-                    {
-                        Projectile otherProj = Main.projectile[k];
+        //            for (int k = 0; k < 1000; k++)
+        //            {
+        //                Projectile otherProj = Main.projectile[k];
 
-                        if (otherProj.active && otherProj.owner == Main.myPlayer && otherProj.type == projectileType && Math.Abs(otherProj.timeLeft - 3600) < 60 && otherProj.Distance(new Vector2(positionX, positionY)) < 4f)
-                        {
-                            spawnProj = false;
-                            break;
-                        }
-                    }
+        //                if (otherProj.active && otherProj.owner == Main.myPlayer && otherProj.type == projectileType && Math.Abs(otherProj.timeLeft - 3600) < 60 && otherProj.Distance(new Vector2(positionX, positionY)) < 4f)
+        //                {
+        //                    spawnProj = false;
+        //                    break;
+        //                }
+        //            }
 
-                    if (spawnProj)
-                    {
-                        int proj = Projectile.NewProjectile(null, positionX, positionY, 0f, 2.5f, projectileType, 10, 0f, Main.myPlayer);
-                        Main.projectile[proj].velocity.Y = 0.5f;
-                        Main.projectile[proj].position.Y += 2f;
-                        Main.projectile[proj].netUpdate = true;
-                    }
+        //            if (spawnProj)
+        //            {
+        //                int proj = Projectile.NewProjectile(null, positionX, positionY, 0f, 2.5f, projectileType, 10, 0f, Main.myPlayer);
+        //                Main.projectile[proj].velocity.Y = 0.5f;
+        //                Main.projectile[proj].position.Y += 2f;
+        //                Main.projectile[proj].netUpdate = true;
+        //            }
 
-                    NetMessage.SendTileSquare(-1, i, j, 1);
-                    WorldGen.SquareTileFrame(i, j);
-                }
-                return false;
-            }
-            return true;
-        }
+        //            NetMessage.SendTileSquare(-1, i, j, 1);
+        //            WorldGen.SquareTileFrame(i, j);
+        //        }
+        //        return false;
+        //    }
+        //    return true;
+        //}
 
         public override void RandomUpdate(int i, int j)
         {

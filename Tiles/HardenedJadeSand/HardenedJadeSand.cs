@@ -20,6 +20,7 @@ namespace JadeFables.Tiles.HardenedJadeSand
             Main.tileSolid[Type] = true;
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
+            TileID.Sets.Conversion.HardenedSand[Type] = true;
 
             LocalizedText name = CreateMapEntryName();
             AddMapEntry(jadeSandMid, name);

@@ -195,23 +195,23 @@ namespace JadeFables.Biomes.JadeLake
                 smallerPlat.Inflate(-(int)(LowerIslandRect.Width * 0.39f), -(int)(LowerIslandRect.Height * 0.39f));
                 //smallerPlat.Y -= (int)(LowerIslandRect.Height * 0.35f);
 
-                List<(Rectangle pos, bool water)> platformList = AddIslands(PlatformArea, smallerPlat.Width, smallerPlat.Height, PlatformArea, fastnoise, CONST_mainIslandBottomAmp * 1.6f, CONST_mainBodyLowerFreq * 2f, loopbackCount: 1, MinAdd: 5, chance: 0.0025f, 0, CONST_sizeVariation: 0.05f, 0.20f, avoidCollide: false, deleteCollide: true, true);
+                List<(Rectangle pos, bool water)> platformList = 
+                    AddIslands(PlatformArea, smallerPlat.Width, smallerPlat.Height, PlatformArea, fastnoise, CONST_mainIslandBottomAmp * 1.6f, CONST_mainBodyLowerFreq * 2f, loopbackCount: 1, MinAdd: 5, chance: 0.0025f, 0, CONST_sizeVariation: 0.05f, 0.20f, avoidCollide: false, deleteCollide: true, true);
                 //Platform(smallerPlat, fastnoise, CONST_mainIslandBottomAmp * 2, CONST_mainBodyLowerFreq * 2, 0f, LowerIslandRect.Center().ToPoint16(), 7);
 
                 //FillArea(PlatformArea, TileID.SapphireGemspark, 0);
 
                 GenerateWallPillars(platformList, biomeSize / 3);
 
+                //places sandstone under floating sand
+                SupportSand(WholeBiomeRect);
+
+                //slopes all tiles in biome
+                //likely only needed for debug generation since vanilla has this pass
+                SlopeTiles(WholeBiomeRect);
+
                 GeneratePagoda(platformList);
             }
-
-
-            //places sandstone under floating sand
-            SupportSand(WholeBiomeRect);
-
-            //slopes all tiles in biome
-            //likely only needed for debug generation since vanilla has this pass
-            //SlopeTiles(WholeBiomeRect);
 
             //Clear out chests and life crystals not destroyed in the worldgen.
             ClearDebris(WholeBiomeRect);
@@ -1022,6 +1022,7 @@ namespace JadeFables.Biomes.JadeLake
                     {
                         Main.tile[i, j].Get<TileTypeData>().Type = (ushort)ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>();
                         Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
+                        Main.tile[i, j].LiquidAmount = 0;
                     }
                 }
             }
@@ -1040,7 +1041,10 @@ namespace JadeFables.Biomes.JadeLake
                 for (int j = worldArea.Y; j < worldArea.Y + worldArea.Height; j++)
                 {
                     if ((i + (j % 2) + offset) % 2 == 0)
+                    {
                         WorldGen.PlaceTile(i, j, tile, true, true);
+                        Main.tile[i, j].LiquidAmount = 0;
+                    }
                 }
         }
 
@@ -1111,9 +1115,15 @@ namespace JadeFables.Biomes.JadeLake
                     {
                         if (water)//WorldGen.genRand.NextBool(3))
                         {
-                            Tile waterTile = Main.tile[rect.X + i, rect.Y + j];
-                            waterTile.LiquidAmount = waterLevel;
-                            waterTile.LiquidType = LiquidID.Water;
+                            if (!(Main.tile[rect.X + i, rect.Y + j].HasTile &&
+                                Main.tile[rect.X + i, rect.Y + j].Slope == SlopeType.Solid &&
+                                Main.tileSolid[Main.tile[rect.X + i, rect.Y + j].TileType] && 
+                                !Main.tileSolidTop[Main.tile[rect.X + i, rect.Y + j].TileType]))
+                            {
+                                Tile waterTile = Main.tile[rect.X + i, rect.Y + j];
+                                waterTile.LiquidAmount = waterLevel;
+                                waterTile.LiquidType = LiquidID.Water;
+                            }
                         }
                         if (clearTop)
                             continue;
@@ -1130,14 +1140,19 @@ namespace JadeFables.Biomes.JadeLake
                     if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - (depthScale / 2))
                     {
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSand.JadeSandTile>(), true, true);
+                        Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 0;
                     }
                     else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - (depthScale / 4))
                     {
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), true, true);
+                        Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 0;
                         //generateNew = WorldGen.genRand.NextFloat()/*Debug:make genrand later*/ < MathHelper.Lerp(chanceToOffshoot, -chanceToOffshoot, normalizedY);//???
                     }
                     else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal)
+                    {
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), true, true);
+                        Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 0;
+                    }
                 }
             }
         }
@@ -1170,11 +1185,11 @@ namespace JadeFables.Biomes.JadeLake
                     bool belowSideSlopeHeight = (i - 3) > sinh && (-i + (int)(rect.Width) - 5) > sinh;
 
                     //places water if below below a certain threshold. and skips everything below on second iterations (?)
-                    if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.25f)
-                    {
+                    //if ((normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.25f)
+                   // {
                         //if (WorldGen.genRand.NextBool(3))
                         //    Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 255;
-                    }
+                   // }
 
                     //skip placing sand or sandstone if this is...?
                     if (Main.tile[rect.X + i, rect.Y + j].HasTile && (Main.tile[rect.X + i, rect.Y + j].TileType == ModContent.TileType<JadeSandTile>()))
@@ -1182,11 +1197,20 @@ namespace JadeFables.Biomes.JadeLake
 
                     //placement of sand and sandstone if below a certain threshold, continued from water placement
                     if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.14f)
+                    {
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSand.JadeSandTile>(), true, true);
+                        Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 0;
+                    }
                     else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal - 0.07f)
+                    { 
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), true, true);
+                        Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 0;
+                    }
                     else if (belowSideSlopeHeight && (normalizedY / sineCap) < (1f - (amp * 0.5f)) + noiseVal)
+                    { 
                         WorldGen.PlaceTile(rect.X + i, rect.Y + j, ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), true, true);
+                        Main.tile[rect.X + i, rect.Y + j].LiquidAmount = 0;
+                    }
                 }
             }
         }

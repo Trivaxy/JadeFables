@@ -101,28 +101,31 @@ namespace JadeFables.Biomes.JadeLake
 
         public override void PostUpdateEverything()
         {
-            /*if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.OemCloseBrackets))
-            {
-                if (!pressed)
-                {
-                    pressed = true;
+            //if (Main.keyState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.OemCloseBrackets))
+            //{
+            //    if (!pressed)
+            //    {
+            //        pressed = true;
 
-                    for (int i = 400; i < Main.maxTilesX - 400; i++)
-                        for (int j = 100; j < Main.maxTilesY - 400; j++)
-                        {
-                            //Main.tile[i, j].ClearTile();
-                            Main.tile[i, j].Get<TileTypeData>().Type = TileID.Stone;
-                            Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
-                        }
+            //        for (int i = 400; i < Main.maxTilesX - 400; i++)
+            //            for (int j = 100; j < Main.maxTilesY - 400; j++)
+            //            {
+            //                //Main.tile[i, j].ClearTile();
+            //                Main.tile[i, j].Get<TileTypeData>().Type = TileID.Stone;
+            //                Main.tile[i, j].Get<TileWallWireStateData>().HasTile = true;
+            //                Main.tile[i, j].Get<TileWallWireStateData>().Slope = SlopeType.Solid;
+            //                Main.tile[i, j].Get<TileWallWireStateData>().TileColor = PaintID.None;
+            //                Main.tile[i, j].LiquidAmount = 0;
+            //            }
 
-                    JadeLakeWorldGen.SurfaceItemPass(new GenerationProgress(), default);
-                    JadeLakeWorldGen.PolishPass(new GenerationProgress(), default);
-                    PopulateChests();
-                    Main.NewText("regened");
-                }
-            }
-            else
-                pressed = false;*/
+            //        JadeLakeWorldGen.SurfaceItemPass(new GenerationProgress(), default);
+            //        JadeLakeWorldGen.PolishPass(new GenerationProgress(), default);
+            //        PopulateChests();
+            //        Main.NewText("regened");
+            //    }
+            //}
+            //else
+            //    pressed = false;
 
             float progress = MathHelper.Min(TotalBiomeCount, 3000) / 3000f;
             if (TotalBiomeCount == 0 && !forceLakeAesthetic)

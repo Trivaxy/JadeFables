@@ -27,7 +27,9 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
         public override void SetStaticDefaults()
         {
             Tooltip.SetDefault("Left click to throw Ying, pushing enemies away \nRight click to throw Yang, pulling enemies in\nAlternate strikes for guaranteed critical hits");
+            ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
         }
+        const int ManaUsage = 8;
         public override void SetDefaults()
         {
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -35,7 +37,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             Item.height = 15;
             Item.noUseGraphic = true;
             Item.DamageType = DamageClass.Magic;
-            Item.mana = 8;
+            //Item.mana = 8;
             Item.noMelee = true;
             Item.useAnimation = 10;
             Item.useTime = 10;
@@ -54,16 +56,18 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
 
         public override bool? UseItem(Player player)
         {
+            //check for zero mana here
             int projType = player.altFunctionUse != 2 ? ModContent.ProjectileType<Ying>() : ModContent.ProjectileType<Yang>();
             int altProjType = player.altFunctionUse == 2 ? ModContent.ProjectileType<Ying>() : ModContent.ProjectileType<Yang>();
             Projectile toThrow = Main.projectile.Where(n => n.active && n.owner == player.whoAmI && n.type == projType).FirstOrDefault();
             Projectile toSpeedUp = Main.projectile.Where(n => n.active && n.owner == player.whoAmI && n.type == altProjType).FirstOrDefault();
             if (toThrow != default && toSpeedUp != default)
             {
-                var mp = (toThrow.ModProjectile as Ying);
-                var mp2 = toSpeedUp.ModProjectile as Ying;
-                if (!mp.readyToStrike && !mp2.readyToStrike)
+                Ying? mp = (toThrow.ModProjectile as Ying);
+                Ying? mp2 = toSpeedUp.ModProjectile as Ying;
+                if ((!mp.readyToStrike && !mp2.readyToStrike) && player.CheckMana((int)(ManaUsage * player.manaCost), true))
                 {
+                    player.manaRegenDelay = (int)player.maxRegenDelay;
                     mp.readyToStrike = true;
                     mp.rotSpeed = mp.GetStrikeSpeed();
                     mp2.rotSpeed = mp.GetStrikeSpeed();
@@ -82,6 +86,14 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             if (!Main.projectile.Any(n => n.active && n.owner == player.whoAmI && n.type == ModContent.ProjectileType<Ying>()))
             {
                 Projectile.NewProjectile(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ModContent.ProjectileType<Ying>(), (int)(Item.damage * player.GetDamage(DamageClass.Magic).Additive), Item.knockBack, player.whoAmI, 3.14f, 60);
+            }
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (Helper.FindTooltipIndex(tooltips, "Knockback", "Terraria", out int index)) // Which ever vanilla line you want to insert after
+            {
+                tooltips.Insert(index + 1, new TooltipLine(Mod, "ManaCost", "Uses " + ManaUsage.ToString() + " mana"));
             }
         }
     }

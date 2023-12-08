@@ -22,6 +22,19 @@ namespace JadeFables.Helpers
         private static int tiltTime;
         private static float tiltMax;
 
+        public static bool FindTooltipIndex(List<TooltipLine> tooltips, string name, string mod, out int index)//move this somewhere else later
+        {
+            TooltipLine tooltipLine = tooltips.FirstOrDefault(x => x.Name == name && x.Mod == mod);
+            if (tooltipLine != null)
+            {
+                index = tooltips.IndexOf(tooltipLine);
+                return true;
+            }
+            index = 0;
+            JadeFables.Instance.Logger.WarnFormat("Tooltip line {0} from mod {1} not found!", name, mod); // Change to your mod obviously
+            return false;
+        }
+
         public static Rectangle ToRectangle(this Vector2 vector) => new Rectangle(0, 0, (int)vector.X, (int)vector.Y);
 
         public static Vector2 Round(this Vector2 vector) => new Vector2((float)Math.Round(vector.X), (float)Math.Round(vector.Y));

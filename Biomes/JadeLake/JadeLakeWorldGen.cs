@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Terraria.DataStructures;
 using Terraria.IO;
 using Terraria.Utilities;
+using Terraria.Utilities.Terraria.Utilities;
 using Terraria.WorldBuilding;
 using static JadeFables.Biomes.JadeLake.JadeLakeWorldGen;
 using static Terraria.ModLoader.PlayerDrawLayer;
@@ -68,10 +69,11 @@ namespace JadeFables.Biomes.JadeLake
             float biomeWidthMult = 1.2f;//the width/height ratio
             int sideBeachSize = 12;
 
-
-            float CONST_mainBodyLowerFreq = 3;
-            float CONST_mainIslandBottomAmp = 0.5f;
-            float CONST_mainIslandBodyHeightMult = 0.9f;
+            //make const before release
+            const float CONST_mainBodyLowerFreq = 3;
+            const float CONST_mainIslandBottomAmp = 0.5f;
+            const float CONST_mainIslandBodyHeightMult = 0.9f;
+            const float CONST_mainIslandSideBuffer = 0.9f;
 
             FastNoise fastnoise = new FastNoise(WorldGen.genRand.Next());
 
@@ -88,6 +90,13 @@ namespace JadeFables.Biomes.JadeLake
                 biomeCenter.Y,
                 (int)((biomeSize / 2) * biomeWidthMult) * 2,
                 (int)(biomeSize * CONST_mainIslandBodyHeightMult));
+
+            //limits island range to around big cup
+            Rectangle SlimLowerRect = new Rectangle(
+                biomeCenter.X - (int)((biomeSize / 2) * biomeWidthMult * CONST_mainIslandSideBuffer),
+                biomeCenter.Y,
+                (int)((biomeSize / 2) * biomeWidthMult * CONST_mainIslandSideBuffer) * 2,
+                (int)((biomeSize * CONST_mainIslandBodyHeightMult) / 2));
 
 
             //for the upper islands
@@ -106,9 +115,10 @@ namespace JadeFables.Biomes.JadeLake
 
             //clears all water in biome area
             ClearWater(WholeBiomeRect);
-            //FillArea(WholeBiomeRect, TileID.EmeraldGemspark, 0);
+            //FillArea(WholeBiomeRect, TileID.SapphireGemspark, 0);
             //FillArea(LowerIslandRect, TileID.RubyGemspark, 1);//lower hitbox
             //FillArea(UpperIslandRect, TileID.EmeraldGemspark, 0);//upper hitbox
+            //FillArea(SlimLowerRect, TileID.DiamondGemspark, 0);//upper hitbox
 
             Cup(LowerIslandRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq, 0.35f, false);
 
@@ -130,7 +140,7 @@ namespace JadeFables.Biomes.JadeLake
                 //}
 
                 //only for wavybowl
-                int radius = (int)((biomeSize / 2) * 0.9f/*side buffer?*/);
+                int radius = (int)((biomeSize / 2) * CONST_mainIslandSideBuffer);
                 radius = (int)MathHelper.Max(radius, 4);//this makes sure the minimum is 4 (?)
 
 
@@ -145,7 +155,7 @@ namespace JadeFables.Biomes.JadeLake
             //lower and upper platforms/pools
             {
                 //lower pools
-                var list1 = AddIslands(LowerIslandRect, (int)(LowerIslandRect.Width * 0.33f), (int)(LowerIslandRect.Height * 0.21f), WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq * 1.3f, loopbackCount: 2, MinAdd: 3, chance: 0.00015f, 2, CONST_sizeVariation: 0.225f, 1.1f, avoidCollide: true, deleteCollide: true);
+                var list1 = AddIslands(SlimLowerRect, (int)(LowerIslandRect.Width * 0.33f), (int)(LowerIslandRect.Height * 0.21f), WholeBiomeRect, fastnoise, CONST_mainIslandBottomAmp, CONST_mainBodyLowerFreq * 1.3f, loopbackCount: 2, MinAdd: 3, chance: 0.00015f, 2, CONST_sizeVariation: 0.225f, 1.1f, avoidCollide: true, deleteCollide: true);
                 GenerateWallPillars(list1, biomeSize / 3);
 
                 //upper platforms and pools
@@ -1083,7 +1093,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void Cup(Rectangle rect, FastNoise fastnoise, float amp, float freq, float depthScale = 0.25f, bool clearTop = false, bool water = false)
         {
-            fastnoise = new FastNoise(WorldGen.genRand.Next(0, 1000000));
+            fastnoise = new FastNoise(WorldGen.genRand.Next(0, 10000000));
             const int waterLevel = 255;
 
             //generates the wavy pattern on the bottom of the island

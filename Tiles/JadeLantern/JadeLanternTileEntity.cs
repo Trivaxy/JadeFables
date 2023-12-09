@@ -44,7 +44,7 @@ namespace JadeFables.Tiles.JadeLantern
         public int burnTimer = 0;
 
         public int burnedSegments = 0;
-        public VerletChain chain;
+        public VerletChain? chain;//remove nullable if poss
 
         public Rectangle hitbox
         {
@@ -138,8 +138,21 @@ namespace JadeFables.Tiles.JadeLantern
             if (!tile.HasTile || !(tile.TileType == ModContent.TileType<JadeLantern>() || tile.TileType == ModContent.TileType<JadeLanternFurniture>()))
                 Kill(Position.X, Position.Y);
 
-            if (chain == null)
+            const int range = 640;
+
+            if (!Collision.CheckAABBvAABBCollision(Main.screenPosition, Main.ScreenSize.ToVector2(), (Position.ToVector2() * 16) - new Vector2(range, range), new Vector2(range * 2, (range * 2) + (length * 16))))
+            {
+                chain = null;
                 return;
+            }
+            else if (chain == null) // || chain.segmentCount == 0)
+            {
+                StartChainInstance();
+            }
+            //if (chain == null)
+            //    return;
+
+
             chain.UpdateChain();
 
             swayTimer += 0.025f;
@@ -319,13 +332,19 @@ namespace JadeFables.Tiles.JadeLantern
                 chainFrameY = Main.rand.Next(3);
                 lanternFrameY = Main.rand.Next(4);
             }
-            chain = new VerletChain(length, true, WorldPosition + new Vector2(8, 0), 14, true);
-            chain.Start();
-            chain.forceGravity = new Vector2(0, 0.4f);
+
+            StartChainInstance();
 
             chainFrame = new Rectangle(0, 22 * chainFrameY, 12, 22);
             pivotFrame = new Rectangle(0, 10 * chainFrameY, 14, 10);
             lanternFrame = new Rectangle(0, 34 * lanternFrameY, 32, 32);
+        }
+
+        public void StartChainInstance()
+        {
+            chain = new VerletChain(length, true, WorldPosition + new Vector2(8, 0), 14, true);
+            chain.Start();
+            chain.forceGravity = new Vector2(0, 0.4f);
         }
 
         public static Dictionary<UniversalVariationKey, WhateverPaintRenderTargetHolder> _paintRenders = new();

@@ -23,6 +23,14 @@ namespace JadeFables.Items.Potions.Heartbeat
             Item.maxStack = 1;
         }
 
+        
+        public override void GrabRange(Player player, ref int grabRange)
+        {
+            //Heartreach effect
+            if (player.lifeMagnet)
+                grabRange += Terraria.Item.lifeGrabRange;
+        }
+
         public override bool ItemSpace(Player Player) => true;
         public override bool OnPickup(Player Player)
         {

@@ -153,7 +153,7 @@ LotusFiber: {
 
 LotusHammer: {
 	DisplayName: Lotus Hammer
-	Tooltip: Can pickup walls that other hammers can't
+	Tooltip: Can collect all natural wall types
 }
 
 Dumpling: {

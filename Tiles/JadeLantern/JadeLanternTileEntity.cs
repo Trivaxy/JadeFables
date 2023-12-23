@@ -50,6 +50,9 @@ namespace JadeFables.Tiles.JadeLantern
         {
             get
             {
+                if(chain == null)//unsure why this is null when hit now, may be related to offscreen culling?
+                    return Rectangle.Empty;
+
                 RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
 
                 return new Rectangle((int)seg.posNow.X - 16, (int)seg.posNow.Y - 16, 32, 32);

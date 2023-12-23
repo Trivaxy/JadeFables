@@ -50,7 +50,7 @@ namespace JadeFables.Tiles.JadeLantern
         {
             get
             {
-                if(chain == null)//unsure why this is null when hit now, may be related to offscreen culling?
+                if (chain == null)//unsure why this is null when hit now, may be related to offscreen culling?
                     return Rectangle.Empty;
 
                 RopeSegment seg = chain.ropeSegments[chain.segmentCount - 1];
@@ -137,9 +137,7 @@ namespace JadeFables.Tiles.JadeLantern
                 initialized = true;
                 SpawnIn();
             }
-            Tile tile = Main.tile[Position.X, Position.Y];
-            if (!tile.HasTile || !(tile.TileType == ModContent.TileType<JadeLantern>() || tile.TileType == ModContent.TileType<JadeLanternFurniture>()))
-                Kill(Position.X, Position.Y);
+
 
             const int range = 640;
 
@@ -148,12 +146,16 @@ namespace JadeFables.Tiles.JadeLantern
                 chain = null;
                 return;
             }
-            else if (chain == null) // || chain.segmentCount == 0)
+            if (chain == null) // || chain.segmentCount == 0)
             {
                 StartChainInstance();
             }
             //if (chain == null)
             //    return;
+
+            Tile tile = Main.tile[Position.X, Position.Y];
+            if (!tile.HasTile || !(tile.TileType == ModContent.TileType<JadeLantern>() || tile.TileType == ModContent.TileType<JadeLanternFurniture>()))
+                Kill(Position.X, Position.Y);
 
 
             chain.UpdateChain();

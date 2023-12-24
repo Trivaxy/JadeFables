@@ -27,6 +27,7 @@ namespace JadeFables.Tiles.JadeTorch
             ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.ShimmerTorch;
 
             ItemID.Sets.Torches[Type] = true;
+            ItemID.Sets.WaterTorches[Type] = true;
         }
 
         public override void SetDefaults()
@@ -52,13 +53,15 @@ namespace JadeFables.Tiles.JadeTorch
             itemGroup = ContentSamples.CreativeHelper.ItemGroup.Torches; // Vanilla usually matches sorting methods with the right type of item, but sometimes, like with torches, it doesn't. Make sure to set whichever items manually if need be.
         }
 
+        public static Color jadeTorchColor => Color.Lerp(new Color(20, 210, 60), new Color(0, 255, 200), Main.demonTorch);
+
         public override void HoldItem(Player player)
         {
 
             // Create a white (1.0, 1.0, 1.0) light at the torch's approximate position, when the item is held.
             Vector2 position = player.RotatedRelativePoint(new Vector2(player.itemLocation.X + 12f * player.direction + player.velocity.X, player.itemLocation.Y - 14f + player.velocity.Y), true);
 
-            Lighting.AddLight(position, new Color(255, 29, 80).ToVector3() * 0.6f);
+            Lighting.AddLight(position, jadeTorchColor.ToVector3());
         }
 
         public override void PostUpdate()
@@ -66,7 +69,7 @@ namespace JadeFables.Tiles.JadeTorch
             // Create a white (1.0, 1.0, 1.0) light when the item is in world, and isn't underwater.
             if (!Item.wet)
             {
-                Lighting.AddLight(Item.Center, 1f, 0.113f, 0.313f);
+                Lighting.AddLight(Item.Center, jadeTorchColor.ToVector3());
             }
         }
 
@@ -92,8 +95,8 @@ namespace JadeFables.Tiles.JadeTorch
             Main.tileSolid[Type] = false;
             Main.tileNoAttach[Type] = true;
             Main.tileNoFail[Type] = true;
-            Main.tileWaterDeath[Type] = true;
-            TileID.Sets.FramesOnKillWall[Type] = true;
+            Main.tileWaterDeath[Type] = false;
+            TileID.Sets.FramesOnKillWall[Type] = false;
             TileID.Sets.DisableSmartCursor[Type] = true;
             TileID.Sets.Torch[Type] = true;
             TileSets.TorchThatTriggersTorchGod[Type] = true;
@@ -106,17 +109,21 @@ namespace JadeFables.Tiles.JadeTorch
 
             // Placement
             TileObjectData.newTile.CopyFrom(TileObjectData.StyleTorch);
+            TileObjectData.newTile = AllowPlacingInLiquid(TileObjectData.newTile);
             TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, TileObjectData.newTile.Width, 0);
             TileObjectData.newAlternate.CopyFrom(TileObjectData.StyleTorch);
             TileObjectData.newAlternate.AnchorLeft = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.Tree | AnchorType.AlternateTile, TileObjectData.newTile.Height, 0);
             TileObjectData.newAlternate.AnchorAlternateTiles = new[] { 124 };
+            TileObjectData.newAlternate = AllowPlacingInLiquid(TileObjectData.newAlternate);
             TileObjectData.addAlternate(1);
             TileObjectData.newAlternate.CopyFrom(TileObjectData.StyleTorch);
             TileObjectData.newAlternate.AnchorRight = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide | AnchorType.Tree | AnchorType.AlternateTile, TileObjectData.newTile.Height, 0);
             TileObjectData.newAlternate.AnchorAlternateTiles = new[] { 124 };
+            TileObjectData.newAlternate = AllowPlacingInLiquid(TileObjectData.newAlternate);
             TileObjectData.addAlternate(2);
             TileObjectData.newAlternate.CopyFrom(TileObjectData.StyleTorch);
             TileObjectData.newAlternate.AnchorWall = true;
+            TileObjectData.newAlternate = AllowPlacingInLiquid(TileObjectData.newAlternate);
             TileObjectData.addAlternate(0);
             TileObjectData.addTile(Type);
 
@@ -129,6 +136,16 @@ namespace JadeFables.Tiles.JadeTorch
             {
                 flameTexture = ModContent.Request<Texture2D>(Texture + "_Flame");
             }
+        }
+
+        public static TileObjectData AllowPlacingInLiquid(TileObjectData tileObjectData)
+        {
+            tileObjectData.WaterDeath = false;
+            tileObjectData.LavaDeath = false;
+            tileObjectData.WaterPlacement = LiquidPlacement.Allowed;
+            tileObjectData.LavaPlacement = LiquidPlacement.Allowed;
+
+            return tileObjectData;
         }
 
         public override float GetTorchLuck(Player player)
@@ -145,8 +162,8 @@ namespace JadeFables.Tiles.JadeTorch
 
             // The influence positive torch luck can have overall is 0.1 (if positive luck is any number less than 1) or 0.2 (if positive luck is greater than or equal to 1)
 
-            bool inExampleUndergroundBiome = player.InModBiome<JadeLakeBiome>();
-            return inExampleUndergroundBiome ? 1f : -0.1f; // ExampleTorch gives maximum positive luck when in example biome, otherwise a small negative luck
+            bool inJadeBiome = player.InModBiome<JadeLakeBiome>();
+            return inJadeBiome ? 1f : 0f; //gives no negative luck since the torch looks good in a variety of biomes
         }
 
         public override void NumDust(int i, int j, bool fail, ref int num) => num = Main.rand.Next(1, 3);
@@ -154,18 +171,16 @@ namespace JadeFables.Tiles.JadeTorch
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
             Tile tile = Main.tile[i, j];
-            Color color = new Color(255, 29, 80);
 
             // If the torch is on
             if (tile.TileFrameX < 66)
             {
                 // Make it emit the following light.
-                r = color.R / 255f;
-                g = color.G / 255f;
-                b = color.B / 255f;
+                r = JadeTorch.jadeTorchColor.R / 255f;
+                g = JadeTorch.jadeTorchColor.G / 255f;
+                b = JadeTorch.jadeTorchColor.B / 255f;
             }
         }
-
         public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
         {
             offsetY = 0;

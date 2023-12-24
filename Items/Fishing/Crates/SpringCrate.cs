@@ -13,6 +13,8 @@ using JadeFables.Items.SpringChestLoot.Hwacha;
 using JadeFables.Tiles.JadeFountain;
 using Terraria.Localization;
 using JadeFables.Items.SpringChestLoot.DuelingSpirits;
+using JadeFables.Tiles.JadeWaterfall;
+using Terraria.ModLoader;
 
 namespace JadeFables.Items.Fishing.Crates
 {
@@ -79,6 +81,12 @@ namespace JadeFables.Items.Fishing.Crates
             ItemDropRule.NotScalingWithLuck(ItemID.MasterBait, 1, 2, 6),
             ItemDropRule.NotScalingWithLuck(ItemID.JourneymanBait, 1, 2, 6)
         };
+        public static IItemDropRule[] buildingItems = new IItemDropRule[] //if a drop is selected and the denominator fails, it doesn't reroll. so festival lantern is a 1/6 drop here, and the bucket and fountain are 1/3 drops
+        {
+            ItemDropRule.NotScalingWithLuck(ItemType<JadeWaterfallBucket>(), 1, 2, 5), //adding droprules directly to modifyitemloot doesn't seem to work
+            ItemDropRule.NotScalingWithLuck(ItemType<JadeFountainItem>(), 1),
+            ItemDropRule.NotScalingWithLuck(ItemType<Jade.FestivalLantern.FestivalLantern>(), 2),
+        };
     }
 
     public class SpringCrate : ModItem
@@ -108,10 +116,9 @@ namespace JadeFables.Items.Fishing.Crates
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>(), ItemType<DuelingSpirits>()));
-            itemLoot.Add(ItemDropRule.Common(4, ItemType<JadeFountainItem>()));
-            itemLoot.Add(ItemDropRule.Common(6, ItemType<Jade.FestivalLantern.FestivalLantern>()));
+            itemLoot.Add(new OneFromRulesRule(1, buildingItems));
             itemLoot.Add(goldCoin);
-            //note: SequentialRulesNotScalingWithLuck unfortunately makes droprules later in the sequential list less common, as it will exit out as soon as any droprule succeeds.
+            //note: SequentialRulesNotScalingWithLuck unfortunately makes droprules later in the sequential list less common, as it will exit out as soon as any droprule succeeds. 
             itemLoot.Add(ItemDropRule.SequentialRulesNotScalingWithLuck(1, new OneFromRulesRule(4, bars), new OneFromRulesRule(7, ores)));
             itemLoot.Add(new OneFromRulesRule(4, potions));
             itemLoot.Add(new OneFromRulesRule(2, recoveryPotions));
@@ -122,6 +129,8 @@ namespace JadeFables.Items.Fishing.Crates
     {
         public override void SetStaticDefaults()
         {
+            ItemID.Sets.IsFishingCrate[Type] = true;
+
             Main.tileSolidTop[Type] = true;
             Main.tileFrameImportant[Type] = true;
             Main.tileTable[Type] = true;
@@ -161,8 +170,7 @@ namespace JadeFables.Items.Fishing.Crates
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
             itemLoot.Add(ItemDropRule.OneFromOptionsNotScalingWithLuck(1, ItemType<FireworkPack>(), ItemType<TanookiLeaf>(), ItemType<GongItem>(), ItemType<Chopsticks>(), ItemType<Hwacha>(), ItemType<DuelingSpirits>()));
-            itemLoot.Add(ItemDropRule.Common(4, ItemType<JadeFountainItem>()));
-            itemLoot.Add(ItemDropRule.Common(6, ItemType<Jade.FestivalLantern.FestivalLantern>()));
+            itemLoot.Add(new OneFromRulesRule(1, buildingItems));
             itemLoot.Add(goldCoin);
             itemLoot.Add(ItemDropRule.SequentialRulesNotScalingWithLuck(1, new OneFromRulesRule(6, hardmodeBars), new OneFromRulesRule(14, hardmodeOres), new OneFromRulesRule(12, bars), new OneFromRulesRule(14, ores)));
             itemLoot.Add(new OneFromRulesRule(4, potions));

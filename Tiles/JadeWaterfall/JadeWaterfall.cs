@@ -80,7 +80,7 @@ namespace JadeFables.Tiles.JadeWaterfall
             Item.useTime = 15;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.rare = ItemRarityID.White;
-            Item.value = 5;
+            Item.value = 0;
         }
 
         public override bool CanUseItem(Player player)

@@ -50,12 +50,12 @@ Arowana: {
 
 DragonCrate: {
 	DisplayName: Dragon Crate
-	Tooltip: Right click to open
+	Tooltip: <right> to open
 }
 
 SpringCrate: {
 	DisplayName: Spring Crate
-	Tooltip: Right click to open
+	Tooltip: <right> to open
 }
 
 KoiPopper: {
@@ -63,7 +63,7 @@ KoiPopper: {
 	Tooltip:
 		'''
 		Shoot bubles out in a spread 
-		Right click to pop all bubbles, dealing damage to nearby enemies
+		<right> to pop all bubbles, dealing damage to nearby enemies
 		'''
 }
 
@@ -217,8 +217,8 @@ GongItem: {
 	DisplayName: Gong and Ringer
 	Tooltip:
 		'''
-		Left click to throw out a gong 
-		Right click to ring it, increasing its damage
+		<left> to throw out a gong 
+		<right> to ring it, increasing its damage
 		'''
 }
 
@@ -228,7 +228,7 @@ Hwacha: {
 		'''
 		Summons a Hwacha to fight for you 
 		Whip the hwacha to fire it with arrows from your inventory
-		Right click to push and pull the hwacha
+		<right> to push and pull the hwacha
 		'''
 }
 
@@ -348,4 +348,9 @@ PufferfishBannerItem: {
 DuelingSpirits: {
 	DisplayName: Dueling Spirits
 	Tooltip: ""
+}
+
+JadeMantisBannerItem: {
+	Tooltip: ""
+	DisplayName: Jade Mantis Banner Item
 }

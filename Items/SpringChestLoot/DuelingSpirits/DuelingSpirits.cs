@@ -26,7 +26,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
     {
         public override void SetStaticDefaults()
         {
-            Tooltip.SetDefault("Left click to throw Ying, pushing enemies away \nRight click to throw Yang, pulling enemies in\nAlternate strikes for guaranteed critical hits");
+            Tooltip.SetDefault("<left> to throw Ying, pushing enemies away \n<right> to throw Yang, pulling enemies in\nAlternate strikes for guaranteed critical hits");
             ItemID.Sets.ItemsThatAllowRepeatedRightClick[Item.type] = true;
         }
         const int ManaUsage = 8;

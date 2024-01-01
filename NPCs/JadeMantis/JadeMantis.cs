@@ -1,12 +1,4 @@
-﻿//TODO:
-//Balance
-//Banner
-//Prevent it from clipping into blocks
-
-//SOUND EFFECTS:
-//Pulse sound for swoop
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;

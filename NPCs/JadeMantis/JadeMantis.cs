@@ -1,15 +1,10 @@
 ﻿//TODO:
 //Balance
+//Banner
 //Prevent it from clipping into blocks
 
 //SOUND EFFECTS:
 //Pulse sound for swoop
-
-//SPRITE DEPENDANT:
-//Make foliage cover the mantis when its hiding
-//Banner
-//Swoop animations
-//Throwing animation and offset
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -56,7 +51,7 @@ namespace JadeFables.NPCs.JadeMantis
         private AttackPhase attackPhase = AttackPhase.JustSpawned;
         private Player target => Main.player[NPC.target];
 
-        private int XFRAMES = 1;
+        private int XFRAMES = 3;
         private int xFrame = 0;
         private int yFrame = 0;
         private int frameCounter = 0;
@@ -87,7 +82,7 @@ namespace JadeFables.NPCs.JadeMantis
 
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 4;
+            Main.npcFrameCount[NPC.type] = 13;
             DisplayName.SetDefault("Artisan Mantis");
         }
 
@@ -336,7 +331,7 @@ namespace JadeFables.NPCs.JadeMantis
         private void ThrowingBehavior()
         {
             NPC.velocity *= 0.97f;
-            if (frameCounter == 0 && yFrame == 3)
+            if (frameCounter == 0 && yFrame == 7)
             {
                 SoundEngine.PlaySound(SoundID.Item19, NPC.Center);
                 Vector2 pos = NPC.Center;
@@ -465,19 +460,30 @@ namespace JadeFables.NPCs.JadeMantis
 
             if (attackPhase == AttackPhase.Throwing)
             {
-                xFrame = 0;
+                xFrame = 1;
                 frameCounter++;
-                if (frameCounter > 30)
+                if (frameCounter > 6)
                 {
                     frameCounter = 0;
                     yFrame++;
                 }
-                if (yFrame >= 4)
+                if (yFrame >= 13)
                 {
                     yFrame = 0;
                     xFrame = 0;
                     attackPhase = AttackPhase.Idle;
                 }
+            }
+            if (attackPhase == AttackPhase.Swooping)
+            {
+                xFrame = 2;
+                frameCounter++;
+                if (frameCounter > 4)
+                {
+                    frameCounter = 0;
+                    yFrame++;
+                }
+                yFrame %= 2;
             }
         }
 

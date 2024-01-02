@@ -70,7 +70,7 @@ namespace JadeFables.Tiles.WarriorStatue
             SoundEngine.PlaySound(SoundID.CoinPickup);
             for (int k = 0; k < 3; k++)
             {
-                int dust = Dust.NewDust(player.position, player.width, player.height, DustID.GoldCoin, 0, -2);
+                int dust = Dust.NewDust(player.HandPosition - new Vector2(8,0) ?? player.position, 16, 0, DustID.GoldCoin, 0, -2);
                 Main.dust[dust].velocity.X = 0;
                 Main.dust[dust].velocity.Y *= 0.3f;
             }

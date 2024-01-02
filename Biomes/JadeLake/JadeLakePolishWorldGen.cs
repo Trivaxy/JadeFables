@@ -310,6 +310,16 @@ namespace JadeFables.Biomes.JadeLake
                     }
                     else
                         WorldGen.PlaceChest(i, j, (ushort)ModContent.TileType<SpringChest>());
+                    if (k == 1) //make one non-waterfall chest invisible
+                    {
+                        for (int x = 0; x < 2; x++)
+                        {
+                            for (int y = 0; y < 2; y++)
+                            {
+                                WorldGen.paintCoatTile(i + x, j - 1 + y, PaintCoatingID.Echo);
+                            }
+                        }
+                    }
                 }
                 else
                     k--;
@@ -320,16 +330,16 @@ namespace JadeFables.Biomes.JadeLake
         {
             for (int i = x; i < x + 2; i++)
             {
-                Tile tile1 = Framing.GetTileSafely(x, y - 1);
-                if (tile1.HasTile)
+                Tile chestTopTile = Framing.GetTileSafely(i, y - 1);
+                if (chestTopTile.HasTile)
                     return false;
 
-                Tile tile2 = Framing.GetTileSafely(x, y);
-                if (tile2.HasTile)
+                Tile chestBottomTile = Framing.GetTileSafely(i, y);
+                if (chestBottomTile.HasTile)
                     return false;
 
-                Tile tile3 = Framing.GetTileSafely(x, y + 1);
-                if (!tile3.HasTile || tile3.TileType != ModContent.TileType<JadeSandTile>() || tile3.BlockType != BlockType.Solid)
+                Tile groundTile = Framing.GetTileSafely(i, y + 1);
+                if (!groundTile.HasTile || groundTile.TileType != ModContent.TileType<JadeSandTile>() || groundTile.BlockType != BlockType.Solid)
                     return false;
             }
             return true;

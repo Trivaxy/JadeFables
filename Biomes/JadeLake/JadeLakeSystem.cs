@@ -179,7 +179,7 @@ namespace JadeFables.Biomes.JadeLake
 
             int[] ternaryLoot = new int[] {
                 ModContent.ItemType<Tiles.JadeTorch.JadeTorch>(),
-                ItemID.Rope,
+                ItemID.SilkRope,
                 ItemID.BouncyBomb,
                 ItemID.SwiftnessPotion,
                 ItemID.RegenerationPotion,
@@ -213,7 +213,7 @@ namespace JadeFables.Biomes.JadeLake
                     int primaryLootChoice = chestIndex % primaryLoot.Length;
                     chest.item[0].SetDefaults(primaryLoot[primaryLootChoice]);
 
-                    int secondaryLootChoice = Main.rand.Next(secondaryLoot.Length);
+                    int secondaryLootChoice = WorldGen.genRand.Next(secondaryLoot.Length);
                     chest.item[1].SetDefaults(secondaryLoot[secondaryLootChoice]);
 
                     int slotsToFill = WorldGen.genRand.Next(5, 8);
@@ -222,33 +222,37 @@ namespace JadeFables.Biomes.JadeLake
                         if (inventoryIndex == slotsToFill - 1)
                         {
                             chest.item[inventoryIndex].SetDefaults(ItemID.GoldCoin);
-                            chest.item[inventoryIndex].stack = Main.rand.Next(1, 5);
+                            chest.item[inventoryIndex].stack = WorldGen.genRand.Next(1, 5);
                         }
-                        else if (Main.rand.NextBool(5))
+                        else if (WorldGen.genRand.NextBool(5))
                         {
-                            int type = ternaryLootRareList[Main.rand.Next(ternaryLootRareList.Count)];
+                            int type = ternaryLootRareList[WorldGen.genRand.Next(ternaryLootRareList.Count)];
                             ternaryLootRareList.Remove(type);
                             chest.item[inventoryIndex].SetDefaults(type);
-                            chest.item[inventoryIndex].stack = Main.rand.Next(2, 5);
+                            chest.item[inventoryIndex].stack = WorldGen.genRand.Next(2, 5);
                         }
-                        else if (Main.rand.NextBool(6) && ternaryLootSingleList.Count > 0)
+                        else if (WorldGen.genRand.NextBool(6) && ternaryLootSingleList.Count > 0)
                         {
-                            int type = ternaryLootSingleList[Main.rand.Next(ternaryLootSingleList.Count)];
+                            int type = ternaryLootSingleList[WorldGen.genRand.Next(ternaryLootSingleList.Count)];
                             ternaryLootSingleList.Remove(type);
                             chest.item[inventoryIndex].SetDefaults(type);
                             chest.item[inventoryIndex].stack = 1;
                         }
                         else
                         {
-                            int type = ternaryLootList[Main.rand.Next(ternaryLootList.Count)];
+                            int type = ternaryLootList[WorldGen.genRand.Next(ternaryLootList.Count)];
                             ternaryLootList.Remove(type);
                             chest.item[inventoryIndex].SetDefaults(type);
-                            if (chest.item[inventoryIndex].type == ItemID.Rope)
+                            if (chest.item[inventoryIndex].type == ItemID.SilkRope)
                             {
-                                chest.item[inventoryIndex].stack = Main.rand.Next(30, 50);
+                                chest.item[inventoryIndex].stack = WorldGen.genRand.Next(50, 100);
+                            }
+                            else if (chest.item[inventoryIndex].type == ModContent.ItemType<Tiles.JadeTorch.JadeTorch>())
+                            {
+                                chest.item[inventoryIndex].stack = WorldGen.genRand.Next(10, 20);
                             }
                             else
-                                chest.item[inventoryIndex].stack = Main.rand.Next(2, 6);
+                                chest.item[inventoryIndex].stack = WorldGen.genRand.Next(2, 6);
                         }
                     }
                 }

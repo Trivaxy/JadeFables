@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using Terraria.GameContent.Drawing;
 
 namespace JadeFables.Tiles.SpringChest
 {
@@ -200,8 +201,23 @@ namespace JadeFables.Tiles.SpringChest
                 player.cursorItemIconID = 0;
             }
         }
-    }
 
+        public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
+        {
+            if (TileDrawing.IsVisible(Main.tile[i, j]))
+                return;
+
+            //Spawn sparkles if invisible, calculations taken from vanilla
+            Color light = Lighting.GetColor(i, j);
+            if (light.R <= 20 && light.B <= 20 && light.G <= 20)
+                return;
+            int maxLight = Math.Max(light.R, Math.Max(light.G, light.B)) / 30;
+            if (Main.rand.Next(Main.tileShine[Type]) >= maxLight)
+                return;
+            int sparkle = Dust.NewDust(new Vector2(i * 16, j * 16), 16, 16, DustID.TintableDustLighted, 0f, 0f, 54, Color.White, 0.5f);
+            Main.dust[sparkle].velocity *= 0f;
+        }
+    }
     internal class SpringChestItem : ModItem
     {
         public override void SetDefaults()

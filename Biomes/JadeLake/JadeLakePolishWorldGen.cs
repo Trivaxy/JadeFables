@@ -26,6 +26,8 @@ using static Terraria.ModLoader.PlayerDrawLayer;
 using Terraria.Utilities;
 using JadeFables.Tiles.HardenedJadeSand;
 using JadeFables.NPCs.Lilypad;
+using Terraria.ObjectData;
+using JadeFables.Helpers;
 
 namespace JadeFables.Biomes.JadeLake
 {
@@ -97,12 +99,12 @@ namespace JadeFables.Biomes.JadeLake
                     k--;
                     continue;
                 }
-                NPC.NewNPC(new EntitySource_WorldGen(), i * 16, j * 16, ModContent.NPCType<Lilypad>());
+                NPC.NewNPC(new EntitySource_WorldGen(), i * 16, j * 16, NPCType<Lilypad>());
             }
         }
         public static void PlacePearls(Rectangle rect, int chance)
         {
-            int[] validTiles = new int[] { ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), ModContent.TileType<JadeSandTile>() };
+            int[] validTiles = new int[] { TileType<JadeSandstoneTile>(), TileType<HardenedJadeSandTile>(), TileType<JadeSandTile>() };
             for (int i = rect.Left; i < rect.Left + rect.Width; i++)
             {
                 for (int j = rect.Top + 1; j < rect.Top + rect.Height; j++)
@@ -133,7 +135,7 @@ namespace JadeFables.Biomes.JadeLake
         public static void JadeSeaweedPopulation(Rectangle rect, float threshhold, float noiseFreq)
         {
             //Debug method to wipe jade grass
-            Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<JadeSeaweedProj>()).ToList().ForEach(n => n.active = false);
+            Main.projectile.Where(n => n.active && n.type == ProjectileType<JadeSeaweedProj>()).ToList().ForEach(n => n.active = false);
 
             FastNoise fastnoise = new FastNoise(WorldGen.genRand.Next(0, 1000000));
             for (int i = rect.Left; i < rect.Left + rect.Width; i++)
@@ -143,13 +145,13 @@ namespace JadeFables.Biomes.JadeLake
                     Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                     Tile mainTile = Framing.GetTileSafely(i, j);
 
-                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>() && mainTile.BlockType == BlockType.Solid)
+                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == TileType<JadeSandTile>() && mainTile.BlockType == BlockType.Solid)
                     {
                         float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
                         if (noiseVal > threshhold)
                         {
                             tileAbove.HasTile = true;
-                            tileAbove.TileType = (ushort)ModContent.TileType<JadeSeaweedTile>();
+                            tileAbove.TileType = (ushort)TileType<JadeSeaweedTile>();
                         }
                     }
                 }
@@ -166,12 +168,12 @@ namespace JadeFables.Biomes.JadeLake
                     Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                     Tile mainTile = Framing.GetTileSafely(i, j);
 
-                    if ((!tileAbove.HasTile || !Main.tileSolid[tileAbove.TileType]) && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>())
+                    if ((!tileAbove.HasTile || !Main.tileSolid[tileAbove.TileType]) && mainTile.HasTile && mainTile.TileType == TileType<JadeSandTile>())
                     {
                         float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
                         if (noiseVal > threshhold)
                         {
-                            mainTile.TileType = (ushort)ModContent.TileType<OvergrownJadeSandTile>();
+                            mainTile.TileType = (ushort)TileType<OvergrownJadeSandTile>();
                         }
                     }
                 }
@@ -186,7 +188,7 @@ namespace JadeFables.Biomes.JadeLake
                 {
                     Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                     Tile mainTile = Framing.GetTileSafely(i, j);
-                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>() && mainTile.BlockType == BlockType.Solid)
+                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == TileType<JadeSandTile>() && mainTile.BlockType == BlockType.Solid)
                     {
                         if (WorldGen.genRand.NextBool(chance))
                         {
@@ -229,7 +231,7 @@ namespace JadeFables.Biomes.JadeLake
                     Tile tileAbove = Framing.GetTileSafely(i, j - 1);
                     Tile mainTile = Framing.GetTileSafely(i, j);
 
-                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>())
+                    if (!tileAbove.HasTile && mainTile.HasTile && mainTile.TileType == TileType<JadeSandTile>())
                     {
                         float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
                         if (noiseVal > threshhold && WorldGen.genRand.NextBool(chance))
@@ -245,7 +247,7 @@ namespace JadeFables.Biomes.JadeLake
                                     y = j + (MathF.Sin(rad) * h);
                                     Tile wallTile = Framing.GetTileSafely((int)x, (int)y);
                                     if (!wallTile.HasTile && wallTile.WallType == 0)
-                                        wallTile.WallType = (ushort)ModContent.WallType<BlossomWall>();
+                                        wallTile.WallType = (ushort)WallType<BlossomWall>();
                                 }
                             }
                         }
@@ -263,9 +265,9 @@ namespace JadeFables.Biomes.JadeLake
                 {
                     Tile mainTile = Framing.GetTileSafely(i, j);
 
-                    if (mainTile.WallType == ModContent.WallType<JadeSandWall>() && Main.rand.NextBool(chance))
+                    if (mainTile.WallType == WallType<JadeSandWall>() && Main.rand.NextBool(chance))
                     {
-                        mainTile.WallType = (ushort)ModContent.WallType<JadeSandBlossomWall>();
+                        mainTile.WallType = (ushort)WallType<JadeSandBlossomWall>();
                     }
                 }
             }
@@ -292,10 +294,10 @@ namespace JadeFables.Biomes.JadeLake
                             Tile rightTile = Framing.GetTileSafely(i + 1, y);
                             if (leftTile.LiquidAmount > 0 || rightTile.LiquidAmount > 0)
                                 break;
-                            if (leftTile.HasTile && leftTile.TileType == ModContent.TileType<HardenedJadeSandTile>() && rightTile.HasTile && rightTile.TileType == ModContent.TileType<HardenedJadeSandTile>())
+                            if (leftTile.HasTile && leftTile.TileType == TileType<HardenedJadeSandTile>() && rightTile.HasTile && rightTile.TileType == TileType<HardenedJadeSandTile>())
                             {
                                 success = true;
-                                leftTile.TileType = (ushort)ModContent.TileType<JadeWaterfallTile>();
+                                leftTile.TileType = (ushort)TileType<JadeWaterfallTile>();
                                 rightTile.HasTile = false;
                                 break;
                             }
@@ -303,22 +305,20 @@ namespace JadeFables.Biomes.JadeLake
 
                         if (success)
                         {
-                            WorldGen.PlaceChest(i, j, (ushort)ModContent.TileType<SpringChest>());
+                            WorldGen.PlaceChest(i, j, (ushort)TileType<SpringChest>());
                         }
                         else
                             k--;
                     }
                     else
-                        WorldGen.PlaceChest(i, j, (ushort)ModContent.TileType<SpringChest>());
+                    {
+                        WorldGen.PlaceChest(i, j, (ushort)TileType<SpringChest>());
+                    }
                     if (k == 1) //make one non-waterfall chest invisible
                     {
-                        for (int x = 0; x < 2; x++)
-                        {
-                            for (int y = 0; y < 2; y++)
-                            {
-                                WorldGen.paintCoatTile(i + x, j - 1 + y, PaintCoatingID.Echo);
-                            }
-                        }
+                        Helper.ForTilesInRect(2, 2, i, j, (x, y) =>
+                                WorldGen.paintCoatTile(x, y, PaintCoatingID.Echo)
+                        );
                     }
                 }
                 else
@@ -339,7 +339,7 @@ namespace JadeFables.Biomes.JadeLake
                     return false;
 
                 Tile groundTile = Framing.GetTileSafely(i, y + 1);
-                if (!groundTile.HasTile || groundTile.TileType != ModContent.TileType<JadeSandTile>() || groundTile.BlockType != BlockType.Solid)
+                if (!groundTile.HasTile || groundTile.TileType != TileType<JadeSandTile>() || groundTile.BlockType != BlockType.Solid)
                     return false;
             }
             return true;
@@ -354,9 +354,9 @@ namespace JadeFables.Biomes.JadeLake
                     Tile tileBelow = Framing.GetTileSafely(i, j + 1);
                     Tile mainTile = Framing.GetTileSafely(i, j);
 
-                    if (!mainTile.HasTile && tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
+                    if (!mainTile.HasTile && tileBelow.HasTile && tileBelow.TileType == TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
                     {
-                        WorldGen.PlaceTile(i, j, ModContent.TileType<JasmineFlowerTile>());
+                        WorldGen.PlaceTile(i, j, TileType<JasmineFlowerTile>());
                         mainTile.TileFrameX = (short)(WorldGen.genRand.Next(3) * 18);
                     }
                 }
@@ -373,17 +373,17 @@ namespace JadeFables.Biomes.JadeLake
                     Tile mainTile = Framing.GetTileSafely(i, j);
                     Tile tileAbove = Framing.GetTileSafely(i, j - 1);
 
-                    if (!mainTile.HasTile && tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
+                    if (!mainTile.HasTile && tileBelow.HasTile && tileBelow.TileType == TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
                     {
                         short tileFrame = (short)(WorldGen.genRand.Next(6) * 18);
                         if (WorldGen.genRand.NextBool(3))
                         {
-                            WorldGen.PlaceTile(i, j, ModContent.TileType<JadeGrassTall>());
+                            WorldGen.PlaceTile(i, j, TileType<JadeGrassTall>());
                             tileAbove.TileFrameX = tileFrame;
                         }
                         else
                         {
-                            WorldGen.PlaceTile(i, j, ModContent.TileType<JadeGrassShort>());
+                            WorldGen.PlaceTile(i, j, TileType<JadeGrassShort>());
                         }
                         mainTile.TileFrameX = tileFrame;
                     }
@@ -393,17 +393,23 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void PlaceJadeSandPiles(Rectangle rect, int chance)
         {
-            int[] piles = new int[] { ModContent.TileType<JadeSandCastle1>(), ModContent.TileType<JadeSandCastle2>(), ModContent.TileType<JadeSandPile1>(), ModContent.TileType<JadeSandPile2>(), ModContent.TileType<JadeSandPile3>(), ModContent.TileType<JadeSandPile4>(), ModContent.TileType<JadeSandPile5>(), ModContent.TileType<JadeSandPile6>(), ModContent.TileType<JadeSandPile7>(), ModContent.TileType<JadeSandPile8>() };
+            int[] piles = new int[] { TileType<JadeSandCastle1>(), TileType<JadeSandCastle2>(), TileType<JadeSandPile1>(), TileType<JadeSandPile2>(), TileType<JadeSandPile3>(), TileType<JadeSandPile4>(), TileType<JadeSandPile5>(), TileType<JadeSandPile6>(), TileType<JadeSandPile7>(), TileType<JadeSandPile8>() };
             for (int i = rect.Left; i < rect.Left + rect.Width; i++)
             {
                 for (int j = rect.Top; j < rect.Top + rect.Height - 1; j++)
                 {
                     Tile tileBelow = Framing.GetTileSafely(i, j + 1);
-                    Tile mainTile = Framing.GetTileSafely(i, j);
 
-                    if (tileBelow.HasTile && tileBelow.TileType == ModContent.TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
+                    int chosenType = piles[WorldGen.genRand.Next(piles.Length)];
+                    if (tileBelow.HasTile && tileBelow.TileType == TileType<JadeSandTile>() && WorldGen.genRand.NextBool(chance))
                     {
-                        WorldGen.PlaceObject(i, j, piles[WorldGen.genRand.Next(piles.Length)]);
+                        var tileData = TileObjectData.GetTileData(chosenType, 0);
+                        bool canPlace = Helper.CheckTilesInRect(tileData.Width, tileData.Height, i, j, (x, y) =>
+                        {
+                            return !(Framing.GetTileSafely(x, y).HasTile && Framing.GetTileSafely(x, y).TileType == TileType<SpringChest>());
+                        });
+
+                        if (canPlace) WorldGen.PlaceObject(i, j, chosenType);
                     }
                 }
             }
@@ -417,7 +423,7 @@ namespace JadeFables.Biomes.JadeLake
                 for (int j = rect.Top; j < rect.Top + rect.Height; j++)
                 {
                     Tile mainTile = Framing.GetTileSafely(i, j);
-                    if (mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandTile>())
+                    if (mainTile.HasTile && mainTile.TileType == TileType<JadeSandTile>())
                     {
                         bool exposed = false;
                         for (int x = i - 3; x < i + 3; x++)
@@ -437,7 +443,7 @@ namespace JadeFables.Biomes.JadeLake
                         float noiseVal = fastnoise.GetPerlin(i * noiseFreq, j * noiseFreq);
                         if (noiseVal > (exposed ? exposedThreshhold : threshhold))
                         {
-                            mainTile.TileType = (ushort)ModContent.TileType<JadeOre>();
+                            mainTile.TileType = (ushort)TileType<JadeOre>();
                         }
                     }
                 }
@@ -451,7 +457,7 @@ namespace JadeFables.Biomes.JadeLake
                 for (int j = rect.Top; j < rect.Top + rect.Height - spaceBelow; j++)
                 {
                     Tile mainTile = Framing.GetTileSafely(i, j);
-                    if (mainTile.HasTile && mainTile.TileType == ModContent.TileType<JadeSandstoneTile>())
+                    if (mainTile.HasTile && mainTile.TileType == TileType<JadeSandstoneTile>())
                     {
                         bool safe = true;
                         for (int y = 1; y < spaceBelow; y++)
@@ -475,7 +481,7 @@ namespace JadeFables.Biomes.JadeLake
 
         public static void PlaceForegroundWaterfalls(Rectangle rect, int chance)
         {
-            int[] validTiles = new int[] { ModContent.TileType<Tiles.JadeSandstone.JadeSandstoneTile>(), ModContent.TileType<Tiles.HardenedJadeSand.HardenedJadeSandTile>(), ModContent.TileType<JadeSandTile>() };
+            int[] validTiles = new int[] { TileType<JadeSandstoneTile>(), TileType<HardenedJadeSandTile>(), TileType<JadeSandTile>() };
             for (int i = rect.Left; i < rect.Left + rect.Width; i++)
             {
                 for (int j = rect.Top; j < rect.Top + rect.Height; j++)
@@ -488,7 +494,7 @@ namespace JadeFables.Biomes.JadeLake
                     {
                         if (WorldGen.genRand.NextBool(chance))
                         {
-                            leftTile.TileType = (ushort)ModContent.TileType<JadeWaterfallTile>();
+                            leftTile.TileType = (ushort)TileType<JadeWaterfallTile>();
                             rightTile.HasTile = false;
                             i += 15;
                         }

@@ -423,6 +423,36 @@ namespace JadeFables.Helpers
             }
             return false;
         }
+        public delegate bool TileCheck(int i, int j);
+        /// <summary>
+        /// Runs a check for each tile in a rectangle, starting at the bottom left. Returns false if any check returns false, otherwise returns true.
+        /// </summary>
+        public static bool CheckTilesInRect(int width, int height, int i, int j, TileCheck check)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    if (!check(i + x, j - y))
+                        return false;
+                }
+            }
+            return true;
+        }
+        public delegate void TileOperation(int i, int j);
+        /// <summary>
+        /// Performs a function on each tile in a rectangle, starting at the bottom left.
+        /// </summary>
+        public static void ForTilesInRect(int width, int height, int i, int j, TileOperation func)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    func(i + x, j - y);
+                }
+            }
+        }
     }
 }
 

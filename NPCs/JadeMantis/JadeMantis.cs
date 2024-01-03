@@ -103,13 +103,14 @@ namespace JadeFables.NPCs.JadeMantis
             NPC.height = 64;
             NPC.damage = 30;
             NPC.defense = 5;
-            NPC.lifeMax = 300;
-            NPC.value = 10f;
+            NPC.lifeMax = 230;
+            NPC.value = 300f;
             NPC.knockBackResist = 1.2f;
             NPC.HitSound = SoundID.NPCHit32;
             NPC.DeathSound = SoundID.NPCDeath35;
             NPC.noGravity = true;
             NPC.behindTiles = true;
+            NPC.npcSlots = 2f;
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -123,27 +124,24 @@ namespace JadeFables.NPCs.JadeMantis
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            if (attackPhase == AttackPhase.Hiding)
-            {
-                attackPhase = AttackPhase.PoppingOut;
-            }
-            if (attackPhase == AttackPhase.Idle && hit.Knockback > 0)
-            {
-                knockBackPos = NPC.Center;
-                knockBackTimer = 30;
-            }
+            OnHitByAnything(hit, damageDone);
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
+            OnHitByAnything(hit, damageDone);
+        }
+        public void OnHitByAnything(NPC.HitInfo hit, int damageDone)
+        {
             if (attackPhase == AttackPhase.Hiding)
             {
                 attackPhase = AttackPhase.PoppingOut;
-                if (attackPhase == AttackPhase.Idle && hit.Knockback > 0)
-                {
-                    knockBackPos = NPC.Center;
-                    knockBackTimer = 30;
-                }
+            }
+            if (attackPhase == AttackPhase.Idle && hit.Knockback > 0 && attackTimer < 400)
+            {
+                knockBackPos = NPC.Center;
+                if (attackTimer > 200) knockBackTimer = (int)(30 - (attackTimer * 0.075f));
+                else knockBackTimer = 30;
             }
         }
 
@@ -316,8 +314,6 @@ namespace JadeFables.NPCs.JadeMantis
 
             if (!swoopStopped)
                 NPC.velocity.X = swoopDirection * -MathF.Sin(swoopCounter) * swoopSpeed;
-
-
         }
 
         private void ThrowingBehavior()
@@ -327,7 +323,7 @@ namespace JadeFables.NPCs.JadeMantis
             {
                 SoundEngine.PlaySound(SoundID.Item19, NPC.Center);
                 Vector2 pos = NPC.Center;
-                Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), pos, spearVel, ModContent.ProjectileType<JadeMantisSpear>(), (int)(NPC.damage * (Main.expertMode ? 0.5f : 1f)), 3);
+                Projectile.NewProjectileDirect(NPC.GetSource_FromAI(), pos, spearVel, ModContent.ProjectileType<JadeMantisSpear>(), (int)(NPC.damage * (Main.expertMode ? 0.35f : 1f)), 3);
             }
         }
 
@@ -390,7 +386,7 @@ namespace JadeFables.NPCs.JadeMantis
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
         {
-            if (attackPhase == AttackPhase.Swooping && swoopCounter > 4.71f)
+            if (attackPhase == AttackPhase.Swooping && swoopCounter > 4f)
                 return base.CanHitPlayer(target, ref cooldownSlot);
             return false;
         }

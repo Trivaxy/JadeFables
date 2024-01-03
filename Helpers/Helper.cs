@@ -441,15 +441,16 @@ namespace JadeFables.Helpers
         }
         public delegate void TileOperation(int i, int j);
         /// <summary>
-        /// Performs a function on each tile in a rectangle, starting at the bottom left.
+        /// Performs a function on each tile in a rectangle, starting at the bottom left. Use topLeft to start from the top left instead.
         /// </summary>
-        public static void ForTilesInRect(int width, int height, int i, int j, TileOperation func)
+        public static void ForTilesInRect(int width, int height, int i, int j, TileOperation func, bool topLeft = false)
         {
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    func(i + x, j - y);
+                    if (topLeft) func(i + x, j + y);
+                    else func(i + x, j - y);
                 }
             }
         }

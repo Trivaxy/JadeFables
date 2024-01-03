@@ -316,9 +316,7 @@ namespace JadeFables.Biomes.JadeLake
                     }
                     if (k == 1) //make one non-waterfall chest invisible
                     {
-                        Helper.ForTilesInRect(2, 2, i, j, (x, y) =>
-                                WorldGen.paintCoatTile(x, y, PaintCoatingID.Echo)
-                        );
+                        Helper.ForTilesInRect(2, 2, i, j, (x, y) => WorldGen.paintCoatTile(x, y, PaintCoatingID.Echo));
                     }
                 }
                 else

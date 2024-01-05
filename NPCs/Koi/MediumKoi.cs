@@ -62,7 +62,7 @@ namespace JadeFables.NPCs.Koi
             NPC.damage = 0;
             NPC.defense = 5;
             NPC.lifeMax = 50;
-            NPC.value = 10f;
+            NPC.value = 0f;
             NPC.knockBackResist = 2.6f;
             NPC.HitSound = SoundID.NPCHit23;
             NPC.DeathSound = SoundID.NPCDeath26;

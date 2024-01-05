@@ -65,8 +65,8 @@ namespace JadeFables.NPCs.Pufferfish
             NPC.height = 7;
             NPC.damage = 30;
             NPC.defense = 5;
-            NPC.lifeMax = 100;
-            NPC.value = 10f;
+            NPC.lifeMax = 70;
+            NPC.value = 70f;
             NPC.knockBackResist = 2.6f;
             NPC.HitSound = SoundID.Item111 with { PitchVariance = 0.2f, Pitch = 0.4f };
             NPC.DeathSound = SoundID.NPCDeath26;

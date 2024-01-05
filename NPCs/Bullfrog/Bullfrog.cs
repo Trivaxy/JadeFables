@@ -82,8 +82,8 @@ namespace JadeFables.NPCs.Bullfrog
             NPC.height = 96;
             NPC.damage = 0;
             NPC.defense = 5;
-            NPC.lifeMax = 300;
-            NPC.value = 10f;
+            NPC.lifeMax = 260;
+            NPC.value = 250f;
             NPC.knockBackResist = 0.4f;
             NPC.HitSound = SoundID.NPCHit21 with { Pitch = -0.45f };
             NPC.DeathSound = SoundID.NPCDeath53 with { Pitch = -0.6f };

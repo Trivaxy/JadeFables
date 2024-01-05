@@ -63,7 +63,7 @@ namespace JadeFables.NPCs.Eel
             NPC.damage = 30;
             NPC.defense = 5;
             NPC.lifeMax = 100;
-            NPC.value = 10f;
+            NPC.value = 80f;
             NPC.knockBackResist = 1.2f;
             NPC.HitSound = SoundID.Item111 with { PitchVariance = 0.2f, Pitch = 0.4f };
             NPC.DeathSound = SoundID.NPCDeath26;

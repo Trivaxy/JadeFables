@@ -113,6 +113,8 @@ namespace JadeFables.NPCs.JadeMantis
             NPC.npcSlots = 2f;
         }
 
+        public override void ModifyHoverBoundingBox(ref Rectangle boundingBox) => boundingBox = NPC.Hitbox;
+
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[]

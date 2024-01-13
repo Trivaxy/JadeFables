@@ -17,7 +17,7 @@ namespace JadeFables.Items.Potions.Spine
         {
             Item.width = 24;
             Item.height = 32;
-            Item.maxStack = 30; //Change this when Labor of Love drops?
+            Item.maxStack = Item.CommonMaxStack;
 
             Item.useStyle = ItemUseStyleID.DrinkLiquid;
             Item.useAnimation = 17;
@@ -52,7 +52,7 @@ namespace JadeFables.Items.Potions.Spine
             Item.width = 18;
             Item.height = 26;
 
-            Item.maxStack = 999; //change after labor of love
+            Item.maxStack = Item.CommonMaxStack;
             Item.value = Item.sellPrice(silver: 2);
             Item.rare = ItemRarityID.Blue;
         }

@@ -37,7 +37,7 @@ namespace JadeFables.Items.Fishing.Arowana
             Item.value = Item.sellPrice(silver: 45);
             Item.rare = ItemRarityID.Blue;
             Item.consumable = true;
-            Item.maxStack = 30;
+            Item.maxStack = Item.CommonMaxStack;
             Item.noUseGraphic = true;
         }
     }

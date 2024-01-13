@@ -324,7 +324,7 @@ namespace JadeFables.Tiles.OvergrownJadeSand
         {
             Item.width = 14;
             Item.height = 14;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.useTurn = true;
             Item.autoReuse = true;
             Item.useAnimation = 15;

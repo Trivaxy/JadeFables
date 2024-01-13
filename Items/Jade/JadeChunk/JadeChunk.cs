@@ -23,7 +23,7 @@ namespace JadeFables.Items.Jade.JadeChunk
             Item.width = 24;
             Item.height = 24;
 
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.value = Item.sellPrice(silver: 35);
             Item.rare = ItemRarityID.Blue;
         }

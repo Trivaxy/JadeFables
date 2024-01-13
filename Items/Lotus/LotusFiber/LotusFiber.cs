@@ -18,7 +18,7 @@ namespace JadeFables.Items.Lotus.LotusFiber
             Item.width = 24;
             Item.height = 24;
 
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.value = 0;
             Item.rare = ItemRarityID.White;
         }

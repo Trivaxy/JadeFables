@@ -29,7 +29,7 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
             Item.channel = true;
             Item.noMelee = true;
             Item.consumable = true;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.shoot = ModContent.ProjectileType<HourglassProj>();
             Item.useAnimation = 25;
             Item.useTime = 25;
@@ -40,7 +40,7 @@ namespace JadeFables.Items.SpringChestLoot.Hourglass
             Item.crit = 8;
             Item.rare = ItemRarityID.Blue;
             Item.autoReuse = true;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
         }
     }

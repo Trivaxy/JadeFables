@@ -69,7 +69,7 @@ namespace JadeFables.Tiles.JasmineFlower
         {
             Item.width = 24;
             Item.height = 24;
-            Item.maxStack = 30; //Change this when Labor of Love drops?
+            Item.maxStack = Item.CommonMaxStack;
 
             Item.value = Item.sellPrice(silver: 30);
             Item.rare = ItemRarityID.Blue;

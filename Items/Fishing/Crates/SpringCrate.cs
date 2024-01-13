@@ -102,7 +102,7 @@ namespace JadeFables.Items.Fishing.Crates
             Item.height = 12;
             Item.value = Item.sellPrice(gold: 1);
             Item.rare = ItemRarityID.Green;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
             Item.createTile = ModContent.TileType<SpringCrateTile>();
             Item.useAnimation = 15;
             Item.useTime = 15;

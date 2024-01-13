@@ -40,7 +40,7 @@ namespace JadeFables.Tiles.JadeTorch
             Item.useTime = 10;
             Item.holdStyle = ItemHoldStyleID.HoldFront;
             Item.autoReuse = true;
-            Item.maxStack = 999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
             Item.createTile = ModContent.TileType<JadeTorchTile>();
             Item.width = 10;

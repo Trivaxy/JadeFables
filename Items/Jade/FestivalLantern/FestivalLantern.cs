@@ -27,7 +27,7 @@ namespace JadeFables.Items.Jade.FestivalLantern
         {
             Item.width = 24;
             Item.height = 32;
-            Item.maxStack = 30; //Change this when Labor of Love drops?
+            Item.maxStack = Item.CommonMaxStack;
 
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 17;

@@ -16,7 +16,7 @@ namespace JadeFables.Items.Potions.Dumpling
         {
             Item.width = Item.height = 20;
             Item.rare = ItemRarityID.Blue;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
             Item.noUseGraphic = true;
             Item.useStyle = ItemUseStyleID.EatFood;
             Item.useTime = Item.useAnimation = 30;

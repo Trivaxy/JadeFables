@@ -124,7 +124,7 @@ namespace JadeFables.Tiles.JadeFountain
             Item.useAnimation = 15;
             Item.useTime = 10;
             Item.autoReuse = true;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
             Item.createTile = ModContent.TileType<JadeFountain>();
             Item.width = 10;

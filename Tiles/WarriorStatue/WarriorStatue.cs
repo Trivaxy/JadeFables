@@ -213,7 +213,7 @@ namespace JadeFables.Tiles.WarriorStatue
             Item.useAnimation = 15;
             Item.useTime = 10;
             Item.autoReuse = true;
-            Item.maxStack = 99;
+            Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;
             Item.createTile = TileType<WarriorStatue>();
             Item.width = 10;

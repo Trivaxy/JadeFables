@@ -21,7 +21,7 @@ float4 White(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
 	float pixW = 2.0 / uImageSize0.x;
 	float pixH = 2.0 / uImageSize0.y;
     coords.x = floor(coords.x / pixW) * pixW;
-    coords.H = floor(coords.x / pixH) * pixH;
+    coords.y = floor(coords.x / pixH) * pixH;
 	float4 color = tex2D(uImage0, coords);
     float2 squareWidth = float2(pixW, pixH);
     float4 outlineColor2 = outlineColor * alpha;

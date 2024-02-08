@@ -3,15 +3,16 @@
 //Sellprice
 //Rarity
 //Right click
-//Vfx
+//Stab VFX
+//Some sort of electrical aura
 //Obtainment
 //Description
-//Collision
+//Grass Collision
 //Make sure damage is transferred correctly
-//More gradual transition upwards
 //Better SFX
-//Make player change direction with the fists
-//More smooth recovery
+//Make it farther up the arm
+//Snappier movement
+//Rename to eel arms
 
 using System;
 using System.Linq;
@@ -34,6 +35,7 @@ using Steamworks;
 using static tModPorter.ProgressUpdate;
 using JadeFables.Helpers;
 using static Humanizer.In;
+using ReLogic.Content;
 
 namespace JadeFables.Items.EelFists
 {
@@ -50,8 +52,8 @@ namespace JadeFables.Items.EelFists
             Item.DamageType = DamageClass.Melee;
             Item.noMelee = true;
             Item.shoot = ModContent.ProjectileType<EelFistProj>();
-            Item.useAnimation = 10;
-            Item.useTime = 10;
+            Item.useAnimation = 31;
+            Item.useTime = 31;
             Item.shootSpeed = 45.5f;
             Item.damage = 13;
             Item.knockBack = 1.5f;
@@ -77,8 +79,8 @@ namespace JadeFables.Items.EelFists
                 {
                     var proj = Projectile.NewProjectileDirect(new EntitySource_ItemUse(player, Item), player.Center, Vector2.Zero, ModContent.ProjectileType<EelFistProj>(), Item.damage, Item.knockBack, player.whoAmI);
                     var MP = (proj.ModProjectile as EelFistProj);
-                    MP.rightArm = i == 1;
-                    MP.timer = i * 30;
+                    MP.rightArm = i == 0;
+                    MP.timer = i * 60;
                 }
             }
         }
@@ -86,7 +88,7 @@ namespace JadeFables.Items.EelFists
         public override bool AltFunctionUse(Player player)
         {
             return true;
-        }   
+        }
     }
 
     internal class EelFistProj : ModProjectile
@@ -116,21 +118,23 @@ namespace JadeFables.Items.EelFists
 
         public int timer;
 
-        private float curveMult = 25;
+        private float curveMult = 43;
 
         private int attackTimer = 0;
 
         private float attackLength = 30;
 
+        private float armRotationVar = 0f;
+
         public override void SetDefaults()
         {
             Projectile.width = 24;
             Projectile.height = 24;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.friendly = true;
             Projectile.timeLeft = 500;
             Projectile.DamageType = DamageClass.Melee;
-            Projectile.penetrate = 1;
+            Projectile.penetrate = -1;
         }
 
         private float SignPow(float inp, float exp)
@@ -142,10 +146,12 @@ namespace JadeFables.Items.EelFists
             Vector2 dir = Main.MouseWorld - startPos;
             dir.Normalize();
             dir *= length;
-            dir += (Vector2.One.RotatedBy(timer * 0.1) * 10);
-            float rotationAmt = MathF.Pow(Math.Clamp(attackTimer / attackLength, 0, 1), 0.8f);
+            owner.ChangeDir(MathF.Sign(dir.X));
+            dir += (Vector2.One.RotatedBy(timer * 0.03f) * 10);
+            float rotationAmt = MathF.Pow(Math.Clamp(attackTimer / attackLength, 0, 1), 1.2f);
+            armRotationVar = MathHelper.Lerp(armRotationVar, rotationAmt, 0.1f);
             float angleOffset = -0.8f * owner.direction;
-            float armRotation = MathHelper.Lerp(-angleOffset, angleOffset, rotationAmt) + (dir.ToRotation() - (owner.direction * 0.6f));
+            float armRotation = MathHelper.Lerp(-angleOffset, angleOffset, armRotationVar) + (dir.ToRotation() - (owner.direction * 0.6f));
             if (rightArm)
             {
                 owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, armRotation - 1.57f);
@@ -168,17 +174,34 @@ namespace JadeFables.Items.EelFists
 
             if (attackTimer > 0)
             {
-                attackTimer--;
-                if (attackTimer < attackLength)
+
+                if (attackTimer <= attackLength)
                 {
                     curveMult = 30;
 
-                    float lengthExtraMult = SignPow(MathF.Sin((attackTimer / attackLength) * 6.28f), 2.5f);
+                    float progress = Math.Clamp(attackTimer / attackLength, 0, 1);
+                    float lengthExtraMult = SignPow(MathF.Sin((progress * 9.42f) - 3.14f), 2.5f);
                     if (lengthExtraMult < 0)
-                        lengthExtraMult = -MathF.Pow(MathF.Abs(lengthExtraMult) * 0.98f, 1.0f - (lengthExtraMult * 1.5f));
-                    length = 120 + (70 * lengthExtraMult);
-                    curveMult = 45 - (63 * SignPow(MathF.Sin((attackTimer / attackLength) * 6.28f), 1.25f));
+                    {
+                        if (progress > 0.5f)
+                            lengthExtraMult = -MathF.Pow(MathF.Abs(lengthExtraMult) * 0.98f, 1.0f - (lengthExtraMult * 1.5f));
+                        else
+                            lengthExtraMult = SignPow(lengthExtraMult, 0.6f);
+                    }
+                    length = 120 + (70 * MathF.Pow(Math.Clamp(progress * 3.0f, 0, 1), 2.0f) * lengthExtraMult);
+                    curveMult = 45 - (63 * MathF.Pow(Math.Clamp(progress * 3.0f, 0, 1), 5.35f) * SignPow(MathF.Sin((progress * 9.42f) - 3.14f), 1.25f));
+                
+                    if (Main.rand.NextBool(1))
+                    {
+                        for (int i = 0; i < 1; i++)
+                        {
+                            Vector2 dustPos = cache[(int)((NUMPOINTS - 1) * (MathF.Pow(Main.rand.NextFloat(0.6f, 0.8f), (1.0f - SignPow(lengthExtraMult, 0.3f)) * 2.0f)))];
+                            var dust = Dust.NewDustPerfect(dustPos, ModContent.DustType<EelFistDust>(), Main.rand.NextVector2Circular(0.15f, 0.15f), 0, rightArm ? new Color(0.5f, 0.5f, 0f, 1f) : new Color(0.5f, 0.0f, 0.5f, 1f), Main.rand.NextFloat(0.35f, 0.7f));
+                            dust.rotation = Main.rand.NextFloat(6.28f);
+                        }
+                    }
                 }
+                attackTimer--;
             }
         }
 
@@ -203,9 +226,9 @@ namespace JadeFables.Items.EelFists
         }
 
         private void On_Main_DrawDust(On_Main.orig_DrawDust orig, Main self)
-        {
-            orig(self);
+        {  
             Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<EelFistProj>()).ToList().ForEach(n => (n.ModProjectile as EelFistProj).DrawTrail());
+            orig(self);
         }
 
         public void DrawTrail()
@@ -232,6 +255,55 @@ namespace JadeFables.Items.EelFists
                     attackTimer += (int)(attackLength / 5.5f);
                 }
             }
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            if (length < 160)
+                return false;
+            foreach (Vector2 point in cache)
+            {
+                if (targetHitbox.Contains((int)point.X, (int)point.Y))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    class EelFistDust : ModDust
+    {
+        public override Color? GetAlpha(Dust dust, Color lightColor)
+        {
+            return dust.color;
+        }
+
+        public override void OnSpawn(Dust dust)
+        {
+            dust.fadeIn = 0;
+            dust.noLight = false;
+            dust.frame = new Rectangle(0, 0, 24, 24);
+            dust.shader = new Terraria.Graphics.Shaders.ArmorShaderData(new Ref<Effect>(ModContent.Request<Effect>("JadeFables/Effects/GlowingDust", AssetRequestMode.ImmediateLoad).Value), "GlowingDustPass");
+        }
+
+        public override bool Update(Dust dust)
+        {
+            if (dust.fadeIn % 3 == 2)
+                dust.frame.Y += 6;
+            if (dust.fadeIn == 0)
+                dust.position -= Vector2.One.RotatedBy(dust.rotation) * 12 * dust.scale;
+            dust.position += dust.velocity;
+            dust.velocity *= 0.86f;
+            dust.shader.UseColor(dust.color);
+            dust.fadeIn++;
+
+            Lighting.AddLight(dust.position, dust.color.ToVector3() * 1.1f);
+
+            if (dust.fadeIn > 12)
+                dust.active = false;
+
+            return false;
         }
     }
 }

@@ -8,6 +8,7 @@ using Terraria.GameContent.Metadata;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using JadeFables.Items.Lotus.LotusFiber;
 
 namespace JadeFables.Tiles.JadeGrassShort
 {
@@ -54,6 +55,7 @@ namespace JadeFables.Tiles.JadeGrassShort
         public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
             if (!fail && Main.rand.NextBool(20)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<JadeGrassSeeds>());
+            if (!fail && Main.rand.NextBool(10)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<LotusFiber>());
         }
     }
 
@@ -93,6 +95,7 @@ namespace JadeFables.Tiles.JadeGrassShort
         public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
             if (!fail && Main.rand.NextBool(20)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<JadeGrassSeeds>());
+            if (!fail && Main.rand.NextBool(10)) Item.NewItem(new EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 32, ItemType<LotusFiber>());
         }
     }
 }

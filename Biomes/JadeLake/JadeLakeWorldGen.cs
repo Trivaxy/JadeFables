@@ -229,6 +229,8 @@ namespace JadeFables.Biomes.JadeLake
             UpperIslandRects.Add(UpperIslandRect);
             LowerIslandRects.Add(LowerIslandRect);
             WholeBiomeRects.Add(WholeBiomeRect);
+
+            PlaceLilypads(WholeBiomeRect, 7);
             return true;
         }
 

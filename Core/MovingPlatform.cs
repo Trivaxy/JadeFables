@@ -36,9 +36,9 @@ namespace JadeFables.Core
             DisplayName.SetDefault("");
         }
 
-        public virtual void SafeSendExtraAI() { }
+        public virtual void SafeSendExtraAI(BinaryWriter writer) { }
 
-        public virtual void SafeReceiveExtraAI() { }
+        public virtual void SafeReceiveExtraAI(BinaryReader reader) { }
 
         public sealed override void SetDefaults()
         {
@@ -66,12 +66,12 @@ namespace JadeFables.Core
 
         public override sealed void SendExtraAI(BinaryWriter writer)
         {
-            SafeSendExtraAI();
+            SafeSendExtraAI(writer);
         }
 
         public override sealed void ReceiveExtraAI(BinaryReader reader)
         {
-            SafeReceiveExtraAI();
+            SafeReceiveExtraAI(reader);
         }
 
         public sealed override void AI()

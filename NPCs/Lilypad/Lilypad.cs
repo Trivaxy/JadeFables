@@ -43,6 +43,7 @@ namespace JadeFables.NPCs.Lilypad
             NPC.width = 96;
             NPC.height = 24;
             NPC.gfxOffY = -6;
+            NPC.dontCountMe = true;
         }
 
         public override bool NeedSaving()
@@ -58,8 +59,12 @@ namespace JadeFables.NPCs.Lilypad
 
         public override void LoadData(TagCompound tag)
         {
-            NPC.position.X = tag.GetFloat("xPos");
-            NPC.position.Y = tag.GetFloat("yPos");
+            float xPos = tag.GetFloat("xPos");
+            if (xPos != 0)
+                NPC.position.X = xPos;
+            float yPos = tag.GetFloat("yPos");
+            if (yPos != 0)
+                NPC.position.Y = yPos;
         }
 
         public override void SafeAI()

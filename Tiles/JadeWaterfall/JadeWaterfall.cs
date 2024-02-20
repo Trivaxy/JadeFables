@@ -309,7 +309,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                 sound = soundInstance?.Sound;
             }
 
-            if (originLeft.HasTile && originLeft.TileType == ModContent.TileType<JadeWaterfallTile>())
+            if (originLeft.HasTile && originLeft.TileType == ModContent.TileType<JadeWaterfallTile>() && Main.player.Where(n => n.active).OrderBy(n => n.Distance(Projectile.Center)).FirstOrDefault().Distance(Projectile.Center) < 2500)
                 Projectile.timeLeft = 2;
         }
 

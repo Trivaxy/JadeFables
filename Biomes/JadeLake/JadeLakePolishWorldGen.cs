@@ -83,7 +83,6 @@ namespace JadeFables.Biomes.JadeLake
             //Places pearls
             PlacePearls(worldRect, 80);
 
-            PlaceLilypads(worldRect, 40);
         }
 
         public static void PlaceLilypads(Rectangle rect, int num)

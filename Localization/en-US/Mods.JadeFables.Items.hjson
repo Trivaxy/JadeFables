@@ -354,3 +354,12 @@ JadeMantisBannerItem: {
 	Tooltip: ""
 	DisplayName: Jade Mantis Banner Item
 }
+
+JadePylonItem: {
+	DisplayName: Jade Pylon
+	Tooltip:
+		'''
+		Teleport to another pylon when 2 villagers are nearby 
+		You can only place one per type and in the matching biome
+		'''
+}

@@ -292,6 +292,7 @@ namespace JadeFables.NPCs.JadeMantis
                 if (swoopPulse == 1 && swoopCounter > 3.14f)
                 {
                     swoopStopped = true;
+                    SoundEngine.PlaySound(SoundID.Item29 with { Pitch = -0.1f}, NPC.Center);
                     swoopPulse = 0;
                 }
             }

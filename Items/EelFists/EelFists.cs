@@ -13,6 +13,7 @@
 //Make it farther up the arm
 //Snappier movement
 //Rename to eel arms
+//Make electric dust flash
 
 using System;
 using System.Linq;

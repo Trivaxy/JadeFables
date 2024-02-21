@@ -11,6 +11,7 @@ using Terraria.DataStructures;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Humanizer.In;
 using static Terraria.ModLoader.ModContent;
 
 namespace JadeFables.Items.Fishing.KoiPopper
@@ -73,6 +74,18 @@ namespace JadeFables.Items.Fishing.KoiPopper
             {
                 Projectile.NewProjectile(source, position, velocity.RotatedByRandom(0.3f) * Main.rand.NextFloat(0.9f, 1.1f), type, damage, knockback, player.whoAmI);
             }
+
+            for (int i = 0; i < Main.rand.Next(4, 9); i++)
+            {
+                Vector2 vel = velocity.SafeNormalize(Vector2.UnitX).RotatedByRandom(0.75f) * Main.rand.NextFloat(1f, 4f);
+
+                Vector2 dustPos = position + velocity.SafeNormalize(Vector2.UnitX) * 35;
+                Dust d = Dust.NewDustPerfect(dustPos, 217, vel, Scale: 1f);
+                d.noLight = true;
+                d.noGravity = true;
+                d.alpha = 100;
+            }
+
             return false;
         }
 
@@ -116,6 +129,7 @@ namespace JadeFables.Items.Fishing.KoiPopper
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texGlow = ModContent.Request<Texture2D>("JadeFables/Items/Fishing/KoiPopper/KoiPopperBubbleGlow").Value;
 
             int frameHeight = tex.Height / Main.projFrames[Projectile.type];
             Rectangle frameBox = new Rectangle(0, frameHeight * Projectile.frame, tex.Width, frameHeight);
@@ -131,12 +145,14 @@ namespace JadeFables.Items.Fishing.KoiPopper
             effect.Parameters["uOpacity"].SetValue(0.7f);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(default, default, default, default, default, effect, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(default, default, Main.DefaultSamplerState, default, default, effect, Main.GameViewMatrix.TransformationMatrix);
+
+            Main.spriteBatch.Draw(texGlow, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, new Vector2(tex.Width / 2, frameHeight / 2), Projectile.scale * new Vector2(stretch, squash), SpriteEffects.None, 0f);
 
             Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, new Vector2(tex.Width / 2, frameHeight / 2), Projectile.scale * new Vector2(stretch, squash), SpriteEffects.None, 0f);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(default, default, Main.DefaultSamplerState, default, default, default, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
 
@@ -152,11 +168,13 @@ namespace JadeFables.Items.Fishing.KoiPopper
 
         public void Pop()
         {
-            SoundEngine.PlaySound(SoundID.Item54, Projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item54 with { Pitch = 0.25f, PitchVariance = 0.2f }, Projectile.Center);
             Projectile.active = false;
             Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<KoiPop>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
             proj.scale = scale;
-            /*for (int i = 0; i < 6; i++)
+
+            /*
+            for (int i = 0; i < 6; i++)
             {
                 Vector2 dir = Main.rand.NextVector2CircularEdge(3, 3);
                 Dust.NewDustPerfect(Projectile.Center + (dir * 12), ModContent.DustType<GlowLineFast>(), dir, 0, Color.Pink, Main.rand.NextFloat(0.5f, 0.7f));
@@ -167,7 +185,8 @@ namespace JadeFables.Items.Fishing.KoiPopper
                 int dustType = Main.rand.NextBool() ? 176 : 177;
                 Vector2 dir = Main.rand.NextVector2Circular(3, 3);
                 Dust.NewDustPerfect(Projectile.Center, dustType, dir, default, default, 1.3f).noGravity = true;
-            }*/
+            }
+            */
         }
     }
     internal class KoiPop : ModProjectile
@@ -208,10 +227,13 @@ namespace JadeFables.Items.Fishing.KoiPopper
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D texGlow = ModContent.Request<Texture2D>("JadeFables/Items/Fishing/KoiPopper/KoiPopGLow").Value;
 
             int frameHeight = tex.Height / Main.projFrames[Projectile.type];
             Rectangle frameBox = new Rectangle(0, frameHeight * Projectile.frame, tex.Width, frameHeight);
             Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, frameBox, lightColor * 0.7f, Projectile.rotation, new Vector2(tex.Width / 2, frameHeight / 2), Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, frameBox, Color.White with { A = 0 } * 0.25f, Projectile.rotation, new Vector2(tex.Width / 2, frameHeight / 2), Projectile.scale, SpriteEffects.None, 0f);
+
             return false;
         }
 

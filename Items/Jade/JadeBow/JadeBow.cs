@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -239,6 +241,69 @@ namespace JadeFables.Items.Jade.JadeBow
                 return base.CanHitPlayer(projectile, target);
 
             return false;
+        }
+
+        public override void OnKill(Projectile projectile, int timeLeft)
+        {
+            if (shotFromBow)
+            {
+                SoundStyle style4 = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_crystal_impact_1") with { Pitch = 0f, PitchVariance = .25f, MaxInstances = -1, Volume = 0.5f };
+                SoundEngine.PlaySound(style4, projectile.Center);
+            }
+
+            base.OnKill(projectile, timeLeft);
+        }
+
+        public override bool PreDraw(Projectile projectile, ref Color lightColor)
+        {
+            if (false)
+            {
+                Texture2D glow = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/DragonEyeAlt").Value;
+
+                Vector2 scale = new Vector2(1f, 1f) * projectile.scale;
+                float rot = projectile.rotation + MathHelper.PiOver2 + +(float)(Main.timeForVisualEffects * 0.02f * projectile.direction);
+                float rot2 = projectile.rotation + (float)(Main.timeForVisualEffects * 0.02f * projectile.direction);
+
+                //Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, Color.ForestGreen with { A = 0 } * 0.35f, rot, glow.Size() / 2, scale, SpriteEffects.None);
+                //Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, Color.Green with { A = 0 } * 0.25f, rot, glow.Size() / 2, scale, SpriteEffects.None);
+                //Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, Color.LawnGreen with { A = 0 } * .75f, rot, glow.Size() / 2, scale * 0.75f, SpriteEffects.None);
+
+                //Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, Color.ForestGreen with { A = 0 } * 0.35f, rot2, glow.Size() / 2, scale, SpriteEffects.None);
+                //Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, Color.Green with { A = 0 } * 0.25f, rot2, glow.Size() / 2, scale, SpriteEffects.None);
+                //Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, Color.LawnGreen with { A = 0 } * .75f, rot2, glow.Size() / 2, scale * 0.75f, SpriteEffects.None);
+
+            }
+
+            return base.PreDraw(projectile, ref lightColor);
+        }
+
+        public override void PostDraw(Projectile projectile, Color lightColor)
+        {
+            
+            if (false)
+            {
+                Texture2D arrowTex = TextureAssets.Projectile[projectile.type].Value;
+                Texture2D spikeTex = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/DragonEyeAlt").Value;
+
+                for (int i = 0; i < 0; i++)
+                {
+                    Main.EntitySpriteDraw(arrowTex, projectile.Center - Main.screenPosition + Main.rand.NextVector2Circular(1.5f, 1.5f), null, Color.ForestGreen with { A = 0 } * 2f, projectile.rotation, arrowTex.Size() / 2, projectile.scale * 1.05f, SpriteEffects.None);
+
+                }
+
+                Vector2 spikeScale1 = new Vector2(1f, 0.25f) * projectile.scale;
+                Vector2 spikeScale2 = new Vector2(1f, 0.15f) * projectile.scale;
+
+                Main.EntitySpriteDraw(spikeTex, projectile.Center - Main.screenPosition, null, Color.ForestGreen with { A = 0 } * 1f, projectile.rotation + MathHelper.PiOver2, spikeTex.Size() / 2, spikeScale1, SpriteEffects.None);
+
+                Main.EntitySpriteDraw(arrowTex, projectile.Center - Main.screenPosition, null, lightColor, projectile.rotation, arrowTex.Size() / 2, projectile.scale, SpriteEffects.None);
+                Main.EntitySpriteDraw(arrowTex, projectile.Center - Main.screenPosition, null, Color.Green with { A = 0 } * 0.75f, projectile.rotation, arrowTex.Size() / 2, projectile.scale, SpriteEffects.None);
+
+                Main.EntitySpriteDraw(spikeTex, projectile.Center - Main.screenPosition, null, Color.Green with { A = 0 } * 1f, projectile.rotation + MathHelper.PiOver2, spikeTex.Size() / 2, spikeScale2, SpriteEffects.None);
+
+
+            }
+            base.PostDraw(projectile, lightColor);
         }
     }
 

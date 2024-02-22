@@ -927,7 +927,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             Projectile.tileCollide = false;
             Projectile.scale = 0.1f;
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = -1;
+            Projectile.localNPCHitCooldown = -1; 
         }
 
         Vector2 startingCenter;

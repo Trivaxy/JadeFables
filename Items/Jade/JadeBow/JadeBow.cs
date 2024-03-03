@@ -1,4 +1,6 @@
 ﻿using JadeFables.Dusts;
+using JadeFables.Items.SpringChestLoot.FireworkPack;
+using JadeFables.Tiles.JadeLantern;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -127,6 +129,8 @@ namespace JadeFables.Items.Jade.JadeBow
             else
                 stretch = Player.CompositeArmStretchAmount.Full;
             owner.SetCompositeArmFront(true, stretch, Projectile.rotation - 1.57f);
+            owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - 1.57f);
+
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -213,12 +217,46 @@ namespace JadeFables.Items.Jade.JadeBow
                 target.GetGlobalNPC<JadeBowGNPC>().timer = (int)(900 * mult);
                 target.GetGlobalNPC<JadeBowGNPC>().owner = Main.player[projectile.owner];
                 modifiers.SetMaxDamage(1);
+
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_1") with { Volume = 0.75f, Pitch = .6f, PitchVariance = .2f, MaxInstances = -1 };
+                SoundEngine.PlaySound(style, projectile.Center);
+
+                for (int i = 0; i < Main.rand.Next(10, 22); i++)
+                {
+                    Vector2 randomStart = Main.rand.NextVector2Circular(2.5f, 2.5f) * 2f;
+
+                    Dust dust;
+                    if (Main.rand.NextBool())
+                        dust = Dust.NewDustPerfect(projectile.Center, ModContent.DustType<RoaParticle>(), randomStart, newColor: Color.Green, Scale: Main.rand.NextFloat(0.5f, 0.65f));
+                    else
+                        dust = Dust.NewDustPerfect(projectile.Center, ModContent.DustType<GlowFastDecelerate>(), randomStart * 0.5f, newColor: new Color(0, 255, 0, 150), Scale: Main.rand.NextFloat(0.75f, 1f));
+
+                    dust.noGravity = true;
+                    dust.noLight = false;
+                }
             }
             else if (target.townNPC)
             {
                 target.immortal = true;
                 target.GetGlobalNPC<JadeBowGNPC>().timer = 3000;
                 modifiers.SetMaxDamage(1);
+
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_1") with { Volume = 0.75f, Pitch = .6f, PitchVariance = .2f, MaxInstances = -1 };
+                SoundEngine.PlaySound(style, projectile.Center);
+
+                for (int i = 0; i < Main.rand.Next(10, 22); i++)
+                {
+                    Vector2 randomStart = Main.rand.NextVector2Circular(2.5f, 2.5f) * 2f;
+
+                    Dust dust;
+                    if (Main.rand.NextBool())
+                        dust = Dust.NewDustPerfect(projectile.Center, ModContent.DustType<RoaParticle>(), randomStart, newColor: Color.Green, Scale: Main.rand.NextFloat(0.5f, 0.65f));
+                    else
+                        dust = Dust.NewDustPerfect(projectile.Center, ModContent.DustType<GlowFastDecelerate>(), randomStart * 0.5f, newColor: new Color(0, 255, 0, 150), Scale: Main.rand.NextFloat(0.75f, 1f));
+
+                    dust.noGravity = true;
+                    dust.noLight = false;
+                }
             }
             else
             {
@@ -249,6 +287,16 @@ namespace JadeFables.Items.Jade.JadeBow
             {
                 SoundStyle style4 = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_crystal_impact_1") with { Pitch = 0f, PitchVariance = .25f, MaxInstances = -1, Volume = 0.5f };
                 SoundEngine.PlaySound(style4, projectile.Center);
+
+                for (int i = 0; i < Main.rand.Next(5, 12); i++)
+                {
+                    Vector2 randomStart = Main.rand.NextVector2Circular(2.5f, 2.5f);
+                    Dust dust = Dust.NewDustPerfect(projectile.Center, ModContent.DustType<GlowFastDecelerate>(), randomStart, newColor: Color.Green, Scale: Main.rand.NextFloat(0.5f, 0.65f));
+                    dust.velocity += projectile.velocity * 0.25f;
+                    dust.noGravity = true;
+                    dust.noLight = false;
+                }
+
             }
 
             base.OnKill(projectile, timeLeft);
@@ -256,7 +304,7 @@ namespace JadeFables.Items.Jade.JadeBow
 
         public override bool PreDraw(Projectile projectile, ref Color lightColor)
         {
-            if (false)
+            if (shotFromBow)
             {
                 Texture2D glow = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/DragonEyeAlt").Value;
 
@@ -271,7 +319,7 @@ namespace JadeFables.Items.Jade.JadeBow
                 //Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, Color.ForestGreen with { A = 0 } * 0.35f, rot2, glow.Size() / 2, scale, SpriteEffects.None);
                 //Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, Color.Green with { A = 0 } * 0.25f, rot2, glow.Size() / 2, scale, SpriteEffects.None);
                 //Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, Color.LawnGreen with { A = 0 } * .75f, rot2, glow.Size() / 2, scale * 0.75f, SpriteEffects.None);
-
+                return false;
             }
 
             return base.PreDraw(projectile, ref lightColor);
@@ -280,26 +328,33 @@ namespace JadeFables.Items.Jade.JadeBow
         public override void PostDraw(Projectile projectile, Color lightColor)
         {
             
-            if (false)
+            if (shotFromBow)
             {
                 Texture2D arrowTex = TextureAssets.Projectile[projectile.type].Value;
-                Texture2D spikeTex = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/DragonEyeAlt").Value;
+ 
+                //Need to do this and not just use lightcolor to account for arrows with 0 alpha values (Jester and Holy)
+                Color originalColor = projectile.GetAlpha(Color.White);
 
-                for (int i = 0; i < 0; i++)
+                // Original projectile's alpha from 0-1
+                float oringinalAlpha = originalColor.A / 255f;
+
+                //Want to draw the under glow effect at lower intensity for low alpha values so it looks better
+                float clampedAlpha = Math.Clamp(oringinalAlpha, 0.25f, 1f);
+
+                for (int i = 0; i < 4; i++)
                 {
-                    Main.EntitySpriteDraw(arrowTex, projectile.Center - Main.screenPosition + Main.rand.NextVector2Circular(1.5f, 1.5f), null, Color.ForestGreen with { A = 0 } * 2f, projectile.rotation, arrowTex.Size() / 2, projectile.scale * 1.05f, SpriteEffects.None);
-
+                    Vector2 offset = new Vector2(1f, 0f).RotatedBy((i * MathHelper.PiOver2) + (Main.timeForVisualEffects * 0.03f));
+                    Main.EntitySpriteDraw(arrowTex, projectile.Center - Main.screenPosition + offset, null, Color.ForestGreen with { A = 0 } * clampedAlpha * 1.25f, projectile.rotation, arrowTex.Size() / 2, projectile.scale * 1.08f, SpriteEffects.None);
                 }
 
-                Vector2 spikeScale1 = new Vector2(1f, 0.25f) * projectile.scale;
-                Vector2 spikeScale2 = new Vector2(1f, 0.15f) * projectile.scale;
 
-                Main.EntitySpriteDraw(spikeTex, projectile.Center - Main.screenPosition, null, Color.ForestGreen with { A = 0 } * 1f, projectile.rotation + MathHelper.PiOver2, spikeTex.Size() / 2, spikeScale1, SpriteEffects.None);
+                // If the original color is Alpha0 then also be 0Alpha
+                Color colToUse = lightColor;
+                if (oringinalAlpha == 0)
+                    colToUse.A = 0;
 
-                Main.EntitySpriteDraw(arrowTex, projectile.Center - Main.screenPosition, null, lightColor, projectile.rotation, arrowTex.Size() / 2, projectile.scale, SpriteEffects.None);
-                Main.EntitySpriteDraw(arrowTex, projectile.Center - Main.screenPosition, null, Color.Green with { A = 0 } * 0.75f, projectile.rotation, arrowTex.Size() / 2, projectile.scale, SpriteEffects.None);
-
-                Main.EntitySpriteDraw(spikeTex, projectile.Center - Main.screenPosition, null, Color.Green with { A = 0 } * 1f, projectile.rotation + MathHelper.PiOver2, spikeTex.Size() / 2, spikeScale2, SpriteEffects.None);
+                Main.EntitySpriteDraw(arrowTex, projectile.Center - Main.screenPosition, null, colToUse, projectile.rotation, arrowTex.Size() / 2, projectile.scale, SpriteEffects.None);
+                Main.EntitySpriteDraw(arrowTex, projectile.Center - Main.screenPosition, null, Color.ForestGreen with { A = 0 } * 0.5f, projectile.rotation, arrowTex.Size() / 2, projectile.scale, SpriteEffects.None);
 
 
             }

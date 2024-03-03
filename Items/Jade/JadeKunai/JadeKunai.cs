@@ -214,14 +214,8 @@ namespace JadeFables.Items.Jade.JadeKunai
                 ManageTrailCache();
                 ManageTrail();
 
-                if (trailFadeIn < 1)
-                {
-                    trailFadeIn += 0.02f;
-                }
-                else
-                {
-                    trailFadeIn = 1;
-                }
+
+                trailFadeIn = Math.Clamp(MathHelper.Lerp(trailFadeIn, 1.15f, 0.05f), 0f, 1f);
             }
 
             if (stabImpactTimer > 0)
@@ -389,7 +383,8 @@ namespace JadeFables.Items.Jade.JadeKunai
 
         public override bool PreDraw(ref Color lightColor)
         {
-            void BeginDefault() => Main.spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+
+            void BeginDefault() => Main.spriteBatch.Begin(default, default, Main.DefaultSamplerState, default, default, default, Main.GameViewMatrix.TransformationMatrix);
 
             if (trail is not null)
             {
@@ -531,9 +526,10 @@ namespace JadeFables.Items.Jade.JadeKunai
         {
             Texture2D tex = ModContent.Request<Texture2D>(Texture).Value;
             Texture2D bloom = ModContent.Request<Texture2D>("JadeFables/Assets/GlowAlpha").Value;
-            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, new Color(0, 255, 100, 0) * (Projectile.timeLeft / (float)maxTimeLeft), Projectile.rotation, tex.Size() / 2f, Projectile.scale, 0, 0);
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, new Color(0, 255, 100, 0) * (Projectile.timeLeft / (float)maxTimeLeft) * 0.75f, Projectile.rotation, tex.Size() / 2f, Projectile.scale, 0, 0);
+            Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, Color.LightGreen with { A = 0 } * (Projectile.timeLeft / (float)maxTimeLeft) * 0.5f, Projectile.rotation, tex.Size() / 2f, Projectile.scale, 0, 0);
 
-            Main.spriteBatch.Draw(bloom, Projectile.Center - Main.screenPosition, null, new Color(0, 255, 100, 0) * (Projectile.timeLeft / (float)maxTimeLeft) * 0.25f, Projectile.rotation, bloom.Size() / 2f, MathHelper.Lerp(originalScale * 25f, 0f, 1f - (Projectile.timeLeft / (float)maxTimeLeft)), 0, 0);
+            Main.spriteBatch.Draw(bloom, Projectile.Center - Main.screenPosition, null, new Color(0, 255, 100, 0) * (Projectile.timeLeft / (float)maxTimeLeft) * 0.15f, Projectile.rotation, bloom.Size() / 2f, MathHelper.Lerp(originalScale * 25f, 0f, 1f - (Projectile.timeLeft / (float)maxTimeLeft)), 0, 0);
 
             return false;
         }

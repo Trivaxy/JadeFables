@@ -46,7 +46,7 @@ namespace JadeFables.Items.Jade.JadeBow
                 return;
 
             spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             Color color = new Color(27, 198, 116);
             Effect effect = Filters.Scene["JadeOutline"].GetShader().Shader;
@@ -60,7 +60,7 @@ namespace JadeFables.Items.Jade.JadeBow
             spriteBatch.Draw(jadeBowRT, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White);
 
             spriteBatch.End();
-            spriteBatch.Begin(default, default, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+            spriteBatch.Begin(default, default, Main.DefaultSamplerState, default, default, default, Main.GameViewMatrix.TransformationMatrix);
         }
 
         public void Unload()
@@ -89,7 +89,7 @@ namespace JadeFables.Items.Jade.JadeBow
             graphics.SetRenderTarget(jadeBowRT);
 
             graphics.Clear(Color.Transparent);
-            Main.spriteBatch.Begin(default, BlendState.Additive, default, default, default, default);
+            Main.spriteBatch.Begin(default, BlendState.Additive, Main.DefaultSamplerState, default, default, default);
 
             DrawTargets(validNPCs.ToList());
 

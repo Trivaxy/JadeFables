@@ -275,6 +275,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             //Portal Drawing
             Texture2D Portal = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/JadeFirePortal").Value;
             Texture2D White = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/JadeFirePortalWhite").Value;
+            Texture2D PortalGlow = Mod.Assets.Request<Texture2D>("Items/Jade/JadeStaff/JadeFirePortalGlow2").Value;
             Texture2D Glorb = Mod.Assets.Request<Texture2D>("Assets/Projectile_540").Value;
 
             Vector2 spawnPos = (owner.Center - Main.screenPosition + new Vector2(-2, -88f));
@@ -286,8 +287,9 @@ namespace JadeFables.Items.Jade.JadeStaff
 
             Vector2 scalePortalVec2 = new Vector2(portalScale, 1f) * 0.8f;
             Rectangle sFrame = new Rectangle(0, Portal.Height / 4 * portalFrame, Portal.Width, (Portal.Height / 4));
-            Main.spriteBatch.Draw(Portal, new Vector2((int)spawnPos.X, (int)spawnPos.Y), sFrame, Color.White * 0.9f, 0f, sFrame.Size() / 2, scalePortalVec2 * 0.7f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(White, new Vector2((int)spawnPos.X, (int)spawnPos.Y), sFrame, Color.White * (1 - portalScale), 0f, sFrame.Size() / 2, scalePortalVec2 * 0.7f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Portal, new Vector2((int)spawnPos.X, (int)spawnPos.Y), sFrame, Color.White * 0.9f, 0f, sFrame.Size() / 2, scalePortalVec2 * 0.75f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(White, new Vector2((int)spawnPos.X, (int)spawnPos.Y), sFrame, Color.White * (1 - portalScale), 0f, sFrame.Size() / 2, scalePortalVec2 * 0.75f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(PortalGlow, new Vector2((int)spawnPos.X, (int)spawnPos.Y), sFrame, Color.White with { A = 0 } * portalScale, 0f, sFrame.Size() / 2, scalePortalVec2 * 0.75f, SpriteEffects.None, 0f);
 
 
 

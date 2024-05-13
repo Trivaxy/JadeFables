@@ -363,3 +363,8 @@ JadePylonItem: {
 		You can only place one per type and in the matching biome
 		'''
 }
+
+EelFists: {
+	Tooltip: ""
+	DisplayName: Eel Fists
+}

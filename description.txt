@@ -1,9 +1,9 @@
 The Everjade Mod is a mod focused on adding a biome, the Springs, that fits into vanilla's overall progression. The mod adds: 
-x Items
-x Weapons
-x Accessories 
-x Enemies 
+61 Items
+8 NPCs
 1 biome 
 3 New Structures
 
 WARNING: This mod is multiplayer incompatible. Also content is only designed for prehardmode at the moment.
+
+Join our discord to report bugs and suggest things: https://discord.gg/jWm3D8RNVJ

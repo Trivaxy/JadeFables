@@ -16,7 +16,7 @@ namespace JadeFables.NPCs
 {
     internal class BloodMetaballs : MetaballActor
     {
-        public override bool Active => Main.projectile.Any(x => x.active && x.type == ModContent.ProjectileType<AirBubble>());
+        public override bool Active => false;
 
         public override Color outlineColor => Color.Green * 0.8f;
 

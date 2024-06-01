@@ -1,0 +1,24 @@
+HeartbeatBuff: {
+	DisplayName: 心跳
+	Description: 可拾取的心变为大心
+}
+
+JasmineTeaBuff: {
+	DisplayName: 茉莉花茶
+	Description: 你需要点薄荷缓解一下！
+}
+
+SpineBuff: {
+	DisplayName: 棘刺化
+	Description: 受到伤害时会向周围发射尖刺
+}
+
+SpringWaterBuff: {
+	DisplayName: 春泉
+	Description: 负面效果被治愈了
+}
+
+BullfrogTongueTag: {
+	DisplayName: 牛蛙舌标签
+	Description: Mods.JadeFables.Buffs.BullfrogTongueTag.Description
+}

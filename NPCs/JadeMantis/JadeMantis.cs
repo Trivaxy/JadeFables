@@ -78,18 +78,6 @@ namespace JadeFables.NPCs.JadeMantis
             DisplayName.SetDefault("Artisan Mantis");
         }
 
-        public override bool IsLoadingEnabled(Mod mod)
-        {
-            //Since this NPC is just about to be loaded and assigned its type, the current count BEFORE the load will be its type, which is why we can do this
-            int npcType = NPCLoader.NPCCount;
-
-            DefaultNPCBanner.AddBannerAndItemForNPC(mod, npcType, "JadeMantis", out int bannerType);
-            Banner = npcType;
-            BannerItem = bannerType;
-
-            return true;
-        }
-
         public override void Load()
         {
             for (int j = 1; j <= 5; j++)
@@ -111,6 +99,9 @@ namespace JadeFables.NPCs.JadeMantis
             NPC.noGravity = true;
             NPC.behindTiles = true;
             NPC.npcSlots = 2f;
+            
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.JadeMantisBannerItem>();
         }
 
         public override void ModifyHoverBoundingBox(ref Rectangle boundingBox) => boundingBox = NPC.Hitbox;

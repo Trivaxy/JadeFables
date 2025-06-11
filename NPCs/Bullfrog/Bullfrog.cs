@@ -52,18 +52,6 @@ namespace JadeFables.NPCs.Bullfrog
 
         private float speed;
 
-        public override bool IsLoadingEnabled(Mod mod)
-        {
-            //Since this NPC is just about to be loaded and assigned its type, the current count BEFORE the load will be its type, which is why we can do this
-            int npcType = NPCLoader.NPCCount;
-
-            DefaultNPCBanner.AddBannerAndItemForNPC(mod, npcType, "Bullfrog", out int bannerType);
-            Banner = npcType;
-            BannerItem = bannerType;
-
-            return true;
-        }
-
         public override void Load()
         {
             for (int j = 1; j <= 4; j++)
@@ -88,6 +76,9 @@ namespace JadeFables.NPCs.Bullfrog
             NPC.HitSound = SoundID.NPCHit21 with { Pitch = -0.45f };
             NPC.DeathSound = SoundID.NPCDeath53 with { Pitch = -0.6f };
             NPC.noGravity = false;
+            
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.BullfrogBannerItem>();
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)

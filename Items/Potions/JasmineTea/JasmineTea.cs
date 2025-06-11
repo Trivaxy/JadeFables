@@ -44,7 +44,7 @@ namespace JadeFables.Items.Potions.JasmineTea
         }
 
         //Yes we need this for UseStyle() to run
-        public override bool? UseItem(Player player)
+        public override Nullable<bool> UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             return true;
         }

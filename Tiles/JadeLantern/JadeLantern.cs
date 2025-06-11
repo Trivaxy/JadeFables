@@ -137,7 +137,7 @@ namespace JadeFables.Tiles.JadeLantern
             Item.value = 5;
         }
 
-        public override bool? UseItem(Player player)
+        public override Nullable<bool> UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (player.whoAmI == Main.myPlayer && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY, TileReachCheckSettings.Simple))
             {
@@ -168,7 +168,7 @@ namespace JadeFables.Tiles.JadeLantern
             Item.rare = ItemRarityID.White;
             Item.value = 5;
         }
-        public override bool? UseItem(Player player)
+        public override Nullable<bool> UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (player.whoAmI == Main.myPlayer && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY, TileReachCheckSettings.Simple))
             {

@@ -54,7 +54,7 @@ namespace JadeFables.Items.SpringChestLoot.DuelingSpirits
             return true;
         }
 
-        public override bool? UseItem(Player player)
+        public override Nullable<bool> UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             //check for zero mana here
             int projType = player.altFunctionUse != 2 ? ModContent.ProjectileType<Ying>() : ModContent.ProjectileType<Yang>();

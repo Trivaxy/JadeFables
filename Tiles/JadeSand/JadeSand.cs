@@ -3,6 +3,7 @@ using JadeFables.Dusts;
 using JadeFables.Tiles.JadeGrassShort;
 using JadeFables.Tiles.JadeSandstone;
 using JadeFables.Tiles.JasmineFlower;
+using System;
 using Terraria.Localization;
 
 namespace JadeFables.Tiles.JadeSand
@@ -294,6 +295,6 @@ namespace JadeFables.Tiles.JadeSand
             }
         }
 
-        public override bool? CanDamage() => Projectile.localAI[1] != -1f;
+        public override Nullable<bool> CanDamage()/* tModPorter Suggestion: Return null instead of true */ => Projectile.localAI[1] != -1f;
     }
 }

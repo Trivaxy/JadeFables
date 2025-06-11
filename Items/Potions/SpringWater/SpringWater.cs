@@ -43,7 +43,7 @@ namespace JadeFables.Items.Potions.SpringWater
         }
         public override bool CanUseItem(Player player) => player.FindBuffIndex(BuffID.PotionSickness) < 0;
 
-        public override bool? UseItem(Player player)
+        public override Nullable<bool> UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             Item.healLife = 0; //set item's heal life to 0 when actually used, so it doesnt heal player
             if (!player.pStone)

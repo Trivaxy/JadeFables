@@ -43,7 +43,7 @@ namespace JadeFables.Tiles.Banners
         static DefaultNPCBanner()
         {
             //Committing cardinal sins in order to call a one line private method
-            AddSpecialPoint = typeof(TileDrawing).GetMethod("AddSpecialPoint", BindingFlags.Instance | BindingFlags.NonPublic)!.CreateDelegate<Action<int, int, int>>(Main.instance.TilesRenderer);
+            //AddSpecialPoint = typeof(TileDrawing).GetMethod("AddSpecialPoint", BindingFlags.Instance | BindingFlags.NonPublic)!.CreateDelegate<Action<int, int, int>>(Main.instance.TilesRenderer);
         }
 
         public DefaultNPCBanner(int npcType, int itemType, string tileTexturePath, string tileName)

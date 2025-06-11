@@ -349,7 +349,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
         }
 
-        public override bool? CanDamage() { return false; }
+        public override Nullable<bool> CanDamage()/* tModPorter Suggestion: Return null instead of true */ { return false; }
         public override bool? CanCutTiles() { return false; }
 
         //Returns the mathematical quadrant of the vec2, with the player as the origin
@@ -396,7 +396,7 @@ namespace JadeFables.Items.Jade.JadeStaff
             Projectile.DamageType = DamageClass.Magic;
         }
 
-        public override bool? CanDamage()
+        public override Nullable<bool> CanDamage()/* tModPorter Suggestion: Return null instead of true */
         {
             if (timeAfterLaunch == 0)
                 return true;
@@ -749,7 +749,7 @@ namespace JadeFables.Items.Jade.JadeStaff
         private int timer = 0;
         private Vector2 startingCenter = Vector2.Zero;
 
-        public override bool? CanDamage()
+        public override Nullable<bool> CanDamage()/* tModPorter Suggestion: Return null instead of true */
         {
             if (Projectile.timeLeft < 20)
                 return false;

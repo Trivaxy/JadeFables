@@ -7,6 +7,7 @@ using JadeFables.Tiles.JadeSandstone;
 using JadeFables.Tiles.JasmineFlower;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -335,7 +336,7 @@ namespace JadeFables.Tiles.OvergrownJadeSand
             Item.rare = ItemRarityID.White;
             Item.value = 500;
         }
-        public override bool? UseItem(Player player)
+        public override Nullable<bool> UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (Main.tile[Player.tileTargetX, Player.tileTargetY].TileType != TileType<JadeSandTile>() || !Helpers.Helper.TileInRange(player, Item) || player.itemAnimation != player.itemAnimationMax)
                 return false;
@@ -345,7 +346,7 @@ namespace JadeFables.Tiles.OvergrownJadeSand
     }
     public class StaffOfRegrowthCompatability : GlobalItem
     {
-        public override bool? UseItem(Item item, Player player)
+        public override Nullable<bool> UseItem(Item item, Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (item.type != ItemID.StaffofRegrowth)
                 return null;

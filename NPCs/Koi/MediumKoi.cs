@@ -32,18 +32,6 @@ namespace JadeFables.NPCs.Koi
         private int yFrame = 0;
         private int frameCounter = 0;
 
-        public override bool IsLoadingEnabled(Mod mod)
-        {
-            //Since this NPC is just about to be loaded and assigned its type, the current count BEFORE the load will be its type, which is why we can do this
-            int npcType = NPCLoader.NPCCount;
-
-            DefaultNPCBanner.AddBannerAndItemForNPC(mod, npcType, "MediumKoi", out int bannerType);
-            Banner = npcType;
-            BannerItem = bannerType;
-
-            return true;
-        }
-
         public override void Load()
         {
             for (int j = 1; j <= 4; j++)
@@ -69,6 +57,9 @@ namespace JadeFables.NPCs.Koi
             NPC.noGravity = true;
             NPC.aiStyle = 16;
             AIType = NPCID.Goldfish;
+            
+            Banner = NPC.type;
+            BannerItem = ModContent.ItemType<Banners.MediumKoiBannerItem>();
         }
 
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)

@@ -90,7 +90,7 @@ namespace JadeFables.Tiles.JadeWaterfall
                 return false;
             return base.CanUseItem(player);
         }
-        public override bool? UseItem(Player player)
+        public override Nullable<bool> UseItem(Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (!player.ItemTimeIsZero || player.itemAnimation != player.itemAnimationMax) return base.UseItem(player);
 
@@ -104,7 +104,7 @@ namespace JadeFables.Tiles.JadeWaterfall
 
     public class BucketObtainability : GlobalItem
     {
-        public override bool? UseItem(Item item, Player player)
+        public override Nullable<bool> UseItem(Item item, Player player)/* tModPorter Suggestion: Return null instead of false */
         {
             if (player.itemAnimation == item.useAnimation - 1 && item.type == ItemID.EmptyBucket && player.InInteractionRange(Player.tileTargetX, Player.tileTargetY, TileReachCheckSettings.Simple))
             {

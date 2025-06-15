@@ -1,0 +1,370 @@
+Bulfrauble: {
+	DisplayName: 金蟾佩
+	Tooltip:
+		'''
+		跳跃前助跑以极大增加跳跃距离
+		增加移动速度和加速度
+		佩戴时提供光照
+		'''
+}
+
+BullfrogBaubleBelt: {
+	DisplayName: 金蟾玉带
+	Tooltip:
+		'''
+		跳跃前助跑以极大增加跳跃距离
+		增加二段跳的水平速度
+		增加移动速度和加速度
+		佩戴时提供光照
+		'''
+}
+
+BullfrogLegs: {
+	DisplayName: 蟾足
+	Tooltip: 跳跃前助跑以增加跳跃距离
+}
+
+BullfrogTongue: {
+	DisplayName: 蟾舌鞭
+	Tooltip: ""
+}
+
+FrogInFroggle: {
+	DisplayName: 金蟾瓶
+	Tooltip:
+		'''
+		跳跃前助跑以增加跳跃距离
+		增加二段跳的水平速度
+		'''
+}
+
+KoiItem: {
+	DisplayName: 锦鲤
+	Tooltip: "“你不跟我一起逗锦鲤吗”"
+}
+
+Arowana: {
+	DisplayName: 绯鱼
+	Tooltip: 跟随你的光标移动，吸引周围敌人的注意力
+}
+
+DragonCrate: {
+	DisplayName: 神龙匣
+	Tooltip: <right>可打开
+}
+
+SpringCrate: {
+	DisplayName: 沁春匣
+	Tooltip: <right>可打开
+}
+
+KoiPopper: {
+	DisplayName: 锦鲤泡泡机
+	Tooltip:
+		'''
+		喷出一股泡泡
+		<right>以戳破泡泡，对附近敌人造成伤害
+		'''
+}
+
+FestivalLantern: {
+	DisplayName: 节日灯笼
+	Tooltip: 开始一场灯笼夜
+}
+
+JadeHat: {
+	DisplayName: 翠玉巾冠
+	Tooltip: 伤害和暴击率各提高10%
+}
+
+JadeRobe: {
+	DisplayName: 翠玉深衣
+	Tooltip: 移动速度和奔跑速度各提高7%
+}
+
+JadeAxe: {
+	DisplayName: 浑璞斧
+	Tooltip: 树木会掉落更多水果
+}
+
+JadeBow: {
+	DisplayName: 黄琮弓
+	Tooltip:
+		'''
+		射击小动物使它们为你而战
+		射击城镇NPC可给予他们一个盾牌
+		'''
+}
+
+JadeChunk: {
+	DisplayName: 璞玉
+	Tooltip: ""
+}
+
+JadeHarpoon: {
+	DisplayName: 琼瑜叉
+	Tooltip: 将你钩向敌人，并从它们身上弹回来
+}
+
+JadeHookItem: {
+	DisplayName: 环璧钩
+	Tooltip: 钩到物块上时产生爆炸
+}
+
+JadeKunai: {
+	DisplayName: 璇玑苦无
+	Tooltip: 反复打击会增加其他武器的伤害
+}
+
+JadePickaxe: {
+	DisplayName: 磋琢镐
+	Tooltip: 岩石会掉落更多生物
+}
+
+JadeStaff: {
+	DisplayName: 圭璋杖
+	Tooltip:
+		'''
+		长按以喷出火焰
+		随后召唤一条火龙
+		松开以发射火龙
+		'''
+}
+
+LotusChestplate: {
+	DisplayName: 芰荷蓑
+	Tooltip: 增加渔力
+}
+
+LotusHelmet: {
+	DisplayName: 芰荷笠
+	Tooltip: 增加渔力
+}
+
+LotusLeggings: {
+	DisplayName: 芰荷膝裤
+	Tooltip: 增加渔力
+}
+
+LotusFiber: {
+	DisplayName: 藕丝
+	Tooltip: ""
+}
+
+LotusHammer: {
+	DisplayName: 菡萏锤
+	Tooltip: 可以收集各种天然墙
+}
+
+Dumpling: {
+	DisplayName: 饺子
+	Tooltip:
+		'''
+		所有属性中幅提升
+		“几乎认不出来”
+		'''
+}
+
+BigHeartItem: {
+	DisplayName: 大红心
+	Tooltip: 你不应该看到这个
+}
+
+HeartbeatPotion: {
+	DisplayName: 心动药水
+	Tooltip: 捡起的红心会变成更大的心，能够治疗更多血量
+}
+
+JasmineTea: {
+	DisplayName: 茉莉花茶
+	Tooltip: "“你知道他们为什么都叫我西方之龙吗？”"
+}
+
+SpineItem: {
+	DisplayName: 鱼骨
+	Tooltip: ""
+}
+
+SpinePotion: {
+	DisplayName: 鱼骨药水
+	Tooltip: 受到伤害时向附近敌人发射鱼骨
+}
+
+SpringWater: {
+	DisplayName: 沁春水
+	Tooltip:
+		'''
+		清除绝大部分减益
+		造成15秒药水疾病
+		'''
+}
+
+Chopsticks: {
+	DisplayName: 筷子
+	Tooltip: 增加剑的范围，并允许全方向挥舞
+}
+
+FireworkPack: {
+	DisplayName: 烟花包
+	Tooltip:
+		'''
+		15伤害
+		敌人死后会发射伤害性烟花
+		'''
+}
+
+GongItem: {
+	DisplayName: 锣与锤
+	Tooltip:
+		'''
+		<left>扔出一个锣
+		<right>敲击它，增加它的伤害
+		'''
+}
+
+Hwacha: {
+	DisplayName: 火战车
+	Tooltip:
+		'''
+		召唤一架火战车为你而战
+		鞭打火战车以让它发射你物品栏中的弹药
+		<right>以移动火战车
+		'''
+}
+
+TanookiLeaf: {
+	DisplayName: 浣熊叶
+	Tooltip:
+		'''
+		助跑速度可以增加跳跃高度
+		在空中按跳跃以减缓下落
+		'''
+}
+
+BlossomWallItem: {
+	DisplayName: 樱花墙
+	Tooltip: ""
+}
+
+HardenedJadeSandItem: {
+	DisplayName: 硬化沁春沙
+	Tooltip: ""
+}
+
+JadeFountainItem: {
+	DisplayName: 沁春喷泉
+	Tooltip: 使附近的水发光
+}
+
+JadeLanternItem: {
+	DisplayName: 沁春灯笼
+	Tooltip:
+		'''
+		放置在一个现有灯笼的顶部，使其变得更长 
+		这样做不会消耗灯笼
+		'''
+}
+
+JadeLanternItemDebug: {
+	DisplayName: 沁春灯笼DEBUG
+	Tooltip: ""
+}
+
+JadeSandItem: {
+	DisplayName: 沁春沙
+	Tooltip: ""
+}
+
+JadeSandstoneItem: {
+	DisplayName: 沁春沙岩
+	Tooltip: ""
+}
+
+JadeSandWallItem: {
+	DisplayName: 沁春石墙
+	Tooltip: ""
+}
+
+JadeSeaweedItem: {
+	DisplayName: 沁春海草
+	Tooltip: ""
+}
+
+JadeWaterfallBucket: {
+	DisplayName: 瀑布桶
+	Tooltip:
+		'''
+		盛有少量瀑布
+		可以倒出
+		'''
+}
+
+JasmineFlower: {
+	DisplayName: 茉莉花
+	Tooltip: "“莫名幽香沁人心脾”"
+}
+
+JadeGrassSeeds: {
+	DisplayName: 沁春草种
+	Tooltip: 可放置
+}
+
+SpringChestItem: {
+	DisplayName: 沁春箱
+	Tooltip: ""
+}
+
+WarriorStatueItem: {
+	DisplayName: 武士雕像
+	Tooltip: ""
+}
+
+JadeTorch: {
+	DisplayName: 翠玉火把
+	Tooltip: ""
+}
+
+# Banners
+BullfrogBannerItem: {
+	DisplayName: 牛蛙旗
+	Tooltip: "{$CommonItemTooltip.BannerBonus}牛蛙"
+}
+
+GiantSnailBannerItem: {
+	DisplayName: 巨型蜗牛旗
+	Tooltip: "{$CommonItemTooltip.BannerBonus}巨型蜗牛"
+}
+
+MediumKoiBannerItem: {
+	DisplayName: 中型锦鲤旗
+	Tooltip: "{$CommonItemTooltip.BannerBonus}中型锦鲤"
+}
+
+PufferfishBannerItem: {
+	DisplayName: 河豚旗
+	Tooltip: "{$CommonItemTooltip.BannerBonus}河豚"
+}
+
+DuelingSpirits: {
+	DisplayName: 阴阳之魂
+	Tooltip: ""
+}
+
+JadeMantisBannerItem: {
+	Tooltip: ""
+	DisplayName: 工匠螳螂旗帜
+}
+
+JadePylonItem: {
+	DisplayName: 翠玉晶塔
+	Tooltip:
+		'''
+		附近有2个城镇居民时可以传送至另一个晶塔
+		只能放置在匹配的生物群系中且每种类型只能放置一个
+		'''
+}
+
+EelFists: {
+	Tooltip: ""
+	DisplayName: 鳗鱼拳套
+}
